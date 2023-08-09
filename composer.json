@@ -8,7 +8,6 @@
       "email": "web@avega-soft.ru"
     }
   ],
-  "minimum-stability": "dev",
   "require": {
     "php": "^8.0",
     "codeigniter4/framework": "^4.3",
