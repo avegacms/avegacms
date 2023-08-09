@@ -27,7 +27,6 @@
       "AvegaCMS\\": "src/"
     }
   },
-  "minimum-stability": "dev",
   "config": {
     "allow-plugins": {
       "phpstan/extension-installer": true
