@@ -1,5 +1,6 @@
 {
   "name": "avegacms/avegacms",
+  "minimum-stability": "dev",
   "description": "Codeigniter4 :: AvegaCMS",
   "license": "MIT",
   "authors": [
