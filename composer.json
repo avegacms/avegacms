@@ -1,0 +1,36 @@
+{
+  "name": "avegacms/avegacms",
+  "description": "AvegaCMS",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "AvegaTeam",
+      "email": "web@avega-soft.ru"
+    }
+  ],
+  "require": {
+    "php": "^8.2",
+    "codeigniter4/framework": "^4.3",
+    "firebase/php-jwt": "^6.8"
+  },
+  "require-dev": {
+    "codeigniter/coding-standard": "^1.7",
+    "codeigniter4/devkit": "^1.1",
+    "fakerphp/faker": "^1.9",
+    "mikey179/vfsstream": "^1.6",
+    "phpunit/phpunit": "^9.1",
+    "vimeo/psalm": "^5.13"
+  },
+  "autoload": {
+    "psr-4": {
+      "AvegaCMS\\": "src/"
+    }
+  },
+  "minimum-stability": "dev",
+  "config": {
+    "allow-plugins": {
+      "phpstan/extension-installer": true
+    }
+  }
+}
