@@ -44,6 +44,15 @@ $RECYCLE.BIN/
 Vagrantfile
 
 #-------------------------
+# AvegaCMS API
+#-------------------------
+public/
+writable/
+spark
+src/Config/Paths.php
+src/Config/App.php
+src/Config/Autoload.php
+#-------------------------
 # Test Files
 #-------------------------
 tests/coverage*
@@ -96,3 +105,4 @@ nb-configuration.xml
 /phpunit*.xml
 /.phpunit.*.cache
 
+/writable/
