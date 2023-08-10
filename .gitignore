@@ -67,7 +67,7 @@ _modules/*
 .php-version
 
 # Jetbrains editors (PHPStorm, etc)
-.idea/
+../.idea/
 *.iml
 
 # Netbeans
