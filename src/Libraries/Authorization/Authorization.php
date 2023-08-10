@@ -130,7 +130,9 @@ class Authorization
             throw AuthorizationExceptions::forWrongCode();
         }
 
-        // TODO Сгенерить новый код
+        if ($data['condition'] === 'recovery') {
+            $hash = $this->_hashCode($this->_setSecretCode($user->id, 'password'));
+        }
 
         return match ($data['condition']) {
             'auth'     => [
@@ -141,7 +143,7 @@ class Authorization
             'recovery' => [
                 'status'   => true,
                 'direct'   => 'password',
-                'userdata' => ['user_id' => $user->id, 'hash' => $user->secret]
+                'userdata' => ['user_id' => $user->id, 'hash' => $hash??'']
             ],
             default    => throw AuthorizationExceptions::forWrongCode()
         };
