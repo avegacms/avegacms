@@ -40,7 +40,7 @@ class Authorization
     }
 
     /**
-     * @param array $data
+     * @param  array  $data
      * @extension AuthorizationExceptions
      * @extension
      * @return array
@@ -52,13 +52,13 @@ class Authorization
             throw AuthorizationExceptions::forNoData();
         }
 
-        if (!in_array($this->settings['auth']['loginType'] ?? '', $this->settings['auth']['loginTypeList'])) {
+        if ( ! in_array($this->settings['auth']['loginType'] ?? '', $this->settings['auth']['loginTypeList'])) {
             throw AuthorizationExceptions::forUnknownAuthType($this->settings['auth']['loginType']);
         }
 
         $loginType = $this->_checkType($data[$this->settings['auth']['loginType']]);
 
-        if (!$this->validate($this->_validate('auth_by_' . $this->settings['auth']['loginType']), $data)) {
+        if ( ! $this->validate($this->_validate('auth_by_' . $this->settings['auth']['loginType']), $data)) {
             throw new ValidationException($this->validator->getErrors());
         }
 
@@ -66,7 +66,7 @@ class Authorization
             throw AuthorizationExceptions::forUnknownUser();
         }
 
-        if (isset($data['password']) && !password_verify($data['password'], $user->password)) {
+        if (isset($data['password']) && ! password_verify($data['password'], $user->password)) {
             throw AuthorizationExceptions::forWrongPassword();
         }
 
@@ -96,7 +96,7 @@ class Authorization
     }
 
     /**
-     * @param array $data
+     * @param  array  $data
      * @return array[]
      * @throws AuthorizationExceptions|ValidationException|Exception
      */
@@ -106,7 +106,7 @@ class Authorization
             throw AuthorizationExceptions::forNoData();
         }
 
-        if (!$this->validate($this->_validate('check_code'), $data)) {
+        if ( ! $this->validate($this->_validate('check_code'), $data)) {
             throw new ValidationException($this->validator->getErrors());
         }
 
@@ -126,7 +126,7 @@ class Authorization
             throw AuthorizationExceptions::forCodeExpired();
         }
 
-        if ($user->secret !== $this->_hashCode((int)$data['code'])) {
+        if ($user->secret !== $this->_hashCode((int) $data['code'])) {
             throw AuthorizationExceptions::forWrongCode();
         }
 
@@ -143,15 +143,15 @@ class Authorization
             'recovery' => [
                 'status'   => true,
                 'direct'   => 'password',
-                'userdata' => ['user_id' => $user->id, 'hash' => $hash??'']
+                'userdata' => ['user_id' => $user->id, 'hash' => $hash ?? '']
             ],
             default    => throw AuthorizationExceptions::forWrongCode()
         };
     }
 
     /**
-     * @param int $userId
-     * @param array $userData
+     * @param  int  $userId
+     * @param  array  $userData
      * @return array[]
      * @throws ReflectionException|Exception
      */
@@ -220,7 +220,7 @@ class Authorization
                 'user_agent'    => $userAgent
             ];
 
-            if (!$this->UTM->insert((new UserTokensEntity($newUserSession)))) {
+            if ( ! $this->UTM->insert((new UserTokensEntity($newUserSession)))) {
                 throw AuthorizationExceptions::forCreateToken();
             }
         }
@@ -247,7 +247,7 @@ class Authorization
     }
 
     /**
-     * @param array $data
+     * @param  array  $data
      * @return array
      * @throws AuthorizationExceptions|ValidationException|Exception
      */
@@ -261,7 +261,7 @@ class Authorization
             throw AuthorizationExceptions::forNoData();
         }
 
-        if (!$this->validate($this->_validate('recovery'), $data)) {
+        if ( ! $this->validate($this->_validate('recovery'), $data)) {
             throw new ValidationException($this->validator->getErrors());
         }
 
@@ -295,7 +295,7 @@ class Authorization
     }
 
     /**
-     * @param array $data
+     * @param  array  $data
      * @return array
      * @throws ValidationException|ReflectionException|ValidationException|Exception
      */
@@ -309,7 +309,7 @@ class Authorization
             throw AuthorizationExceptions::forNoData();
         }
 
-        if (!$this->validate($this->_validate('password'), $data)) {
+        if ( ! $this->validate($this->_validate('password'), $data)) {
             throw new ValidationException($this->validator->getErrors());
         }
 
@@ -362,7 +362,7 @@ class Authorization
     }
 
     /**
-     * @param array $data
+     * @param  array  $data
      * @return array
      * @throws ReflectionException|ValidationException
      * @throws Exception
@@ -395,7 +395,7 @@ class Authorization
             throw AuthorizationExceptions::forNoData();
         }
 
-        if (!$this->validate($this->_validate('refresh_token'), $data)) {
+        if ( ! $this->validate($this->_validate('refresh_token'), $data)) {
             throw new ValidationException($this->validator->getErrors());
         }
 
@@ -409,7 +409,7 @@ class Authorization
                     throw AuthorizationExceptions::forFailUnauthorized('expiresToken');
                 }
 
-                if (empty($jwt = $this->_signatureTokenJWT((array)$payload->data))) {
+                if (empty($jwt = $this->_signatureTokenJWT((array) $payload->data))) {
                     throw AuthorizationExceptions::forCreateToken();
                 }
 
@@ -451,8 +451,8 @@ class Authorization
     }
 
     /**
-     * @param int $userId
-     * @param string $condition
+     * @param  int  $userId
+     * @param  string  $condition
      * @return int
      * @throws ReflectionException|Exception
      */
@@ -487,7 +487,7 @@ class Authorization
     }
 
     /**
-     * @param int $code
+     * @param  int  $code
      * @return string
      */
     private function _hashCode(int $code): string
@@ -496,7 +496,7 @@ class Authorization
     }
 
     /**
-     * @param string $condition
+     * @param  string  $condition
      * @return int
      * @throws Exception
      */
@@ -510,7 +510,7 @@ class Authorization
     }
 
     /**
-     * @param array $userData
+     * @param  array  $userData
      * @return string
      */
     public function _signatureTokenJWT(array $userData): string
@@ -534,7 +534,7 @@ class Authorization
     }
 
     /**
-     * @param string $field
+     * @param  string  $field
      * @return string[]
      * @throws AuthorizationExceptions
      */
@@ -556,7 +556,7 @@ class Authorization
     }
 
     /**
-     * @param array $userdata
+     * @param  array  $userdata
      * @return void
      */
     private function _setClientSession(array $userdata = []): void
@@ -568,7 +568,7 @@ class Authorization
     }
 
     /**
-     * @param string $type
+     * @param  string  $type
      * @return array[]
      * @throws ValidationException
      */
