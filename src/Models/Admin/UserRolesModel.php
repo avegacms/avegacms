@@ -43,18 +43,26 @@ class UserRolesModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    public function getUserRoles(int $userId)
+    /**
+     * @param  string  $role
+     * @return $this
+     */
+    public function getUserRoles(string $role = '')
     {
         $this->builder()->select(['user_roles.role_id', 'user_roles.user_id', 'r.role'])
             ->join('users AS u', 'u.id = user_roles.user_id')
             ->join('roles AS r', 'r.id = user_roles.role_id')
+            ->orderBy('r.priority', 'ASC')
             ->where(
                 [
-                    'u.id'     => $userId,
                     'u.status' => 'active',
                     'r.active' => 1
                 ]
             );
+
+        if ( ! empty($role)) {
+            $this->builder()->where(['r.role' => $role]);
+        }
 
         return $this;
     }

@@ -6,8 +6,11 @@ use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Config\Services;
+use Exception;
+use AvegaCms\Libraries\Authentication\Authentication;
+use AvegaCms\Libraries\Authentication\Exceptions\AuthenticationException;
 
-class AuthFilter implements FilterInterface
+class AuthenticationFilter implements FilterInterface
 {
     /**
      * Do whatever processing this filter needs to do.
@@ -19,8 +22,8 @@ class AuthFilter implements FilterInterface
      * sent back to the client, allowing for error pages,
      * redirects, etc.
      *
-     * @param RequestInterface $request
-     * @param array|null $arguments
+     * @param  RequestInterface  $request
+     * @param  array|null  $arguments
      *
      * @return ResponseInterface
      */
@@ -30,11 +33,21 @@ class AuthFilter implements FilterInterface
         $response = Services::response();
         $auth = service('settings')->get('core.auth');
 
+        try {
+        } catch (AuthenticationException|Exception $e) {
+            return $response->setStatusCode($e->getCode(), $e->getMessage());
+        }
+
+
+        $request = Services::request();
+        $response = Services::response();
+        $auth = service('settings')->get('core.auth');
+
         if (empty($authHeader = $request->getServer('HTTP_AUTHORIZATION'))) {
             return $response->setStatusCode(401, 'Access denied');
         }
 
-        if ($auth['useWhiteIpList'] && !empty($auth['whiteIpList']) && in_array(
+        if ($auth['useWhiteIpList'] && ! empty($auth['whiteIpList']) && in_array(
                 $request->getIPAddress(),
                 $auth['whiteIpList']
             )) {
@@ -56,10 +69,6 @@ class AuthFilter implements FilterInterface
         }
 
         unset($authHeader, $cont);
-
-        // Проверка прав доступа
-        print_r($authType);
-        exit();
     }
 
     /**
@@ -68,9 +77,9 @@ class AuthFilter implements FilterInterface
      * to stop execution of other after filters, short of
      * throwing an Exception or Error.
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
-     * @param array|null $arguments
+     * @param  RequestInterface  $request
+     * @param  ResponseInterface  $response
+     * @param  array|null  $arguments
      *
      * @return void
      */

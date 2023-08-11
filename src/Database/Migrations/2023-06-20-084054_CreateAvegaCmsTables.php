@@ -389,19 +389,16 @@ class CreateAvegaCmsTables extends Migration
         $this->forge->addField([
             'id'          => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'auto_increment' => true],
             'role_id'     => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
-            // роль пользователя
-            'parent'      => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
-            // принадлежность к модулю
             'module_id'   => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true, 'default' => 0],
             // принадлежность к модулю
+            'parent'      => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
+            // URL-slug модуля
             'module_slug' => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
-            // принадлежность к элементу модуля
-            'access'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
-            // доступ к модулю
-            'show'        => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // разрешение на просмотр
-            'self'        => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'access'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // действия разрешены только со своими записями
+            'self'        => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            // разрешение на создание
             'create'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // разрешение на создание
             'read'        => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
@@ -451,7 +448,7 @@ class CreateAvegaCmsTables extends Migration
             'deleted_at' => ['type' => 'datetime', 'null' => true]
         ];
 
-        if (!empty($exclude)) {
+        if ( ! empty($exclude)) {
             for ($i = 0; $i < count($exclude); $i++) {
                 if (isset($dateList[$exclude[$i]])) {
                     unset($dateList[$exclude[$i]]);

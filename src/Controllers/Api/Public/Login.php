@@ -4,7 +4,7 @@ namespace AvegaCms\Controllers\Api\Public;
 
 use AvegaCms\Controllers\Api\AvegaCmsAPI;
 use AvegaCms\Libraries\Authorization\Authorization;
-use AvegaCms\Libraries\Authorization\Exceptions\{AuthorizationExceptions, ValidationException};
+use AvegaCms\Libraries\Authorization\Exceptions\{AuthorizationException, ValidationException};
 use CodeIgniter\Events\Events;
 use CodeIgniter\HTTP\ResponseInterface;
 use Exception;
@@ -23,9 +23,9 @@ class Login extends AvegaCmsAPI
     }
 
     /**
-     * @param string|null $action
+     * @param  string|null  $action
      * @return ResponseInterface
-     * @throws AuthorizationExceptions|ValidationException|Exception
+     * @throws AuthorizationException|ValidationException|Exception
      */
     public function index(?string $action = null): ResponseInterface
     {
@@ -65,12 +65,12 @@ class Login extends AvegaCmsAPI
                 case 'registration':
                     break;
                 default:
-                    throw AuthorizationExceptions::forUnknownAuthType();
+                    throw AuthorizationException::forUnknownAuthType();
             }
             return $this->respondUpdated($result);
         } catch (ValidationException $e) {
             return $this->failValidationErrors($e->getMessages());
-        } catch (AuthorizationExceptions|Exception $e) {
+        } catch (AuthorizationException|Exception $e) {
             return match ($e->getCode()) {
                 403     => $this->failForbidden($e->getMessage()),
                 401     => $this->failUnauthorized($e->getMessage()),
@@ -80,16 +80,16 @@ class Login extends AvegaCmsAPI
     }
 
     /**
-     * @param array $auth
+     * @param  array  $auth
      * @return array|array[]
-     * @throws AuthorizationExceptions|Exception
+     * @throws AuthorizationException|Exception
      */
     private function _authProcess(array $auth): array
     {
         $result = ['data' => ['status' => 'unauthorized']];
 
         if ($auth['status'] === false) {
-            throw AuthorizationExceptions::forFailForbidden();
+            throw AuthorizationException::forFailForbidden();
         }
 
         switch ($auth['direct']) {
@@ -99,14 +99,14 @@ class Login extends AvegaCmsAPI
                 $result = ['data' => ['status' => 'authorized', 'userdata' => $user]];
                 break;
             case 'send_code':
-                if (!empty($auth['userdata']['phone'] ?? '')) {
+                if ( ! empty($auth['userdata']['phone'] ?? '')) {
                     // Отправляем смс с кодом пользователю
                     Events::trigger($auth['userdata']['condition'] === 'auth' ? 'sendAuthSms' : 'sendRecoverySms', [
                         'user_id' => $auth['userdata']['user_id'],
                         'phone'   => $auth['userdata']['phone'],
                         'code'    => $auth['userdata']['code']
                     ]);
-                } elseif (!empty($auth['userdata']['email'] ?? '')) {
+                } elseif ( ! empty($auth['userdata']['email'] ?? '')) {
                     // Отправляем email с кодом пользователю
                     Events::trigger($auth['userdata']['condition'] === 'auth' ? 'sendAuthEmail' : 'sendRecoveryEmail', [
                         'user_id' => $auth['userdata']['user_id'],
@@ -114,7 +114,7 @@ class Login extends AvegaCmsAPI
                         'code'    => $auth['userdata']['code']
                     ]);
                 } else {
-                    throw AuthorizationExceptions::forNoData();
+                    throw AuthorizationException::forNoData();
                 }
                 $result['data']['status'] = 'send_code';
 
@@ -130,7 +130,7 @@ class Login extends AvegaCmsAPI
                 $result['data']['userdata']['hash'] = $auth['userdata']['hash'];
                 break;
             default:
-                throw AuthorizationExceptions::forNoData();
+                throw AuthorizationException::forNoData();
         }
 
         return $result;
