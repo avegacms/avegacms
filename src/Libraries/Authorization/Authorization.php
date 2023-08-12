@@ -186,7 +186,8 @@ class Authorization
                 'phone'    => $user->phone,
                 'email'    => $user->email,
                 'extra'    => $user->extra,
-                'roles'    => $role->role,
+                'roleId'   => $role->role_id,
+                'role'     => $role->role,
                 ...$userData
             ]
         ];

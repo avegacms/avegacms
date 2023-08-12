@@ -110,6 +110,9 @@ class Authentication
                 throw AuthenticationException::forTokenNotFound();
         }
 
+        if (empty($roleActionMap = $UAM->where(['role_id' => $userData->user->roleId])->findAll())) {
+            throw AuthenticationException::forAccessDenied();
+        }
 
         return false;
     }

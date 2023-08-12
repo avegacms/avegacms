@@ -3,7 +3,7 @@
 namespace AvegaCms\Models\Admin;
 
 use CodeIgniter\Model;
-use AvegaCms\Entities\UserAuthenticationEntity;
+use AvegaCms\Entities\PermissionsEntity;
 
 class UserAuthenticationModel extends Model
 {
@@ -11,7 +11,7 @@ class UserAuthenticationModel extends Model
     protected $table            = 'permissions';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = UserAuthenticationEntity::class;
+    protected $returnType       = PermissionsEntity::class;
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [];
@@ -39,4 +39,31 @@ class UserAuthenticationModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    public function getRoleAccessMap(int $roleId)
+    {
+        $this->builder()->select(
+            [
+                'parent',
+                'module_id',
+                'parent',
+                'is_system',
+                'is_plugin',
+                'slug',
+                'access',
+                'self',
+                'create',
+                'read',
+                'update',
+                'delete',
+                'moderated',
+                'settings',
+                'extra'
+            ]
+        )->where(['role_id' => $roleId])
+            ->orderBy('module_id', 'ASC')
+            ->orderBy('parent', 'ASC');
+
+        return $this;
+    }
 }
