@@ -19,7 +19,7 @@ class PermissionsModel extends Model
         'parent',
         'module_id',
         'is_plugin',
-        'module_slug',
+        'slug',
         'access',
         'self',
         'create',

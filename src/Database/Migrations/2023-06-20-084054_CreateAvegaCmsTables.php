@@ -297,38 +297,38 @@ class CreateAvegaCmsTables extends Migration
          * Таблица для хранения SEO-данных страниц приложения
          */
         $this->forge->addField([
-            'id'          => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'auto_increment' => true],
-            'parent'      => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
+            'id'         => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'auto_increment' => true],
+            'parent'     => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
             // id - родительской записи
-            'locale_id'   => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => 0],
+            'locale_id'  => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => 0],
             // принадлежность к локалии
-            'module_id'   => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true, 'default' => 0],
+            'module_id'  => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true, 'default' => 0],
             // принадлежность к модулю
-            'module_slug' => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
+            'slug'       => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
             // принадлежность к элементу модуля
-            'creator_id'  => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
+            'creator_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
             // id - пользователя создавшего запись
-            'item_id'     => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
+            'item_id'    => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
             // id - элемента записи
-            'title'       => ['type' => 'varchar', 'constraint' => 1024, 'null' => true],
+            'title'      => ['type' => 'varchar', 'constraint' => 1024, 'null' => true],
             // Название страницы
-            'sort'        => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true, 'default' => 0],
+            'sort'       => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true, 'default' => 0],
             // порядковый номер записи
-            'url'         => ['type' => 'varchar', 'constraint' => 2048, 'null' => true],
+            'url'        => ['type' => 'varchar', 'constraint' => 2048, 'null' => true],
             // URL-адрес без указания base_url
-            'meta'        => ['type' => 'text', 'null' => true],
+            'meta'       => ['type' => 'text', 'null' => true],
             // объект, содержащий информацию о метаданных
-            'extra'       => ['type' => 'text', 'null' => true],
+            'extra'      => ['type' => 'text', 'null' => true],
             // объект, содержащий информацию о доп. данных
-            'status'      => [
+            'status'     => [
                 'type'       => 'enum',
                 'constraint' => ['publish', 'future', 'pending', 'draft', 'trash'],
                 'default'    => 'pending'
             ],
             // статус страницы
-            'in_sitemap'  => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'in_sitemap' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // флаг добавления в карту сайта
-            'publish_at'  => ['type' => 'datetime', 'null' => true],
+            'publish_at' => ['type' => 'datetime', 'null' => true],
             ...$this->byId(),
             ...$this->dateFields(['deleted_at'])
         ]);
@@ -388,34 +388,34 @@ class CreateAvegaCmsTables extends Migration
         $this->createTable($this->tables['tags_links']);
 
         $this->forge->addField([
-            'id'          => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'auto_increment' => true],
-            'role_id'     => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
-            'module_id'   => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true, 'default' => 0],
+            'id'        => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'auto_increment' => true],
+            'role_id'   => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
+            'module_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true, 'default' => 0],
             // Является ли запись системной
-            'is_system'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'is_system' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // Является ли модуль плагином
-            'is_plugin'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'is_plugin' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // принадлежность к модулю
-            'parent'      => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
+            'parent'    => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
             // URL-slug модуля
-            'module_slug' => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
+            'slug'      => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
             // разрешение на просмотр
-            'access'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'access'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // действия разрешены только со своими записями
-            'self'        => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'self'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // разрешение на создание
-            'create'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'create'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // разрешение на создание
-            'read'        => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'read'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // разрешение на чтение
-            'update'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'update'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // разрешение на обновление/редактирование
-            'delete'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'delete'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // разрешение на удаление
-            'moderated'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'moderated' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // действие требует модерации вышестоящих
-            'settings'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
-            'extra'       => ['type' => 'text', 'null' => true], // Настройки для плагинов
+            'settings'  => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'extra'     => ['type' => 'text', 'null' => true], // Настройки для плагинов
             ...$this->byId(),
             ...$this->dateFields(['deleted_at'])
         ]);

@@ -13,6 +13,10 @@ return [
             'content'         => 'Управление контентом',
             'content_builder' => 'Управление Content Builder',
             'uploader'        => 'Управление Content Uploader',
+            'rubrics'         => 'Управление рубриками',
+            'pages'           => 'Управление страницами',
+            'posts'           => 'Управление публикациями',
+            'tags'            => 'Управление тегами'
         ],
         'description' => [
             'cms'             => 'AvegaCMS :: Ядро',
@@ -25,6 +29,11 @@ return [
             'content'         => 'Управление контентом',
             'content_builder' => 'Управление Content Builder',
             'uploader'        => 'Управление Content Uploader',
+            'rubrics'         => 'Управление рубриками',
+            'pages'           => 'Управление страницами',
+            'posts'           => 'Управление публикациями',
+            'tags'            => 'Управление тегами'
+
         ]
     ]
 ];

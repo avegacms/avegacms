@@ -18,7 +18,7 @@ class ContentSeoModel extends Model
         'parent',
         'locale_id',
         'module_id',
-        'module_slug',
+        'slug',
         'creator_id',
         'item_id',
         'title',
