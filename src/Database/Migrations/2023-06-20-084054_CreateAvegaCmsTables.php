@@ -160,8 +160,6 @@ class CreateAvegaCmsTables extends Migration
             ...$this->dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
-        $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
-        $this->forge->addForeignKey('updated_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
         $this->createTable($this->tables['modules']);
 
         /**
@@ -391,7 +389,7 @@ class CreateAvegaCmsTables extends Migration
 
         $this->forge->addField([
             'id'          => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'auto_increment' => true],
-            'role_id'     => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
+            'role_id'     => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
             'module_id'   => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true, 'default' => 0],
             // Является ли запись системной
             'is_system'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
@@ -417,15 +415,11 @@ class CreateAvegaCmsTables extends Migration
             'moderated'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // действие требует модерации вышестоящих
             'settings'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
-            // разрешение на доступ к настройкам
+            'extra'       => ['type' => 'text', 'null' => true], // Настройки для плагинов
             ...$this->byId(),
             ...$this->dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
-        $this->forge->addForeignKey('role_id', $this->tables['roles'], 'id', '', 'CASCADE');
-        $this->forge->addForeignKey('module_id', $this->tables['modules'], 'id', '', 'CASCADE');
-        $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
-        $this->forge->addForeignKey('updated_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
         $this->createTable($this->tables['permissions']);
     }
 

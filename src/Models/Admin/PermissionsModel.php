@@ -28,6 +28,7 @@ class PermissionsModel extends Model
         'delete',
         'moderated',
         'settings',
+        'extra',
         'created_by_id',
         'updated_by_id',
         'created_at',

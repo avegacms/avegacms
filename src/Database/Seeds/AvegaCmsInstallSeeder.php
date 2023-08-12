@@ -5,8 +5,8 @@ namespace AvegaCms\Database\Seeds;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Database\Seeder;
 use Config\Database;
-use AvegaCms\Models\Admin\{ModulesModel, SettingsModel, LoginModel, RolesModel, UserRolesModel};
-use AvegaCms\Entities\{ModulesEntity, LoginEntity, RolesEntity, SettingsEntity, UserRolesEntity};
+use AvegaCms\Models\Admin\{ModulesModel, SettingsModel, LoginModel, RolesModel, UserRolesModel, PermissionsModel};
+use AvegaCms\Entities\{ModulesEntity, LoginEntity, RolesEntity, SettingsEntity, UserRolesEntity, PermissionsEntity};
 use ReflectionException;
 use Exception;
 
@@ -19,6 +19,8 @@ class AvegaCmsInstallSeeder extends Seeder
     protected RolesModel     $RM;
     protected UserRolesModel $URM;
 
+    protected PermissionsModel $PM;
+
     public function __construct(Database $config, ?BaseConnection $db = null)
     {
         parent::__construct($config, $db);
@@ -27,6 +29,7 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->LM = model(LoginModel::class);
         $this->SM = model(SettingsModel::class);
         $this->RM = model(RolesModel::class);
+        $this->PM = model(PermissionsModel::class);
         $this->URM = model(UserRolesModel::class);
     }
 
@@ -40,6 +43,7 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->_createRoles($userId);
         $this->_createUserRoles($userId);
         $this->_installCmsModules($userId);
+        $this->_createPermissions($userId);
         $this->_createSettings();
     }
 
@@ -100,7 +104,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'updated_by_id' => 0
             ],
             [
-                'role'          => 'content-manager',
+                'role'          => 'default',
                 'description'   => '',
                 'color'         => '#',
                 'path'          => '/',
@@ -156,7 +160,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'in_sitemap'    => 0,
                 'active'        => 1,
                 'created_by_id' => $userId,
-                'updated_by_id' => $userId
+                'updated_by_id' => 0
             ],
             [
                 'parent'        => 1,
@@ -170,7 +174,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'in_sitemap'    => 0,
                 'active'        => 1,
                 'created_by_id' => $userId,
-                'updated_by_id' => $userId
+                'updated_by_id' => 0
             ],
             [
                 'parent'        => 1,
@@ -184,7 +188,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'in_sitemap'    => 0,
                 'active'        => 1,
                 'created_by_id' => $userId,
-                'updated_by_id' => $userId
+                'updated_by_id' => 0
             ],
             [
                 'parent'        => 1,
@@ -198,7 +202,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'in_sitemap'    => 0,
                 'active'        => 1,
                 'created_by_id' => $userId,
-                'updated_by_id' => $userId
+                'updated_by_id' => 0
             ],
             [
                 'parent'        => 1,
@@ -212,7 +216,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'in_sitemap'    => 0,
                 'active'        => 1,
                 'created_by_id' => $userId,
-                'updated_by_id' => $userId
+                'updated_by_id' => 0
             ],
             [
                 'parent'        => 1,
@@ -226,7 +230,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'in_sitemap'    => 0,
                 'active'        => 1,
                 'created_by_id' => $userId,
-                'updated_by_id' => $userId
+                'updated_by_id' => 0
             ],
             [
                 'parent'        => 1,
@@ -240,7 +244,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'in_sitemap'    => 0,
                 'active'        => 1,
                 'created_by_id' => $userId,
-                'updated_by_id' => $userId
+                'updated_by_id' => 0
             ],
             [
                 'parent'        => 1,
@@ -254,7 +258,35 @@ class AvegaCmsInstallSeeder extends Seeder
                 'in_sitemap'    => 0,
                 'active'        => 1,
                 'created_by_id' => $userId,
-                'updated_by_id' => $userId
+                'updated_by_id' => 0
+            ],
+            [
+                'parent'        => 1,
+                'is_plugin'     => 1,
+                'is_system'     => 1,
+                'slug'          => 'content_builder',
+                'name'          => 'Cms.modules.name.content_builder',
+                'version'       => $this->version,
+                'description'   => 'Cms.modules.description.content_builder',
+                'extra'         => '',
+                'in_sitemap'    => 0,
+                'active'        => 1,
+                'created_by_id' => $userId,
+                'updated_by_id' => 0
+            ],
+            [
+                'parent'        => 1,
+                'is_plugin'     => 1,
+                'is_system'     => 1,
+                'slug'          => 'uploader',
+                'name'          => 'Cms.modules.name.uploader',
+                'version'       => $this->version,
+                'description'   => 'Cms.modules.description.uploader',
+                'extra'         => '',
+                'in_sitemap'    => 0,
+                'active'        => 1,
+                'created_by_id' => $userId,
+                'updated_by_id' => 0
             ]
         ];
 
@@ -263,6 +295,208 @@ class AvegaCmsInstallSeeder extends Seeder
         foreach ($modules as $module) {
             $this->MM->insert($moduleEntity->fill($module));
         }
+    }
+
+    /**
+     * @param  int  $userId
+     * @return void
+     * @throws ReflectionException
+     */
+    private function _createPermissions(int $userId): void
+    {
+        $roles = $this->RM->select(['id', 'role'])->findAll();
+
+        $permissions = [
+            // root Module
+            [
+                'role_id'       => 1,
+                'parent'        => 0,
+                'module_id'     => 0,
+                'is_system'     => 0,
+                'is_plugin'     => 0,
+                'module_slug'   => '',
+                'access'        => 1,
+                'self'          => 1,
+                'create'        => 1,
+                'read'          => 1,
+                'update'        => 1,
+                'delete'        => 1,
+                'moderated'     => 0,
+                'settings'      => 1,
+                'extra'         => '',
+                'created_by_id' => $userId,
+                'updated_by_id' => 0
+            ],
+            // root System
+            [
+                'role_id'       => 1,
+                'parent'        => 0,
+                'module_id'     => 0,
+                'is_system'     => 1,
+                'is_plugin'     => 0,
+                'module_slug'   => '',
+                'access'        => 1,
+                'self'          => 1,
+                'create'        => 1,
+                'read'          => 1,
+                'update'        => 1,
+                'delete'        => 1,
+                'moderated'     => 0,
+                'settings'      => 1,
+                'extra'         => '',
+                'created_by_id' => $userId,
+                'updated_by_id' => 0
+            ],
+            // root Plugin
+            [
+                'role_id'       => 1,
+                'parent'        => 0,
+                'module_id'     => 0,
+                'is_system'     => 0,
+                'is_plugin'     => 1,
+                'module_slug'   => '',
+                'access'        => 1,
+                'self'          => 1,
+                'create'        => 1,
+                'read'          => 1,
+                'update'        => 1,
+                'delete'        => 1,
+                'moderated'     => 0,
+                'settings'      => 1,
+                'extra'         => '',
+                'created_by_id' => $userId,
+                'updated_by_id' => 0
+            ],
+
+            // Admin Module
+            [
+                'role_id'       => 2,
+                'parent'        => 0,
+                'module_id'     => 0,
+                'is_system'     => 0,
+                'is_plugin'     => 0,
+                'module_slug'   => '',
+                'access'        => 1,
+                'self'          => 1,
+                'create'        => 1,
+                'read'          => 1,
+                'update'        => 1,
+                'delete'        => 1,
+                'moderated'     => 0,
+                'settings'      => 1,
+                'extra'         => '',
+                'created_by_id' => $userId,
+                'updated_by_id' => 0
+            ],
+            // Admin Plugin
+            [
+                'role_id'       => 2,
+                'parent'        => 0,
+                'module_id'     => 0,
+                'is_system'     => 0,
+                'is_plugin'     => 1,
+                'module_slug'   => '',
+                'access'        => 1,
+                'self'          => 1,
+                'create'        => 1,
+                'read'          => 1,
+                'update'        => 1,
+                'delete'        => 1,
+                'moderated'     => 0,
+                'settings'      => 1,
+                'extra'         => '',
+                'created_by_id' => $userId,
+                'updated_by_id' => 0
+            ],
+
+            // Manager Module
+            [
+                'role_id'       => 3,
+                'parent'        => 0,
+                'module_id'     => 0,
+                'is_system'     => 0,
+                'is_plugin'     => 0,
+                'module_slug'   => '',
+                'access'        => 1,
+                'self'          => 1,
+                'create'        => 1,
+                'read'          => 1,
+                'update'        => 1,
+                'delete'        => 1,
+                'moderated'     => 0,
+                'settings'      => 0,
+                'extra'         => '',
+                'created_by_id' => $userId,
+                'updated_by_id' => 0
+            ],
+            // Manager Plugin
+            [
+                'role_id'       => 3,
+                'parent'        => 0,
+                'module_id'     => 0,
+                'is_system'     => 0,
+                'is_plugin'     => 1,
+                'module_slug'   => '',
+                'access'        => 1,
+                'self'          => 1,
+                'create'        => 1,
+                'read'          => 1,
+                'update'        => 1,
+                'delete'        => 1,
+                'moderated'     => 0,
+                'settings'      => 0,
+                'extra'         => '',
+                'created_by_id' => $userId,
+                'updated_by_id' => 0
+            ],
+
+            // Default Module
+            [
+                'role_id'       => 4,
+                'parent'        => 0,
+                'module_id'     => 0,
+                'is_system'     => 0,
+                'is_plugin'     => 0,
+                'module_slug'   => '',
+                'access'        => 1,
+                'self'          => 1,
+                'create'        => 0,
+                'read'          => 0,
+                'update'        => 0,
+                'delete'        => 0,
+                'moderated'     => 0,
+                'settings'      => 0,
+                'extra'         => '',
+                'created_by_id' => $userId,
+                'updated_by_id' => 0
+            ],
+            // Default Plugin
+            [
+                'role_id'       => 4,
+                'parent'        => 0,
+                'module_id'     => 0,
+                'is_system'     => 0,
+                'is_plugin'     => 1,
+                'module_slug'   => '',
+                'access'        => 1,
+                'self'          => 0,
+                'create'        => 0,
+                'read'          => 0,
+                'update'        => 0,
+                'delete'        => 0,
+                'moderated'     => 0,
+                'settings'      => 0,
+                'extra'         => '',
+                'created_by_id' => $userId,
+                'updated_by_id' => 0
+            ]
+        ];
+
+        foreach ($permissions as $permission) {
+            $defPermissions[] = (new PermissionsEntity($permission));
+        }
+
+        $this->PM->insertBatch($defPermissions);
     }
 
     /**
