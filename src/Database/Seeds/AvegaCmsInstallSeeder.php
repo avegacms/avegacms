@@ -373,8 +373,6 @@ class AvegaCmsInstallSeeder extends Seeder
      */
     private function _createPermissions(int $userId): void
     {
-        $roles = $this->RM->select(['id', 'role'])->findAll();
-
         $permissions = [
             // root Module
             [
@@ -578,7 +576,7 @@ class AvegaCmsInstallSeeder extends Seeder
                         $perm['parent'] = $module->parent;
                         $perm['module_id'] = $module->id;
                         $perm['slug'] = $module->slug;
-                        
+
                         if ($module->is_system !== $permission['is_system'] || $module->is_plugin !== $permission['is_plugin']) {
                             break;
                         }
@@ -589,7 +587,7 @@ class AvegaCmsInstallSeeder extends Seeder
             }
         }
 
-        $this->PM->insertBatch($moduleRolePermission);
+        $this->PM->insertBatch($moduleRolePermission ?? null);
     }
 
     /**
