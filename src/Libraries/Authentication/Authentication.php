@@ -2,13 +2,8 @@
 
 namespace AvegaCms\Libraries\Authentication;
 
-use AvegaCms\Entities\UserTokensEntity;
 use AvegaCms\Libraries\Authentication\Exceptions\AuthenticationException;
-use AvegaCms\Libraries\Authorization\Exceptions\AuthorizationException;
-use CodeIgniter\HTTP\Request;
-use CodeIgniter\HTTP\Response;
 use Config\Services;
-use CodeIgniter\Session\Session;
 use AvegaCms\Models\Admin\{UserAuthenticationModel, UserTokensModel};
 use Exception;
 use Firebase\JWT\JWT;
@@ -17,14 +12,6 @@ use Firebase\JWT\Key;
 class Authentication
 {
     protected array $settings = [];
-
-    protected Session $session;
-
-    protected Request  $request;
-    protected Response $response;
-
-    protected UserAuthenticationModel $UAM;
-    protected UserTokensModel         $UTM;
 
     /**
      * @param  array  $settings
@@ -37,28 +24,29 @@ class Authentication
         }
 
         $this->settings = $settings;
-        $this->session = Services::session();
-        $this->request = Services::request();
-        $this->response = Services::response();
+    }
+
+    /**
+     * @return boolean
+     * @throws AuthenticationException|Exception
+     */
+    public function checkUserAccess(): bool
+    {
+        $session = Services::session();
+        $request = Services::request();
+        $response = Services::response();
+
+        $UTM = model(UserTokensModel::class);
+        $UAM = model(UserAuthenticationModel::class);
 
         if ($this->settings['useWhiteIpList'] && ! empty($this->settings['whiteIpList']) && in_array(
-                $this->request->getIPAddress(),
+                $request->getIPAddress(),
                 $this->settings['whiteIpList']
             )) {
             throw AuthenticationException::forAccessDenied();
         }
 
-        $this->UAM = model(UserAuthenticationModel::class);
-        $this->UTM = model(UserTokensModel::class);
-    }
-
-    /**
-     * @return boolean
-     * @throws AuthenticationException|AuthorizationException|Exception
-     */
-    public function checkUserAuth(): bool
-    {
-        if (empty($authHeader = $this->request->getServer('HTTP_AUTHORIZATION'))) {
+        if (empty($authHeader = $request->getServer('HTTP_AUTHORIZATION'))) {
             throw AuthenticationException::forNoHeaderAuthorize();
         }
 
@@ -82,15 +70,17 @@ class Authentication
 
         switch ($authType['type']) {
             case 'session':
-                if ($this->session->has('avegacms') === false) {
+                if ($session->has('avegacms') === false) {
                     throw AuthenticationException::forAccessDenied();
                 }
 
-                if ($this->session->get('avegacms.admin.isAuth') ?? false) {
+                if ($session->get('avegacms.admin.isAuth') ?? false) {
                     throw AuthenticationException::forNotAuthorized();
                 }
 
-                return true;
+                $userData = (object) $session->get('avegacms.admin');
+
+                break;
             case 'jwt':
 
                 $payload = JWT::decode(
@@ -101,29 +91,26 @@ class Authentication
                     )
                 );
 
-                if (empty($tokens = $this->UTM->getUserTokens($payload->data->userId)->findAll())) {
-                    throw AuthorizationException::forFailUnauthorized();
+                if (empty($tokens = $UTM->getUserTokens($payload->data->userId)->findAll())) {
+                    throw AuthenticationException::forNotAuthorized();
                 }
 
                 foreach ($tokens as $item) {
-                    if (hash_equals($item->refresh_token, $authType['token'])) {
+                    if (hash_equals($item->access_token, $authType['token'])) {
                         if ($item->expires < now()) {
-                            throw AuthorizationException::forFailUnauthorized('expiresToken');
+                            throw AuthenticationException::forExpiredToken();
                         }
-                        return true;
+                        $userData = $payload->data;
+                        break;
                     }
                 }
-
-                throw AuthorizationException::forFailUnauthorized('tokenNotFound');
+                throw AuthenticationException::forTokenNotFound();
             case 'token':
-                return false;
+                // TODO реализовать в дальнейшем
+                throw AuthenticationException::forTokenNotFound();
         }
 
-        return false;
-    }
 
-    public function checkUserAccess(): array
-    {
-        return [];
+        return false;
     }
 }

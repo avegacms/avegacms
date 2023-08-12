@@ -8,7 +8,7 @@ use AvegaCms\Entities\ModulesEntity;
 class ModulesModel extends Model
 {
     protected $DBGroup          = 'default';
-    protected $table            = 'extensions';
+    protected $table            = 'modules';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = ModulesEntity::class;
@@ -16,6 +16,8 @@ class ModulesModel extends Model
     protected $protectFields    = true;
     protected $allowedFields    = [
         'parent',
+        'is_plugin',
+        'is_system',
         'slug',
         'name',
         'version',

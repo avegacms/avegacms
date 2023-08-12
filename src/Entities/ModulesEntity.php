@@ -9,6 +9,8 @@ class ModulesEntity extends Entity
     protected $datamap = [
         'id'            => null,
         'parent'        => null,
+        'is_plugin'     => null,
+        'is_system'     => null,
         'slug'          => null,
         'name'          => null,
         'version'       => null,
@@ -25,6 +27,8 @@ class ModulesEntity extends Entity
     protected $casts   = [
         'id'            => 'integer',
         'parent'        => 'integer',
+        'is_plugin'     => 'integer',
+        'is_system'     => 'integer',
         'slug'          => 'string',
         'name'          => 'string',
         'version'       => 'string',

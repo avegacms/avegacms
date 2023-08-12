@@ -25,6 +25,14 @@ class AuthenticationException extends FrameworkException
     /**
      * @return AuthenticationException
      */
+    public static function forExpiredToken(): AuthenticationException
+    {
+        return new static(message: lang('Authentication.errors.expiresToken'), code: 401);
+    }
+
+    /**
+     * @return AuthenticationException
+     */
     public static function forTokenNotFound(): AuthenticationException
     {
         return new static(message: lang('Authentication.errors.tokenNotFound'), code: 401);

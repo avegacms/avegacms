@@ -2,6 +2,7 @@
 
 namespace AvegaCms\Database\Migrations;
 
+use CodeIgniter\Database\Forge;
 use CodeIgniter\Database\Migration;
 
 class CreateAvegaCmsTables extends Migration
@@ -146,6 +147,8 @@ class CreateAvegaCmsTables extends Migration
         $this->forge->addField([
             'id'          => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
             'parent'      => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
+            'is_system'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'is_plugin'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             'slug'        => ['type' => 'varchar', 'constraint' => 64, 'unique' => true, 'null' => true],
             'name'        => ['type' => 'varchar', 'constraint' => 255, 'unique' => true, 'null' => true],
             'version'     => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
@@ -390,6 +393,10 @@ class CreateAvegaCmsTables extends Migration
             'id'          => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'auto_increment' => true],
             'role_id'     => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
             'module_id'   => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true, 'default' => 0],
+            // Является ли запись системной
+            'is_system'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            // Является ли модуль плагином
+            'is_plugin'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // принадлежность к модулю
             'parent'      => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
             // URL-slug модуля
