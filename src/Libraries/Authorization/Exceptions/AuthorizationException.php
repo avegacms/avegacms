@@ -100,6 +100,14 @@ class AuthorizationException extends FrameworkException
     }
 
     /**
+     * @return AuthorizationException
+     */
+    public static function forUserSessionNotExist(): AuthorizationException
+    {
+        return new static(message: lang('Authorization.errors.userSessionNotExist'));
+    }
+
+    /**
      * @param  string|null  $message
      * @return AuthorizationException
      */

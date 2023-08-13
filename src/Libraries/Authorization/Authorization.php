@@ -166,7 +166,7 @@ class Authorization
 
         unset($user->password, $user->secret, $user->expires, $user->reset);
 
-        if (($role = $this->URM->getUserRoles($userRole)->find($user->id)) === null) {
+        if (($role = $this->URM->getUserRoles($user->id, $userRole)->first()) === null) {
             throw AuthorizationException::forUnknownRole($userRole);
         }
 
@@ -445,7 +445,7 @@ class Authorization
      */
     public function logout(): void
     {
-        $this->_setClientSession();
+        $this->session->push('avegacms.admin', []);
     }
 
     protected function validate(array $rules, array $data): bool
@@ -566,10 +566,14 @@ class Authorization
      */
     private function _setClientSession(array $userdata = []): void
     {
-        $currentSession['avegacms'] = $this->session->get('avegacms');
-        $currentSession['avegacms']['admin'] = $userdata;
-        $this->session->set($currentSession);
-        unset($currentSession);
+        if ($this->session->has('avegacms') === false) {
+            throw AuthorizationException::forUserSessionNotExist();
+        }
+        $session = $this->session->get('avegacms');
+
+        $session['admin'] = $userdata;
+
+        $this->session->set('avegacms', $session);
     }
 
     /**

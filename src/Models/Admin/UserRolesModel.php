@@ -47,7 +47,7 @@ class UserRolesModel extends Model
      * @param  string  $role
      * @return $this
      */
-    public function getUserRoles(string $role = '')
+    public function getUserRoles(int $userId, string $role = '')
     {
         $this->builder()->select(['user_roles.role_id', 'user_roles.user_id', 'r.role'])
             ->join('users AS u', 'u.id = user_roles.user_id')
@@ -55,8 +55,9 @@ class UserRolesModel extends Model
             ->orderBy('r.priority', 'ASC')
             ->where(
                 [
-                    'u.status' => 'active',
-                    'r.active' => 1
+                    'user_roles.user_id' => $userId,
+                    'u.status'           => 'active',
+                    'r.active'           => 1
                 ]
             );
 

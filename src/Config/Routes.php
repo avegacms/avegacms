@@ -4,6 +4,7 @@ namespace Config;
 
 use AvegaCms\Controllers\Api\Public\Login;
 use AvegaCms\Controllers\Api\Admin\Settings;
+use AvegaCms\Controllers\Api\Admin\Content\Pages;
 
 // Create a new instance of our RouteCollection class.
 $routes = Services::routes();
@@ -43,6 +44,12 @@ $routes->group('api', function ($routes) {
         $routes->post('login/(:segment)', [Login::class, 'index/$1']);
     });
     $routes->group('admin', ['namespace' => 'AvegaCms\Controllers\Api\Admin', 'filter' => 'auth'], function ($routes) {
+        $routes->group('content', function ($routes) {
+            $routes->group('pages', function ($routes) {
+                $routes->get('/', [Pages::class, 'index']);
+            });
+        });
+
         $routes->group('settings', function ($routes) {
             $routes->get('/', [Settings::class, 'index']);
         });

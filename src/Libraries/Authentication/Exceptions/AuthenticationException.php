@@ -49,6 +49,14 @@ class AuthenticationException extends FrameworkException
     /**
      * @return AuthenticationException
      */
+    public static function forUserSessionNotExist(): AuthenticationException
+    {
+        return new static(message: lang('Authentication.errors.userSessionNotExist'));
+    }
+
+    /**
+     * @return AuthenticationException
+     */
     public static function forAccessDenied(): AuthenticationException
     {
         return new static(message: 'Access denied', code: 401);

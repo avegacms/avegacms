@@ -29,46 +29,13 @@ class AuthenticationFilter implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null): ResponseInterface
     {
-        $request = Services::request();
         $response = Services::response();
-        $auth = service('settings')->get('core.auth');
 
         try {
+            (new Authentication(service('settings')->get('core.auth')))->checkUserAccess();
         } catch (AuthenticationException|Exception $e) {
-            return $response->setStatusCode($e->getCode(), $e->getMessage());
+            return Services::response()->setStatusCode($e->getCode(), $e->getMessage());
         }
-
-
-        $request = Services::request();
-        $response = Services::response();
-        $auth = service('settings')->get('core.auth');
-
-        if (empty($authHeader = $request->getServer('HTTP_AUTHORIZATION'))) {
-            return $response->setStatusCode(401, 'Access denied');
-        }
-
-        if ($auth['useWhiteIpList'] && ! empty($auth['whiteIpList']) && in_array(
-                $request->getIPAddress(),
-                $auth['whiteIpList']
-            )) {
-            return $response->setStatusCode(401, 'Access denied');
-        }
-
-        $authHeader = explode(' ', $authHeader);
-        $cont = count($authHeader);
-
-        $authType = match ($authHeader[0]) {
-            'Session' => ($cont === 1 && $auth['useSession']) ? ['type' => 'session'] : false,
-            'Token'   => ($cont === 2 && $auth['useToken']) ? ['type' => 'token', 'token' => $authHeader[1]] : false,
-            'Bearer'  => ($cont === 2 && $auth['useJwt']) ? ['type' => 'jwt', 'token' => $authHeader[1]] : false,
-            default   => false
-        };
-
-        if ($authType === false) {
-            return $response->setStatusCode(401, 'Access denied');
-        }
-
-        unset($authHeader, $cont);
     }
 
     /**

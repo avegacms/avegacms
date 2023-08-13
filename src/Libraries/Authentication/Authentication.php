@@ -23,6 +23,8 @@ class Authentication
             throw AuthenticationException::forNoSettings();
         }
 
+        helper(['avegacms']);
+
         $this->settings = $settings;
     }
 
@@ -70,15 +72,16 @@ class Authentication
 
         switch ($authType['type']) {
             case 'session':
+
                 if ($session->has('avegacms') === false) {
-                    throw AuthenticationException::forAccessDenied();
+                    throw AuthenticationException::forUserSessionNotExist();
                 }
 
-                if ($session->get('avegacms.admin.isAuth') ?? false) {
+                if ($session->get('avegacms.admin.isAuth') !== true) {
                     throw AuthenticationException::forNotAuthorized();
                 }
 
-                $userData = (object) $session->get('avegacms.admin');
+                $userData = arrayToObject($session->get('avegacms.admin'));
 
                 break;
             case 'jwt':
@@ -110,9 +113,14 @@ class Authentication
                 throw AuthenticationException::forTokenNotFound();
         }
 
-        if (empty($roleActionMap = $UAM->where(['role_id' => $userData->user->roleId])->findAll())) {
+        if (empty($roleActionMap = $UAM->getRoleAccessMap($userData->user->roleId)->findAll())) {
             throw AuthenticationException::forAccessDenied();
         }
+
+        $segments = $request->uri->getSegments();
+
+        print_r($segments);
+        exit();
 
         return false;
     }
