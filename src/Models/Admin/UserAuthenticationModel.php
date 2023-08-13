@@ -3,7 +3,7 @@
 namespace AvegaCms\Models\Admin;
 
 use CodeIgniter\Model;
-use AvegaCms\Entities\PermissionsEntity;
+use AvegaCms\Entities\UserAuthenticationEntity;
 
 class UserAuthenticationModel extends Model
 {
@@ -11,7 +11,7 @@ class UserAuthenticationModel extends Model
     protected $table            = 'permissions';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = PermissionsEntity::class;
+    protected $returnType       = UserAuthenticationEntity::class;
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [];

@@ -113,11 +113,25 @@ class Authentication
                 throw AuthenticationException::forTokenNotFound();
         }
 
-        if (empty($roleActionMap = $UAM->getRoleAccessMap($userData->user->roleId)->findAll())) {
+        if (empty($segments = array_slice($request->uri->getSegments(), 2))) {
+            throw AuthenticationException::forUnknownPermission();
+        }
+
+        if (($map = $UAM->getRoleAccessMap($userData->user->roleId)->findAll()) === null) {
             throw AuthenticationException::forAccessDenied();
         }
 
-        $segments = $request->uri->getSegments();
+        foreach ($segments as $segment) {
+            foreach ($map as $item) {
+                if ($item->slug === $segment) {
+                    if ($item->parent === 0) {
+                        if ($item->access === false) {
+                            throw AuthenticationException::forForbiddenAccess();
+                        }
+                    }
+                }
+            }
+        }
 
         print_r($segments);
         exit();

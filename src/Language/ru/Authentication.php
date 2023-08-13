@@ -7,6 +7,7 @@ return [
         'notAuthorized'       => 'Доступ запрещен. Пользователь не авторизован',
         'expiresToken'        => 'Время действия токена истекло',
         'tokenNotFound'       => 'Токен не обнаружен',
-        'userSessionNotExist' => 'Пользовательская сессия не существует'
+        'userSessionNotExist' => 'Пользовательская сессия не существует',
+        'unknownPermission'   => 'Неизвестный URL-разрешения',
     ]
 ];
