@@ -11,6 +11,6 @@ class AvegaCmsAPI extends Controller
 
     public function __construct()
     {
-        helper(['settings', 'date']);
+        helper(['avegacms', 'date']);
     }
 }

@@ -5,6 +5,7 @@ namespace Config;
 use AvegaCms\Controllers\Api\Public\Login;
 use AvegaCms\Controllers\Api\Admin\Settings;
 use AvegaCms\Controllers\Api\Admin\Content\Pages;
+use AvegaCms\Controllers\Api\Admin\Settings\Locales;
 
 // Create a new instance of our RouteCollection class.
 $routes = Services::routes();
@@ -51,7 +52,10 @@ $routes->group('api', function ($routes) {
         });
 
         $routes->group('settings', function ($routes) {
-            $routes->get('/', [Settings::class, 'index']);
+            $routes->group('locales', function ($routes) {
+                $routes->get('/', [Locales::class, 'index']);
+            });
+            //$routes->get('/', [Settings::class, 'index']);
         });
     });
 });

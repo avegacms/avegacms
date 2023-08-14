@@ -5,8 +5,22 @@ namespace AvegaCms\Database\Seeds;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Database\Seeder;
 use Config\Database;
-use AvegaCms\Models\Admin\{ModulesModel, SettingsModel, LoginModel, RolesModel, UserRolesModel, PermissionsModel};
-use AvegaCms\Entities\{ModulesEntity, LoginEntity, RolesEntity, SettingsEntity, UserRolesEntity, PermissionsEntity};
+use AvegaCms\Models\Admin\{ModulesModel,
+    SettingsModel,
+    LoginModel,
+    RolesModel,
+    UserRolesModel,
+    PermissionsModel,
+    LocalesModel
+};
+use AvegaCms\Entities\{ModulesEntity,
+    LoginEntity,
+    RolesEntity,
+    SettingsEntity,
+    UserRolesEntity,
+    PermissionsEntity,
+    LocalesEntity
+};
 use ReflectionException;
 use Exception;
 
@@ -21,6 +35,8 @@ class AvegaCmsInstallSeeder extends Seeder
 
     protected PermissionsModel $PM;
 
+    protected LocalesModel $LLM;
+
     public function __construct(Database $config, ?BaseConnection $db = null)
     {
         parent::__construct($config, $db);
@@ -31,6 +47,7 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->RM = model(RolesModel::class);
         $this->PM = model(PermissionsModel::class);
         $this->URM = model(UserRolesModel::class);
+        $this->LLM = model(LocalesModel::class);
     }
 
     /**
@@ -44,6 +61,7 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->_createUserRoles($userId);
         $this->_installCmsModules($userId);
         $this->_createPermissions($userId);
+        $this->_createLocales($userId);
         $this->_createSettings();
     }
 
@@ -577,12 +595,63 @@ class AvegaCmsInstallSeeder extends Seeder
     }
 
     /**
+     * @param  int  $userId
+     * @return void
+     */
+    private function _createLocales(int $userId): void
+    {
+        $locales = [
+
+            [
+                'slug'          => 'ru',
+                'locale'        => 'ru_RU',
+                'locale_name'   => 'Русская версия',
+                'home'          => 'Главная',
+                'extra'         => '',
+                'is_default'    => 1,
+                'active'        => 1,
+                'created_by_id' => $userId,
+                'updated_by_id' => 0
+            ],
+            [
+                'slug'          => 'en',
+                'locale'        => 'en_EN',
+                'locale_name'   => 'English version',
+                'home'          => 'Home',
+                'extra'         => '',
+                'is_default'    => 0,
+                'active'        => 0,
+                'created_by_id' => $userId,
+                'updated_by_id' => 0
+            ],
+            [
+                'slug'          => 'de',
+                'locale'        => 'de_DE',
+                'locale_name'   => 'Deutsche version',
+                'home'          => 'Startseite',
+                'extra'         => '',
+                'is_default'    => 0,
+                'active'        => 0,
+                'created_by_id' => $userId,
+                'updated_by_id' => 0
+            ]
+        ];
+
+        foreach ($locales as $locale) {
+            $localesEntity[] = (new ModulesEntity($locale));
+        }
+
+        $this->LLM->insertBatch($localesEntity);
+    }
+
+    /**
      * @return void
      * @throws ReflectionException|Exception
      */
     private function _createSettings(): void
     {
         $settingsList = [
+            // .env
             [
                 'entity'        => 'core',
                 'slug'          => 'env',
@@ -605,6 +674,30 @@ class AvegaCmsInstallSeeder extends Seeder
                 'context'       => 'settings.context.env.secretKey',
                 'rules'         => 'required'
             ],
+            [
+                'entity'        => 'core',
+                'slug'          => 'env',
+                'key'           => 'defLanguage',
+                'value'         => 'ru',
+                'default_value' => 'ru',
+                'return_type'   => 'string',
+                'label'         => 'settings.label.env.defLanguage',
+                'context'       => 'settings.context.env.defLanguage',
+                'rules'         => 'required|timezone'
+            ],
+            [
+                'entity'        => 'core',
+                'slug'          => 'env',
+                'key'           => 'useMultiLanguages',
+                'value'         => 0,
+                'default_value' => 0,
+                'return_type'   => 'boolean',
+                'label'         => 'settings.label.env.useMultiLanguages',
+                'context'       => 'settings.context.env.useMultiLanguages',
+                'rules'         => 'required|timezone'
+            ],
+
+            // auth
             [
                 'entity'        => 'core',
                 'slug'          => 'auth',
