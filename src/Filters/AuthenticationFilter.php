@@ -25,12 +25,10 @@ class AuthenticationFilter implements FilterInterface
      * @param  RequestInterface  $request
      * @param  array|null  $arguments
      *
-     * @return ResponseInterface
+     * @return mixed
      */
-    public function before(RequestInterface $request, $arguments = null): ResponseInterface
+    public function before(RequestInterface $request, $arguments = null)
     {
-        $response = Services::response();
-
         try {
             (new Authentication(service('settings')->get('core.auth')))->checkUserAccess();
         } catch (AuthenticationException|Exception $e) {

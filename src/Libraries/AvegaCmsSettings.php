@@ -6,6 +6,7 @@ use AvegaCms\Models\Admin\SettingsModel;
 use AvegaCms\Entities\SettingsEntity;
 use InvalidArgumentException;
 use RuntimeException;
+use ReflectionException;
 
 class AvegaCmsSettings
 {
@@ -18,10 +19,11 @@ class AvegaCmsSettings
     }
 
     /**
-     * @param string $key
-     * @return integer|float|string|boolean|array|null|\CodeIgniter\Cache\CacheInterface|mixed
+     * @param  string  $key
+     * @return mixed
+     * @throws RuntimeException
      */
-    public function get(string $key)
+    public function get(string $key): mixed
     {
         [$entity, $slug, $property] = $this->_parseKey($key);
 
@@ -49,13 +51,13 @@ class AvegaCmsSettings
             cache()->save($fileCacheName, $settings, DAY * 30);
         }
 
-        if (!is_null($slug) && !is_null($property)) {
-            if (!isset($settings[$slug][$property])) {
+        if ( ! is_null($slug) && ! is_null($property)) {
+            if ( ! isset($settings[$slug][$property])) {
                 throw new RuntimeException('Unable to find in Settings array slug/key.');
             }
             $settings = $settings[$slug][$property];
-        } elseif (!is_null($slug)) {
-            if (!isset($settings[$slug])) {
+        } elseif ( ! is_null($slug)) {
+            if ( ! isset($settings[$slug])) {
                 throw new RuntimeException('Unable to find in Settings array slug/key');
             }
             $settings = $settings[$slug];
@@ -65,16 +67,17 @@ class AvegaCmsSettings
     }
 
     /**
-     * @param string $key
-     * @param string|null $value
-     * @param array $config
-     * @return void
+     * @param  string  $key
+     * @param  string|null  $value
+     * @param  array|null  $config
+     * @return bool
+     * @throws ReflectionException
      */
-    public function set(string $key, ?string $value = null, ?array $config = [])
+    public function set(string $key, ?string $value = null, ?array $config = []): bool
     {
         [$entity, $slug, $property] = $this->_parseKey($key);
 
-        $this->settings->save(
+        return $this->settings->save(
             (new SettingsEntity(
                 [
                     'id'            => $this->settings->getId($entity, $slug, $property),
@@ -90,14 +93,10 @@ class AvegaCmsSettings
                 ]
             ))
         );
-        /*
-         * 1. Проверить существование модуля $module
-         * 2.
-         * */
     }
 
     /**
-     * @param string|null $entity
+     * @param  string|null  $entity
      * @return void
      */
     public function clear(?string $entity = null): void
@@ -111,22 +110,22 @@ class AvegaCmsSettings
 
     /**
      * @param $value
-     * @param string $type
+     * @param  string  $type
      * @return integer|float|string|boolean|array|null
      */
     private function _castAs($value, string $type): mixed
     {
         return match ($type) {
             'int',
-            'integer' => (int)$value,
+            'integer' => (int) $value,
             'double',
-            'float'   => (float)$value,
-            'string'  => (string)$value,
+            'float'   => (float) $value,
+            'string'  => (string) $value,
             'bool',
-            'boolean' => (bool)$value,
-            'array'   => (array)(
+            'boolean' => (bool) $value,
+            'array'   => (array) (
             (
-            (is_string($value) && (strpos($value, 'a:') === 0 || strpos($value, 's:') === 0)) ?
+            (is_string($value) && (str_starts_with($value, 'a:') || str_starts_with($value, 's:'))) ?
                 unserialize($value) :
                 $value
             )
@@ -136,7 +135,7 @@ class AvegaCmsSettings
     }
 
     /**
-     * @param string $key
+     * @param  string  $key
      * @return array
      *
      * @throws InvalidArgumentException

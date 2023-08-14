@@ -13,6 +13,12 @@ class Pages extends AvegaCmsAPI
 
     public function index()
     {
-        dd('Content/Pages');
+        $user = service('AvegaCmsUser');
+
+        return $this->respond([
+            'Content/Pages',
+            $user::data(),
+            $user::permission()
+        ]);
     }
 }
