@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AvegaCms\Libraries\Authorization;
 
-use AvegaCms\Libraries\Authorization\Exceptions\{AuthorizationExceptions, ValidationException};
+use AvegaCms\Libraries\Authorization\Exceptions\{AuthorizationException, ValidationException};
 use AvegaCms\Entities\{LoginEntity, UserEntity, UserTokensEntity};
 use AvegaCms\Models\Admin\{LoginModel, UserRolesModel, UserTokensModel};
 use CodeIgniter\Validation\ValidationInterface;
@@ -20,7 +20,8 @@ class Authorization
     protected LoginModel      $LM;
     protected UserTokensModel $UTM;
 
-    protected Session $session;
+    protected UserRolesModel $URM;
+    protected Session        $session;
 
     protected ValidationInterface $validator;
 
@@ -29,19 +30,20 @@ class Authorization
         helper(['date', 'avegacms']);
 
         if (empty($settings)) {
-            throw AuthorizationExceptions::forNoData();
+            throw AuthorizationException::forNoData();
         }
 
         $this->settings = $settings;
         $this->LM = model(LoginModel::class);
         $this->UTM = model(UserTokensModel::class);
+        $this->URM = model(UserRolesModel::class);
 
         $this->session = Services::session();
     }
 
     /**
      * @param  array  $data
-     * @extension AuthorizationExceptions
+     * @extension AuthorizationException
      * @extension
      * @return array
      * @throws ValidationException|ReflectionException
@@ -49,11 +51,11 @@ class Authorization
     public function auth(array $data): array
     {
         if (empty($data)) {
-            throw AuthorizationExceptions::forNoData();
+            throw AuthorizationException::forNoData();
         }
 
         if ( ! in_array($this->settings['auth']['loginType'] ?? '', $this->settings['auth']['loginTypeList'])) {
-            throw AuthorizationExceptions::forUnknownAuthType($this->settings['auth']['loginType']);
+            throw AuthorizationException::forUnknownAuthType($this->settings['auth']['loginType']);
         }
 
         $loginType = $this->_checkType($data[$this->settings['auth']['loginType']]);
@@ -63,11 +65,11 @@ class Authorization
         }
 
         if (($user = $this->LM->getUser($loginType)) === null) {
-            throw AuthorizationExceptions::forUnknownUser();
+            throw AuthorizationException::forUnknownUser();
         }
 
         if (isset($data['password']) && ! password_verify($data['password'], $user->password)) {
-            throw AuthorizationExceptions::forWrongPassword();
+            throw AuthorizationException::forWrongPassword();
         }
 
         $authResult = [
@@ -86,7 +88,7 @@ class Authorization
             } elseif ($this->settings['auth']['2faField'] === 'email') {
                 $authResult['userdata']['email'] = $user->email;
             } else {
-                throw AuthorizationExceptions::forFailSendAuthCode();
+                throw AuthorizationException::forFailSendAuthCode();
             }
 
             $authResult['direct'] = 'send_code';
@@ -98,12 +100,12 @@ class Authorization
     /**
      * @param  array  $data
      * @return array[]
-     * @throws AuthorizationExceptions|ValidationException|Exception
+     * @throws AuthorizationException|ValidationException|Exception
      */
     public function checkCode(array $data): array
     {
         if (empty($data)) {
-            throw AuthorizationExceptions::forNoData();
+            throw AuthorizationException::forNoData();
         }
 
         if ( ! $this->validate($this->_validate('check_code'), $data)) {
@@ -119,15 +121,15 @@ class Authorization
         ];
 
         if (($user = $this->LM->getUser($conditions)) === null) {
-            throw AuthorizationExceptions::forUnknownUser();
+            throw AuthorizationException::forUnknownUser();
         }
 
         if ($user->expires < now($this->settings['env']['timezone'])) {
-            throw AuthorizationExceptions::forCodeExpired();
+            throw AuthorizationException::forCodeExpired();
         }
 
         if ($user->secret !== $this->_hashCode((int) $data['code'])) {
-            throw AuthorizationExceptions::forWrongCode();
+            throw AuthorizationException::forWrongCode();
         }
 
         if ($data['condition'] === 'recovery') {
@@ -145,27 +147,28 @@ class Authorization
                 'direct'   => 'password',
                 'userdata' => ['user_id' => $user->id, 'hash' => $hash ?? '']
             ],
-            default    => throw AuthorizationExceptions::forWrongCode()
+            default    => throw AuthorizationException::forWrongCode()
         };
     }
 
     /**
      * @param  int  $userId
+     * @param  string  $userRole
      * @param  array  $userData
      * @return array[]
      * @throws ReflectionException|Exception
      */
-    public function setUser(int $userId, array $userData = []): array
+    public function setUser(int $userId, string $userRole = '', array $userData = []): array
     {
         if (($user = $this->LM->getUser(['id' => $userId])) === null) {
-            throw AuthorizationExceptions::forUnknownUser();
+            throw AuthorizationException::forUnknownUser();
         }
 
         unset($user->password, $user->secret, $user->expires, $user->reset);
 
-        $URM = model(UserRolesModel::class);
-
-        $roles = $URM->getUserRoles($user->id)->findColumn('role');
+        if (($role = $this->URM->getUserRoles($user->id, $userRole)->first()) === null) {
+            throw AuthorizationException::forUnknownRole($userRole);
+        }
 
         $userSession = [
             'isAuth'       => true,
@@ -178,11 +181,13 @@ class Authorization
                 'userId'   => $user->id,
                 'timezone' => $user->timezone,
                 'login'    => $user->login,
+                'status'   => $user->status,
                 'avatar'   => $user->avatar,
                 'phone'    => $user->phone,
                 'email'    => $user->email,
                 'extra'    => $user->extra,
-                'roles'    => $roles,
+                'roleId'   => $role->role_id,
+                'role'     => $role->role,
                 ...$userData
             ]
         ];
@@ -194,7 +199,7 @@ class Authorization
 
         if ($this->settings['auth']['useJwt']) {
             if (empty($token = $this->_signatureTokenJWT($userSession['user']))) {
-                throw AuthorizationExceptions::forCreateToken();
+                throw AuthorizationException::forCreateToken();
             }
 
             if (count(
@@ -221,7 +226,7 @@ class Authorization
             ];
 
             if ( ! $this->UTM->insert((new UserTokensEntity($newUserSession)))) {
-                throw AuthorizationExceptions::forCreateToken();
+                throw AuthorizationException::forCreateToken();
             }
         }
 
@@ -249,16 +254,16 @@ class Authorization
     /**
      * @param  array  $data
      * @return array
-     * @throws AuthorizationExceptions|ValidationException|Exception
+     * @throws AuthorizationException|ValidationException|Exception
      */
     public function recovery(array $data): array
     {
         if ($this->settings['auth']['useRecovery'] === false) {
-            throw AuthorizationExceptions::forFailForbidden();
+            throw AuthorizationException::forFailForbidden();
         }
 
         if (empty($data)) {
-            throw AuthorizationExceptions::forNoData();
+            throw AuthorizationException::forNoData();
         }
 
         if ( ! $this->validate($this->_validate('recovery'), $data)) {
@@ -268,7 +273,7 @@ class Authorization
         $field = $this->settings['auth']['recoveryField'];
 
         if (($user = $this->LM->getUser([$field => $data['recovery_field']])) === null) {
-            throw AuthorizationExceptions::forUnknownUser();
+            throw AuthorizationException::forUnknownUser();
         }
 
         $code = $this->_setSecretCode($user->id, 'recovery');
@@ -288,7 +293,7 @@ class Authorization
             'phone' => ($recoveryResult['userdata']['phone'] = $user->phone),
             'email',
             'login' => ($recoveryResult['userdata']['email'] = $user->email),
-            default => throw AuthorizationExceptions::forFailSendAuthCode()
+            default => throw AuthorizationException::forFailSendAuthCode()
         };
 
         return $recoveryResult;
@@ -302,11 +307,11 @@ class Authorization
     public function setPassword(array $data): array
     {
         if ($this->settings['auth']['useRecovery'] === false) {
-            throw AuthorizationExceptions::forFailForbidden();
+            throw AuthorizationException::forFailForbidden();
         }
 
         if (empty($data)) {
-            throw AuthorizationExceptions::forNoData();
+            throw AuthorizationException::forNoData();
         }
 
         if ( ! $this->validate($this->_validate('password'), $data)) {
@@ -320,11 +325,11 @@ class Authorization
         ];
 
         if (($user = $this->LM->getUser($conditions)) === null) {
-            throw AuthorizationExceptions::forUnknownUser();
+            throw AuthorizationException::forUnknownUser();
         }
 
         if ($user->expires < now($this->settings['env']['timezone'])) {
-            throw AuthorizationExceptions::forCodeExpired();
+            throw AuthorizationException::forCodeExpired();
         }
 
         $request = Services::request();
@@ -344,7 +349,7 @@ class Authorization
         );
 
         if ($update === false) {
-            throw AuthorizationExceptions::forFailPasswordUpdate();
+            throw AuthorizationException::forFailPasswordUpdate();
         }
 
         if ($this->settings['auth']['useJwt']) {
@@ -374,7 +379,7 @@ class Authorization
         if (empty($authHeader = explode(' ', $request->getServer('HTTP_AUTHORIZATION'))) || count(
                 $authHeader
             ) !== 2) {
-            throw AuthorizationExceptions::forFailUnauthorized();
+            throw AuthorizationException::forFailUnauthorized();
         }
 
         $token = match ($authHeader[0]) {
@@ -384,15 +389,15 @@ class Authorization
         };
 
         if ($token === false || count($token = explode('.', $token)) !== 3) {
-            throw AuthorizationExceptions::forFailUnauthorized();
+            throw AuthorizationException::forFailUnauthorized();
         }
 
         if (($payload = JWT::jsonDecode(JWT::urlsafeB64Decode($token[1]))) === null) {
-            throw AuthorizationExceptions::forFailUnauthorized();
+            throw AuthorizationException::forFailUnauthorized();
         }
 
         if (empty($data)) {
-            throw AuthorizationExceptions::forNoData();
+            throw AuthorizationException::forNoData();
         }
 
         if ( ! $this->validate($this->_validate('refresh_token'), $data)) {
@@ -400,17 +405,17 @@ class Authorization
         }
 
         if (empty($tokens = $this->UTM->getUserTokens($payload->data->userId)->findAll())) {
-            throw AuthorizationExceptions::forFailUnauthorized();
+            throw AuthorizationException::forFailUnauthorized();
         }
 
         foreach ($tokens as $item) {
             if (hash_equals($item->refresh_token, $data['token'])) {
                 if ($item->expires < now()) {
-                    throw AuthorizationExceptions::forFailUnauthorized('expiresToken');
+                    throw AuthorizationException::forFailUnauthorized('expiresToken');
                 }
 
                 if (empty($jwt = $this->_signatureTokenJWT((array) $payload->data))) {
-                    throw AuthorizationExceptions::forCreateToken();
+                    throw AuthorizationException::forCreateToken();
                 }
 
                 $updated = $this->UTM->save(
@@ -432,7 +437,7 @@ class Authorization
             }
         }
 
-        throw AuthorizationExceptions::forFailUnauthorized('tokenNotFound');
+        throw AuthorizationException::forFailUnauthorized('tokenNotFound');
     }
 
     /**
@@ -440,7 +445,7 @@ class Authorization
      */
     public function logout(): void
     {
-        $this->_setClientSession();
+        $this->session->push('avegacms.admin', []);
     }
 
     protected function validate(array $rules, array $data): bool
@@ -536,7 +541,7 @@ class Authorization
     /**
      * @param  string  $field
      * @return string[]
-     * @throws AuthorizationExceptions
+     * @throws AuthorizationException
      */
     private function _checkType(string $field): array
     {
@@ -552,7 +557,7 @@ class Authorization
             return ['login' => $field];
         }
 
-        throw AuthorizationExceptions::forUnknownLoginField();
+        throw AuthorizationException::forUnknownLoginField($field);
     }
 
     /**
@@ -561,10 +566,14 @@ class Authorization
      */
     private function _setClientSession(array $userdata = []): void
     {
-        $currentSession['avegacms'] = $this->session->get('avegacms');
-        $currentSession['avegacms']['admin'] = $userdata;
-        $this->session->set($currentSession);
-        unset($currentSession);
+        if ($this->session->has('avegacms') === false) {
+            throw AuthorizationException::forUserSessionNotExist();
+        }
+        $session = $this->session->get('avegacms');
+
+        $session['admin'] = $userdata;
+
+        $this->session->set('avegacms', $session);
     }
 
     /**

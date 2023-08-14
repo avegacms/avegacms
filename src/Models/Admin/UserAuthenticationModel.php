@@ -3,40 +3,21 @@
 namespace AvegaCms\Models\Admin;
 
 use CodeIgniter\Model;
-use AvegaCms\Entities\PermissionsEntity;
+use AvegaCms\Entities\UserAuthenticationEntity;
 
-class PermissionsModel extends Model
+class UserAuthenticationModel extends Model
 {
     protected $DBGroup          = 'default';
     protected $table            = 'permissions';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = PermissionsEntity::class;
+    protected $returnType       = UserAuthenticationEntity::class;
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = [
-        'role_id',
-        'parent',
-        'module_id',
-        'is_plugin',
-        'slug',
-        'access',
-        'self',
-        'create',
-        'read',
-        'update',
-        'delete',
-        'moderated',
-        'settings',
-        'extra',
-        'created_by_id',
-        'updated_by_id',
-        'created_at',
-        'updated_at'
-    ];
+    protected $allowedFields    = [];
 
     // Dates
-    protected $useTimestamps = true;
+    protected $useTimestamps = false;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
@@ -58,4 +39,33 @@ class PermissionsModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    /**
+     * @param  int  $roleId
+     * @return $this
+     */
+    public function getRoleAccessMap(int $roleId): Model
+    {
+        $this->builder()->select(
+            [
+                'parent',
+                'module_id',
+                'parent',
+                'is_system',
+                'is_plugin',
+                'slug',
+                'access',
+                'self',
+                'create',
+                'read',
+                'update',
+                'delete',
+                'moderated',
+                'settings',
+                'extra'
+            ]
+        )->where(['role_id' => $roleId]);
+
+        return $this;
+    }
 }
