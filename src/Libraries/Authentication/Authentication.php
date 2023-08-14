@@ -31,14 +31,13 @@ class Authentication
     }
 
     /**
-     * @return boolean
+     * @return array
      * @throws AuthenticationException|Exception
      */
-    public function checkUserAccess(): bool
+    public function checkUserAccess(): void
     {
         $session = Services::session();
         $request = Services::request();
-        $response = Services::response();
         $userData = null;
 
         $UTM = model(UserTokensModel::class);
@@ -143,10 +142,14 @@ class Authentication
             throw AuthenticationException::forForbiddenAccess();
         }
 
-        var_dump([$method, $action]);
-        exit();
+        $cmsUser = service('AvegaCmsUser');
 
-        return false;
+        $cmsUser::set('user', $userData->user);
+        $cmsUser::set('permission', arrayToObject([
+            'self'      => $permission->self,
+            'moderated' => $permission->moderated,
+            'settings'  => $permission->settings
+        ]));
     }
 
     /**

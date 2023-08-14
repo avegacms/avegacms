@@ -2,6 +2,7 @@
 
 namespace Config;
 
+use AvegaCms\Libraries\Authentication\AvegaCmsUser;
 use CodeIgniter\Config\BaseService;
 
 /**
@@ -37,5 +38,14 @@ class Services extends BaseService
         }
 
         return new \AvegaCms\Libraries\AvegaCmsSettings();
+    }
+
+    public static function AvegaCmsUser($getShared = true)
+    {
+        if ($getShared) {
+            return static::getSharedInstance('AvegaCmsUser');
+        }
+
+        return new \AvegaCms\Libraries\Authentication\AvegaCmsUser();
     }
 }
