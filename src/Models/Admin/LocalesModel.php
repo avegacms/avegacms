@@ -2,10 +2,10 @@
 
 namespace AvegaCms\Models\Admin;
 
-use CodeIgniter\Model;
+use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Entities\LocalesEntity;
 
-class LocalesModel extends Model
+class LocalesModel extends AvegaCmsModel
 {
     protected $DBGroup          = 'default';
     protected $table            = 'locales';

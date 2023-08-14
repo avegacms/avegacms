@@ -54,6 +54,7 @@ $routes->group('api', function ($routes) {
         $routes->group('settings', function ($routes) {
             $routes->group('locales', function ($routes) {
                 $routes->get('/', [Locales::class, 'index']);
+                $routes->get('show/(:num)', [Locales::class, 'show/$1']);
             });
             //$routes->get('/', [Settings::class, 'index']);
         });

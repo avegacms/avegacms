@@ -1,14 +1,14 @@
 <?php
 
-namespace AvegaCms\Controllers\Api;
+namespace AvegaCms\Controllers\Api\Admin;
 
 use CodeIgniter\RESTful\ResourceController;
 use AvegaCms\Libraries\Authentication\AvegaCmsUser;
 
-class AvegaCmsAPI extends ResourceController
+class AvegaCmsAdminAPI extends ResourceController
 {
-    protected object|null $userData       = null;
-    protected object|null $userPermission = null;
+    protected $userData       = null;
+    protected $userPermission = null;
 
     public function __construct()
     {

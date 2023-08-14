@@ -2,9 +2,9 @@
 
 namespace AvegaCms\Controllers\Api\Admin\Content;
 
-use AvegaCms\Controllers\Api\AvegaCmsAPI;
+use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 
-class Pages extends AvegaCmsAPI
+class Pages extends AvegaCmsAdminAPI
 {
     public function __construct()
     {
