@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AvegaCms\Libraries\Authentication;
 
 use AvegaCms\Libraries\Authentication\Exceptions\AuthenticationException;
@@ -37,6 +39,7 @@ class Authentication
         $session = Services::session();
         $request = Services::request();
         $response = Services::response();
+        $userData = null;
 
         $UTM = model(UserTokensModel::class);
         $UAM = model(UserAuthenticationModel::class);
@@ -113,7 +116,7 @@ class Authentication
                 throw AuthenticationException::forTokenNotFound();
         }
 
-        if (empty($segments = array_slice($request->uri->getSegments(), 2))) {
+        if (empty($segments = array_slice(array_slice($request->uri->getSegments(), 2), 0, 2))) {
             throw AuthenticationException::forUnknownPermission();
         }
 
@@ -121,21 +124,58 @@ class Authentication
             throw AuthenticationException::forAccessDenied();
         }
 
-        foreach ($segments as $segment) {
-            foreach ($map as $item) {
-                if ($item->slug === $segment) {
-                    if ($item->parent === 0) {
-                        if ($item->access === false) {
-                            throw AuthenticationException::forForbiddenAccess();
-                        }
-                    }
-                }
-            }
+        if (($permission = $this->_findPermission($map, $segments)) === null) {
+            throw AuthenticationException::forForbiddenAccess();
         }
 
-        print_r($segments);
+        $method = $request->getMethod();
+
+        $action = match ($method) {
+            'get'    => $permission->read,
+            'post'   => $permission->create,
+            'put',
+            'patch'  => $permission->update,
+            'delete' => $permission->delete,
+            default  => throw AuthenticationException::forForbiddenAccess()
+        };
+
+        if ($action === false) {
+            throw AuthenticationException::forForbiddenAccess();
+        }
+
+        var_dump([$method, $action]);
         exit();
 
         return false;
+    }
+
+    /**
+     * @param $map
+     * @param  array  $segments
+     * @param  int  $index
+     * @param  int  $parent
+     * @return mixed
+     * @throws AuthenticationException
+     */
+    private function _findPermission($map, array $segments, int $index = 0, int $parent = 0): mixed
+    {
+        if ($index >= count($segments)) {
+            return null;
+        }
+
+        foreach ($map as $actions) {
+            if ($actions->slug === $segments[$index] && $actions->parent === $parent) {
+                if ($actions->access === false) {
+                    throw AuthenticationException::forForbiddenAccess();
+                }
+
+                if (isset($segments[$index + 1])) {
+                    return $this->_findPermission($map, $segments, $index + 1, $actions->module_id);
+                }
+                return $actions;
+            }
+        }
+
+        return null;
     }
 }

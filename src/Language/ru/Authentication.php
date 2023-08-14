@@ -9,5 +9,6 @@ return [
         'tokenNotFound'       => 'Токен не обнаружен',
         'userSessionNotExist' => 'Пользовательская сессия не существует',
         'unknownPermission'   => 'Неизвестный URL-разрешения',
+        'forbiddenAccess'     => 'Недостаточно прав для выполнения этого действия'
     ]
 ];

@@ -41,3 +41,28 @@ if ( ! function_exists('arrayToObject')) {
         }, $array);
     }
 }
+
+if ( ! function_exists('getTree')) {
+    /**
+     * @param  array  $data
+     * @return array
+     */
+    function getTree(array $data = []): array
+    {
+        $tree = [];
+
+        if ( ! empty($data)) {
+            foreach ($data as $id => &$node) {
+                if (isset($node['parent'])) {
+                    if ( ! $node['parent']) {
+                        $tree[$id] = &$node;
+                    } else {
+                        $data[$node['parent']]['list'][$id] = &$node;
+                    }
+                }
+            }
+        }
+
+        return $tree;
+    }
+}

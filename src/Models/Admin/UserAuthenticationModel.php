@@ -40,7 +40,11 @@ class UserAuthenticationModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    public function getRoleAccessMap(int $roleId)
+    /**
+     * @param  int  $roleId
+     * @return $this
+     */
+    public function getRoleAccessMap(int $roleId): Model
     {
         $this->builder()->select(
             [
@@ -60,9 +64,7 @@ class UserAuthenticationModel extends Model
                 'settings',
                 'extra'
             ]
-        )->where(['role_id' => $roleId])
-            ->orderBy('module_id', 'ASC')
-            ->orderBy('parent', 'ASC');
+        )->where(['role_id' => $roleId]);
 
         return $this;
     }

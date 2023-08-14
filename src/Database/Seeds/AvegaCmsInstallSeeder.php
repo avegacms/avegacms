@@ -151,20 +151,6 @@ class AvegaCmsInstallSeeder extends Seeder
             [
                 'parent'        => 0,
                 'is_plugin'     => 0,
-                'is_system'     => 0,
-                'slug'          => 'cms',
-                'name'          => 'Cms.modules.name.cms',
-                'version'       => $this->version,
-                'description'   => 'Cms.modules.description.cms',
-                'extra'         => '',
-                'in_sitemap'    => 0,
-                'active'        => 1,
-                'created_by_id' => $userId,
-                'updated_by_id' => 0
-            ],
-            [
-                'parent'        => 1,
-                'is_plugin'     => 0,
                 'is_system'     => 1,
                 'slug'          => 'roles',
                 'name'          => 'Cms.modules.name.roles',
@@ -177,7 +163,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'updated_by_id' => 0
             ],
             [
-                'parent'        => 1,
+                'parent'        => 0,
                 'is_plugin'     => 0,
                 'is_system'     => 1,
                 'slug'          => 'users',
@@ -191,7 +177,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'updated_by_id' => 0
             ],
             [
-                'parent'        => 1,
+                'parent'        => 0,
                 'is_plugin'     => 0,
                 'is_system'     => 1,
                 'slug'          => 'modules',
@@ -205,7 +191,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'updated_by_id' => 0
             ],
             [
-                'parent'        => 1,
+                'parent'        => 0,
                 'is_plugin'     => 0,
                 'is_system'     => 1,
                 'slug'          => 'languages',
@@ -219,7 +205,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'updated_by_id' => 0
             ],
             [
-                'parent'        => 1,
+                'parent'        => 0,
                 'is_plugin'     => 0,
                 'is_system'     => 0,
                 'slug'          => 'seo',
@@ -233,7 +219,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'updated_by_id' => 0
             ],
             [
-                'parent'        => 1,
+                'parent'        => 0,
                 'is_plugin'     => 0,
                 'is_system'     => 0,
                 'slug'          => 'menu',
@@ -247,7 +233,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'updated_by_id' => 0
             ],
             [
-                'parent'        => 1,
+                'parent'        => 0,
                 'is_plugin'     => 0,
                 'is_system'     => 0,
                 'slug'          => 'content',
@@ -261,7 +247,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'updated_by_id' => 0
             ],
             [
-                'parent'        => 1,
+                'parent'        => 0,
                 'is_plugin'     => 1,
                 'is_system'     => 1,
                 'slug'          => 'content_builder',
@@ -275,7 +261,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'updated_by_id' => 0
             ],
             [
-                'parent'        => 1,
+                'parent'        => 0,
                 'is_plugin'     => 1,
                 'is_system'     => 1,
                 'slug'          => 'uploader',
