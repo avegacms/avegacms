@@ -638,7 +638,7 @@ class AvegaCmsInstallSeeder extends Seeder
         ];
 
         foreach ($locales as $locale) {
-            $localesEntity[] = (new ModulesEntity($locale));
+            $localesEntity[] = (new LocalesEntity($locale));
         }
 
         $this->LLM->insertBatch($localesEntity);
