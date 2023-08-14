@@ -31,7 +31,7 @@ class Authentication
     }
 
     /**
-     * @return array
+     * @return void
      * @throws AuthenticationException|Exception
      */
     public function checkUserAccess(): void
