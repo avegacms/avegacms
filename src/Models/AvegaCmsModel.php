@@ -23,7 +23,11 @@ class AvegaCmsModel extends Model
     private array  $filterWhereSings  = ['!', '>=', '<=', '>', '<'];
     private array  $filterSortSings   = ['+' => 'ASC', '-' => 'DESC', '~' => 'RANDOM'];
 
-    public function filter(?array $fields = [])
+    /**
+     * @param  array|null  $fields
+     * @return AvegaCmsModel|array|static
+     */
+    public function filter(?array $fields = []): AvegaCmsModel|array|static
     {
         if ( ! empty($fields = $this->clearEmptyFields($fields)) && ! empty($this->filterFields)) {
             $this->filterCastsFields[$this->searchFieldAlias] = 'string';
@@ -119,6 +123,12 @@ class AvegaCmsModel extends Model
         return $this;
     }
 
+
+    /**
+     * @param  string  $type
+     * @param  array  $fields
+     * @return mixed
+     */
     private function _preparingSetsFields(string $type, array $fields)
     {
         $data = match ($type) {
@@ -127,7 +137,6 @@ class AvegaCmsModel extends Model
             'where'  => $this->filterFields,
             default  => []
         };
-
 
         if (empty($data)) {
             return [];
@@ -145,6 +154,7 @@ class AvegaCmsModel extends Model
                     case 'sort':
                         if ($this->sortFieldAlias === $k) {
                             foreach (explode(',', $value) as $sortField) {
+                                $sortFlag = '';
                                 foreach (array_keys($this->filterSortSings) as $sign) {
                                     if (str_starts_with($sortField, $sign)) {
                                         $sortFlag = $this->filterSortSings[$sign];
@@ -207,7 +217,8 @@ class AvegaCmsModel extends Model
     /**
      * @param $value
      * @param  string  $attribute
-     * @return array|null|float|int|string
+     * @param  string  $fieldName
+     * @return mixed
      */
     protected function castAs($value, string $attribute, string $fieldName = ''): mixed
     {
@@ -226,7 +237,7 @@ class AvegaCmsModel extends Model
             ) ? $value : null,
             'array'         => (array) (
             (
-            (is_string($value) && (strpos($value, 'a:') === 0 || strpos($value, 's:') === 0)) ?
+            (is_string($value) && (str_starts_with($value, 'a:') || str_starts_with($value, 's:'))) ?
                 unserialize($value) :
                 $value
             )
@@ -246,7 +257,7 @@ class AvegaCmsModel extends Model
     protected function clearEmptyFields(array $fields): array
     {
         return array_filter($fields, function ($value) {
-            return ! is_null($value) && ! empty($value);
+            return ! empty($value);
         });
     }
 }

@@ -21,14 +21,12 @@ class Locales extends AvegaCmsAPI
     {
         $filter = $this->request->getGet() ?? [];
 
-        $limit = (int) (($filter['limit'] ?? 0) <= 0 ? $this->LM->limit : $filter['limit']);
-
         return $this->cmsRespond(
-            $this->LM->filter($filter)->paginate($limit),
+            $this->LM->filter($filter)->paginate($this->LM->limit),
             [
                 'pagination' => [
                     'current_page' => (int) ($filter['page'] ?? 1),
-                    'per_page'     => $limit,
+                    'per_page'     => $this->LM->limit,
                     'total'        => $this->LM->pager->getTotal()
                 ]
             ]

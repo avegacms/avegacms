@@ -40,29 +40,29 @@ class UserModel extends AvegaCmsModel
     ];
 
     //AvegaCms model settings
-    protected array  $filterFields      = [
+    public array  $filterFields      = [
         'id'     => 'id',
         'login'  => 'login',
         'avatar' => 'avatar',
         'phone'  => 'phone',
         'email'  => 'email'
     ];
-    protected array  $searchFields      = [
+    public array  $searchFields      = [
         'login' => 'login',
         'email' => 'email'
     ];
-    protected array  $sortableFields    = [];
-    protected array  $filterCastsFields = [
+    public array  $sortableFields    = [];
+    public array  $filterCastsFields = [
         'id'     => 'int|array',
         'login'  => 'string',
         'avatar' => 'string',
         'phone'  => 'int',
         'email'  => 'string',
     ];
-    protected string $searchFieldAlias  = 'q';
-    protected string $sortFieldAlias    = 's';
-    protected int    $limit             = 20;
-    protected int    $maxLimit          = 100;
+    public string $searchFieldAlias  = 'q';
+    public string $sortFieldAlias    = 's';
+    public int    $limit             = 20;
+    public int    $maxLimit          = 100;
 
     // Dates
     protected $useTimestamps = true;
@@ -88,7 +88,11 @@ class UserModel extends AvegaCmsModel
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    public function fake(Generator &$faker)
+    /**
+     * @param  Generator  $faker
+     * @return array
+     */
+    public function fake(Generator &$faker): array
     {
         return [
             'login'         => $faker->word() . '_' . $faker->word(),
