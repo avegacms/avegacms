@@ -2,10 +2,9 @@
 
 namespace AvegaCms\Controllers\Api;
 
-use CodeIgniter\RESTful\ResourceController;
 use AvegaCms\Libraries\Authentication\AvegaCmsUser;
 
-class AvegaCmsAPI extends ResourceController
+class AvegaCmsAPI extends CmsResourceController
 {
     protected object|null $userData       = null;
     protected object|null $userPermission = null;

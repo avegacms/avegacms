@@ -18,6 +18,7 @@ class Login extends ResourceController
 
     public function __construct()
     {
+        helper(['avegacms', 'date']);
         $this->settings = settings('core');
         $this->Authorization = new Authorization($this->settings);
     }

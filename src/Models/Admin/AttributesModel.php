@@ -3,15 +3,15 @@
 namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Models\AvegaCmsModel;
-use AvegaCms\Entities\AttrubutesEntity;
+use AvegaCms\Entities\AttributesEntity;
 
-class AttrubutesModel extends AvegaCmsModel
+class AttributesModel extends AvegaCmsModel
 {
     protected $DBGroup          = 'default';
     protected $table            = 'attributes';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = AttrubutesEntity::class;
+    protected $returnType       = AttributesEntity::class;
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [];
@@ -41,14 +41,14 @@ class AttrubutesModel extends AvegaCmsModel
     protected $afterDelete    = [];
 
     // AvegaCms filter settings
-    protected array $filterFields      = [];
-    protected array $searchFields      = [];
-    protected array $sortableFields    = [];
-    protected array $filterCastsFields = [];
-    protected string $searchFieldAlias = 'q';
-    protected string $sortFieldAlias   = 's';
-    protected array $filterEnumValues  = [];
-    protected bool $usePagination      = true;
-    protected int $limit               = 20;
-    protected int $maxLimit            = 100;
+    public array  $filterFields      = [];
+    public array  $searchFields      = [];
+    public array  $sortableFields    = [];
+    public array  $filterCastsFields = [];
+    public string $searchFieldAlias  = 'q';
+    public string $sortFieldAlias    = 's';
+    public array  $filterEnumValues  = [];
+    public bool   $usePagination     = true;
+    public int    $limit             = 20;
+    public int    $maxLimit          = 100;
 }

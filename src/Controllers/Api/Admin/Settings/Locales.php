@@ -23,21 +23,19 @@ class Locales extends AvegaCmsAPI
 
         $limit = (int) (($filter['limit'] ?? 0) <= 0 ? $this->LM->limit : $filter['limit']);
 
-        return $this->respond(
+        return $this->cmsRespond(
+            $this->LM->filter($filter)->paginate($limit),
             [
-                'data' => [
-                    'list'       => $this->LM->filter($filter)->paginate($limit),
-                    'pagination' => [
-                        'current_page' => (int) ($filter['page'] ?? 1),
-                        'per_page'     => $limit,
-                        'total'        => $this->LM->pager->getTotal()
-                    ]
+                'pagination' => [
+                    'current_page' => (int) ($filter['page'] ?? 1),
+                    'per_page'     => $limit,
+                    'total'        => $this->LM->pager->getTotal()
                 ]
             ]
         );
     }
 
-    public function show($id = null)
+    public function show($id = null): ResponseInterface
     {
         if (($data = $this->LM->find($id)) === null) {
             return $this->failNotFound(lang('Api.errors.noData'));
