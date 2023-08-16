@@ -48,7 +48,6 @@ class AttributesModel extends AvegaCmsModel
     public string $searchFieldAlias  = 'q';
     public string $sortFieldAlias    = 's';
     public array  $filterEnumValues  = [];
-    public bool   $usePagination     = true;
     public int    $limit             = 20;
     public int    $maxLimit          = 100;
 }

@@ -17,22 +17,22 @@ class Locales extends AvegaCmsAPI
         $this->LM = model(LocalesModel::class);
     }
 
+    /**
+     * @return ResponseInterface
+     */
     public function index(): ResponseInterface
     {
         $filter = $this->request->getGet() ?? [];
+        //$filter['limit'] = 1;
+        $locales = $this->LM->filter($filter)->pagination();
 
-        return $this->cmsRespond(
-            $this->LM->filter($filter)->paginate($this->LM->limit),
-            [
-                'pagination' => [
-                    'current_page' => (int) ($filter['page'] ?? 1),
-                    'per_page'     => $this->LM->limit,
-                    'total'        => $this->LM->pager->getTotal()
-                ]
-            ]
-        );
+        return $this->cmsRespond($locales['list'], $locales['pagination']);
     }
 
+    /**
+     * @param $id
+     * @return ResponseInterface
+     */
     public function show($id = null): ResponseInterface
     {
         if (($data = $this->LM->find($id)) === null) {

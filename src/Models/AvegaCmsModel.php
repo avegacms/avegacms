@@ -7,21 +7,20 @@ use CodeIgniter\Model;
 class AvegaCmsModel extends Model
 {
     //AvegaCms model settings
-    public array   $filterFields      = [];
-    public array   $searchFields      = [];
-    public array   $sortableFields    = [];
-    public array   $filterCastsFields = [];
-    public string  $searchFieldAlias  = 'q';
-    public string  $sortFieldAlias    = 's';
-    public array   $filterEnumValues  = [];
-    public bool    $usePagination     = true;
-    public int     $limit             = 20;
-    public int     $maxLimit          = 100;
-    public int     $page              = 1;
-    private array  $filterFieldsMap   = [];
-    private string $fieldMapFlag      = '';
-    private array  $filterWhereSings  = ['!', '>=', '<=', '>', '<'];
-    private array  $filterSortSings   = ['+' => 'ASC', '-' => 'DESC', '~' => 'RANDOM'];
+    protected array  $filterFields      = [];
+    protected array  $searchFields      = [];
+    protected array  $sortableFields    = [];
+    protected array  $filterCastsFields = [];
+    protected string $searchFieldAlias  = 'q';
+    protected string $sortFieldAlias    = 's';
+    protected array  $filterEnumValues  = [];
+    protected int    $limit             = 20;
+    protected int    $maxLimit          = 100;
+    protected int    $page              = 1;
+    private array    $filterFieldsMap   = [];
+    private string   $fieldMapFlag      = '';
+    private array    $filterWhereSings  = ['!', '>=', '<=', '>', '<'];
+    private array    $filterSortSings   = ['+' => 'ASC', '-' => 'DESC', '~' => 'RANDOM'];
 
     /**
      * @param  array|null  $fields
@@ -29,26 +28,9 @@ class AvegaCmsModel extends Model
      */
     public function filter(?array $fields = []): AvegaCmsModel|array|static
     {
-        if ( ! empty($fields = $this->clearEmptyFields($fields)) && ! empty($this->filterFields)) {
+        if ( ! empty($fields = array_filter($fields, fn($value) => $value !== '' && $value !== null))) {
             $this->filterCastsFields[$this->searchFieldAlias] = 'string';
             $this->filterCastsFields[$this->sortFieldAlias] = 'string';
-
-            $limit = (int) (is_int($fields['limit'] ?? '') && $fields['limit'] > 0 ? $fields['limit'] : $this->limit);
-            $page = (int) (is_int($fields['page'] ?? '') && $fields['page'] > 0 ? $fields['page'] : $this->page);
-
-            $this->usePagination = $fields['usePagination'] ?? $this->usePagination;
-
-            if ($limit > $this->maxLimit) {
-                $limit = $this->maxLimit;
-            }
-
-            if ($this->usePagination) {
-                $page = $page >= 1 ? $page : $this->page;
-            } else {
-                $this->builder()->limit($limit);
-            }
-
-            unset($fields['limit'], $fields['page']);
 
             if ( ! empty($this->searchFields)) {
                 $this->_preparingSetsFields('search', $fields);
@@ -110,26 +92,45 @@ class AvegaCmsModel extends Model
                 }
             }
 
-            return ( ! $this->usePagination) ? $this : [
-                'pagination' => [
-                    'page'  => $page,
-                    'limit' => $limit,
-                    'total' => $this->countAllResults(false)
-                ],
-                'list'       => $this->findAll($limit, ($page - 1) * $limit)
-            ];
+            $this->limit = (int) (is_int($fields['limit'] ?? '') && $fields['limit'] > 0 ? $fields['limit'] : $this->limit);
+            $this->page = (int) (is_int($fields['page'] ?? '') && $fields['page'] > 0 ? $fields['page'] : $this->page);
+
+            if ($this->limit > $this->maxLimit) {
+                $this->limit = $this->maxLimit;
+            }
+
+            if ($this->page == 1) {
+                $this->builder()->limit($this->limit);
+            }
+
+            unset($fields['limit'], $fields['page']);
         }
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function pagination(): array
+    {
+        return [
+            'list'       => $this->paginate($this->limit),
+            'pagination' => [
+                'page'  => $this->page,
+                'limit' => $this->limit,
+                'total' => $this->pager->getTotal()
+            ]
+        ];
     }
 
 
     /**
      * @param  string  $type
      * @param  array  $fields
-     * @return mixed
+     * @return void
      */
-    private function _preparingSetsFields(string $type, array $fields)
+    private function _preparingSetsFields(string $type, array $fields): void
     {
         $data = match ($type) {
             'search' => [$this->searchFieldAlias => $this->searchFieldAlias],
@@ -139,7 +140,7 @@ class AvegaCmsModel extends Model
         };
 
         if (empty($data)) {
-            return [];
+            return;
         }
 
         $excludeFieldsWhere = [
@@ -148,7 +149,6 @@ class AvegaCmsModel extends Model
         ];
 
         foreach ($data as $key => $field) {
-            $this->fieldMapFlag = '';
             foreach ($fields as $k => $value) {
                 switch ($type) {
                     case 'sort':
@@ -248,16 +248,5 @@ class AvegaCmsModel extends Model
             'float|array'   => is_float($value) ? $this->castAs($value, 'float') : $this->castAs($value, 'array'),
             default         => null
         };
-    }
-
-    /**
-     * @param  array  $fields
-     * @return array
-     */
-    protected function clearEmptyFields(array $fields): array
-    {
-        return array_filter($fields, function ($value) {
-            return ! empty($value);
-        });
     }
 }
