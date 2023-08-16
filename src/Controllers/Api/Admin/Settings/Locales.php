@@ -23,7 +23,7 @@ class Locales extends AvegaCmsAPI
     public function index(): ResponseInterface
     {
         $locales = $this->LM->filter($this->request->getGet() ?? [])->pagination();
-
+        
         return $this->cmsRespond($locales['list'], $locales['pagination']);
     }
 

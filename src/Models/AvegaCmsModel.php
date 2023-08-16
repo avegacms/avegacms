@@ -110,21 +110,30 @@ class AvegaCmsModel extends Model
     }
 
     /**
+     * @param  int|null  $limit
+     * @param  int|null  $offset
      * @return array
      */
-    public function pagination(): array
+    public function pagination(int|null $limit = null, int|null $offset = null): array
     {
+        if (is_null($limit)) {
+            $limit = $this->limit;
+        }
+
+        if (is_null($offset)) {
+            $offset = $this->page;
+        }
+
         return [
-            'list'       => $this->paginate($this->limit),
+            'list'       => $this->paginate($limit),
             'pagination' => [
-                'page'  => $this->page,
-                'limit' => $this->limit,
+                'page'  => $offset,
+                'limit' => $limit,
                 'total' => $this->pager->getTotal()
             ]
         ];
     }
-
-
+    
     /**
      * @param  string  $type
      * @param  array  $fields
