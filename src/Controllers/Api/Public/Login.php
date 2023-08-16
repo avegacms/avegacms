@@ -62,9 +62,6 @@ class Login extends ResourceController
                     $this->Authorization->logout();
                     $result['data']['status'] = 'logout';
                     break;
-
-                case 'registration':
-                    break;
                 default:
                     throw AuthorizationException::forUnknownAuthType();
             }

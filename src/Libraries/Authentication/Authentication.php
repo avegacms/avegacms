@@ -50,7 +50,7 @@ class Authentication
             throw AuthenticationException::forAccessDenied();
         }
 
-        if (empty($authHeader = $request->getServer('HTTP_AUTHORIZATION'))) {
+        if (empty($authHeader = $request->getServer('HTTP_AUTHORIZATION') ?? '')) {
             throw AuthenticationException::forNoHeaderAuthorize();
         }
 

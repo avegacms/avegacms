@@ -376,7 +376,7 @@ class Authorization
     {
         $request = Services::request();
 
-        if (empty($authHeader = explode(' ', $request->getServer('HTTP_AUTHORIZATION'))) || count(
+        if (empty($authHeader = explode(' ', $request->getServer('HTTP_AUTHORIZATION') ?? '')) || count(
                 $authHeader
             ) !== 2) {
             throw AuthorizationException::forFailUnauthorized();
@@ -645,7 +645,7 @@ class Authorization
             'recovery'      => [
                 'recovery_field' => [
                     'label' => lang('Authorization.fields.' . $recoveryField),
-                    'rules' => 'required|' . (($recoveryField == 'phone') ? $phone : $email)
+                    'rules' => 'required|' . (($recoveryField == 'login') ? $login : $email)
                 ]
             ],
             'password'      => [
