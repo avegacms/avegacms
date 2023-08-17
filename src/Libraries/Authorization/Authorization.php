@@ -376,19 +376,14 @@ class Authorization
     {
         $request = Services::request();
 
-        if (empty($authHeader = explode(' ', $request->getServer('HTTP_AUTHORIZATION'))) || count(
+        if (empty($authHeader = explode(' ', $request->getServer('HTTP_AUTHORIZATION') ?? '')) || count(
                 $authHeader
             ) !== 2) {
             throw AuthorizationException::forFailUnauthorized();
         }
-
-        $token = match ($authHeader[0]) {
-            'Token'  => $this->settings['auth']['useToken'] ? $authHeader[1] : false,
-            'Bearer' => $this->settings['auth']['useJwt'] ? $authHeader[1] : false,
-            default  => false
-        };
-
-        if ($token === false || count($token = explode('.', $token)) !== 3) {
+        
+        if ($this->settings['auth']['useJwt'] || $authHeader[0] !== 'Bearer' || count($token = explode('.',
+                $authHeader[1])) !== 3) {
             throw AuthorizationException::forFailUnauthorized();
         }
 
@@ -645,7 +640,7 @@ class Authorization
             'recovery'      => [
                 'recovery_field' => [
                     'label' => lang('Authorization.fields.' . $recoveryField),
-                    'rules' => 'required|' . (($recoveryField == 'phone') ? $phone : $email)
+                    'rules' => 'required|' . (($recoveryField == 'login') ? $login : $email)
                 ]
             ],
             'password'      => [

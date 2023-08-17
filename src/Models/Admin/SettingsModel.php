@@ -55,6 +55,10 @@ class SettingsModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
+    /**
+     * @param  string  $entity
+     * @return array
+     */
     public function getSettings(string $entity): array
     {
         $this->builder()->select(
@@ -70,9 +74,9 @@ class SettingsModel extends Model
 
         $settings = [];
 
-        if (!empty($result = $this->asArray()->findAll())) {
+        if ( ! empty($result = $this->asArray()->findAll())) {
             foreach ($result as $item) {
-                if (!empty($item['slug']) && !empty($item['key'])) {
+                if ( ! empty($item['slug']) && ! empty($item['key'])) {
                     $settings[$item['slug']][$item['key']] = [
                         'value'       => $item['value'],
                         'return_type' => $item['return_type']
@@ -91,17 +95,17 @@ class SettingsModel extends Model
     }
 
     /**
-     * @param string $entity
-     * @param string|null $slug
-     * @param string|null $property
+     * @param  string  $entity
+     * @param  string|null  $slug
+     * @param  string|null  $property
      * @return int
      */
     public function getId(string $entity, string $slug = null, string $property = null): int
     {
         $this->builder()->where('entity', $entity);
-        if (!empty($slug)) {
+        if ( ! empty($slug)) {
             $this->builder()->where('slug', $slug);
-            if (!empty($property)) {
+            if ( ! empty($property)) {
                 $this->builder()->where('key', $property);
             }
         }
@@ -109,21 +113,33 @@ class SettingsModel extends Model
         return $this->asArray()->findColumn('id')[0] ?? 0;
     }
 
-    protected function dropSettingsCache(array $data)
+    /**
+     * @param  array  $data
+     * @return void
+     */
+    protected function dropSettingsCache(array $data): void
     {
         if ($data['result']) {
             cache()->delete('settings_' . $data['data']['entity']);
         }
     }
 
-    protected function setCreatedById(array $data)
+    /**
+     * @param  array  $data
+     * @return array
+     */
+    protected function setCreatedById(array $data): array
     {
         $data['data']['updated_by_id'] = $data['data']['created_by_id'] = $data['data']['created_by_id'] ?? 1;
 
         return $data;
     }
 
-    protected function setUpdatedById(array $data)
+    /**
+     * @param  array  $data
+     * @return array
+     */
+    protected function setUpdatedById(array $data): array
     {
         $data['data']['updated_by_id'] = $data['data']['updated_by_id'] ?? 2;
 

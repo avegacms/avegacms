@@ -14,7 +14,6 @@ class AvegaCmsModel extends Model
     protected string $searchFieldAlias  = 'q';
     protected string $sortFieldAlias    = 's';
     protected array  $filterEnumValues  = [];
-    protected bool   $usePagination     = true;
     protected int    $limit             = 20;
     protected int    $maxLimit          = 100;
     protected int    $page              = 1;
@@ -23,44 +22,31 @@ class AvegaCmsModel extends Model
     private array    $filterWhereSings  = ['!', '>=', '<=', '>', '<'];
     private array    $filterSortSings   = ['+' => 'ASC', '-' => 'DESC', '~' => 'RANDOM'];
 
-    public function filter(?array $fields = [])
+    /**
+     * @param  array|null  $fields
+     * @return AvegaCmsModel|array|static
+     */
+    public function filter(?array $fields = []): AvegaCmsModel|array|static
     {
-        if (!empty($fields = $this->clearEmptyFields($fields)) && !empty($this->filterFields)) {
+        if ( ! empty($fields = array_filter($fields, fn($value) => $value !== '' && $value !== null))) {
             $this->filterCastsFields[$this->searchFieldAlias] = 'string';
             $this->filterCastsFields[$this->sortFieldAlias] = 'string';
 
-            $limit = (int)(is_int($fields['limit'] ?? '') && $fields['limit'] > 0 ? $fields['limit'] : $this->limit);
-            $page = (int)(is_int($fields['page'] ?? '') && $fields['page'] > 0 ? $fields['page'] : $this->page);
-
-            $this->usePagination = $fields['usePagination'] ?? $this->usePagination;
-
-            if ($limit > $this->maxLimit) {
-                $limit = $this->maxLimit;
-            }
-
-            if ($this->usePagination) {
-                $page = $page >= 1 ? $page : $this->page;
-            } else {
-                $this->builder()->limit($limit);
-            }
-
-            unset($fields['limit'], $fields['page']);
-
-            if (!empty($this->searchFields)) {
+            if ( ! empty($this->searchFields)) {
                 $this->_preparingSetsFields('search', $fields);
             }
 
-            if (!empty($this->filterFields)) {
+            if ( ! empty($this->filterFields)) {
                 $this->_preparingSetsFields('where', $fields);
                 $this->_preparingSetsFields('sort', $fields);
             }
 
-            if (!empty($this->filterFieldsMap)) {
+            if ( ! empty($this->filterFieldsMap)) {
                 foreach (['search', 'sort', 'where'] as $type) {
                     if ($this->filterFieldsMap[$type] ?? false) {
                         switch ($type) {
                             case 'search':
-                                if (!empty($search = trim($fields[$this->searchFieldAlias] ?? ''))) {
+                                if ( ! empty($search = trim($fields[$this->searchFieldAlias] ?? ''))) {
                                     $search = explode(' ', $search);
                                     $this->builder()->groupStart();
                                     foreach ($this->searchFields as $key => $field) {
@@ -76,7 +62,7 @@ class AvegaCmsModel extends Model
                                 }
                                 break;
                             case 'sort':
-                                
+
                                 foreach ($this->filterFieldsMap[$type] as $item) {
                                     $this->builder()->orderBy($item['field'], $item['value']);
                                 }
@@ -85,7 +71,7 @@ class AvegaCmsModel extends Model
                                 $this->builder()->groupStart();
                                 foreach ($this->filterFieldsMap[$type] as $item) {
                                     match ($item['flag']) {
-                                        '>=', '<=', '>', '<' => !is_array($item['value']) ?
+                                        '>=', '<=', '>', '<' => ! is_array($item['value']) ?
                                             $this->builder()->where(
                                                 [$item['field'] . ' ' . $item['flag'] => $item['value']]
                                             ) : '',
@@ -106,20 +92,54 @@ class AvegaCmsModel extends Model
                 }
             }
 
-            return (!$this->usePagination) ? $this : [
-                'pagination' => [
-                    'page'  => $page,
-                    'limit' => $limit,
-                    'total' => $this->countAllResults(false)
-                ],
-                'list'       => $this->findAll($limit, ($page - 1) * $limit)
-            ];
+            $this->limit = (int) (is_int($fields['limit'] ?? '') && $fields['limit'] > 0 ? $fields['limit'] : $this->limit);
+            $this->page = (int) (is_int($fields['page'] ?? '') && $fields['page'] > 0 ? $fields['page'] : $this->page);
+
+            if ($this->limit > $this->maxLimit) {
+                $this->limit = $this->maxLimit;
+            }
+
+            if ($this->page == 1) {
+                $this->builder()->limit($this->limit);
+            }
+
+            unset($fields['limit'], $fields['page']);
         }
 
         return $this;
     }
 
-    private function _preparingSetsFields(string $type, array $fields)
+    /**
+     * @param  int|null  $limit
+     * @param  int|null  $offset
+     * @return array
+     */
+    public function pagination(int|null $limit = null, int|null $offset = null): array
+    {
+        if (is_null($limit)) {
+            $limit = $this->limit;
+        }
+
+        if (is_null($offset)) {
+            $offset = $this->page;
+        }
+
+        return [
+            'list'       => $this->paginate($limit),
+            'pagination' => [
+                'page'  => $offset,
+                'limit' => $limit,
+                'total' => $this->pager->getTotal()
+            ]
+        ];
+    }
+    
+    /**
+     * @param  string  $type
+     * @param  array  $fields
+     * @return void
+     */
+    private function _preparingSetsFields(string $type, array $fields): void
     {
         $data = match ($type) {
             'search' => [$this->searchFieldAlias => $this->searchFieldAlias],
@@ -128,9 +148,8 @@ class AvegaCmsModel extends Model
             default  => []
         };
 
-
         if (empty($data)) {
-            return [];
+            return;
         }
 
         $excludeFieldsWhere = [
@@ -139,12 +158,12 @@ class AvegaCmsModel extends Model
         ];
 
         foreach ($data as $key => $field) {
-            $this->fieldMapFlag = '';
             foreach ($fields as $k => $value) {
                 switch ($type) {
                     case 'sort':
                         if ($this->sortFieldAlias === $k) {
                             foreach (explode(',', $value) as $sortField) {
+                                $sortFlag = '';
                                 foreach (array_keys($this->filterSortSings) as $sign) {
                                     if (str_starts_with($sortField, $sign)) {
                                         $sortFlag = $this->filterSortSings[$sign];
@@ -153,7 +172,7 @@ class AvegaCmsModel extends Model
                                     }
                                 }
 
-                                if (!empty($this->sortableFields)) {
+                                if ( ! empty($this->sortableFields)) {
                                     if (in_array($sortField, $this->sortableFields)) {
                                         $this->filterFieldsMap[$type][$sortField] = [
                                             'field' => $this->filterFields[$sortField],
@@ -182,12 +201,12 @@ class AvegaCmsModel extends Model
                                     break;
                                 }
                             }
-                            $k = !in_array($k, $excludeFieldsWhere) ? $k : '';
+                            $k = ! in_array($k, $excludeFieldsWhere) ? $k : '';
                         } else {
                             $k = ($this->searchFieldAlias === $k) ? $k : '';
                         }
 
-                        if ($k == $key && !is_null(
+                        if ($k == $key && ! is_null(
                                 $value = $this->castAs($value, $this->filterCastsFields[$key] ?? '')
                             )) {
                             $this->filterFieldsMap[$type][$key] = [
@@ -206,27 +225,28 @@ class AvegaCmsModel extends Model
 
     /**
      * @param $value
-     * @param string $attribute
-     * @return array|null|float|int|string
+     * @param  string  $attribute
+     * @param  string  $fieldName
+     * @return mixed
      */
     protected function castAs($value, string $attribute, string $fieldName = ''): mixed
     {
         return match ($attribute) {
             'int',
-            'integer'       => (int)$value,
+            'integer'       => (int) $value,
             'double',
-            'float'         => (float)$value,
-            'string'        => (string)$value,
+            'float'         => (float) $value,
+            'string'        => (string) $value,
             'strtotime'     => strtotime($value),
             'bool',
-            'boolean'       => (bool)$value,
+            'boolean'       => (bool) $value,
             'enum'          => in_array(
                 $value = strtolower($value),
                 $this->filterEnumValues[$fieldName] ?? []
             ) ? $value : null,
-            'array'         => (array)(
+            'array'         => (array) (
             (
-            (is_string($value) && (strpos($value, 'a:') === 0 || strpos($value, 's:') === 0)) ?
+            (is_string($value) && (str_starts_with($value, 'a:') || str_starts_with($value, 's:'))) ?
                 unserialize($value) :
                 $value
             )
@@ -237,16 +257,5 @@ class AvegaCmsModel extends Model
             'float|array'   => is_float($value) ? $this->castAs($value, 'float') : $this->castAs($value, 'array'),
             default         => null
         };
-    }
-
-    /**
-     * @param array $fields
-     * @return array
-     */
-    protected function clearEmptyFields(array $fields): array
-    {
-        return array_filter($fields, function ($value) {
-            return !is_null($value) && !empty($value);
-        });
     }
 }

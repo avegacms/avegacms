@@ -5,8 +5,22 @@ namespace AvegaCms\Database\Seeds;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Database\Seeder;
 use Config\Database;
-use AvegaCms\Models\Admin\{ModulesModel, SettingsModel, LoginModel, RolesModel, UserRolesModel, PermissionsModel};
-use AvegaCms\Entities\{ModulesEntity, LoginEntity, RolesEntity, SettingsEntity, UserRolesEntity, PermissionsEntity};
+use AvegaCms\Models\Admin\{ModulesModel,
+    SettingsModel,
+    LoginModel,
+    RolesModel,
+    UserRolesModel,
+    PermissionsModel,
+    LocalesModel
+};
+use AvegaCms\Entities\{ModulesEntity,
+    LoginEntity,
+    RolesEntity,
+    SettingsEntity,
+    UserRolesEntity,
+    PermissionsEntity,
+    LocalesEntity
+};
 use ReflectionException;
 use Exception;
 
@@ -21,6 +35,8 @@ class AvegaCmsInstallSeeder extends Seeder
 
     protected PermissionsModel $PM;
 
+    protected LocalesModel $LLM;
+
     public function __construct(Database $config, ?BaseConnection $db = null)
     {
         parent::__construct($config, $db);
@@ -31,6 +47,7 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->RM = model(RolesModel::class);
         $this->PM = model(PermissionsModel::class);
         $this->URM = model(UserRolesModel::class);
+        $this->LLM = model(LocalesModel::class);
     }
 
     /**
@@ -44,6 +61,7 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->_createUserRoles($userId);
         $this->_installCmsModules($userId);
         $this->_createPermissions($userId);
+        $this->_createLocales($userId);
         $this->_createSettings();
     }
 
@@ -151,67 +169,11 @@ class AvegaCmsInstallSeeder extends Seeder
             [
                 'parent'        => 0,
                 'is_plugin'     => 0,
-                'is_system'     => 1,
-                'slug'          => 'roles',
-                'name'          => 'Cms.modules.name.roles',
-                'version'       => $this->version,
-                'description'   => 'Cms.modules.description.roles',
-                'extra'         => '',
-                'in_sitemap'    => 0,
-                'active'        => 1,
-                'created_by_id' => $userId,
-                'updated_by_id' => 0
-            ],
-            [
-                'parent'        => 0,
-                'is_plugin'     => 0,
-                'is_system'     => 1,
-                'slug'          => 'users',
-                'name'          => 'Cms.modules.name.users',
-                'version'       => $this->version,
-                'description'   => 'Cms.modules.description.users',
-                'extra'         => '',
-                'in_sitemap'    => 0,
-                'active'        => 1,
-                'created_by_id' => $userId,
-                'updated_by_id' => 0
-            ],
-            [
-                'parent'        => 0,
-                'is_plugin'     => 0,
-                'is_system'     => 1,
-                'slug'          => 'modules',
-                'name'          => 'Cms.modules.name.modules',
-                'version'       => $this->version,
-                'description'   => 'Cms.modules.description.modules',
-                'extra'         => '',
-                'in_sitemap'    => 0,
-                'active'        => 1,
-                'created_by_id' => $userId,
-                'updated_by_id' => 0
-            ],
-            [
-                'parent'        => 0,
-                'is_plugin'     => 0,
-                'is_system'     => 1,
-                'slug'          => 'languages',
-                'name'          => 'Cms.modules.name.languages',
-                'version'       => $this->version,
-                'description'   => 'Cms.modules.description.languages',
-                'extra'         => '',
-                'in_sitemap'    => 0,
-                'active'        => 1,
-                'created_by_id' => $userId,
-                'updated_by_id' => 0
-            ],
-            [
-                'parent'        => 0,
-                'is_plugin'     => 0,
                 'is_system'     => 0,
-                'slug'          => 'seo',
-                'name'          => 'Cms.modules.name.seo',
+                'slug'          => 'settings',
+                'name'          => 'Cms.modules.name.settings',
                 'version'       => $this->version,
-                'description'   => 'Cms.modules.description.seo',
+                'description'   => 'Cms.modules.description.settings',
                 'extra'         => '',
                 'in_sitemap'    => 0,
                 'active'        => 1,
@@ -283,70 +245,155 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->MM->insertBatch($modulesEntity);
         unset($modulesEntity);
 
-        $contentId = $this->MM->select(['id'])->where(['slug' => 'content'])->first();
+        $subModules = $this->MM->select(['id', 'slug'])->whereIn('slug', ['settings', 'content'])->findAll();
+
+        foreach ($subModules as $subModule) {
+            $list[$subModule->slug] = $subModule->id;
+        }
 
         $modules = [
 
-            [
-                'parent'        => $contentId->id,
-                'is_plugin'     => 0,
-                'is_system'     => 0,
-                'slug'          => 'rubrics',
-                'name'          => 'Cms.modules.name.rubrics',
-                'version'       => $this->version,
-                'description'   => 'Cms.modules.description.rubrics',
-                'extra'         => '',
-                'in_sitemap'    => 0,
-                'active'        => 1,
-                'created_by_id' => $userId,
-                'updated_by_id' => 0
+            'settings' => [
+                [
+                    'parent'        => $list['settings'],
+                    'is_plugin'     => 0,
+                    'is_system'     => 1,
+                    'slug'          => 'roles',
+                    'name'          => 'Cms.modules.name.roles',
+                    'version'       => $this->version,
+                    'description'   => 'Cms.modules.description.roles',
+                    'extra'         => '',
+                    'in_sitemap'    => 0,
+                    'active'        => 1,
+                    'created_by_id' => $userId,
+                    'updated_by_id' => 0
+                ],
+                [
+                    'parent'        => $list['settings'],
+                    'is_plugin'     => 0,
+                    'is_system'     => 1,
+                    'slug'          => 'users',
+                    'name'          => 'Cms.modules.name.users',
+                    'version'       => $this->version,
+                    'description'   => 'Cms.modules.description.users',
+                    'extra'         => '',
+                    'in_sitemap'    => 0,
+                    'active'        => 1,
+                    'created_by_id' => $userId,
+                    'updated_by_id' => 0
+                ],
+                [
+                    'parent'        => $list['settings'],
+                    'is_plugin'     => 0,
+                    'is_system'     => 1,
+                    'slug'          => 'modules',
+                    'name'          => 'Cms.modules.name.modules',
+                    'version'       => $this->version,
+                    'description'   => 'Cms.modules.description.modules',
+                    'extra'         => '',
+                    'in_sitemap'    => 0,
+                    'active'        => 1,
+                    'created_by_id' => $userId,
+                    'updated_by_id' => 0
+                ],
+                [
+                    'parent'        => $list['settings'],
+                    'is_plugin'     => 0,
+                    'is_system'     => 1,
+                    'slug'          => 'locales',
+                    'name'          => 'Cms.modules.name.locales',
+                    'version'       => $this->version,
+                    'description'   => 'Cms.modules.description.locales',
+                    'extra'         => '',
+                    'in_sitemap'    => 0,
+                    'active'        => 1,
+                    'created_by_id' => $userId,
+                    'updated_by_id' => 0
+                ],
+                [
+                    'parent'        => $list['settings'],
+                    'is_plugin'     => 0,
+                    'is_system'     => 0,
+                    'slug'          => 'seo',
+                    'name'          => 'Cms.modules.name.seo',
+                    'version'       => $this->version,
+                    'description'   => 'Cms.modules.description.seo',
+                    'extra'         => '',
+                    'in_sitemap'    => 0,
+                    'active'        => 1,
+                    'created_by_id' => $userId,
+                    'updated_by_id' => 0
+                ],
             ],
-            [
-                'parent'        => $contentId->id,
-                'is_plugin'     => 0,
-                'is_system'     => 0,
-                'slug'          => 'pages',
-                'name'          => 'Cms.modules.name.pages',
-                'version'       => $this->version,
-                'description'   => 'Cms.modules.description.pages',
-                'extra'         => '',
-                'in_sitemap'    => 0,
-                'active'        => 1,
-                'created_by_id' => $userId,
-                'updated_by_id' => 0
-            ],
-            [
-                'parent'        => $contentId->id,
-                'is_plugin'     => 0,
-                'is_system'     => 0,
-                'slug'          => 'posts',
-                'name'          => 'Cms.modules.name.posts',
-                'version'       => $this->version,
-                'description'   => 'Cms.modules.description.posts',
-                'extra'         => '',
-                'in_sitemap'    => 0,
-                'active'        => 1,
-                'created_by_id' => $userId,
-                'updated_by_id' => 0
-            ],
-            [
-                'parent'        => $contentId->id,
-                'is_plugin'     => 0,
-                'is_system'     => 0,
-                'slug'          => 'tags',
-                'name'          => 'Cms.modules.name.tags',
-                'version'       => $this->version,
-                'description'   => 'Cms.modules.description.tags',
-                'extra'         => '',
-                'in_sitemap'    => 0,
-                'active'        => 1,
-                'created_by_id' => $userId,
-                'updated_by_id' => 0
+            'content'  => [
+                [
+                    'parent'        => $list['content'],
+                    'is_plugin'     => 0,
+                    'is_system'     => 0,
+                    'slug'          => 'rubrics',
+                    'name'          => 'Cms.modules.name.rubrics',
+                    'version'       => $this->version,
+                    'description'   => 'Cms.modules.description.rubrics',
+                    'extra'         => '',
+                    'in_sitemap'    => 0,
+                    'active'        => 1,
+                    'created_by_id' => $userId,
+                    'updated_by_id' => 0
+                ],
+                [
+                    'parent'        => $list['content'],
+                    'is_plugin'     => 0,
+                    'is_system'     => 0,
+                    'slug'          => 'pages',
+                    'name'          => 'Cms.modules.name.pages',
+                    'version'       => $this->version,
+                    'description'   => 'Cms.modules.description.pages',
+                    'extra'         => '',
+                    'in_sitemap'    => 0,
+                    'active'        => 1,
+                    'created_by_id' => $userId,
+                    'updated_by_id' => 0
+                ],
+                [
+                    'parent'        => $list['content'],
+                    'is_plugin'     => 0,
+                    'is_system'     => 0,
+                    'slug'          => 'posts',
+                    'name'          => 'Cms.modules.name.posts',
+                    'version'       => $this->version,
+                    'description'   => 'Cms.modules.description.posts',
+                    'extra'         => '',
+                    'in_sitemap'    => 0,
+                    'active'        => 1,
+                    'created_by_id' => $userId,
+                    'updated_by_id' => 0
+                ],
+                [
+                    'parent'        => $list['content'],
+                    'is_plugin'     => 0,
+                    'is_system'     => 0,
+                    'slug'          => 'tags',
+                    'name'          => 'Cms.modules.name.tags',
+                    'version'       => $this->version,
+                    'description'   => 'Cms.modules.description.tags',
+                    'extra'         => '',
+                    'in_sitemap'    => 0,
+                    'active'        => 1,
+                    'created_by_id' => $userId,
+                    'updated_by_id' => 0
+                ]
             ]
         ];
 
-        foreach ($modules as $module) {
-            $modulesEntity[] = (new ModulesEntity($module));
+        foreach ($subModules as $subModule) {
+            foreach ($modules as $slug => $list) {
+                foreach ($list as $item) {
+                    if ($slug === $subModule->slug) {
+                        $item['parent'] = $subModule->id;
+                        $modulesEntity[] = (new ModulesEntity($item));
+                    }
+                }
+            }
         }
 
         $this->MM->insertBatch($modulesEntity);
@@ -557,16 +604,12 @@ class AvegaCmsInstallSeeder extends Seeder
         foreach ($modules as $module) {
             foreach ($roles as $role) {
                 foreach ($permissions as $permission) {
-                    if ($permission['role_id'] === $role->id) {
+                    if ($permission['role_id'] === $role->id && $module->is_system === $permission['is_system'] && $module->is_plugin === $permission['is_plugin']) {
                         $perm = $permission;
                         $perm['parent'] = $module->parent;
                         $perm['module_id'] = $module->id;
                         $perm['slug'] = $module->slug;
-
-                        if ($module->is_system !== $permission['is_system'] || $module->is_plugin !== $permission['is_plugin']) {
-                            break;
-                        }
-
+                        
                         $moduleRolePermission[] = (new PermissionsEntity($perm));
                     }
                 }
@@ -577,12 +620,63 @@ class AvegaCmsInstallSeeder extends Seeder
     }
 
     /**
+     * @param  int  $userId
+     * @return void
+     */
+    private function _createLocales(int $userId): void
+    {
+        $locales = [
+
+            [
+                'slug'          => 'ru',
+                'locale'        => 'ru_RU',
+                'locale_name'   => 'Русская версия',
+                'home'          => 'Главная',
+                'extra'         => '',
+                'is_default'    => 1,
+                'active'        => 1,
+                'created_by_id' => $userId,
+                'updated_by_id' => 0
+            ],
+            [
+                'slug'          => 'en',
+                'locale'        => 'en_EN',
+                'locale_name'   => 'English version',
+                'home'          => 'Home',
+                'extra'         => '',
+                'is_default'    => 0,
+                'active'        => 0,
+                'created_by_id' => $userId,
+                'updated_by_id' => 0
+            ],
+            [
+                'slug'          => 'de',
+                'locale'        => 'de_DE',
+                'locale_name'   => 'Deutsche version',
+                'home'          => 'Startseite',
+                'extra'         => '',
+                'is_default'    => 0,
+                'active'        => 0,
+                'created_by_id' => $userId,
+                'updated_by_id' => 0
+            ]
+        ];
+
+        foreach ($locales as $locale) {
+            $localesEntity[] = (new LocalesEntity($locale));
+        }
+
+        $this->LLM->insertBatch($localesEntity);
+    }
+
+    /**
      * @return void
      * @throws ReflectionException|Exception
      */
     private function _createSettings(): void
     {
         $settingsList = [
+            // .env
             [
                 'entity'        => 'core',
                 'slug'          => 'env',
@@ -605,6 +699,30 @@ class AvegaCmsInstallSeeder extends Seeder
                 'context'       => 'settings.context.env.secretKey',
                 'rules'         => 'required'
             ],
+            [
+                'entity'        => 'core',
+                'slug'          => 'env',
+                'key'           => 'defLanguage',
+                'value'         => 'ru',
+                'default_value' => 'ru',
+                'return_type'   => 'string',
+                'label'         => 'settings.label.env.defLanguage',
+                'context'       => 'settings.context.env.defLanguage',
+                'rules'         => 'required|timezone'
+            ],
+            [
+                'entity'        => 'core',
+                'slug'          => 'env',
+                'key'           => 'useMultiLanguages',
+                'value'         => 0,
+                'default_value' => 0,
+                'return_type'   => 'boolean',
+                'label'         => 'settings.label.env.useMultiLanguages',
+                'context'       => 'settings.context.env.useMultiLanguages',
+                'rules'         => 'required|timezone'
+            ],
+
+            // auth
             [
                 'entity'        => 'core',
                 'slug'          => 'auth',

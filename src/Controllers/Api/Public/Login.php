@@ -2,22 +2,23 @@
 
 namespace AvegaCms\Controllers\Api\Public;
 
-use AvegaCms\Controllers\Api\AvegaCmsAPI;
 use AvegaCms\Libraries\Authorization\Authorization;
 use AvegaCms\Libraries\Authorization\Exceptions\{AuthorizationException, ValidationException};
 use CodeIgniter\Events\Events;
 use CodeIgniter\HTTP\ResponseInterface;
 use Exception;
 
+use CodeIgniter\RESTful\ResourceController;
 
-class Login extends AvegaCmsAPI
+
+class Login extends ResourceController
 {
     protected array         $settings = [];
     protected Authorization $Authorization;
 
     public function __construct()
     {
-        parent::__construct();
+        helper(['avegacms', 'date']);
         $this->settings = settings('core');
         $this->Authorization = new Authorization($this->settings);
     }
@@ -60,9 +61,6 @@ class Login extends AvegaCmsAPI
                 case 'logout':
                     $this->Authorization->logout();
                     $result['data']['status'] = 'logout';
-                    break;
-
-                case 'registration':
                     break;
                 default:
                     throw AuthorizationException::forUnknownAuthType();

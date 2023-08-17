@@ -50,22 +50,23 @@ class Authentication
             throw AuthenticationException::forAccessDenied();
         }
 
-        if (empty($authHeader = $request->getServer('HTTP_AUTHORIZATION'))) {
+        if (empty($authHeader = $request->getServer('HTTP_AUTHORIZATION') ?? '')) {
             throw AuthenticationException::forNoHeaderAuthorize();
         }
 
         $authHeader = explode(' ', $authHeader);
-        $cont = count($authHeader);
 
         $authType = match ($authHeader[0]) {
-            'Session' => ($cont === 1 && $this->settings['useSession']) ? ['type' => 'session'] : false,
-            'Token'   => ($cont === 2 && $this->settings['useToken']) ? [
-                'type' => 'token', 'token' => $authHeader[1]
-            ] : false,
-            'Bearer'  => ($cont === 2 && $this->settings['useJwt']) ? [
-                'type' => 'jwt', 'token' => $authHeader[1]
-            ] : false,
-            default   => false
+            'Token'  => ($this->settings['useToken']) ? ['type' => 'token', 'token' => $authHeader[1]] : false,
+            'Bearer' => (strtolower($authHeader[1]) === 'session' && $this->settings['useSession']) ?
+                ['type' => 'session'] :
+                (
+                $this->settings['useJwt'] ?
+                    [
+                        'type' => 'jwt', 'token' => $authHeader[1]
+                    ] : false
+                ),
+            default  => false
         };
 
         if ($authType === false) {

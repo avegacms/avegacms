@@ -204,11 +204,11 @@ class CreateAvegaCmsTables extends Migration
          */
         $this->forge->addField([
             'id'          => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
-            'slug'        => ['type' => 'varchar', 'constraint' => 52, 'unique' => true, 'null' => true],
+            'slug'        => ['type' => 'varchar', 'constraint' => 20, 'unique' => true, 'null' => true],
             // Значение, которое будет отображаться в ULR (пример: ru / omsk)
             'locale'      => ['type' => 'varchar', 'constraint' => 32, 'null' => true],
             // Для SEO (пример: ru_RU / en_EN)
-            'locale_name' => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
+            'locale_name' => ['type' => 'varchar', 'constraint' => 100, 'null' => true],
             // Наименование локали (пример: Русский язык / English language / omsk)
             'home'        => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
             // Для SEO начальное значение для breadcrumbs
@@ -220,8 +220,6 @@ class CreateAvegaCmsTables extends Migration
             ...$this->dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
-        $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
-        $this->forge->addForeignKey('updated_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
         $this->createTable($this->tables['locales']);
 
         /**

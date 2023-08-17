@@ -2,10 +2,12 @@
 
 namespace AvegaCms\Models\Admin;
 
-use CodeIgniter\Model;
+use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Entities\LocalesEntity;
+use CodeIgniter\Database\ConnectionInterface;
+use CodeIgniter\Validation\ValidationInterface;
 
-class LocalesModel extends Model
+class LocalesModel extends AvegaCmsModel
 {
     protected $DBGroup          = 'default';
     protected $table            = 'locales';
@@ -51,4 +53,24 @@ class LocalesModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    /**
+     * @param  int  $id
+     * @return array|object|null
+     */
+    public function forEdit(int $id): array|object|null
+    {
+        $this->builder()->select([
+            'id',
+            'slug',
+            'locale',
+            'locale_name',
+            'home',
+            'extra',
+            'is_default',
+            'active'
+        ]);
+
+        return $this->find($id);
+    }
 }
