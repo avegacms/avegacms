@@ -11,6 +11,7 @@ use ReflectionException;
 class Locales extends AvegaCmsAPI
 {
     protected LocalesModel $LM;
+    protected array        $patchFields = ['active'];
 
     public function __construct()
     {
@@ -111,8 +112,8 @@ class Locales extends AvegaCmsAPI
         if ($this->LM->find($id) === null) {
             return $this->failNotFound();
         }
-
-        if ( ! $this->validateData($data, $this->_rules(key($data)))) {
+        
+        if (in_array($key = key($data), $this->patchFields) && ! $this->validateData($data, $this->_rules($key))) {
             return $this->failValidationErrors(lang('Api.errors.save'));
         }
 
@@ -131,8 +132,12 @@ class Locales extends AvegaCmsAPI
      */
     public function delete($id): ResponseInterface
     {
-        if ($this->LM->find($id) === null) {
-            return $this->failNotFound();
+        if (($data = $this->LM->forEdit($id)) === null) {
+            return $this->failNotFound(lang('Api.errors.noData'));
+        }
+
+        if ($data->is_default == 1) {
+            return $this->failValidationErrors(lang('Locales.errors.deleteIsDefault'));
         }
 
         if ( ! $this->LM->delete($id)) {
