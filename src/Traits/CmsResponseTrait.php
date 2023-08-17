@@ -147,7 +147,22 @@ trait CmsResponseTrait
         unset($payload, $meta);
         return $this->respond($data, 200, $message);
     }
+    
+    /**
+     * @param  int|string|null  $data
+     * @param  string  $message
+     * @return ResponseInterface
+     */
+    protected function cmsRespondCreated(int|string|null $data = null, string $message = ''): ResponseInterface
+    {
+        return $this->respond(['id' => $data], $this->codes['created'], $message);
+    }
 
+    /**
+     * @param  array|string|null  $data
+     * @param  string  $message
+     * @return ResponseInterface
+     */
     protected function respondCreated(array|string|null $data = null, string $message = ''): ResponseInterface
     {
         return $this->respond($data, $this->codes['created'], $message);

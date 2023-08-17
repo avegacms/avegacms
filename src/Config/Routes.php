@@ -54,7 +54,12 @@ $routes->group('api', function ($routes) {
         $routes->group('settings', function ($routes) {
             $routes->group('locales', function ($routes) {
                 $routes->get('/', [Locales::class, 'index']);
-                $routes->get('show/(:num)', [Locales::class, 'show/$1']);
+                $routes->get('(:num)', [Locales::class, 'show/$1']);
+                $routes->get('(:num)/edit', [Locales::class, 'edit/$1']);
+                $routes->post('/', [Locales::class, 'create']);
+                $routes->put('(:num)', [Locales::class, 'update/$1']);
+                $routes->patch('(:num)', [Locales::class, 'patch/$1']);
+                $routes->delete('(:num)', [Locales::class, 'delete/$1']);
             });
             //$routes->get('/', [Settings::class, 'index']);
         });

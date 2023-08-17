@@ -381,14 +381,9 @@ class Authorization
             ) !== 2) {
             throw AuthorizationException::forFailUnauthorized();
         }
-
-        $token = match ($authHeader[0]) {
-            'Token'  => $this->settings['auth']['useToken'] ? $authHeader[1] : false,
-            'Bearer' => $this->settings['auth']['useJwt'] ? $authHeader[1] : false,
-            default  => false
-        };
-
-        if ($token === false || count($token = explode('.', $token)) !== 3) {
+        
+        if ($this->settings['auth']['useJwt'] || $authHeader[0] !== 'Bearer' || count($token = explode('.',
+                $authHeader[1])) !== 3) {
             throw AuthorizationException::forFailUnauthorized();
         }
 
