@@ -7,22 +7,21 @@ namespace AvegaCms\Libraries\Authentication;
 
 class AvegaCmsUser
 {
-    private static $access   = null;
-    private static $userData = null;
+    private static object|null $access   = null;
+    private static object|null $userData = null;
 
     /**
      * @return object|null
      */
-    public static function data(): object
+    public static function data(): object|null
     {
         return self::$userData;
     }
-
-
+    
     /**
      * @return object|null
      */
-    public static function permission(): object
+    public static function permission(): object|null
     {
         return self::$access;
     }

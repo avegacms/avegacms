@@ -120,10 +120,13 @@ class Authentication
             throw AuthenticationException::forUnknownPermission();
         }
 
-        if (($map = $UAM->getRoleAccessMap($userData->user->roleId)->findAll()) === null) {
-            throw AuthenticationException::forAccessDenied();
+        if (is_null($map = cache($fileCacheName = 'RAM_' . $userData->user->role))) {
+            if (($map = $UAM->getRoleAccessMap($userData->user->roleId)->findAll()) === null) {
+                throw AuthenticationException::forAccessDenied();
+            }
+            cache()->save($fileCacheName, $map, DAY * 30);
         }
-
+        
         if (($permission = $this->_findPermission($map, $segments)) === null) {
             throw AuthenticationException::forForbiddenAccess();
         }
