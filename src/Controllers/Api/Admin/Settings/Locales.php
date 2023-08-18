@@ -2,13 +2,13 @@
 
 namespace AvegaCms\Controllers\Api\Admin\Settings;
 
-use AvegaCms\Controllers\Api\AvegaCmsAPI;
+use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use AvegaCms\Models\Admin\LocalesModel;
 use CodeIgniter\HTTP\ResponseInterface;
 use ReflectionException;
 
 
-class Locales extends AvegaCmsAPI
+class Locales extends AvegaCmsAdminAPI
 {
     protected LocalesModel $LM;
     protected array        $patchFields = ['active'];
@@ -112,7 +112,7 @@ class Locales extends AvegaCmsAPI
         if ($this->LM->find($id) === null) {
             return $this->failNotFound();
         }
-        
+
         if (in_array($key = key($data), $this->patchFields) && ! $this->validateData($data, $this->_rules($key))) {
             return $this->failValidationErrors(lang('Api.errors.save'));
         }
