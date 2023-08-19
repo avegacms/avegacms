@@ -412,6 +412,67 @@ class AvegaCmsInstallSeeder extends Seeder
     private function _createPermissions(int $userId): void
     {
         $permissions = [
+            // Default permission Module
+            [
+                'role_id'       => 0,
+                'parent'        => 0,
+                'module_id'     => 1,
+                'is_system'     => 0,
+                'is_plugin'     => 0,
+                'slug'          => '',
+                'access'        => 0,
+                'self'          => 0,
+                'create'        => 0,
+                'read'          => 0,
+                'update'        => 0,
+                'delete'        => 0,
+                'moderated'     => 0,
+                'settings'      => 0,
+                'extra'         => '',
+                'created_by_id' => $userId,
+                'updated_by_id' => 0
+            ],
+            // Default permission System
+            [
+                'role_id'       => 0,
+                'parent'        => 0,
+                'module_id'     => 0,
+                'is_system'     => 1,
+                'is_plugin'     => 0,
+                'slug'          => '',
+                'access'        => 0,
+                'self'          => 0,
+                'create'        => 0,
+                'read'          => 0,
+                'update'        => 0,
+                'delete'        => 0,
+                'moderated'     => 0,
+                'settings'      => 0,
+                'extra'         => '',
+                'created_by_id' => $userId,
+                'updated_by_id' => 0
+            ],
+            // Default permission Plugin
+            [
+                'role_id'       => 0,
+                'parent'        => 0,
+                'module_id'     => 0,
+                'is_system'     => 0,
+                'is_plugin'     => 1,
+                'slug'          => '',
+                'access'        => 0,
+                'self'          => 0,
+                'create'        => 0,
+                'read'          => 0,
+                'update'        => 0,
+                'delete'        => 0,
+                'moderated'     => 0,
+                'settings'      => 0,
+                'extra'         => '',
+                'created_by_id' => $userId,
+                'updated_by_id' => 0
+            ],
+
             // root Module
             [
                 'role_id'       => 1,

@@ -4,17 +4,19 @@ namespace AvegaCms\Controllers\Api\Admin\Settings;
 
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Models\Admin\RolesModel;
+use AvegaCms\Models\Admin\{RolesModel, PermissionsModel};
 use ReflectionException;
 
 class Roles extends AvegaCmsAdminAPI
 {
-    protected RolesModel $RM;
+    protected RolesModel       $RM;
+    protected PermissionsModel $PM;
 
     public function __construct()
     {
         parent::__construct();
         $this->RM = model(RolesModel::class);
+        $this->PM = model(PermissionsModel::class);
     }
 
     /**
@@ -57,7 +59,12 @@ class Roles extends AvegaCmsAdminAPI
             return $this->failNotFound(lang('Api.errors.noData'));
         }
 
-        return $this->cmsRespond($data->toArray());
+        return $this->cmsRespond(
+            [
+                'role'        => $data->toArray(),
+                'permissions' => $this->PM->getDefaultPermissions()
+            ]
+        );
     }
 
     /**
