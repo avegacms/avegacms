@@ -5,12 +5,9 @@ namespace AvegaCms\Commands\Generators;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\CLI\GeneratorTrait;
-use CodeIgniter\Controller;
-use CodeIgniter\RESTful\ResourceController;
-use CodeIgniter\RESTful\ResourcePresenter;
+use AvegaCms\Controllers\AvegaCmsFrontend;
 use AvegaCms\Controllers\Api\CmsResourceController;
-
-use function _PHPStan_8b0bfd44f\RingCentral\Psr7\str;
+use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 
 class AvegaCmsControllerGenerator extends BaseCommand
 {
@@ -35,7 +32,7 @@ class AvegaCmsControllerGenerator extends BaseCommand
      *
      * @var string
      */
-    protected $description = 'Generates a new controller file.';
+    protected $description = 'Generates a new cms controller file.';
 
     /**
      * The Command's Usage
@@ -79,6 +76,7 @@ class AvegaCmsControllerGenerator extends BaseCommand
         $this->template = 'avegacmscontroller.tpl.php';
 
         $this->classNameLang = 'CLI.generator.className.controller';
+
         $this->generateClass($params);
     }
 
@@ -88,36 +86,32 @@ class AvegaCmsControllerGenerator extends BaseCommand
      */
     protected function prepare(string $class): string
     {
-        if (($type = $this->getOption('type')) === true) {
-            $type = 'controller';
+        if (count($classPath = explode('\\', $class)) >= 3) {
+            if ($classPath[2] === 'Api' && ! in_array($classPath[3] ?? '', ['Public', 'Admin'], true)) {
+                CLI::error(lang('Generator.error.controller.folderNotFound', [$classPath[3]]), 'light_gray', 'red');
+                CLI::newLine();
+                exit();
+            }
         }
 
-        if (($access = $this->getOption('type')) === true) {
-            $access = 'public';
-        }
+        $type = strtolower($classPath[2] ?? 'controller');
+        $access = strtolower($classPath[3] ?? 'public');
 
-        if ( ! in_array($type, ['controller', 'api'], true)) {
-            // @codeCoverageIgnoreStart
-            $rest = CLI::prompt(lang('CLI.generator.parentClass'), ['controller', 'api'], 'required');
+
+        $useStatement = AvegaCmsFrontend::class;
+        $extends = 'AvegaCmsFrontend';
+
+        if ($type === 'controller' && $access === 'admin') {
+            CLI::error(lang('CLI.commandNotFound', [$access]), 'light_gray', 'red');
             CLI::newLine();
-            // @codeCoverageIgnoreEnd
-        }
-
-        if ( ! in_array($access, ['public', 'admin'], true)) {
-            // @codeCoverageIgnoreStart
-            $rest = CLI::prompt(lang('CLI.generator.parentClass'), ['public', 'admin'], 'required');
-            CLI::newLine();
-            // @codeCoverageIgnoreEnd
-        }
-
-        if ($type === 'api') {
+            exit();
+        } elseif ($type === 'api') {
             if ($access === 'admin') {
+                $useStatement = AvegaCmsAdminAPI::class;
+                $extends = 'AvegaCmsAdminAPI';
             } else {
-            }
-        } else {
-            if ($access === 'public') {
-            } else {
-                //error
+                $useStatement = CmsResourceController::class;
+                $extends = 'CmsResourceController';
             }
         }
 
@@ -125,56 +119,7 @@ class AvegaCmsControllerGenerator extends BaseCommand
             $class,
             ['{useStatement}', '{extends}'],
             [$useStatement, $extends],
-            ['type' => $rest]
-        );
-    }
-
-    /**
-     * Prepare options and do the necessary replacements.
-     */
-    protected function prepare1(string $class): string
-    {
-        $bare = $this->getOption('bare');
-        $rest = $this->getOption('restful');
-
-        $useStatement = trim(APP_NAMESPACE, '\\') . '\Controllers\BaseController';
-        $extends = 'BaseController';
-
-        // Gets the appropriate parent class to extend.
-        if ($bare || $rest) {
-            if ($bare) {
-                $useStatement = Controller::class;
-                $extends = 'Controller';
-            } elseif ($rest) {
-                $rest = is_string($rest) ? $rest : 'controller';
-
-                if ( ! in_array($rest, ['controller', 'cmsapi', 'presenter'], true)) {
-                    // @codeCoverageIgnoreStart
-                    $rest = CLI::prompt(lang('CLI.generator.parentClass'), ['controller', 'cmsapi', 'presenter'],
-                        'required');
-                    CLI::newLine();
-                    // @codeCoverageIgnoreEnd
-                }
-
-
-                if ($rest === 'controller') {
-                    $useStatement = ResourceController::class;
-                    $extends = 'ResourceController';
-                } elseif ($rest === 'cmsapi') {
-                    $useStatement = CmsResourceController::class;
-                    $extends = 'CmsResourceController';
-                } elseif ($rest === 'presenter') {
-                    $useStatement = ResourcePresenter::class;
-                    $extends = 'ResourcePresenter';
-                }
-            }
-        }
-
-        return $this->parseTemplate(
-            $class,
-            ['{useStatement}', '{extends}'],
-            [$useStatement, $extends],
-            ['type' => $rest]
+            ['type' => $type, 'access' => $access]
         );
     }
 }
