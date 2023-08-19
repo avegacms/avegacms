@@ -63,6 +63,7 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->_createPermissions($userId);
         $this->_createLocales($userId);
         $this->_createSettings();
+        cache()->clean();
     }
 
     /**
@@ -247,6 +248,8 @@ class AvegaCmsInstallSeeder extends Seeder
 
         $subModules = $this->MM->select(['id', 'slug'])->whereIn('slug', ['settings', 'content'])->findAll();
 
+        $list = [];
+
         foreach ($subModules as $subModule) {
             $list[$subModule->slug] = $subModule->id;
         }
@@ -384,6 +387,8 @@ class AvegaCmsInstallSeeder extends Seeder
                 ]
             ]
         ];
+
+        $modulesEntity = [];
 
         foreach ($subModules as $subModule) {
             foreach ($modules as $slug => $list) {
@@ -609,7 +614,7 @@ class AvegaCmsInstallSeeder extends Seeder
                         $perm['parent'] = $module->parent;
                         $perm['module_id'] = $module->id;
                         $perm['slug'] = $module->slug;
-                        
+
                         $moduleRolePermission[] = (new PermissionsEntity($perm));
                     }
                 }
@@ -622,43 +627,37 @@ class AvegaCmsInstallSeeder extends Seeder
     /**
      * @param  int  $userId
      * @return void
+     * @throws ReflectionException
      */
     private function _createLocales(int $userId): void
     {
         $locales = [
-
             [
                 'slug'          => 'ru',
                 'locale'        => 'ru_RU',
                 'locale_name'   => 'Русская версия',
                 'home'          => 'Главная',
-                'extra'         => '',
                 'is_default'    => 1,
                 'active'        => 1,
-                'created_by_id' => $userId,
-                'updated_by_id' => 0
+                'created_by_id' => $userId
             ],
             [
                 'slug'          => 'en',
                 'locale'        => 'en_EN',
                 'locale_name'   => 'English version',
                 'home'          => 'Home',
-                'extra'         => '',
                 'is_default'    => 0,
                 'active'        => 0,
-                'created_by_id' => $userId,
-                'updated_by_id' => 0
+                'created_by_id' => $userId
             ],
             [
                 'slug'          => 'de',
                 'locale'        => 'de_DE',
                 'locale_name'   => 'Deutsche version',
                 'home'          => 'Startseite',
-                'extra'         => '',
                 'is_default'    => 0,
                 'active'        => 0,
-                'created_by_id' => $userId,
-                'updated_by_id' => 0
+                'created_by_id' => $userId
             ]
         ];
 

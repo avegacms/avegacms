@@ -4,7 +4,7 @@ namespace AvegaCms\Controllers\Api\Admin;
 
 use CodeIgniter\RESTful\ResourceController;
 
-class Settings extends ResourceController
+class Settings extends AvegaCmsAdminAPI
 {
     /**
      * Return an array of resource objects, themselves in array format

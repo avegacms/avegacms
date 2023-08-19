@@ -22,7 +22,7 @@ class AvegaCmsModelGenerator extends BaseCommand
      *
      * @var string
      */
-    protected $name = 'make:avegacmsmodel';
+    protected $name = 'makecms:model';
 
     /**
      * The Command's Description
@@ -36,7 +36,7 @@ class AvegaCmsModelGenerator extends BaseCommand
      *
      * @var string
      */
-    protected $usage = 'make:avegacmsmodel <name> [options]';
+    protected $usage = 'makecms:model <name> [options]';
 
     /**
      * The Command's Arguments
@@ -70,7 +70,7 @@ class AvegaCmsModelGenerator extends BaseCommand
     {
         $this->component = 'Model';
         $this->directory = 'Models';
-        $this->template  = 'avegacmsmodel.tpl.php';
+        $this->template = 'avegacmsmodel.tpl.php';
 
         $this->classNameLang = 'CLI.generator.className.model';
         $this->execute($params);
@@ -81,9 +81,9 @@ class AvegaCmsModelGenerator extends BaseCommand
      */
     protected function prepare(string $class): string
     {
-        $table   = $this->getOption('table');
+        $table = $this->getOption('table');
         $dbGroup = $this->getOption('dbgroup');
-        $return  = $this->getOption('return');
+        $return = $this->getOption('return');
 
         $baseClass = class_basename($class);
 
@@ -91,11 +91,11 @@ class AvegaCmsModelGenerator extends BaseCommand
             $baseClass = $match[1];
         }
 
-        $table   = is_string($table) ? $table : plural(strtolower($baseClass));
+        $table = is_string($table) ? $table : plural(strtolower($baseClass));
         $dbGroup = is_string($dbGroup) ? $dbGroup : 'default';
-        $return  = is_string($return) ? $return : 'array';
+        $return = is_string($return) ? $return : 'array';
 
-        if (! in_array($return, ['array', 'object', 'entity'], true)) {
+        if ( ! in_array($return, ['array', 'object', 'entity'], true)) {
             // @codeCoverageIgnoreStart
             $return = CLI::prompt(lang('CLI.generator.returnType'), ['array', 'object', 'entity'], 'required');
             CLI::newLine();
@@ -114,7 +114,7 @@ class AvegaCmsModelGenerator extends BaseCommand
             }
 
             $return = '\\' . trim($return, '\\') . '::class';
-            $this->call('make:entity', array_merge([$baseClass], $this->params));
+            $this->call('makecms:entity', array_merge([$baseClass], $this->params));
         } else {
             $return = "'{$return}'";
         }

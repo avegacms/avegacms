@@ -38,7 +38,18 @@ class LocalesModel extends AvegaCmsModel
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'id'            => ['rules' => 'if_exist|is_natural_no_zero'],
+        'slug'          => ['rules' => 'if_exist|required|alpha_dash|max_length[20]|is_unique[locales.slug,id,{id}]'],
+        'locale'        => ['rules' => 'if_exist|required|max_length[32]'],
+        'locale_name'   => ['rules' => 'if_exist|required|max_length[100]'],
+        'home'          => ['rules' => 'if_exist|required|max_length[255]'],
+        'extra'         => ['rules' => 'if_exist|permit_empty'],
+        'is_default'    => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
+        'active'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
+        'created_by_id' => ['rules' => 'if_exist|is_natural'],
+        'updated_by_id' => ['rules' => 'if_exist|is_natural']
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
