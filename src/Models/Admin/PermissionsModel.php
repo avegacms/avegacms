@@ -90,7 +90,7 @@ class PermissionsModel extends Model
 
         return $this->findAll();
     }
-
+    
     /**
      * @param  int  $roleId
      * @param  int  $moduleId
@@ -107,6 +107,17 @@ class PermissionsModel extends Model
             ->orderBy('parent', 'ASC');
 
         return $this->findAll();
+    }
+
+    /**
+     * @param  int  $id
+     * @return array|object|null
+     */
+    public function forEdit(int $id): array|object|null
+    {
+        $this->_getSelect()->builder()->where(['role_id !=' => 0, 'module_id !=' => 0]);
+
+        return $this->find($id);
     }
 
     private function _getSelect(): Model

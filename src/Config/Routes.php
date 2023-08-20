@@ -5,7 +5,7 @@ namespace Config;
 use AvegaCms\Controllers\Api\Public\Login;
 use AvegaCms\Controllers\Api\Admin\Settings;
 use AvegaCms\Controllers\Api\Admin\Content\Pages;
-use AvegaCms\Controllers\Api\Admin\Settings\{Locales, Roles, Permissions};
+use AvegaCms\Controllers\Api\Admin\Settings\{Locales, Modules, Roles, Permissions};
 
 // Create a new instance of our RouteCollection class.
 $routes = Services::routes();
@@ -60,6 +60,20 @@ $routes->group('api', function ($routes) {
                 $routes->patch('(:num)', [Locales::class, 'update/$1']);
                 $routes->delete('(:num)', [Locales::class, 'delete/$1']);
             });
+            $routes->group('modules', function ($routes) {
+                $routes->get('/', [Modules::class, 'index']);
+                $routes->get('(:num)', [Modules::class, 'show/$1']);
+                $routes->post('/', [Modules::class, 'create']);
+                $routes->put('(:num)', [Modules::class, 'update/$1']);
+                $routes->patch('(:num)', [Modules::class, 'update/$1']);
+                $routes->delete('(:num)', [Modules::class, 'delete/$1']);
+            });
+            $routes->group('permissions', function ($routes) {
+                $routes->get('(:num)/(:num)', [Permissions::class, 'actions/$1/$2']);
+                $routes->get('(:num)/edit', [Permissions::class, 'edit/$1']);
+                $routes->put('(:num)', [Permissions::class, 'update/$1']);
+                $routes->delete('(:num)', [Permissions::class, 'delete/$1']);
+            });
             $routes->group('roles', function ($routes) {
                 $routes->get('/', [Roles::class, 'index']);
                 $routes->get('(:num)/edit', [Roles::class, 'edit/$1']);
@@ -67,15 +81,6 @@ $routes->group('api', function ($routes) {
                 $routes->put('(:num)', [Roles::class, 'update/$1']);
                 $routes->patch('(:num)', [Roles::class, 'update/$1']);
                 $routes->delete('(:num)', [Roles::class, 'delete/$1']);
-            });
-            $routes->group('permissions', function ($routes) {
-                $routes->get('(:num)/(:num)', [Permissions::class, 'actions/$1/$2']);
-                $routes->get('(:num)/edit', [Permissions::class, 'edit/$1']);
-                $routes->get('new', [Permissions::class, 'new']);
-                $routes->post('/', [Permissions::class, 'create']);
-                $routes->put('(:num)', [Permissions::class, 'update/$1']);
-                $routes->patch('(:num)', [Permissions::class, 'update/$1']);
-                $routes->delete('(:num)', [Permissions::class, 'delete/$1']);
             });
             //$routes->get('/', [Settings::class, 'index']);
         });

@@ -37,6 +37,7 @@ if ($type === 'api'): ?>
     /**
     * Return the properties of a resource object
     *
+    * @param $id
     * @return ResponseInterface
     */
     public function show($id = null): ResponseInterface
@@ -67,6 +68,7 @@ if ($type === 'api'): ?>
     /**
     * Return the editable properties of a resource object
     *
+    * @param $id
     * @return ResponseInterface
     */
     public function edit($id = null): ResponseInterface
@@ -77,6 +79,7 @@ if ($type === 'api'): ?>
     /**
     * Add or update a model resource, from "posted" properties
     *
+    * @param $id
     * @return ResponseInterface
     */
     public function update($id = null): ResponseInterface
@@ -87,6 +90,7 @@ if ($type === 'api'): ?>
     /**
     * Delete the designated resource object from the model
     *
+    * @param $id
     * @return ResponseInterface
     */
     public function delete($id = null): ResponseInterface
