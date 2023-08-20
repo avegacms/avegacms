@@ -4,19 +4,21 @@ namespace AvegaCms\Controllers\Api\Admin\Settings;
 
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Models\Admin\{RolesModel, PermissionsModel};
+use AvegaCms\Models\Admin\{RolesModel, PermissionsModel, UserRolesModel};
 use ReflectionException;
 
 class Roles extends AvegaCmsAdminAPI
 {
     protected RolesModel       $RM;
     protected PermissionsModel $PM;
+    protected UserRolesModel   $URM;
 
     public function __construct()
     {
         parent::__construct();
         $this->RM = model(RolesModel::class);
         $this->PM = model(PermissionsModel::class);
+        $this->URM = model(UserRolesModel::class);
     }
 
     /**
@@ -93,6 +95,7 @@ class Roles extends AvegaCmsAdminAPI
     /**
      * @param $id
      * @return ResponseInterface
+     * @throws ReflectionException
      */
     public function delete($id = null): ResponseInterface
     {
@@ -105,7 +108,15 @@ class Roles extends AvegaCmsAdminAPI
         }
 
         if ( ! $this->RM->delete($id)) {
-            return $this->failValidationErrors(lang('Api.errors.delete'));
+            return $this->failValidationErrors(lang('Api.errors.delete', ['Roles']));
+        }
+
+        if ( ! $this->PM->where(['role_id' => $id])->delete()) {
+            return $this->failValidationErrors(lang('Api.errors.delete', ['Permissions']));
+        }
+
+        if ( ! $this->URM->update(['role_id' => 4], ['role_id' => $id])) {
+            return $this->failValidationErrors(lang('Api.errors.update', ['UserRoles']));
         }
 
         return $this->respondNoContent();
