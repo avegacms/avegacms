@@ -2,10 +2,10 @@
 
 namespace AvegaCms\Models\Admin;
 
-use CodeIgniter\Model;
+use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Entities\RolesEntity;
 
-class RolesModel extends Model
+class RolesModel extends AvegaCmsModel
 {
     protected $DBGroup          = 'default';
     protected $table            = 'roles';
@@ -35,7 +35,17 @@ class RolesModel extends Model
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'id'            => ['rules' => 'if_exist|is_natural_no_zero'],
+        'role'          => ['rules' => 'if_exist|required|alpha_dash|max_length[36]|is_unique[roles.role,id,{id}]'],
+        'description'   => ['rules' => 'if_exist|permit_empty'],
+        'color'         => ['rules' => 'if_exist|required|max_length[7]'],
+        'path'          => ['rules' => 'if_exist|permit_empty|max_length[512]'],
+        'priority'      => ['rules' => 'if_exist|is_natural|max_length[3]'],
+        'active'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
+        'created_by_id' => ['rules' => 'if_exist|is_natural'],
+        'updated_by_id' => ['rules' => 'if_exist|is_natural']
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;

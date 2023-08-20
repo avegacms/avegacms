@@ -1,5 +1,11 @@
 <@php
 
+<?php
+if ($strict): ?>
+    declare(strict_types=1);
+<?php
+endif; ?>
+
 namespace {namespace};
 
 use {useStatement};
