@@ -56,12 +56,8 @@ class AvegaCmsControllerGenerator extends BaseCommand
      * @var array
      */
     protected $options = [
-        //'--bare'      => 'Extends from CodeIgniter\Controller instead of BaseController.',
-        '--restful' => 'Extends from a RESTful resource, Options: [controller, cmsapi]. Default: "controller".',
-
-        '--type'      => 'Controller type, options [controller, api]. Default: "controller".',
-        '--access'    => 'Controller access type, options [public, admin]. Default: "public".',
         '--namespace' => 'Set root namespace. Default: "APP_NAMESPACE".',
+        '--strict'    => 'Set declare(strict_types=1) (e.g. strict mode is enabled by default)',
         '--suffix'    => 'Append the component title to the class name (e.g. User => UserController).',
         '--force'     => 'Force overwrite existing file.',
     ];
@@ -97,7 +93,6 @@ class AvegaCmsControllerGenerator extends BaseCommand
         $type = strtolower($classPath[2] ?? 'controller');
         $access = strtolower($classPath[3] ?? 'public');
 
-
         $useStatement = AvegaCmsFrontend::class;
         $extends = 'AvegaCmsFrontend';
 
@@ -119,7 +114,7 @@ class AvegaCmsControllerGenerator extends BaseCommand
             $class,
             ['{useStatement}', '{extends}'],
             [$useStatement, $extends],
-            ['type' => $type, 'access' => $access]
+            ['type' => $type, 'access' => $access, 'strict' => $this->getOption('strict')]
         );
     }
 }

@@ -389,6 +389,8 @@ class CreateAvegaCmsTables extends Migration
             'id'        => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'auto_increment' => true],
             'role_id'   => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
             'module_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true, 'default' => 0],
+            // Является ли запись модулем
+            'is_module' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // Является ли запись системной
             'is_system' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // Является ли модуль плагином
@@ -418,6 +420,7 @@ class CreateAvegaCmsTables extends Migration
             ...$this->dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
+        $this->forge->addUniqueKey(['role_id', 'module_id', 'is_module', 'is_system', 'is_plugin', 'parent', 'slug']);
         $this->createTable($this->tables['permissions']);
     }
 
