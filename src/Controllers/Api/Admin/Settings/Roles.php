@@ -5,6 +5,7 @@ namespace AvegaCms\Controllers\Api\Admin\Settings;
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\{RolesModel, PermissionsModel, UserRolesModel};
+use AvegaCms\Entities\PermissionsEntity;
 use ReflectionException;
 
 class Roles extends AvegaCmsAdminAPI
@@ -47,6 +48,18 @@ class Roles extends AvegaCmsAdminAPI
             return $this->failValidationErrors($this->RM->errors());
         }
 
+        $defaultPermissions = $this->PM->getDefaultPermissions();
+        $rolePermissions = [];
+        foreach ($defaultPermissions as $permission) {
+            $permission['role_id'] = $id;
+            $permission['created_by_id'] = $this->userData->userId;
+            $rolePermissions[] = (new PermissionsEntity($permission));
+        }
+
+        if ( ! $this->PM->insertBatch($rolePermissions)) {
+            return $this->failNotFound(lang('Api.errors.create', ['Permissions']));
+        }
+
         return $this->cmsRespondCreated($id);
     }
 
@@ -63,7 +76,7 @@ class Roles extends AvegaCmsAdminAPI
         return $this->cmsRespond(
             [
                 'role'        => $data->toArray(),
-                'permissions' => $this->PM->getDefaultPermissions()
+                'permissions' => $this->PM->getDefaultPermissions($id)
             ]
         );
     }
@@ -89,6 +102,8 @@ class Roles extends AvegaCmsAdminAPI
             return $this->failValidationErrors($this->RM->errors());
         }
 
+        cache()->delete('RAM_' . $data->role);
+
         return $this->respondNoContent();
     }
 
@@ -110,6 +125,8 @@ class Roles extends AvegaCmsAdminAPI
         if ( ! $this->RM->delete($id)) {
             return $this->failValidationErrors(lang('Api.errors.delete', ['Roles']));
         }
+
+        cache()->delete('RAM_' . $data->role);
 
         if ( ! $this->PM->where(['role_id' => $id])->delete()) {
             return $this->failValidationErrors(lang('Api.errors.delete', ['Permissions']));

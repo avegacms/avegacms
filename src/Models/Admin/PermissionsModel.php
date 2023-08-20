@@ -18,6 +18,7 @@ class PermissionsModel extends Model
         'role_id',
         'parent',
         'module_id',
+        'is_system',
         'is_plugin',
         'slug',
         'access',
@@ -83,7 +84,26 @@ class PermissionsModel extends Model
      */
     public function getDefaultPermissions(int $roleId = 0): array
     {
-        $this->builder()->where(['role_id' => $roleId]);
+        $this->builder()->select(
+            [
+                'id',
+                'role_id',
+                'parent',
+                'module_id',
+                'is_system',
+                'is_plugin',
+                'slug',
+                'access',
+                'self',
+                'create',
+                'read',
+                'update',
+                'delete',
+                'moderated',
+                'settings',
+                'extra'
+            ]
+        )->where(['role_id' => $roleId]);
 
         return $this->findAll();
     }

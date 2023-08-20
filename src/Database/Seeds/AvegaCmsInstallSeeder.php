@@ -275,6 +275,20 @@ class AvegaCmsInstallSeeder extends Seeder
                     'parent'        => $list['settings'],
                     'is_plugin'     => 0,
                     'is_system'     => 1,
+                    'slug'          => 'permissions',
+                    'name'          => 'Cms.modules.name.permissions',
+                    'version'       => $this->version,
+                    'description'   => 'Cms.modules.description.permissions',
+                    'extra'         => '',
+                    'in_sitemap'    => 0,
+                    'active'        => 1,
+                    'created_by_id' => $userId,
+                    'updated_by_id' => 0
+                ],
+                [
+                    'parent'        => $list['settings'],
+                    'is_plugin'     => 0,
+                    'is_system'     => 1,
                     'slug'          => 'users',
                     'name'          => 'Cms.modules.name.users',
                     'version'       => $this->version,
@@ -477,7 +491,7 @@ class AvegaCmsInstallSeeder extends Seeder
             [
                 'role_id'       => 1,
                 'parent'        => 0,
-                'module_id'     => 0,
+                'module_id'     => 1,
                 'is_system'     => 0,
                 'is_plugin'     => 0,
                 'slug'          => '',
@@ -538,7 +552,7 @@ class AvegaCmsInstallSeeder extends Seeder
             [
                 'role_id'       => 2,
                 'parent'        => 0,
-                'module_id'     => 0,
+                'module_id'     => 1,
                 'is_system'     => 0,
                 'is_plugin'     => 0,
                 'slug'          => '',
