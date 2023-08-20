@@ -2,7 +2,7 @@
 
 <?php
 if ($strict): ?>
-declare(strict_types=1);
+    declare(strict_types=1);
 <?php
 endif; ?>
 
@@ -11,7 +11,7 @@ namespace {namespace};
 use {useStatement};
 <?php
 if ($type === 'api'): ?>
-use CodeIgniter\HTTP\ResponseInterface;
+    use CodeIgniter\HTTP\ResponseInterface;
 <?php
 endif; ?>
 
@@ -21,7 +21,7 @@ class {class} extends {extends}
 if ($type === 'api'): ?>
     public function __construct()
     {
-        parent::__construct();
+    parent::__construct();
     }
 
     /**
@@ -37,6 +37,7 @@ if ($type === 'api'): ?>
     /**
     * Return the properties of a resource object
     *
+    * @param $id
     * @return ResponseInterface
     */
     public function show($id = null): ResponseInterface
@@ -67,6 +68,7 @@ if ($type === 'api'): ?>
     /**
     * Return the editable properties of a resource object
     *
+    * @param $id
     * @return ResponseInterface
     */
     public function edit($id = null): ResponseInterface
@@ -77,6 +79,7 @@ if ($type === 'api'): ?>
     /**
     * Add or update a model resource, from "posted" properties
     *
+    * @param $id
     * @return ResponseInterface
     */
     public function update($id = null): ResponseInterface
@@ -87,6 +90,7 @@ if ($type === 'api'): ?>
     /**
     * Delete the designated resource object from the model
     *
+    * @param $id
     * @return ResponseInterface
     */
     public function delete($id = null): ResponseInterface

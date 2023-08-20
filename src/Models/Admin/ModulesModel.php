@@ -39,7 +39,21 @@ class ModulesModel extends Model
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'id'            => ['rules' => 'if_exist|is_natural_no_zero'],
+        'parent'        => ['rules' => 'if_exist|is_natural'],
+        'is_plugin'     => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
+        'is_system'     => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
+        'slug'          => ['rules' => 'if_exist|permit_empty|alpha_dash|max_length[64]'],
+        'name'          => ['rules' => 'if_exist|permit_empty|max_length[255]'],
+        'version'       => ['rules' => 'if_exist|permit_empty|max_length[64]'],
+        'description'   => ['rules' => 'if_exist|permit_empty|max_length[2048]'],
+        'extra'         => ['rules' => 'if_exist|permit_empty'],
+        'in_sitemap'    => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
+        'active'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
+        'created_by_id' => ['rules' => 'if_exist|is_natural'],
+        'updated_by_id' => ['rules' => 'if_exist|is_natural']
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
@@ -54,4 +68,61 @@ class ModulesModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    /**
+     * @param  int  $parent
+     * @return array
+     */
+    public function getModules(int $parent = 0): array
+    {
+        $this->builder()->select([
+            'modules.id',
+            'modules.parent',
+            'modules.is_plugin',
+            'modules.is_system',
+            'modules.slug',
+            'modules.name',
+            'modules.version',
+            'modules.description',
+            'modules.extra',
+            'modules.in_sitemap',
+            'modules.active',
+            '(SELECT COUNT(m.id) FROM modules AS m WHERE m.parent = modules.id) AS num'
+        ])->where(['modules.parent' => $parent]);
+
+        return $this->findAll();
+    }
+
+    /**
+     * @param  int  $id
+     * @return array|object|null
+     */
+    public function forEdit(int $id)
+    {
+        $this->_getSelect()->builder();
+
+        return $this->find($id);
+    }
+
+    /**
+     * @return Model
+     */
+    private function _getSelect(): Model
+    {
+        $this->builder()->select([
+            'id',
+            'parent',
+            'is_plugin',
+            'is_system',
+            'slug',
+            'name',
+            'version',
+            'description',
+            'extra',
+            'in_sitemap',
+            'active',
+        ]);
+
+        return $this;
+    }
 }
