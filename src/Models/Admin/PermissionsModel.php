@@ -49,7 +49,7 @@ class PermissionsModel extends Model
         'parent'        => ['rules' => 'if_exist|is_natural'],
         'module_id'     => ['rules' => 'if_exist|is_natural'],
         'is_plugin'     => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
-        'slug'          => ['rules' => 'if_exist|required|alpha_dash|max_length[64]'],
+        'slug'          => ['rules' => 'if_exist|permit_empty|alpha_dash|max_length[64]'],
         'access'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'self'          => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'create'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],

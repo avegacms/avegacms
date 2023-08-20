@@ -49,8 +49,7 @@ class Roles extends AvegaCmsAdminAPI
     }
 
     /**
-     * Return the editable properties of a resource object
-     *
+     * @param $id
      * @return ResponseInterface
      */
     public function edit($id = null): ResponseInterface
