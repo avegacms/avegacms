@@ -74,7 +74,6 @@ $routes->group('api', function ($routes) {
                 $routes->get('new', [Permissions::class, 'new']);
                 $routes->post('/', [Permissions::class, 'create']);
                 $routes->put('(:num)', [Permissions::class, 'update/$1']);
-                $routes->patch('(:num)', [Permissions::class, 'update/$1']);
                 $routes->delete('(:num)', [Permissions::class, 'delete/$1']);
             });
             //$routes->get('/', [Settings::class, 'index']);

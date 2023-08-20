@@ -94,7 +94,7 @@ class Roles extends AvegaCmsAdminAPI
             return $this->failValidationErrors(lang('Api.errors.noData'));
         }
 
-        if ($this->RM->find($id) === null) {
+        if (($role = $this->RM->find($id)) === null) {
             return $this->failNotFound();
         }
 
@@ -104,7 +104,7 @@ class Roles extends AvegaCmsAdminAPI
             return $this->failValidationErrors($this->RM->errors());
         }
 
-        cache()->delete('RAM_' . $data->role);
+        cache()->delete('RAM_' . $role->role);
 
         return $this->respondNoContent();
     }
@@ -116,11 +116,11 @@ class Roles extends AvegaCmsAdminAPI
      */
     public function delete($id = null): ResponseInterface
     {
-        if (($data = $this->RM->find($id)) === null) {
-            return $this->failNotFound(lang('Api.errors.noData'));
+        if (($role = $this->RM->find($id)) === null) {
+            return $this->failNotFound();
         }
 
-        if (in_array($data->role, ['root', 'default'])) {
+        if (in_array($role->role, ['root', 'default'])) {
             return $this->failValidationErrors(lang('Roles.errors.deleteIsDefault'));
         }
 
@@ -128,7 +128,7 @@ class Roles extends AvegaCmsAdminAPI
             return $this->failValidationErrors(lang('Api.errors.delete', ['Roles']));
         }
 
-        cache()->delete('RAM_' . $data->role);
+        cache()->delete('RAM_' . $role->role);
 
         if ( ! $this->PM->where(['role_id' => $id])->delete()) {
             return $this->failValidationErrors(lang('Api.errors.delete', ['Permissions']));
