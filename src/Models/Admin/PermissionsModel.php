@@ -90,7 +90,7 @@ class PermissionsModel extends Model
 
         return $this->findAll();
     }
-
+    
     /**
      * @param  int  $roleId
      * @param  int  $moduleId

@@ -71,8 +71,6 @@ $routes->group('api', function ($routes) {
             $routes->group('permissions', function ($routes) {
                 $routes->get('(:num)/(:num)', [Permissions::class, 'actions/$1/$2']);
                 $routes->get('(:num)/edit', [Permissions::class, 'edit/$1']);
-                $routes->get('new', [Permissions::class, 'new']);
-                $routes->post('/', [Permissions::class, 'create']);
                 $routes->put('(:num)', [Permissions::class, 'update/$1']);
                 $routes->delete('(:num)', [Permissions::class, 'delete/$1']);
             });

@@ -93,7 +93,7 @@ class Locales extends AvegaCmsAdminAPI
     public function delete($id): ResponseInterface
     {
         if (($data = $this->LM->forEdit($id)) === null) {
-            return $this->failNotFound(lang('Api.errors.noData'));
+            return $this->failNotFound();
         }
 
         if ($data->is_default == 1) {
@@ -101,7 +101,7 @@ class Locales extends AvegaCmsAdminAPI
         }
 
         if ( ! $this->LM->delete($id)) {
-            return $this->failValidationErrors(lang('Api.errors.delete'));
+            return $this->failValidationErrors(lang('Api.errors.delete', ['Locales']));
         }
 
         return $this->respondNoContent();
