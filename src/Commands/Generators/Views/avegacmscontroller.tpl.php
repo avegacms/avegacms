@@ -2,7 +2,7 @@
 
 <?php
 if ($strict): ?>
-    declare(strict_types=1);
+declare(strict_types=1);
 <?php
 endif; ?>
 
@@ -11,7 +11,7 @@ namespace {namespace};
 use {useStatement};
 <?php
 if ($type === 'api'): ?>
-    use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\HTTP\ResponseInterface;
 <?php
 endif; ?>
 
@@ -21,7 +21,7 @@ class {class} extends {extends}
 if ($type === 'api'): ?>
     public function __construct()
     {
-    parent::__construct();
+        parent::__construct();
     }
 
     /**
