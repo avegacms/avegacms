@@ -73,7 +73,7 @@ class AvegaCmsModelGenerator extends BaseCommand
         $this->template = 'avegacmsmodel.tpl.php';
 
         $this->classNameLang = 'CLI.generator.className.model';
-        $this->execute($params);
+        $this->generateClass($params);
     }
 
     /**
