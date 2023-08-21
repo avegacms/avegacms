@@ -41,14 +41,14 @@ class UserModel extends AvegaCmsModel
 
     //AvegaCms model settings
     public array  $filterFields      = [
-        'id'     => 'id',
-        'login'  => 'login',
-        'avatar' => 'avatar',
-        'phone'  => 'phone',
-        'email'  => 'email'
+        'id'    => 'id',
+        'login' => 'login',
+        'phone' => 'phone',
+        'email' => 'email'
     ];
     public array  $searchFields      = [
         'login' => 'login',
+        'phone' => 'phone',
         'email' => 'email'
     ];
     public array  $sortableFields    = [];
@@ -87,6 +87,24 @@ class UserModel extends AvegaCmsModel
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    public function usersList()
+    {
+        $this->builder()->select(
+            [
+                'id',
+                'login',
+                'avatar',
+                'phone',
+                'email',
+                'timezone',
+                'status',
+                'active_at'
+            ]
+        );
+
+        return $this;
+    }
 
     /**
      * @param  Generator  $faker

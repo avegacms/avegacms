@@ -6,30 +6,7 @@ use CodeIgniter\Entity\Entity;
 
 class UserEntity extends Entity
 {
-    protected $datamap = [
-        'id'            => null,
-        'login'         => null,
-        'avatar'        => null,
-        'phone'         => null,
-        'email'         => null,
-        'timezone'      => null,
-        'password'      => null,
-        'secret'        => null,
-        'path'          => null,
-        'expires'       => null,
-        'reset'         => null,
-        'extra'         => null,
-        'status'        => null,
-        'condition'     => null,
-        'last_ip'       => null,
-        'last_agent'    => null,
-        'created_by_id' => null,
-        'updated_by_id' => null,
-        'active_at'     => null,
-        'created_at'    => null,
-        'updated_at'    => null,
-        'deleted_at'    => null
-    ];
+    protected $datamap = [];
     protected $dates   = ['active_at', 'created_at', 'updated_at', 'deleted_at'];
     protected $casts   = [
         'id'            => 'integer',

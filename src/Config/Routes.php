@@ -5,7 +5,7 @@ namespace Config;
 use AvegaCms\Controllers\Api\Public\Login;
 use AvegaCms\Controllers\Api\Admin\Settings;
 use AvegaCms\Controllers\Api\Admin\Content\Pages;
-use AvegaCms\Controllers\Api\Admin\Settings\{Locales, Modules, Roles, Permissions};
+use AvegaCms\Controllers\Api\Admin\Settings\{Locales, Modules, Permissions, Roles, Users};
 
 // Create a new instance of our RouteCollection class.
 $routes = Services::routes();
@@ -81,6 +81,14 @@ $routes->group('api', function ($routes) {
                 $routes->put('(:num)', [Roles::class, 'update/$1']);
                 $routes->patch('(:num)', [Roles::class, 'update/$1']);
                 $routes->delete('(:num)', [Roles::class, 'delete/$1']);
+            });
+            $routes->group('users', function ($routes) {
+                $routes->get('/', [Users::class, 'index']);
+                $routes->get('(:num)/edit', [Users::class, 'edit/$1']);
+                $routes->post('/', [Users::class, 'create']);
+                $routes->put('(:num)', [Users::class, 'update/$1']);
+                $routes->patch('(:num)', [Users::class, 'update/$1']);
+                $routes->delete('(:num)', [Users::class, 'delete/$1']);
             });
             //$routes->get('/', [Settings::class, 'index']);
         });
