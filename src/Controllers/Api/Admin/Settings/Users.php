@@ -6,16 +6,18 @@ namespace AvegaCms\Controllers\Api\Admin\Settings;
 
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Models\Admin\UserModel;
+use AvegaCms\Models\Admin\{UserModel, UserRolesModel};
 
 class Users extends AvegaCmsAdminAPI
 {
-    protected UserModel $UM;
+    protected UserModel      $UM;
+    protected UserRolesModel $URM;
 
     public function __construct()
     {
         parent::__construct();
         $this->UM = model(UserModel::class);
+        $this->URM = model(UserRolesModel::class);
     }
 
     /**
@@ -25,7 +27,7 @@ class Users extends AvegaCmsAdminAPI
      */
     public function index(): ResponseInterface
     {
-        $users = $this->UM->usersList()->filter($this->request->getGet() ?? [])->pagination();
+        $users = $this->URM->getUsers()->filter($this->request->getGet() ?? [])->pagination();
 
         return $this->cmsRespond($users['list'], $users['pagination']);
     }

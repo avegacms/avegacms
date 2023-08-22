@@ -41,10 +41,11 @@ class UserModel extends AvegaCmsModel
 
     //AvegaCms model settings
     public array  $filterFields      = [
-        'id'    => 'id',
-        'login' => 'login',
-        'phone' => 'phone',
-        'email' => 'email'
+        'id'     => 'id',
+        'login'  => 'login',
+        'phone'  => 'phone',
+        'email'  => 'email',
+        'status' => 'status',
     ];
     public array  $searchFields      = [
         'login' => 'login',
@@ -58,6 +59,7 @@ class UserModel extends AvegaCmsModel
         'avatar' => 'string',
         'phone'  => 'int',
         'email'  => 'string',
+        'status' => 'string',
     ];
     public string $searchFieldAlias  = 'q';
     public string $sortFieldAlias    = 's';
@@ -116,11 +118,17 @@ class UserModel extends AvegaCmsModel
             'login'         => $faker->word() . '_' . $faker->word(),
             'email'         => $faker->email,
             'phone'         => '79' . rand(100000000, 999999999),
-            'status'        => rand(0, 1),
-            'extra'         => [],
-            'last_active'   => $faker->dateTimeBetween('-1 week', 'now', 'Asia/Omsk')->format('Y-m-d H:i:s'),
-            'created_by_id' => 0,
-            'updated_by_id' => 0
+            'status'        => array_rand(
+                [
+                    'pre-registration',
+                    'active',
+                    'banned',
+                    'deleted',
+                    ''
+                ], 1
+            ),
+            'active_at'     => $faker->dateTimeBetween('-1 week', 'now', 'Asia/Omsk')->format('Y-m-d H:i:s'),
+            'created_by_id' => 1
         ];
     }
 }
