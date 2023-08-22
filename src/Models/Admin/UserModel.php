@@ -4,6 +4,8 @@ namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Entities\UserEntity;
+use CodeIgniter\Database\ConnectionInterface;
+use CodeIgniter\Validation\ValidationInterface;
 use Faker\Generator;
 
 class UserModel extends AvegaCmsModel
@@ -74,7 +76,19 @@ class UserModel extends AvegaCmsModel
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'id'       => ['rules' => 'if_exist|is_natural_no_zero'],
+        'login'    => ['rules' => 'if_exist|required|alpha_dash|max_length[36]|is_unique[users.login,id,{id}]'],
+        'avatar'   => ['rules' => 'if_exist|permit_empty|permit_empty|max_length[255]'],
+        'phone'    => ['rules' => 'if_exist|exact_length[11]|regex_match[/^79\d{9}/]'],
+        'email'    => ['rules' => 'if_exist|max_length[255]|valid_email'],
+        'timezone' => ['rules' => 'if_exist|required|max_length[144]'],
+        'password' => ['rules' => 'if_exist|required|max_length[144]'],
+        'path'     => ['rules' => 'if_exist|permit_empty|max_length[512]'],
+        'reset'    => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
+        'extra'    => ['rules' => 'if_exist|permit_empty'],
+        'status'   => ['rules' => 'if_exist|in_list[pre-registration,active,banned,deleted]']
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
@@ -90,7 +104,17 @@ class UserModel extends AvegaCmsModel
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    public function usersList()
+    public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
+    {
+        parent::__construct($db, $validation);
+        $this->initUserValidationRules();
+    }
+
+    /**
+     * @param  int  $id
+     * @return array|object|null
+     */
+    public function forEdit(int $id): array|object|null
     {
         $this->builder()->select(
             [
@@ -100,12 +124,33 @@ class UserModel extends AvegaCmsModel
                 'phone',
                 'email',
                 'timezone',
-                'status',
-                'active_at'
+                'password',
+                'path',
+                'reset',
+                'extra',
+                'status'
             ]
         );
 
-        return $this;
+        return $this->find($id);
+    }
+
+    protected function initUserValidationRules(): void
+    {
+        $settings = service('settings')->get('core.auth.loginType');
+
+        $loginType = explode(':', $settings);
+
+        foreach ($loginType as $type) {
+            if (isset($this->validationRules[$type])) {
+                $this->validationRules[$type]['rules'] = match ($type) {
+                    'email' => $this->validationRules[$type]['rules'] . 'required||is_unique[users.email,id,{id}]',
+                    'phone' => $this->validationRules[$type]['rules'] . 'required||is_unique[users.phone,id,{id}]'
+                };
+            }
+        }
+
+        unset($settings, $loginType);
     }
 
     /**
@@ -125,8 +170,7 @@ class UserModel extends AvegaCmsModel
                     'banned',
                     'deleted',
                     ''
-                ], 1
-            ),
+                ], 1),
             'active_at'     => $faker->dateTimeBetween('-1 week', 'now', 'Asia/Omsk')->format('Y-m-d H:i:s'),
             'created_by_id' => 1
         ];

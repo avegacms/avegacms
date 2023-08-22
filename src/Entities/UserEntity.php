@@ -31,4 +31,11 @@ class UserEntity extends Entity
         'updated_at'    => 'datetime',
         'deleted_at'    => 'datetime'
     ];
+
+    public function setPassword(string $pass)
+    {
+        $this->attributes['password'] = password_hash($pass, PASSWORD_BCRYPT);
+
+        return $this;
+    }
 }

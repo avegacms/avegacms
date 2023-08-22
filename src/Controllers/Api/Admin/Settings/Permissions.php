@@ -30,12 +30,12 @@ class Permissions extends AvegaCmsAdminAPI
     public function actions(int $roleId, int $moduleId): ResponseInterface
     {
         if (($permissions = $this->PM->getActions($roleId, $moduleId)) === null) {
-            return $this->failNotFound(lang('Api.errors.noData'));
+            return $this->failNotFound();
         }
 
         return $this->cmsRespond($permissions);
     }
-    
+
     /**
      * @param  int  $id
      * @return ResponseInterface
@@ -43,7 +43,7 @@ class Permissions extends AvegaCmsAdminAPI
     public function edit($id = null): ResponseInterface
     {
         if (($data = $this->PM->forEdit((int) $id)) === null) {
-            return $this->failNotFound(lang('Api.errors.noData'));
+            return $this->failNotFound();
         }
 
         return $this->cmsRespond($data->toArray());

@@ -72,7 +72,7 @@ class Roles extends AvegaCmsAdminAPI
     public function edit($id = null): ResponseInterface
     {
         if (($data = $this->RM->find($id)) === null) {
-            return $this->failNotFound(lang('Api.errors.noData'));
+            return $this->failNotFound();
         }
 
         return $this->cmsRespond(

@@ -57,7 +57,11 @@ class UserRolesModel extends AvegaCmsModel
     protected $deletedField  = '';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'role_id'       => ['rules' => 'if_exist|is_natural_no_zero'],
+        'user_id'       => ['rules' => 'if_exist|is_natural_no_zero'],
+        'created_by_id' => ['rules' => 'if_exist|is_natural_no_zero']
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
