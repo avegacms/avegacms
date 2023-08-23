@@ -18,7 +18,6 @@ class LoginEntity extends Entity
         'password'      => 'string',
         'secret'        => 'string',
         'path'          => 'string',
-        'reset'         => 'integer',
         'extra'         => 'json-array',
         'status'        => 'string',
         'created_by_id' => 'integer',

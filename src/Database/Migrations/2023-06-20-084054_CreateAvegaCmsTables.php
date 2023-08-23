@@ -59,8 +59,6 @@ class CreateAvegaCmsTables extends Migration
             // Будет храниться хэш
             'expires'    => ['type' => 'int', 'null' => true, 'default' => 0],
             // Срок действия хэша
-            'reset'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
-            // Флаг сброса доступов
             'extra'      => ['type' => 'text', 'null' => true],
             // Доп. поля
             'status'     => [

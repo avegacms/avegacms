@@ -240,7 +240,6 @@ class Authorization
                 'id'         => $user->id,
                 'secret'     => '',
                 'expires'    => 0,
-                'reset'      => 0,
                 'condition'  => '',
                 'last_ip'    => $userIp,
                 'last_agent' => $userAgent,
@@ -339,7 +338,6 @@ class Authorization
                 'id'         => $user->id,
                 'secret'     => '',
                 'expires'    => 0,
-                'reset'      => 0,
                 'password'   => $data['password'],
                 'condition'  => '',
                 'last_ip'    => $request->getIPAddress(),
@@ -381,7 +379,7 @@ class Authorization
             ) !== 2) {
             throw AuthorizationException::forFailUnauthorized();
         }
-        
+
         if ($this->settings['auth']['useJwt'] || $authHeader[0] !== 'Bearer' || count($token = explode('.',
                 $authHeader[1])) !== 3) {
             throw AuthorizationException::forFailUnauthorized();

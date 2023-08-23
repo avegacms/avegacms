@@ -6,13 +6,16 @@ namespace AvegaCms\Controllers\Api\Admin\Settings;
 
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Models\Admin\{UserModel, UserRolesModel, RolesModel};
+use AvegaCms\Models\Admin\{UserModel, UserRolesModel, RolesModel, UserTokensModel};
+use AvegaCms\Entities\UserRolesEntity;
+use ReflectionException;
 
 class Users extends AvegaCmsAdminAPI
 {
-    protected RolesModel     $RM;
-    protected UserModel      $UM;
-    protected UserRolesModel $URM;
+    protected RolesModel      $RM;
+    protected UserModel       $UM;
+    protected UserRolesModel  $URM;
+    protected UserTokensModel $UTM;
 
     public function __construct()
     {
@@ -77,6 +80,7 @@ class Users extends AvegaCmsAdminAPI
     /**
      * @param $id
      * @return ResponseInterface
+     * @throws ReflectionException
      */
     public function update($id = null): ResponseInterface
     {
@@ -88,19 +92,38 @@ class Users extends AvegaCmsAdminAPI
             return $this->failNotFound();
         }
 
+        $data['updated_by_id'] = $this->userData->userId;
+
+        $reset = false;
+        if (isset($data['reset'])) {
+            $reset = boolval($data['reset']);
+            unset($data['reset']);
+        }
+
         if ($data['roles'] ?? false) {
             $roles = $data['roles'];
-
-            $data['updated_by_id'] = $this->userData->userId;
-
             unset($data['roles']);
+            $this->URM->where(['user_id' => $id])->delete();
+            $URE = new UserRolesEntity();
+            foreach ($roles as $role) {
+                $setRoles[] = $URE->fill([
+                    'role_id'       => $role,
+                    'user_id'       => $id,
+                    'created_by_id' => $this->userData->userId,
+                ]);
+            }
+            $this->URM->insertBatch($setRoles ?? null);
         }
 
         if ($this->UM->save($data) === false) {
             return $this->failValidationErrors($this->UM->errors());
         }
 
-        $this->URM->where(['user_id' => $id])->delete();
+        if ($reset && settings('core.auth.useJwt')) {
+            (new UserTokensModel())->where(['user_id' => $id])->delete();
+        }
+
+        return $this->respondNoContent();
     }
 
     /**

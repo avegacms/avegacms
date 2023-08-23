@@ -18,7 +18,6 @@ class UserEntity extends Entity
         'password'      => 'string',
         'secret'        => 'string',
         'path'          => 'string',
-        'reset'         => 'integer',
         'extra'         => 'json-array',
         'status'        => 'string',
         'condition'     => 'string',

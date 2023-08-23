@@ -27,7 +27,6 @@ class UserModel extends AvegaCmsModel
         'secret',
         'path',
         'expires',
-        'reset',
         'extra',
         'status',
         'condition',
@@ -126,7 +125,6 @@ class UserModel extends AvegaCmsModel
                 'timezone',
                 'password',
                 'path',
-                'reset',
                 'extra',
                 'status'
             ]
