@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AvegaCms\Libraries\Authentication;
+namespace AvegaCms\Libraries\Authorization;
 
 
 class AvegaCmsUser
@@ -17,7 +17,7 @@ class AvegaCmsUser
     {
         return self::$userData;
     }
-    
+
     /**
      * @return object|null
      */

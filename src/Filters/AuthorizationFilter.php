@@ -7,10 +7,10 @@ use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Config\Services;
 use Exception;
-use AvegaCms\Libraries\Authentication\Authentication;
-use AvegaCms\Libraries\Authentication\Exceptions\AuthenticationException;
+use AvegaCms\Libraries\Authorization\Authorization;
+use AvegaCms\Libraries\Authorization\Exceptions\AuthenticationException;
 
-class AuthenticationFilter implements FilterInterface
+class AuthorizationFilter implements FilterInterface
 {
     /**
      * Do whatever processing this filter needs to do.
@@ -30,7 +30,7 @@ class AuthenticationFilter implements FilterInterface
     public function before(RequestInterface $request, $arguments = null)
     {
         try {
-            (new Authentication(service('settings')->get('core.auth')))->checkUserAccess();
+            (new Authorization(service('settings')->get('core.auth')))->checkUserAccess();
         } catch (AuthenticationException|Exception $e) {
             return Services::response()->setStatusCode($e->getCode(), $e->getMessage());
         }

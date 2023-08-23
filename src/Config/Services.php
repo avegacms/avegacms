@@ -2,7 +2,8 @@
 
 namespace Config;
 
-use AvegaCms\Libraries\Authentication\AvegaCmsUser;
+use AvegaCms\Libraries\Authorization\AvegaCmsUser;
+use AvegaCms\Libraries\AvegaCmsSettings;
 use CodeIgniter\Config\BaseService;
 
 /**
@@ -20,24 +21,13 @@ use CodeIgniter\Config\BaseService;
  */
 class Services extends BaseService
 {
-    /*
-     * public static function example($getShared = true)
-     * {
-     *     if ($getShared) {
-     *         return static::getSharedInstance('example');
-     *     }
-     *
-     *     return new \CodeIgniter\Example();
-     * }
-     */
-
     public static function settings($getShared = true)
     {
         if ($getShared) {
             return static::getSharedInstance('settings');
         }
 
-        return new \AvegaCms\Libraries\AvegaCmsSettings();
+        return new AvegaCmsSettings();
     }
 
     public static function AvegaCmsUser($getShared = true)
@@ -46,6 +36,6 @@ class Services extends BaseService
             return static::getSharedInstance('AvegaCmsUser');
         }
 
-        return new \AvegaCms\Libraries\Authentication\AvegaCmsUser();
+        return new AvegaCmsUser();
     }
 }
