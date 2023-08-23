@@ -7,15 +7,22 @@ namespace AvegaCms\Controllers\Api\Admin\Settings;
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\{UserModel, UserRolesModel, RolesModel, UserTokensModel};
-use AvegaCms\Entities\UserRolesEntity;
+use AvegaCms\Entities\{UserEntity, UserRolesEntity};
 use ReflectionException;
 
 class Users extends AvegaCmsAdminAPI
 {
-    protected RolesModel      $RM;
-    protected UserModel       $UM;
-    protected UserRolesModel  $URM;
-    protected UserTokensModel $UTM;
+    protected RolesModel     $RM;
+    protected UserModel      $UM;
+    protected UserRolesModel $URM;
+
+    protected array $userStatus = [
+        'pre-registration',
+        'active',
+        'banned',
+        'deleted',
+        ''
+    ];
 
     public function __construct()
     {
@@ -36,28 +43,40 @@ class Users extends AvegaCmsAdminAPI
     }
 
     /**
-     * @param $id
-     * @return ResponseInterface
-     */
-    public function show($id = null): ResponseInterface
-    {
-        //
-    }
-
-    /**
      * @return ResponseInterface
      */
     public function new(): ResponseInterface
     {
-        //
+        return $this->cmsRespond(
+            [
+                'roles'    => $this->_getRoles(),
+                'statuses' => $this->userStatus
+            ]
+        );
     }
 
     /**
      * @return ResponseInterface
+     * @throws ReflectionException
      */
     public function create(): ResponseInterface
     {
-        //
+        if (empty($data = $this->request->getJSON(true))) {
+            return $this->failValidationErrors(lang('Api.errors.noData'));
+        }
+
+        $data['created_by_id'] = $this->userData->userId;
+
+        $roles = $data['roles'];
+        unset($data['roles']);
+
+        if ( ! $id = $this->UM->insert((new UserEntity($data)))) {
+            return $this->failValidationErrors($this->UM->errors());
+        }
+
+        $this->_setRoles((int) $id, $roles);
+
+        return $this->cmsRespondCreated($id);
     }
 
     /**
@@ -70,7 +89,7 @@ class Users extends AvegaCmsAdminAPI
             return $this->failNotFound();
         }
 
-        if (($data->role = $this->URM->where(['user_id' => $id])->findColumn('role_id')) === null) {
+        if (($data->roles = $this->URM->where(['user_id' => $id])->findColumn('role_id')) === null) {
             return $this->failNotFound();
         }
 
@@ -88,7 +107,7 @@ class Users extends AvegaCmsAdminAPI
             return $this->failValidationErrors(lang('Api.errors.noData'));
         }
 
-        if ($this->UM->forEdit((int) $id) === null) {
+        if (($user = $this->UM->find($id)) === null) {
             return $this->failNotFound();
         }
 
@@ -103,25 +122,18 @@ class Users extends AvegaCmsAdminAPI
         if ($data['roles'] ?? false) {
             $roles = $data['roles'];
             unset($data['roles']);
-            $this->URM->where(['user_id' => $id])->delete();
-            $URE = new UserRolesEntity();
-            foreach ($roles as $role) {
-                $setRoles[] = $URE->fill([
-                    'role_id'       => $role,
-                    'user_id'       => $id,
-                    'created_by_id' => $this->userData->userId,
-                ]);
-            }
-            $this->URM->insertBatch($setRoles ?? null);
+            $this->_setRoles((int) $id, $roles);
         }
 
-        if ($this->UM->save($data) === false) {
+        if ($this->UM->save((new UserEntity($data))) === false) {
             return $this->failValidationErrors($this->UM->errors());
         }
 
         if ($reset && settings('core.auth.useJwt')) {
             (new UserTokensModel())->where(['user_id' => $id])->delete();
         }
+
+        // TODO удаление аватара
 
         return $this->respondNoContent();
     }
@@ -132,7 +144,21 @@ class Users extends AvegaCmsAdminAPI
      */
     public function delete($id = null): ResponseInterface
     {
-        //
+        if (($user = $this->UM->find($id)) === null) {
+            return $this->failNotFound();
+        }
+
+        if ( ! $this->UM->delete($id)) {
+            return $this->failValidationErrors(lang('Api.errors.delete', ['Users']));
+        }
+
+        if ( ! $this->URM->where(['user_id' => $id])->delete()) {
+            return $this->failValidationErrors(lang('Api.errors.delete', ['UserRoles']));
+        }
+
+        // TODO удаление аватара
+
+        return $this->respondNoContent();
     }
 
     /**
@@ -143,7 +169,7 @@ class Users extends AvegaCmsAdminAPI
         if (is_null($roles = cache($fileCacheName = 'UserRolesList'))) {
             $rolesData = $this->RM->select(['id', 'role'])->orderBy('role', 'ASC')->findAll();
             foreach ($rolesData as $role) {
-                $roles[$role->id] = $role->role;
+                $roles[(int) $role->id] = $role->role;
             }
             cache()->save($fileCacheName, $roles, DAY * 30);
             unset($rolesData);
@@ -151,4 +177,25 @@ class Users extends AvegaCmsAdminAPI
 
         return $roles;
     }
+
+    /**
+     * @param  int  $userId
+     * @param  array  $roles
+     * @return void
+     * @throws ReflectionException
+     */
+    private function _setRoles(int $userId, array $roles): void
+    {
+        $this->URM->where(['user_id' => $userId])->delete();
+        $URE = new UserRolesEntity();
+        foreach ($roles as $role) {
+            $setRoles[] = $URE->fill([
+                'role_id'       => $role,
+                'user_id'       => $userId,
+                'created_by_id' => $this->userData->userId,
+            ]);
+        }
+        $this->URM->insertBatch($setRoles ?? null);
+    }
+
 }

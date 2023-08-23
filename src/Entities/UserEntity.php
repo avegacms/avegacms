@@ -12,7 +12,7 @@ class UserEntity extends Entity
         'id'            => 'integer',
         'login'         => 'string',
         'avatar'        => 'string',
-        'phone'         => 'integer',
+        'phone'         => 'string',
         'email'         => 'string',
         'timezone'      => 'string',
         'password'      => 'string',

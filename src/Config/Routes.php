@@ -84,6 +84,7 @@ $routes->group('api', function ($routes) {
             });
             $routes->group('users', function ($routes) {
                 $routes->get('/', [Users::class, 'index']);
+                $routes->get('new', [Users::class, 'new']);
                 $routes->get('(:num)/edit', [Users::class, 'edit/$1']);
                 $routes->post('/', [Users::class, 'create']);
                 $routes->put('(:num)', [Users::class, 'update/$1']);
