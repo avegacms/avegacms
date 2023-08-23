@@ -1,6 +1,6 @@
 <?php
 
-namespace AvegaCms\Libraries\Authentication\Exceptions;
+namespace AvegaCms\Libraries\Authorization\Exceptions;
 
 use CodeIgniter\Exceptions\FrameworkException;
 

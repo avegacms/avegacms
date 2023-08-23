@@ -3,7 +3,7 @@
 namespace AvegaCms\Controllers\Api\Admin;
 
 use AvegaCms\Controllers\Api\CmsResourceController;
-use AvegaCms\Libraries\Authentication\AvegaCmsUser;
+use AvegaCms\Libraries\Authorization\AvegaCmsUser;
 
 class AvegaCmsAdminAPI extends CmsResourceController
 {

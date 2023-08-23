@@ -97,11 +97,18 @@ class ModulesModel extends Model
      * @param  int  $id
      * @return array|object|null
      */
-    public function forEdit(int $id)
+    public function forEdit(int $id): array|object|null
     {
         $this->_getSelect()->builder();
 
         return $this->find($id);
+    }
+
+    public function parentsId(int $id = 0)
+    {
+        $this->builder()->where(['id' => $id])->orWhere(['parent' => $id]);
+
+        return $this;
     }
 
     /**

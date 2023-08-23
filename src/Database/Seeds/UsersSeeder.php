@@ -2,25 +2,39 @@
 
 namespace AvegaCms\Database\Seeds;
 
-use AvegaCms\Models\Admin\UserModel;
+use AvegaCms\Models\Admin\{UserModel, UserRolesModel};
 use CodeIgniter\Database\Seeder;
 use CodeIgniter\Test\Fabricator;
-use AvegaCms\Entities\UserEntity;
+use AvegaCms\Entities\{UserEntity, UserRolesEntity};
+use ReflectionException;
 
 class UsersSeeder extends Seeder
 {
     /**
-     * @return void
+     * @throws ReflectionException
      */
     public function run()
     {
-        $UM = new UserModel();
-        $EU = new UserEntity();
+        $UM = model(UserModel::class);
+        $URM = model(UserRolesModel::class);
 
-        $fakeUsers = (new Fabricator($UM, null))->make(10);
+        $EU = new UserEntity();
+        $URE = new UserRolesEntity();
+
+        $fakeUsers = (new Fabricator($UM, null))->make(100);
 
         foreach ($fakeUsers as $item) {
-            $UM->save($EU->fill($item->toArray()));
+            if ($id = $UM->insert($EU->fill($item->toArray()))) {
+                $URM->save(
+                    $URE->fill(
+                        [
+                            'role_id'       => rand(2, 4),
+                            'user_id'       => $id,
+                            'created_by_id' => 1
+                        ]
+                    )
+                );
+            }
         }
     }
 }
