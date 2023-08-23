@@ -56,13 +56,15 @@ class AvegaCmsInstallSeeder extends Seeder
      */
     public function run(): void
     {
-        $userId = $this->_createUser();
+        /*$userId = $this->_createUser();
         $this->_createRoles($userId);
         $this->_createUserRoles($userId);
         $this->_installCmsModules($userId);
         $this->_createPermissions($userId);
         $this->_createLocales($userId);
-        $this->_createSettings();
+        $this->_createSettings();*/
+        $this->_createPublicFolders();
+
         cache()->clean();
     }
 
@@ -1064,6 +1066,33 @@ class AvegaCmsInstallSeeder extends Seeder
 
         foreach ($settingsList as $item) {
             $this->SM->insert($settingEntity->fill($item));
+        }
+    }
+
+    /**
+     * @return void
+     */
+    private function _createPublicFolders(): void
+    {
+        $directories = [
+            'uploads',
+            'uploads/users',
+            'uploads/content',
+            'uploads/content/thumbs'
+        ];
+
+        foreach ($directories as $directory) {
+            $directory = FCPATH . $directory;
+            if ( ! is_dir($directory)) {
+                if (mkdir($directory, 0777, true)) {
+                    //file_put_contents($directory . '/index.html', (string) view('index.html'));
+                    //echo "Директория '$directory' создана, и файл 'index.html' сохранен внутри.\n";
+                } else {
+                    echo "Не удалось создать директорию '$directory'.\n";
+                }
+            } else {
+                echo "Директория '$directory' уже существует. Ничего не делаем.\n";
+            }
         }
     }
 }
