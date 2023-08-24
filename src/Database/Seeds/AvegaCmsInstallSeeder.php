@@ -5,6 +5,7 @@ namespace AvegaCms\Database\Seeds;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Database\Seeder;
 use Config\Database;
+use CodeIgniter\CLI\CLI;
 use AvegaCms\Models\Admin\{ModulesModel,
     SettingsModel,
     LoginModel,
@@ -56,13 +57,13 @@ class AvegaCmsInstallSeeder extends Seeder
      */
     public function run(): void
     {
-        /*$userId = $this->_createUser();
+        $userId = $this->_createUser();
         $this->_createRoles($userId);
         $this->_createUserRoles($userId);
         $this->_installCmsModules($userId);
         $this->_createPermissions($userId);
         $this->_createLocales($userId);
-        $this->_createSettings();*/
+        $this->_createSettings();
         $this->_createPublicFolders();
 
         cache()->clean();
@@ -1082,16 +1083,13 @@ class AvegaCmsInstallSeeder extends Seeder
         ];
 
         foreach ($directories as $directory) {
-            $directory = FCPATH . $directory;
-            if ( ! is_dir($directory)) {
-                if (mkdir($directory, 0777, true)) {
-                    //file_put_contents($directory . '/index.html', (string) view('index.html'));
-                    //echo "Директория '$directory' создана, и файл 'index.html' сохранен внутри.\n";
-                } else {
-                    echo "Не удалось создать директорию '$directory'.\n";
-                }
+            if ( ! is_dir($directory = FCPATH . $directory) && mkdir($directory, 0777, true)) {
+                file_put_contents(
+                    $directory . '/index.html',
+                    '<!DOCTYPE html><html lang="en"><head><title>403 Forbidden</title></head><body><p>Directory access is forbidden.</p></body></html>'
+                );
             } else {
-                echo "Директория '$directory' уже существует. Ничего не делаем.\n";
+                CLI::write('Can\'t create directory: ' . $directory);
             }
         }
     }
