@@ -8,6 +8,8 @@ use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\{UserModel, UserRolesModel, RolesModel, UserTokensModel};
 use AvegaCms\Entities\{UserEntity, UserRolesEntity};
+use AvegaCms\Libraries\Uploader\Uploader;
+use AvegaCms\Libraries\Uploader\Exceptions\UploaderException;
 use ReflectionException;
 
 class Users extends AvegaCmsAdminAPI
@@ -136,6 +138,32 @@ class Users extends AvegaCmsAdminAPI
         // TODO удаление аватара
 
         return $this->respondNoContent();
+    }
+
+    /**
+     * @param $id
+     * @return ResponseInterface
+     */
+    public function upload($id = null): ResponseInterface
+    {
+        if ($this->UM->forEdit((int) $id) === null) {
+            return $this->failNotFound();
+        }
+
+        try {
+            $avatar = Uploader::file(
+                'file',
+                'users',
+                [
+                    'is_image' => true,
+                    'ext_in'   => 'png,jpg,gif'
+                ]
+            );
+
+            return $this->cmsRespond($avatar);
+        } catch (UploaderException $e) {
+            return $this->failValidationErrors(empty($e->getMessages()) ? $e->getMessage() : $e->getMessages());
+        }
     }
 
     /**

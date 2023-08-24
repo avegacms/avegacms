@@ -1084,10 +1084,7 @@ class AvegaCmsInstallSeeder extends Seeder
 
         foreach ($directories as $directory) {
             if ( ! is_dir($directory = FCPATH . $directory) && mkdir($directory, 0777, true)) {
-                file_put_contents(
-                    $directory . '/index.html',
-                    '<!DOCTYPE html><html lang="en"><head><title>403 Forbidden</title></head><body><p>Directory access is forbidden.</p></body></html>'
-                );
+                file_put_contents($directory . '/index.html', '');
             } else {
                 CLI::write('Can\'t create directory: ' . $directory);
             }

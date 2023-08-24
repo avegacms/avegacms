@@ -88,6 +88,7 @@ $routes->group('api', function ($routes) {
                 $routes->get('(:num)/edit', [Users::class, 'edit/$1']);
                 $routes->post('/', [Users::class, 'create']);
                 $routes->put('(:num)', [Users::class, 'update/$1']);
+                $routes->put('upload/(:num)', [Users::class, 'upload/$1']);
                 $routes->patch('(:num)', [Users::class, 'update/$1']);
                 $routes->delete('(:num)', [Users::class, 'delete/$1']);
             });
