@@ -51,7 +51,7 @@ class Uploader
             'fileName'  => $fileName,
             'fileUrl'   => 'uploads/' . $filePath . '/' . $fileName,
             'pathName'  => $file->getPathname(),
-            'size'      => $file->getSizeByUnit('kb'),
+            'size'      => (float) $file->getSizeByUnit('kb'),
             'isImage'   => $isImage,
             'fileType'  => $isImage ? 'image' : 'file',
             'extension' => $extension,

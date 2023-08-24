@@ -135,7 +135,9 @@ class Users extends AvegaCmsAdminAPI
             (new UserTokensModel())->where(['user_id' => $id])->delete();
         }
 
-        // TODO удаление аватара
+        if (isset($data['avatar']) && empty($data['avatar'])) {
+            $this->_removeAvatar($user->avatar);
+        }
 
         return $this->respondNoContent();
     }
@@ -143,6 +145,7 @@ class Users extends AvegaCmsAdminAPI
     /**
      * @param $id
      * @return ResponseInterface
+     * @throws ReflectionException
      */
     public function upload($id = null): ResponseInterface
     {
@@ -156,9 +159,13 @@ class Users extends AvegaCmsAdminAPI
                 'users',
                 [
                     'is_image' => true,
-                    'ext_in'   => 'png,jpg,gif'
+                    'ext_in'   => 'png,jpg,jpeg,gif'
                 ]
             );
+
+            if ( ! $this->UM->save((new UserEntity(['id' => $id, 'avatar' => $avatar['fileName']])))) {
+                return $this->failValidationErrors($this->UM->errors());
+            }
 
             return $this->cmsRespond($avatar);
         } catch (UploaderException $e) {
@@ -184,9 +191,20 @@ class Users extends AvegaCmsAdminAPI
             return $this->failValidationErrors(lang('Api.errors.delete', ['UserRoles']));
         }
 
-        // TODO удаление аватара
+        $this->_removeAvatar($user->avatar);
 
         return $this->respondNoContent();
+    }
+
+    /**
+     * @param  string  $file
+     * @return void
+     */
+    private function _removeAvatar(string $file): void
+    {
+        if ( ! empty($file) && file_exists($path = FCPATH . 'uploads/users' . $file)) {
+            unlink($path);
+        }
     }
 
     /**
