@@ -19,15 +19,7 @@ class UploaderException extends Exception
 
         parent::__construct(message: lang('Authorization.errors.validationError'), code: 400);
     }
-
-    /**
-     * @return UploaderException
-     */
-    public static function forRulesNotFound(): UploaderException
-    {
-        return new static([lang('Authorization.errors.rulesNotFound')]);
-    }
-
+    
     /**
      * @return array
      */
