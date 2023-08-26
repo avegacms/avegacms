@@ -9,6 +9,7 @@ use AvegaCms\Entities\{LoginEntity, UserEntity, UserTokensEntity};
 use AvegaCms\Models\Admin\{LoginModel, UserAuthenticationModel, UserRolesModel, UserTokensModel};
 use CodeIgniter\Validation\ValidationInterface;
 use CodeIgniter\Session\Session;
+use CodeIgniter\Validation\Validation;
 use Config\Services;
 use Firebase\JWT\Key;
 use Firebase\JWT\JWT;
@@ -24,6 +25,7 @@ class Authorization
     protected UserRolesModel $URM;
     protected Session        $session;
 
+    protected Validation          $validation;
     protected ValidationInterface $validator;
 
     public function __construct(array $settings)
@@ -40,6 +42,7 @@ class Authorization
         $this->URM = model(UserRolesModel::class);
 
         $this->session = Services::session();
+        $this->validation = Services::validation();
     }
 
     /**
@@ -62,8 +65,10 @@ class Authorization
         $loginType = $this->_checkType($data[$this->settings['auth']['loginType']]);
 
         if ( ! $this->validate($this->_validate('auth_by_' . $this->settings['auth']['loginType']), $data)) {
-            throw new ValidationException($this->validator->getErrors());
+            throw new ValidationException($this->validation->getErrors());
         }
+
+        $data = $this->validation->getValidated();
 
         if (($user = $this->LM->getUser($loginType)) === null) {
             throw AuthorizationException::forUnknownUser();
@@ -599,9 +604,7 @@ class Authorization
 
     protected function validate(array $rules, array $data): bool
     {
-        $this->validator = Services::validation();
-
-        return $this->validator->setRules($rules)->run($data);
+        return $this->validation->setRules($rules)->run($data);
     }
 
     /**

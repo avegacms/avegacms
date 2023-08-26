@@ -8,6 +8,8 @@ use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\{UserModel, UserRolesModel, RolesModel, UserTokensModel};
 use AvegaCms\Entities\{UserEntity, UserRolesEntity};
+use AvegaCms\Libraries\Uploader\Uploader;
+use AvegaCms\Libraries\Uploader\Exceptions\UploaderException;
 use ReflectionException;
 
 class Users extends AvegaCmsAdminAPI
@@ -38,7 +40,7 @@ class Users extends AvegaCmsAdminAPI
     public function index(): ResponseInterface
     {
         $users = $this->URM->getUsers()->filter($this->request->getGet() ?? [])->pagination();
-
+        
         return $this->cmsRespond($users['list'], $users['pagination']);
     }
 
@@ -133,9 +135,42 @@ class Users extends AvegaCmsAdminAPI
             (new UserTokensModel())->where(['user_id' => $id])->delete();
         }
 
-        // TODO удаление аватара
+        if (isset($data['avatar']) && empty($data['avatar'])) {
+            $this->_removeAvatar($user->avatar);
+        }
 
         return $this->respondNoContent();
+    }
+
+    /**
+     * @param $id
+     * @return ResponseInterface
+     * @throws ReflectionException
+     */
+    public function upload($id = null): ResponseInterface
+    {
+        if ($this->UM->forEdit((int) $id) === null) {
+            return $this->failNotFound();
+        }
+
+        try {
+            $avatar = Uploader::file(
+                'file',
+                'users',
+                [
+                    'is_image' => true,
+                    'ext_in'   => 'png,jpg,jpeg,gif'
+                ]
+            );
+
+            if ( ! $this->UM->save((new UserEntity(['id' => $id, 'avatar' => $avatar['fileName']])))) {
+                return $this->failValidationErrors($this->UM->errors());
+            }
+
+            return $this->cmsRespond($avatar);
+        } catch (UploaderException $e) {
+            return $this->failValidationErrors(empty($e->getMessages()) ? $e->getMessage() : $e->getMessages());
+        }
     }
 
     /**
@@ -156,9 +191,20 @@ class Users extends AvegaCmsAdminAPI
             return $this->failValidationErrors(lang('Api.errors.delete', ['UserRoles']));
         }
 
-        // TODO удаление аватара
+        $this->_removeAvatar($user->avatar);
 
         return $this->respondNoContent();
+    }
+
+    /**
+     * @param  string  $file
+     * @return void
+     */
+    private function _removeAvatar(string $file): void
+    {
+        if ( ! empty($file) && file_exists($path = FCPATH . 'uploads/users' . $file)) {
+            unlink($path);
+        }
     }
 
     /**

@@ -22,4 +22,10 @@ class UserRolesEntity extends Entity
         'timezone' => 'string',
         'status'   => 'string'
     ];
+
+
+    public function getAvatar(): string
+    {
+        return ( ! empty($this->attributes['avatar'])) ? base_url('/uploads/users/' . $this->attributes['avatar']) : 'no_photo';
+    }
 }

@@ -53,6 +53,7 @@ src/Config/App.php
 src/Config/Autoload.php
 src/Config/Filters.php
 src/Config/Paths.php
+src/Config/Routing.php
 #-------------------------
 # Test Files
 #-------------------------

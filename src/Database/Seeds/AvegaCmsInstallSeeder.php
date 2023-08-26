@@ -5,6 +5,7 @@ namespace AvegaCms\Database\Seeds;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Database\Seeder;
 use Config\Database;
+use CodeIgniter\CLI\CLI;
 use AvegaCms\Models\Admin\{ModulesModel,
     SettingsModel,
     LoginModel,
@@ -63,6 +64,8 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->_createPermissions($userId);
         $this->_createLocales($userId);
         $this->_createSettings();
+        $this->_createPublicFolders();
+
         cache()->clean();
     }
 
@@ -1064,6 +1067,27 @@ class AvegaCmsInstallSeeder extends Seeder
 
         foreach ($settingsList as $item) {
             $this->SM->insert($settingEntity->fill($item));
+        }
+    }
+
+    /**
+     * @return void
+     */
+    private function _createPublicFolders(): void
+    {
+        $directories = [
+            'uploads',
+            'uploads/users',
+            'uploads/content',
+            'uploads/content/thumbs'
+        ];
+
+        foreach ($directories as $directory) {
+            if ( ! is_dir($directory = FCPATH . $directory) && mkdir($directory, 0777, true)) {
+                file_put_contents($directory . '/index.html', '');
+            } else {
+                CLI::write('Can\'t create directory: ' . $directory);
+            }
         }
     }
 }

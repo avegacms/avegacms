@@ -31,10 +31,15 @@ class UserEntity extends Entity
         'deleted_at'    => 'datetime'
     ];
 
-    public function setPassword(string $pass)
+    public function setPassword(string $pass): Entity
     {
         $this->attributes['password'] = password_hash($pass, PASSWORD_BCRYPT);
 
         return $this;
+    }
+
+    public function getAvatar(): string
+    {
+        return ( ! empty($this->attributes['avatar'])) ? base_url('/uploads/users/' . $this->attributes['avatar']) : 'no_photo';
     }
 }

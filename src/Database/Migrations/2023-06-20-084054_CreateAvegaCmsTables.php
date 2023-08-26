@@ -425,9 +425,7 @@ class CreateAvegaCmsTables extends Migration
     public function down()
     {
         $this->db->disableForeignKeyChecks();
-
-        $this->tables['migrations'] = 'migrations';
-
+        
         foreach ($this->tables as $table) {
             $this->forge->dropTable($table, true);
         }
@@ -443,6 +441,7 @@ class CreateAvegaCmsTables extends Migration
     private function dateFields(array $exclude): array
     {
         $dateList = [
+
             'created_at' => ['type' => 'datetime', 'null' => true],
             'updated_at' => ['type' => 'datetime', 'null' => true],
             'deleted_at' => ['type' => 'datetime', 'null' => true]
