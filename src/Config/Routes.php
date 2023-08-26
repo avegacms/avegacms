@@ -4,7 +4,7 @@ use CodeIgniter\Router\RouteCollection;
 
 use AvegaCms\Controllers\Api\Public\Login;
 use AvegaCms\Controllers\Api\Admin\Content\Pages;
-use AvegaCms\Controllers\Api\Admin\Settings\{Locales, Modules, Permissions, Roles, Users};
+use AvegaCms\Controllers\Api\Admin\Settings\{Configs, Locales, Modules, Permissions, Roles, Users};
 
 /**
  * @var RouteCollection $routes
@@ -68,7 +68,9 @@ $routes->group('api', function (RouteCollection $routes) {
                     $routes->patch('(:num)', [Users::class, 'update/$1']);
                     $routes->delete('(:num)', [Users::class, 'delete/$1']);
                 });
-                //$routes->get('/', [Settings::class, 'index']);
+                $routes->group('configs', function (RouteCollection $routes) {
+                    $routes->get('/', [Configs::class, 'index']);
+                });
             });
         });
 });

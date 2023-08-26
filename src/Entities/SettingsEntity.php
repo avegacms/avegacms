@@ -6,23 +6,7 @@ use CodeIgniter\Entity\Entity;
 
 class SettingsEntity extends Entity
 {
-    protected $datamap = [
-        'id'            => null,
-        'entity'        => null,
-        'slug'          => null,
-        'key'           => null,
-        'value'         => null,
-        'default_value' => null,
-        'return_type'   => null,
-        'label'         => null,
-        'context'       => null,
-        'rules'         => null,
-        'sort'          => null,
-        'created_by_id' => null,
-        'updated_by_id' => null,
-        'created_at'    => null,
-        'updated_at'    => null
-    ];
+    protected $datamap = [];
     protected $dates   = ['created_at', 'updated_at'];
     protected $casts   = [
         'id'            => 'integer',

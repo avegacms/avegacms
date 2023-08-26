@@ -2,10 +2,10 @@
 
 namespace AvegaCms\Models\Admin;
 
-use CodeIgniter\Model;
+use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Entities\SettingsEntity;
 
-class SettingsModel extends Model
+class SettingsModel extends AvegaCmsModel
 {
     protected $DBGroup          = 'default';
     protected $table            = 'settings';
@@ -54,6 +54,47 @@ class SettingsModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    public array $filterFields = [
+        'id'     => 'id',
+        'entity' => 'entity',
+        'slug'   => 'slug',
+        'key'    => 'key',
+        'label'  => 'label'
+    ];
+
+    public array $searchFields   = [];
+    public array $sortableFields = [];
+
+    public array  $filterCastsFields = [
+        'id'     => 'int|array',
+        'entity' => 'string',
+        'slug'   => 'string',
+        'key'    => 'string',
+        'label'  => 'string'
+    ];
+    public string $searchFieldAlias  = 'q';
+    public string $sortFieldAlias    = 's';
+    public int    $limit             = 20;
+    public int    $maxLimit          = 100;
+
+    /**
+     * @return AvegaCmsModel
+     */
+    public function selectSettings(): AvegaCmsModel
+    {
+        $this->builder()->select(
+            [
+                'id',
+                'entity',
+                'slug',
+                'key',
+                'label'
+            ]
+        );
+
+        return $this;
+    }
 
     /**
      * @param  string  $entity

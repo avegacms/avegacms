@@ -6,6 +6,7 @@ use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Database\Seeder;
 use Config\Database;
 use CodeIgniter\CLI\CLI;
+use AvegaCms\Config\AvegaCms;
 use AvegaCms\Models\Admin\{ModulesModel,
     SettingsModel,
     LoginModel,
@@ -27,7 +28,7 @@ use Exception;
 
 class AvegaCmsInstallSeeder extends Seeder
 {
-    protected string         $version = '0.0.0.1';
+    protected string         $version = AvegaCms::AVEGACMS_VERSION;
     protected ModulesModel   $MM;
     protected LoginModel     $LM;
     protected SettingsModel  $SM;
@@ -344,6 +345,20 @@ class AvegaCmsInstallSeeder extends Seeder
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
                 ],
+                [
+                    'parent'        => $list['settings'],
+                    'is_plugin'     => 0,
+                    'is_system'     => 1,
+                    'slug'          => 'configs',
+                    'name'          => 'Cms.modules.name.configs',
+                    'version'       => $this->version,
+                    'description'   => 'Cms.modules.description.configs',
+                    'extra'         => '',
+                    'in_sitemap'    => 0,
+                    'active'        => 1,
+                    'created_by_id' => $userId,
+                    'updated_by_id' => 0
+                ]
             ],
             'content'  => [
                 [
