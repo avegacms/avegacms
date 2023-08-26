@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AvegaCms\Libraries\Authorization;
 
-use AvegaCms\Libraries\Authorization\Exceptions\{AuthorizationException, AuthenticationException, ValidationException};
+use AvegaCms\Libraries\Authorization\Exceptions\{AuthorizationException, AuthenticationException};
 use AvegaCms\Entities\{LoginEntity, UserEntity, UserTokensEntity};
 use AvegaCms\Models\Admin\{LoginModel, UserAuthenticationModel, UserRolesModel, UserTokensModel};
 use CodeIgniter\Validation\ValidationInterface;
@@ -28,6 +28,10 @@ class Authorization
     protected Validation          $validation;
     protected ValidationInterface $validator;
 
+    /**
+     * @param  array  $settings
+     * @throws AuthorizationException
+     */
     public function __construct(array $settings)
     {
         helper(['date', 'avegacms']);
@@ -47,10 +51,9 @@ class Authorization
 
     /**
      * @param  array  $data
-     * @extension AuthorizationException
-     * @extension
      * @return array
-     * @throws ValidationException|ReflectionException
+     * @throws AuthorizationException
+     * @throws ReflectionException
      */
     public function auth(array $data): array
     {
@@ -65,7 +68,7 @@ class Authorization
         $loginType = $this->_checkType($data[$this->settings['auth']['loginType']]);
 
         if ( ! $this->validate($this->_validate('auth_by_' . $this->settings['auth']['loginType']), $data)) {
-            throw new ValidationException($this->validation->getErrors());
+            throw new AuthorizationException($this->validation->getErrors());
         }
 
         $data = $this->validation->getValidated();
@@ -106,7 +109,7 @@ class Authorization
     /**
      * @param  array  $data
      * @return array[]
-     * @throws AuthorizationException|ValidationException|Exception
+     * @throws AuthorizationException|Exception
      */
     public function checkCode(array $data): array
     {
@@ -115,7 +118,7 @@ class Authorization
         }
 
         if ( ! $this->validate($this->_validate('check_code'), $data)) {
-            throw new ValidationException($this->validator->getErrors());
+            throw new AuthorizationException($this->validator->getErrors());
         }
 
         $type = $this->_checkType($data['pointer']);
@@ -259,7 +262,7 @@ class Authorization
     /**
      * @param  array  $data
      * @return array
-     * @throws AuthorizationException|ValidationException|Exception
+     * @throws AuthorizationException|Exception
      */
     public function recovery(array $data): array
     {
@@ -272,7 +275,7 @@ class Authorization
         }
 
         if ( ! $this->validate($this->_validate('recovery'), $data)) {
-            throw new ValidationException($this->validator->getErrors());
+            throw new AuthorizationException($this->validator->getErrors());
         }
 
         $field = $this->settings['auth']['recoveryField'];
@@ -307,7 +310,7 @@ class Authorization
     /**
      * @param  array  $data
      * @return array
-     * @throws ValidationException|ReflectionException|ValidationException|Exception
+     * @throws ReflectionException|Exception
      */
     public function setPassword(array $data): array
     {
@@ -320,7 +323,7 @@ class Authorization
         }
 
         if ( ! $this->validate($this->_validate('password'), $data)) {
-            throw new ValidationException($this->validator->getErrors());
+            throw new AuthorizationException($this->validator->getErrors());
         }
 
         $conditions = [
@@ -373,7 +376,7 @@ class Authorization
     /**
      * @param  array  $data
      * @return array
-     * @throws ReflectionException|ValidationException
+     * @throws ReflectionException
      * @throws Exception
      */
     public function refresh(array $data): array
@@ -400,7 +403,7 @@ class Authorization
         }
 
         if ( ! $this->validate($this->_validate('refresh_token'), $data)) {
-            throw new ValidationException($this->validator->getErrors());
+            throw new AuthorizationException($this->validator->getErrors());
         }
 
         if (empty($tokens = $this->UTM->getUserTokens($payload->data->userId)->findAll())) {
@@ -715,6 +718,7 @@ class Authorization
     /**
      * @param  array  $userdata
      * @return void
+     * @throws AuthorizationException
      */
     private function _setClientSession(array $userdata = []): void
     {
@@ -731,7 +735,7 @@ class Authorization
     /**
      * @param  string  $type
      * @return array[]
-     * @throws ValidationException
+     * @throws AuthorizationException
      */
     private function _validate(string $type): array
     {
@@ -824,7 +828,7 @@ class Authorization
                     ]
                 ]
             ],
-            default         => throw ValidationException::forRulesNotFound()
+            default         => throw AuthorizationException::forRulesNotFound()
         };
     }
 }
