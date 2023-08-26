@@ -8,7 +8,7 @@ use Exception;
 
 class UploaderException extends Exception
 {
-    protected array $messages = [];
+    protected array|string $messages = [];
 
     /**
      * @param  array|string  $messages
@@ -19,13 +19,13 @@ class UploaderException extends Exception
 
         parent::__construct(message: lang('Authorization.errors.validationError'), code: 400);
     }
-    
+
     /**
      * @return array
      */
     public function getMessages(): array
     {
-        return $this->messages;
+        return ! is_array($this->messages) ? [$this->messages] : $this->messages;
     }
 
     /**
@@ -37,6 +37,7 @@ class UploaderException extends Exception
     }
 
     /**
+     * @param  string  $directory
      * @return UploaderException
      */
     public static function forCreateDirectory(string $directory): UploaderException
@@ -44,6 +45,10 @@ class UploaderException extends Exception
         return new static(lang('Uploader.errors.createDirectory', [$directory]));
     }
 
+    /**
+     * @param  string  $file
+     * @return UploaderException
+     */
     public static function forHasMoved(string $file): UploaderException
     {
         return new static(lang('Uploader.errors.hasMoved', [$file]));
