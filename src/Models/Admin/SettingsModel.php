@@ -57,11 +57,11 @@ class SettingsModel extends AvegaCmsModel
     protected $afterDelete    = [];
 
     public array $filterFields = [
-        'id'     => 'id',
-        'entity' => 'entity',
-        'slug'   => 'slug',
-        'key'    => 'key',
-        'label'  => 'label'
+        'id'     => 'settings.id',
+        'entity' => 'settings.entity',
+        'slug'   => 'settings.slug',
+        'key'    => 'settings.key',
+        'label'  => 'settings.label'
     ];
 
     public array $searchFields   = [];
@@ -86,13 +86,17 @@ class SettingsModel extends AvegaCmsModel
     {
         $this->builder()->select(
             [
-                'id',
-                'entity',
-                'slug',
-                'key',
-                'label AS lang_label'
+                'settings.id',
+                'settings.module_id',
+                'settings.is_system',
+                'settings.entity',
+                'settings.slug',
+                'settings.key',
+                'settings.label AS lang_label',
+                'IFNULL(m.slug, "AvegaCms Core") AS module_slug',
+                'IFNULL(m.name, "AvegaCms Core") AS module_name',
             ]
-        );
+        )->join('modules AS m', 'm.id = settings.module_id', 'left');
 
         return $this;
     }

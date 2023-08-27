@@ -25,7 +25,7 @@ class Configs extends AvegaCmsAdminAPI
     public function index(): ResponseInterface
     {
         $settings = $this->SM->selectSettings()->filter($this->request->getGet() ?? [])->pagination();
-        
+
         return $this->cmsRespond($settings['list'], $settings['pagination']);
     }
 
@@ -47,7 +47,12 @@ class Configs extends AvegaCmsAdminAPI
      */
     public function new(): ResponseInterface
     {
-        //
+        return $this->cmsRespond(
+            [
+                'modules',
+                'return'
+            ]
+        );
     }
 
     /**
@@ -91,5 +96,22 @@ class Configs extends AvegaCmsAdminAPI
     public function delete($id = null): ResponseInterface
     {
         //
+    }
+
+    /**
+     * @return string[]
+     */
+    private function _returnTypes(): array
+    {
+        return [
+            'integer'   => 'integer',
+            'float'     => 'float',
+            'string'    => 'string',
+            'boolean'   => 'boolean',
+            'array'     => 'array',
+            'datetime'  => 'datetime',
+            'timestamp' => 'timestamp',
+            'json'      => 'json'
+        ];
     }
 }

@@ -31,11 +31,11 @@ class SettingsEntity extends Entity
 
     public function getLangLabel(): string
     {
-        return lang($this->attributes['label']);
+        return lang($this->attributes['lang_label']);
     }
 
-    public function getContext(): string
+    public function getLangContext(): string
     {
-        return lang($this->attributes['context']);
+        return lang($this->attributes['lang_context']);
     }
 }

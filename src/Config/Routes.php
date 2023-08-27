@@ -70,6 +70,8 @@ $routes->group('api', function (RouteCollection $routes) {
                 });
                 $routes->group('configs', function (RouteCollection $routes) {
                     $routes->get('/', [Configs::class, 'index']);
+                    $routes->post('/', [Configs::class, 'create']);
+                    $routes->get('new', [Configs::class, 'new']);
                 });
             });
         });
