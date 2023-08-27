@@ -49,7 +49,7 @@ class Settings extends AvegaCmsAdminAPI
     {
         return $this->cmsRespond(
             [
-                'modules' => model(ModulesModel::class)->getModulesList(),
+                'modules' => [0 => 'AvegaCms Core', ...model(ModulesModel::class)->getModulesList()],
                 'return'  => $this->_returnTypes()
             ]
         );
@@ -73,7 +73,11 @@ class Settings extends AvegaCmsAdminAPI
      */
     public function edit($id = null): ResponseInterface
     {
-        //
+        if (($data = $this->SM->forEdit((int) $id)) === null) {
+            return $this->failNotFound();
+        }
+
+        return $this->cmsRespond($data->toArray());
     }
 
     /**

@@ -160,6 +160,30 @@ class SettingsModel extends AvegaCmsModel
     }
 
     /**
+     * @param  int  $id
+     * @return array|object|null
+     */
+    public function forEdit(int $id): array|object|null
+    {
+        $this->builder()->select([
+            'id',
+            'module_id',
+            'is_core',
+            'entity',
+            'slug',
+            'key',
+            'value',
+            'default_value',
+            'return_type',
+            'label',
+            'context',
+            'sort'
+        ]);
+
+        return $this->find($id);
+    }
+
+    /**
      * @param  array  $data
      * @return void
      */

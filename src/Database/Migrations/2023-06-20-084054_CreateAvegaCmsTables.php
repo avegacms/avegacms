@@ -149,7 +149,7 @@ class CreateAvegaCmsTables extends Migration
             'is_system'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             'is_plugin'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             'slug'        => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
-            'name'        => ['type' => 'varchar', 'constraint' => 255, 'unique' => true, 'null' => true],
+            'name'        => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
             'version'     => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
             'description' => ['type' => 'text', 'null' => true],
             'extra'       => ['type' => 'text', 'null' => true],
@@ -168,7 +168,7 @@ class CreateAvegaCmsTables extends Migration
         $this->forge->addField([
             'id'            => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
             'module_id'     => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
-            'is_system'     => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'is_core'       => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             'entity'        => ['type' => 'varchar', 'constraint' => 36, 'null' => true],
             'slug'          => ['type' => 'varchar', 'constraint' => 36, 'null' => true],
             'key'           => ['type' => 'varchar', 'constraint' => 36, 'null' => true],

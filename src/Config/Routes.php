@@ -72,6 +72,7 @@ $routes->group('api', function (RouteCollection $routes) {
                     $routes->get('/', [Settings::class, 'index']);
                     $routes->post('/', [Settings::class, 'create']);
                     $routes->get('new', [Settings::class, 'new']);
+                    $routes->get('(:num)/edit', [Settings::class, 'edit/$1']);
                 });
             });
         });
