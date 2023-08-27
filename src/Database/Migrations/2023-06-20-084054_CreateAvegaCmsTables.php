@@ -147,7 +147,7 @@ class CreateAvegaCmsTables extends Migration
             'parent'      => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
             'is_system'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             'is_plugin'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
-            'slug'        => ['type' => 'varchar', 'constraint' => 64, 'unique' => true, 'null' => true],
+            'slug'        => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
             'name'        => ['type' => 'varchar', 'constraint' => 255, 'unique' => true, 'null' => true],
             'version'     => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
             'description' => ['type' => 'text', 'null' => true],
@@ -158,6 +158,7 @@ class CreateAvegaCmsTables extends Migration
             ...$this->dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
+        $this->forge->addUniqueKey(['parent', 'slug']);
         $this->createTable($this->tables['modules']);
 
         /**
@@ -165,6 +166,8 @@ class CreateAvegaCmsTables extends Migration
          */
         $this->forge->addField([
             'id'            => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'module_id'     => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
+            'is_system'     => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             'entity'        => ['type' => 'varchar', 'constraint' => 36, 'null' => true],
             'slug'          => ['type' => 'varchar', 'constraint' => 36, 'null' => true],
             'key'           => ['type' => 'varchar', 'constraint' => 36, 'null' => true],
@@ -186,13 +189,12 @@ class CreateAvegaCmsTables extends Migration
             ],
             'label'         => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
             'context'       => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
-            'rules'         => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
             'sort'          => ['type' => 'tinyint', 'constraint' => 3, 'null' => 0, 'default' => 100],
             ...$this->byId(),
             ...$this->dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
-        $this->forge->addUniqueKey(['entity', 'slug', 'key']);
+        $this->forge->addUniqueKey(['module_id', 'entity', 'slug', 'key']);
         $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
         $this->forge->addForeignKey('updated_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
         $this->createTable($this->tables['settings']);
@@ -425,7 +427,7 @@ class CreateAvegaCmsTables extends Migration
     public function down()
     {
         $this->db->disableForeignKeyChecks();
-        
+
         foreach ($this->tables as $table) {
             $this->forge->dropTable($table, true);
         }

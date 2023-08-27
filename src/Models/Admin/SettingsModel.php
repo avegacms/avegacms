@@ -15,6 +15,8 @@ class SettingsModel extends AvegaCmsModel
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
+        'module_id',
+        'is_system',
         'entity',
         'slug',
         'key',
@@ -23,7 +25,6 @@ class SettingsModel extends AvegaCmsModel
         'return_type',
         'label',
         'context',
-        'rules',
         'sort',
         'created_by_id',
         'updated_by_id',
@@ -89,7 +90,7 @@ class SettingsModel extends AvegaCmsModel
                 'entity',
                 'slug',
                 'key',
-                'label'
+                'label AS lang_label'
             ]
         );
 
