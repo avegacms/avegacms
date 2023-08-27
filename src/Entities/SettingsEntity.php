@@ -11,7 +11,7 @@ class SettingsEntity extends Entity
     protected $casts   = [
         'id'            => 'integer',
         'module_id'     => 'integer',
-        'is_system'     => 'integer',
+        'is_core'       => 'integer',
         'entity'        => 'string',
         'slug'          => 'string',
         'key'           => 'string',

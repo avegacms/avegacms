@@ -16,7 +16,7 @@ class SettingsModel extends AvegaCmsModel
     protected $protectFields    = true;
     protected $allowedFields    = [
         'module_id',
-        'is_system',
+        'is_core',
         'entity',
         'slug',
         'key',
@@ -88,7 +88,7 @@ class SettingsModel extends AvegaCmsModel
             [
                 'settings.id',
                 'settings.module_id',
-                'settings.is_system',
+                'settings.is_core',
                 'settings.entity',
                 'settings.slug',
                 'settings.key',

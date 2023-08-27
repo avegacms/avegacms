@@ -173,6 +173,7 @@ class AvegaCmsInstallSeeder extends Seeder
         $modules = [
             [
                 'parent'        => 0,
+                'is_core'       => 1,
                 'is_plugin'     => 0,
                 'is_system'     => 0,
                 'slug'          => 'settings',
@@ -187,6 +188,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'parent'        => 0,
+                'is_core'       => 1,
                 'is_plugin'     => 0,
                 'is_system'     => 0,
                 'slug'          => 'menu',
@@ -201,6 +203,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'parent'        => 0,
+                'is_core'       => 1,
                 'is_plugin'     => 0,
                 'is_system'     => 0,
                 'slug'          => 'content',
@@ -215,6 +218,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'parent'        => 0,
+                'is_core'       => 1,
                 'is_plugin'     => 1,
                 'is_system'     => 1,
                 'slug'          => 'content_builder',
@@ -229,6 +233,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'parent'        => 0,
+                'is_core'       => 1,
                 'is_plugin'     => 1,
                 'is_system'     => 1,
                 'slug'          => 'uploader',
@@ -263,6 +268,7 @@ class AvegaCmsInstallSeeder extends Seeder
             'settings' => [
                 [
                     'parent'        => $list['settings'],
+                    'is_core'       => 1,
                     'is_plugin'     => 0,
                     'is_system'     => 1,
                     'slug'          => 'roles',
@@ -277,6 +283,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 ],
                 [
                     'parent'        => $list['settings'],
+                    'is_core'       => 1,
                     'is_plugin'     => 0,
                     'is_system'     => 1,
                     'slug'          => 'permissions',
@@ -291,6 +298,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 ],
                 [
                     'parent'        => $list['settings'],
+                    'is_core'       => 1,
                     'is_plugin'     => 0,
                     'is_system'     => 1,
                     'slug'          => 'users',
@@ -305,6 +313,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 ],
                 [
                     'parent'        => $list['settings'],
+                    'is_core'       => 1,
                     'is_plugin'     => 0,
                     'is_system'     => 1,
                     'slug'          => 'modules',
@@ -319,6 +328,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 ],
                 [
                     'parent'        => $list['settings'],
+                    'is_core'       => 1,
                     'is_plugin'     => 0,
                     'is_system'     => 1,
                     'slug'          => 'locales',
@@ -333,6 +343,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 ],
                 [
                     'parent'        => $list['settings'],
+                    'is_core'       => 1,
                     'is_plugin'     => 0,
                     'is_system'     => 0,
                     'slug'          => 'seo',
@@ -347,6 +358,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 ],
                 [
                     'parent'        => $list['settings'],
+                    'is_core'       => 1,
                     'is_plugin'     => 0,
                     'is_system'     => 1,
                     'slug'          => 'configs',
@@ -363,6 +375,7 @@ class AvegaCmsInstallSeeder extends Seeder
             'content'  => [
                 [
                     'parent'        => $list['content'],
+                    'is_core'       => 1,
                     'is_plugin'     => 0,
                     'is_system'     => 0,
                     'slug'          => 'rubrics',
@@ -377,6 +390,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 ],
                 [
                     'parent'        => $list['content'],
+                    'is_core'       => 1,
                     'is_plugin'     => 0,
                     'is_system'     => 0,
                     'slug'          => 'pages',
@@ -391,6 +405,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 ],
                 [
                     'parent'        => $list['content'],
+                    'is_core'       => 1,
                     'is_plugin'     => 0,
                     'is_system'     => 0,
                     'slug'          => 'posts',
@@ -405,6 +420,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 ],
                 [
                     'parent'        => $list['content'],
+                    'is_core'       => 1,
                     'is_plugin'     => 0,
                     'is_system'     => 0,
                     'slug'          => 'tags',

@@ -16,6 +16,7 @@ class ModulesModel extends Model
     protected $protectFields    = true;
     protected $allowedFields    = [
         'parent',
+        'is_core',
         'is_plugin',
         'is_system',
         'slug',
@@ -41,6 +42,7 @@ class ModulesModel extends Model
     // Validation
     protected $validationRules      = [
         'id'            => ['rules' => 'if_exist|is_natural_no_zero'],
+        'is_core'       => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'parent'        => ['rules' => 'if_exist|is_natural'],
         'is_plugin'     => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'is_system'     => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
@@ -109,6 +111,19 @@ class ModulesModel extends Model
         $this->builder()->where(['id' => $id])->orWhere(['parent' => $id]);
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getModulesList(): array
+    {
+        $this->builder()->select(['id', 'name'])
+            ->where(['is_core' => 0])
+            ->orderBy('parent', 'ASC')
+            ->orderBy('name', 'ASC');
+
+        return array_column($this->findAll(), 'name', 'id');
     }
 
     /**

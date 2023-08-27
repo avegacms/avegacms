@@ -6,10 +6,10 @@ namespace AvegaCms\Controllers\Api\Admin\Settings;
 
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Models\Admin\SettingsModel;
+use AvegaCms\Models\Admin\{SettingsModel, ModulesModel};
 use AvegaCms\Entities\SettingsEntity;
 
-class Configs extends AvegaCmsAdminAPI
+class Settings extends AvegaCmsAdminAPI
 {
     protected SettingsModel $SM;
 
@@ -49,8 +49,8 @@ class Configs extends AvegaCmsAdminAPI
     {
         return $this->cmsRespond(
             [
-                'modules',
-                'return'
+                'modules' => model(ModulesModel::class)->getModulesList(),
+                'return'  => $this->_returnTypes()
             ]
         );
     }
