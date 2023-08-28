@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace AvegaCms\Controllers\Api\Admin\Settings;
 
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
+use CodeIgniter\Database\Exceptions\DatabaseException;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\{SettingsModel, ModulesModel};
+use ReflectionException;
 use AvegaCms\Entities\SettingsEntity;
 
 class Settings extends AvegaCmsAdminAPI
@@ -30,19 +32,6 @@ class Settings extends AvegaCmsAdminAPI
     }
 
     /**
-     * Return the properties of a resource object
-     *
-     * @param $id
-     * @return ResponseInterface
-     */
-    public function show($id = null): ResponseInterface
-    {
-        //
-    }
-
-    /**
-     * Return a new resource object, with default properties
-     *
      * @return ResponseInterface
      */
     public function new(): ResponseInterface
@@ -56,13 +45,26 @@ class Settings extends AvegaCmsAdminAPI
     }
 
     /**
-     * Create a new resource object, from "posted" parameters
-     *
      * @return ResponseInterface
+     * @throws ReflectionException
      */
     public function create(): ResponseInterface
     {
-        //
+        try {
+            if (empty($data = $this->request->getJSON(true))) {
+                return $this->failValidationErrors(lang('Api.errors.noData'));
+            }
+
+            $data['created_by_id'] = $this->userData->userId;
+
+            if ( ! $id = $this->SM->insert((new SettingsEntity($data)))) {
+                return $this->failValidationErrors($this->SM->errors());
+            }
+
+            return $this->cmsRespondCreated($id);
+        } catch (DatabaseException $e) {
+            return $this->failValidationErrors($e->getMessage());
+        }
     }
 
     /**
@@ -81,25 +83,53 @@ class Settings extends AvegaCmsAdminAPI
     }
 
     /**
-     * Add or update a model resource, from "posted" properties
-     *
      * @param $id
      * @return ResponseInterface
+     * @throws ReflectionException
      */
     public function update($id = null): ResponseInterface
     {
-        //
+        try {
+            if (empty($data = $this->request->getJSON(true))) {
+                return $this->failValidationErrors(lang('Api.errors.noData'));
+            }
+
+            if (($settings = $this->SM->find($id)) === null) {
+                return $this->failNotFound();
+            }
+
+            $data['entity'] = $settings->entity;
+            $data['updated_by_id'] = $this->userData->userId;
+
+            if ($this->SM->save($data) === false) {
+                return $this->failValidationErrors($this->SM->errors());
+            }
+
+            return $this->respondNoContent();
+        } catch (DatabaseException $e) {
+            return $this->failValidationErrors($e->getMessage());
+        }
     }
 
     /**
-     * Delete the designated resource object from the model
-     *
      * @param $id
      * @return ResponseInterface
      */
     public function delete($id = null): ResponseInterface
     {
-        //
+        if (($data = $this->SM->forEdit((int) $id)) === null) {
+            return $this->failNotFound();
+        }
+
+        if ($data->is_core == 1) {
+            return $this->failValidationErrors(lang('Settings.errors.deleteIsDefault'));
+        }
+
+        if ( ! $this->SM->delete($id)) {
+            return $this->failValidationErrors(lang('Api.errors.delete', ['Settings']));
+        }
+
+        return $this->respondNoContent();
     }
 
     /**

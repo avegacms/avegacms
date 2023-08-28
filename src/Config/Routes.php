@@ -73,6 +73,9 @@ $routes->group('api', function (RouteCollection $routes) {
                     $routes->post('/', [Settings::class, 'create']);
                     $routes->get('new', [Settings::class, 'new']);
                     $routes->get('(:num)/edit', [Settings::class, 'edit/$1']);
+                    $routes->put('(:num)', [Settings::class, 'update/$1']);
+                    $routes->patch('(:num)', [Settings::class, 'update/$1']);
+                    $routes->delete('(:num)', [Settings::class, 'delete/$1']);
                 });
             });
         });

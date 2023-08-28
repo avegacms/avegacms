@@ -40,7 +40,22 @@ class SettingsModel extends AvegaCmsModel
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'id'            => ['rules' => 'if_exist|is_natural_no_zero'],
+        'module_id'     => ['rules' => 'if_exist|is_natural'],
+        'is_core'       => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
+        'entity'        => ['rules' => 'if_exist|required|alpha_numeric|max_length[36]'],
+        'slug'          => ['rules' => 'if_exist|required|alpha_numeric|max_length[36]'],
+        'key'           => ['rules' => 'if_exist|required|alpha_numeric|max_length[36]'],
+        'value'         => ['rules' => 'if_exist|permit_empty'],
+        'default_value' => ['rules' => 'if_exist|permit_empty'],
+        'return_type'   => ['rules' => 'if_exist|in_list[integer,float,string,boolean,array,datetime,timestamp,json]'],
+        'label'         => ['rules' => 'if_exist|required|string|max_length[255]'],
+        'context'       => ['rules' => 'if_exist|permit_empty|string|max_length[512]'],
+        'sort'          => ['rules' => 'if_exist|is_natural'],
+        'created_by_id' => ['rules' => 'if_exist|is_natural'],
+        'updated_by_id' => ['rules' => 'if_exist|is_natural']
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
