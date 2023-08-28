@@ -6,6 +6,7 @@ use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Database\Seeder;
 use Config\Database;
 use CodeIgniter\CLI\CLI;
+use AvegaCms\Config\AvegaCms;
 use AvegaCms\Models\Admin\{ModulesModel,
     SettingsModel,
     LoginModel,
@@ -27,7 +28,7 @@ use Exception;
 
 class AvegaCmsInstallSeeder extends Seeder
 {
-    protected string         $version = '0.0.0.1';
+    protected string         $version = AvegaCms::AVEGACMS_VERSION;
     protected ModulesModel   $MM;
     protected LoginModel     $LM;
     protected SettingsModel  $SM;
@@ -172,6 +173,7 @@ class AvegaCmsInstallSeeder extends Seeder
         $modules = [
             [
                 'parent'        => 0,
+                'is_core'       => 1,
                 'is_plugin'     => 0,
                 'is_system'     => 0,
                 'slug'          => 'settings',
@@ -186,6 +188,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'parent'        => 0,
+                'is_core'       => 1,
                 'is_plugin'     => 0,
                 'is_system'     => 0,
                 'slug'          => 'menu',
@@ -200,6 +203,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'parent'        => 0,
+                'is_core'       => 1,
                 'is_plugin'     => 0,
                 'is_system'     => 0,
                 'slug'          => 'content',
@@ -214,6 +218,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'parent'        => 0,
+                'is_core'       => 1,
                 'is_plugin'     => 1,
                 'is_system'     => 1,
                 'slug'          => 'content_builder',
@@ -228,6 +233,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'parent'        => 0,
+                'is_core'       => 1,
                 'is_plugin'     => 1,
                 'is_system'     => 1,
                 'slug'          => 'uploader',
@@ -262,6 +268,7 @@ class AvegaCmsInstallSeeder extends Seeder
             'settings' => [
                 [
                     'parent'        => $list['settings'],
+                    'is_core'       => 1,
                     'is_plugin'     => 0,
                     'is_system'     => 1,
                     'slug'          => 'roles',
@@ -276,6 +283,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 ],
                 [
                     'parent'        => $list['settings'],
+                    'is_core'       => 1,
                     'is_plugin'     => 0,
                     'is_system'     => 1,
                     'slug'          => 'permissions',
@@ -290,6 +298,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 ],
                 [
                     'parent'        => $list['settings'],
+                    'is_core'       => 1,
                     'is_plugin'     => 0,
                     'is_system'     => 1,
                     'slug'          => 'users',
@@ -304,6 +313,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 ],
                 [
                     'parent'        => $list['settings'],
+                    'is_core'       => 1,
                     'is_plugin'     => 0,
                     'is_system'     => 1,
                     'slug'          => 'modules',
@@ -318,6 +328,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 ],
                 [
                     'parent'        => $list['settings'],
+                    'is_core'       => 1,
                     'is_plugin'     => 0,
                     'is_system'     => 1,
                     'slug'          => 'locales',
@@ -332,6 +343,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 ],
                 [
                     'parent'        => $list['settings'],
+                    'is_core'       => 1,
                     'is_plugin'     => 0,
                     'is_system'     => 0,
                     'slug'          => 'seo',
@@ -344,10 +356,26 @@ class AvegaCmsInstallSeeder extends Seeder
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
                 ],
+                [
+                    'parent'        => $list['settings'],
+                    'is_core'       => 1,
+                    'is_plugin'     => 0,
+                    'is_system'     => 1,
+                    'slug'          => 'settings',
+                    'name'          => 'Cms.modules.name.settings',
+                    'version'       => $this->version,
+                    'description'   => 'Cms.modules.description.settings',
+                    'extra'         => '',
+                    'in_sitemap'    => 0,
+                    'active'        => 1,
+                    'created_by_id' => $userId,
+                    'updated_by_id' => 0
+                ]
             ],
             'content'  => [
                 [
                     'parent'        => $list['content'],
+                    'is_core'       => 1,
                     'is_plugin'     => 0,
                     'is_system'     => 0,
                     'slug'          => 'rubrics',
@@ -362,6 +390,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 ],
                 [
                     'parent'        => $list['content'],
+                    'is_core'       => 1,
                     'is_plugin'     => 0,
                     'is_system'     => 0,
                     'slug'          => 'pages',
@@ -376,6 +405,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 ],
                 [
                     'parent'        => $list['content'],
+                    'is_core'       => 1,
                     'is_plugin'     => 0,
                     'is_system'     => 0,
                     'slug'          => 'posts',
@@ -390,6 +420,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 ],
                 [
                     'parent'        => $list['content'],
+                    'is_core'       => 1,
                     'is_plugin'     => 0,
                     'is_system'     => 0,
                     'slug'          => 'tags',
@@ -767,173 +798,190 @@ class AvegaCmsInstallSeeder extends Seeder
         $settingsList = [
             // .env
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'env',
                 'key'           => 'timezone',
                 'value'         => 'Europe/Moscow',
                 'default_value' => 'Europe/Moscow',
                 'return_type'   => 'string',
-                'label'         => 'settings.label.env.timezone',
-                'context'       => 'settings.context.env.timezone',
-                'rules'         => 'required|timezone'
+                'label'         => 'Settings.label.env.timezone',
+                'context'       => 'Settings.context.env.timezone'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'env',
                 'key'           => 'secretKey',
                 'value'         => bin2hex(random_bytes(32)),
                 'default_value' => '',
                 'return_type'   => 'string',
-                'label'         => 'settings.label.env.secretKey',
-                'context'       => 'settings.context.env.secretKey',
-                'rules'         => 'required'
+                'label'         => 'Settings.label.env.secretKey',
+                'context'       => 'Settings.context.env.secretKey'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'env',
                 'key'           => 'defLanguage',
                 'value'         => 'ru',
                 'default_value' => 'ru',
                 'return_type'   => 'string',
-                'label'         => 'settings.label.env.defLanguage',
-                'context'       => 'settings.context.env.defLanguage',
-                'rules'         => 'required|timezone'
+                'label'         => 'Settings.label.env.defLanguage',
+                'context'       => 'Settings.context.env.defLanguage'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'env',
                 'key'           => 'useMultiLanguages',
                 'value'         => 0,
                 'default_value' => 0,
                 'return_type'   => 'boolean',
-                'label'         => 'settings.label.env.useMultiLanguages',
-                'context'       => 'settings.context.env.useMultiLanguages',
-                'rules'         => 'required|timezone'
+                'label'         => 'Settings.label.env.useMultiLanguages',
+                'context'       => 'Settings.context.env.useMultiLanguages'
             ],
 
             // auth
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'useCors',
                 'value'         => 0,
                 'default_value' => 0,
                 'return_type'   => 'boolean',
-                'label'         => 'settings.label.auth.useCors',
-                'context'       => 'settings.context.auth.useCors',
-                'rules'         => 'required|in_list[0,1]'
+                'label'         => 'Settings.label.auth.useCors',
+                'context'       => 'Settings.context.auth.useCors'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'useSession',
                 'value'         => 1,
                 'default_value' => 1,
                 'return_type'   => 'boolean',
-                'label'         => 'settings.label.auth.useSession',
-                'context'       => 'settings.context.auth.useSession',
-                'rules'         => 'required|in_list[0,1]'
+                'label'         => 'Settings.label.auth.useSession',
+                'context'       => 'Settings.context.auth.useSession'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 0,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'useToken',
                 'value'         => 0,
                 'default_value' => 0,
                 'return_type'   => 'boolean',
-                'label'         => 'settings.label.auth.useToken',
-                'context'       => 'settings.context.auth.useToken',
-                'rules'         => 'required|in_list[0,1]'
+                'label'         => 'Settings.label.auth.useToken',
+                'context'       => 'Settings.context.auth.useToken'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'useJwt',
                 'value'         => 0,
                 'default_value' => 0,
                 'return_type'   => 'boolean',
-                'label'         => 'settings.label.auth.useJwt',
-                'context'       => 'settings.context.auth.useJwt',
-                'rules'         => 'required|in_list[0,1]'
+                'label'         => 'Settings.label.auth.useJwt',
+                'context'       => 'Settings.context.auth.useJwt'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'jwtSecretKey',
                 'value'         => bin2hex(random_bytes(32)),
                 'default_value' => '',
                 'return_type'   => 'string',
-                'label'         => 'settings.label.auth.jwtSecretKey',
-                'context'       => 'settings.context.auth.jwtSecretKey',
-                'rules'         => 'required'
+                'label'         => 'Settings.label.auth.jwtSecretKey',
+                'context'       => 'Settings.context.auth.jwtSecretKey'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'jwtSessionsLimit',
                 'value'         => 3,
                 'default_value' => 3,
                 'return_type'   => 'integer',
-                'label'         => 'settings.label.auth.jwtSessionsLimit',
-                'context'       => 'settings.context.auth.jwtSessionsLimit',
-                'rules'         => 'required'
+                'label'         => 'Settings.label.auth.jwtSessionsLimit',
+                'context'       => 'Settings.context.auth.jwtSessionsLimit'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'jwtLiveTime',
                 'value'         => 30,
                 'default_value' => 30,
                 'return_type'   => 'integer',
-                'label'         => 'settings.label.auth.jwtLiveTime',
-                'context'       => 'settings.context.auth.jwtLiveTime',
-                'rules'         => 'required|integer'
+                'label'         => 'Settings.label.auth.jwtLiveTime',
+                'context'       => 'Settings.context.auth.jwtLiveTime'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'jwtRefreshTime',
                 'value'         => 30,
                 'default_value' => 30,
                 'return_type'   => 'integer',
-                'label'         => 'settings.label.auth.jwtLiveTime',
-                'context'       => 'settings.context.auth.jwtLiveTime',
-                'rules'         => 'required|integer'
+                'label'         => 'Settings.label.auth.jwtLiveTime',
+                'context'       => 'Settings.context.auth.jwtLiveTime'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'jwtAlg',
                 'value'         => 'HS256',
                 'default_value' => 'HS256',
                 'return_type'   => 'string',
-                'label'         => 'settings.label.auth.jwtAlg',
-                'context'       => 'settings.context.auth.jwtAlg',
-                'rules'         => 'required|in_list[ES384,ES256,ES256K,HS256,HS384,HS512,RS256,RS384,RS512]'
+                'label'         => 'Settings.label.auth.jwtAlg',
+                'context'       => 'Settings.context.auth.jwtAlg'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'useWhiteIpList',
                 'value'         => 1,
                 'default_value' => 0,
                 'return_type'   => 'boolean',
-                'label'         => 'settings.label.auth.useWhiteIpList',
-                'context'       => 'settings.context.auth.useWhiteIpList',
-                'rules'         => 'required|in_list[0,1]'
+                'label'         => 'Settings.label.auth.useWhiteIpList',
+                'context'       => 'Settings.context.auth.useWhiteIpList'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'whiteIpList',
                 'value'         => serialize([]),
                 'default_value' => serialize([]),
                 'return_type'   => 'array',
-                'label'         => 'settings.label.auth.whiteIpList',
-                'context'       => 'settings.context.auth.whiteIpList',
-                'rules'         => 'required'
+                'label'         => 'Settings.label.auth.whiteIpList',
+                'context'       => 'Settings.context.auth.whiteIpList'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'loginTypeList',
@@ -958,109 +1006,117 @@ class AvegaCmsInstallSeeder extends Seeder
                     ]
                 ),
                 'return_type'   => 'array',
-                'label'         => 'settings.label.auth.loginTypeList',
-                'context'       => 'settings.context.auth.loginTypeList',
-                'rules'         => 'required|in_list[login,email,phone,login:email,email:phone,login:email:phone]'
+                'label'         => 'Settings.label.auth.loginTypeList',
+                'context'       => 'Settings.context.auth.loginTypeList'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'loginType',
                 'value'         => 'email',
                 'default_value' => 'email',
                 'return_type'   => 'string',
-                'label'         => 'settings.label.auth.loginType',
-                'context'       => 'settings.context.auth.loginType',
-                'rules'         => 'required|in_list[login,email,phone,login:email,email:phone,login:email:phone]'
+                'label'         => 'Settings.label.auth.loginType',
+                'context'       => 'Settings.context.auth.loginType'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'use2fa',
                 'value'         => 0,
                 'default_value' => 0,
                 'return_type'   => 'boolean',
-                'label'         => 'settings.label.auth.use2fa',
-                'context'       => 'settings.context.auth.use2fa',
-                'rules'         => 'required|in_list[0,1]'
+                'label'         => 'Settings.label.auth.use2fa',
+                'context'       => 'Settings.context.auth.use2fa'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => '2faField',
                 'value'         => 'email',
                 'default_value' => 'email',
                 'return_type'   => 'string',
-                'label'         => 'settings.label.auth.2faField',
-                'context'       => 'settings.context.auth.2faField',
-                'rules'         => 'required|in_list[email,phone]'
+                'label'         => 'Settings.label.auth.2faField',
+                'context'       => 'Settings.context.auth.2faField'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'verifyCodeLength',
                 'value'         => 4,
                 'default_value' => 4,
                 'return_type'   => 'integer',
-                'label'         => 'settings.label.auth.verifyCodeLength',
-                'context'       => 'settings.context.auth.verifyCodeLength',
-                'rules'         => 'required|integer|exact_length[4,5,6]'
+                'label'         => 'Settings.label.auth.verifyCodeLength',
+                'context'       => 'Settings.context.auth.verifyCodeLength'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'verifyCodeTime',
                 'value'         => 5,
                 'default_value' => 5,
                 'return_type'   => 'integer',
-                'label'         => 'settings.label.auth.verifyCodeTime',
-                'context'       => 'settings.context.auth.verifyCodeTime',
-                'rules'         => 'required|greater_than_equal_to[1]|less_than_equal_to[60]'
+                'label'         => 'Settings.label.auth.verifyCodeTime',
+                'context'       => 'Settings.context.auth.verifyCodeTime'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'useRecovery',
                 'value'         => 1,
                 'default_value' => 1,
                 'return_type'   => 'boolean',
-                'label'         => 'settings.label.auth.useRecovery',
-                'context'       => 'settings.context.auth.useRecovery',
-                'rules'         => 'required|in_list[0,1]'
+                'label'         => 'Settings.label.auth.useRecovery',
+                'context'       => 'Settings.context.auth.useRecovery'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'recoveryField',
                 'value'         => 'email',
                 'default_value' => 'email',
                 'return_type'   => 'string',
-                'label'         => 'settings.label.auth.recoveryField',
-                'context'       => 'settings.context.auth.recoveryField',
-                'rules'         => 'required|in_list[login,email,phone]'
+                'label'         => 'Settings.label.auth.recoveryField',
+                'context'       => 'Settings.context.auth.recoveryField'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'recoveryCodeTime',
                 'value'         => 10,
                 'default_value' => 10,
                 'return_type'   => 'integer',
-                'label'         => 'settings.label.auth.recoveryCodeTime',
-                'context'       => 'settings.context.auth.recoveryCodeTime',
-                'rules'         => 'required|greater_than_equal_to[1]|less_than_equal_to[60]'
+                'label'         => 'Settings.label.auth.recoveryCodeTime',
+                'context'       => 'Settings.context.auth.recoveryCodeTime'
             ],
             [
+                'module_id'     => 0,
+                'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'authSmsMessage',
                 'value'         => '',
                 'default_value' => '',
                 'return_type'   => 'string',
-                'label'         => 'settings.label.auth.authSmsMessage',
-                'context'       => 'settings.context.auth.authSmsMessage',
-                'rules'         => 'required'
-            ],
+                'label'         => 'Settings.label.auth.authSmsMessage',
+                'context'       => 'Settings.context.auth.authSmsMessage'
+            ]
         ];
 
         $settingEntity = new SettingsEntity();

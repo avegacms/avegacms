@@ -4,16 +4,45 @@ declare(strict_types=1);
 
 namespace AvegaCms\Libraries\Authorization\Exceptions;
 
-use CodeIgniter\Exceptions\FrameworkException;
+use Exception;
 
-class AuthorizationException extends FrameworkException
+class AuthorizationException extends Exception
 {
+    protected array|string $messages = [];
+
+    /**
+     * @param  array|string  $messages
+     * @param  int  $code
+     */
+    public function __construct(array|string $messages, int $code = 400)
+    {
+        $this->messages = $messages;
+
+        parent::__construct(message: lang('Authorization.errors.validationError'), code: $code);
+    }
+
+    /**
+     * @return AuthorizationException
+     */
+    public static function forRulesNotFound(): AuthorizationException
+    {
+        return new static([lang('Authorization.errors.rulesNotFound')]);
+    }
+
+    /**
+     * @return array
+     */
+    public function getMessages(): array
+    {
+        return ! is_array($this->messages) ? [$this->messages] : $this->messages;
+    }
+
     /**
      * @return AuthorizationException
      */
     public static function forNoData(): AuthorizationException
     {
-        return new static(message: lang('Authorization.errors.noData'));
+        return new static(lang('Authorization.errors.noData'));
     }
 
     /**
@@ -22,7 +51,7 @@ class AuthorizationException extends FrameworkException
      */
     public static function forUnknownAuthType(string $type = null): AuthorizationException
     {
-        return new static(message: lang('Authorization.errors.unknownAuthType', [$type]));
+        return new static(lang('Authorization.errors.unknownAuthType', [$type]));
     }
 
     /**
@@ -31,7 +60,7 @@ class AuthorizationException extends FrameworkException
      */
     public static function forUnknownLoginField(string $field = null): AuthorizationException
     {
-        return new static(message: lang('Authorization.errors.unknownLoginField', [$field]));
+        return new static(lang('Authorization.errors.unknownLoginField', [$field]));
     }
 
     /**
@@ -40,7 +69,7 @@ class AuthorizationException extends FrameworkException
      */
     public static function forUnknownRole(string $role = null): AuthorizationException
     {
-        return new static(message: lang('Authorization.errors.unknownRole', [$role]));
+        return new static(lang('Authorization.errors.unknownRole', [$role]));
     }
 
     /**
@@ -48,7 +77,7 @@ class AuthorizationException extends FrameworkException
      */
     public static function forUnknownUser(): AuthorizationException
     {
-        return new static(message: lang('Authorization.errors.unknownUser'));
+        return new static(lang('Authorization.errors.unknownUser'));
     }
 
     /**
@@ -56,7 +85,7 @@ class AuthorizationException extends FrameworkException
      */
     public static function forWrongPassword(): AuthorizationException
     {
-        return new static(message: lang('Authorization.errors.wrongPassword'));
+        return new static(lang('Authorization.errors.wrongPassword'));
     }
 
     /**
@@ -64,7 +93,7 @@ class AuthorizationException extends FrameworkException
      */
     public static function forFailSendAuthCode(): AuthorizationException
     {
-        return new static(message: lang('Authorization.errors.failSendAuthCode'));
+        return new static(lang('Authorization.errors.failSendAuthCode'));
     }
 
     /**
@@ -72,7 +101,7 @@ class AuthorizationException extends FrameworkException
      */
     public static function forCreateToken(): AuthorizationException
     {
-        return new static(message: lang('Authorization.errors.createToken'));
+        return new static(lang('Authorization.errors.createToken'));
     }
 
     /**
@@ -80,7 +109,7 @@ class AuthorizationException extends FrameworkException
      */
     public static function forCodeExpired(): AuthorizationException
     {
-        return new static(message: lang('Authorization.errors.codeExpired'));
+        return new static(lang('Authorization.errors.codeExpired'));
     }
 
     /**
@@ -88,7 +117,7 @@ class AuthorizationException extends FrameworkException
      */
     public static function forWrongCode(): AuthorizationException
     {
-        return new static(message: lang('Authorization.errors.wrongCode'));
+        return new static(lang('Authorization.errors.wrongCode'));
     }
 
     /**
@@ -96,7 +125,7 @@ class AuthorizationException extends FrameworkException
      */
     public static function forFailPasswordUpdate(): AuthorizationException
     {
-        return new static(message: lang('Authorization.errors.failPasswordUpdate'));
+        return new static(lang('Authorization.errors.failPasswordUpdate'));
     }
 
     /**
@@ -104,7 +133,7 @@ class AuthorizationException extends FrameworkException
      */
     public static function forUserSessionNotExist(): AuthorizationException
     {
-        return new static(message: lang('Authorization.errors.userSessionNotExist'));
+        return new static(lang('Authorization.errors.userSessionNotExist'));
     }
 
     /**
@@ -113,7 +142,7 @@ class AuthorizationException extends FrameworkException
      */
     public static function forFailUnauthorized(?string $message = null): AuthorizationException
     {
-        return new static(message: is_null($message) ? '' : lang('Authorization.errors.' . $message), code: 401);
+        return new static(is_null($message) ? '' : lang('Authorization.errors.' . $message), 401);
     }
 
     /**
@@ -122,6 +151,6 @@ class AuthorizationException extends FrameworkException
      */
     public static function forFailForbidden(?string $message = null): AuthorizationException
     {
-        return new static(message: is_null($message) ? '' : lang('Authorization.errors.' . $message), code: 403);
+        return new static(is_null($message) ? '' : lang('Authorization.errors.' . $message), 403);
     }
 }

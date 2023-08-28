@@ -24,9 +24,9 @@ class AvegaCmsModel extends Model
 
     /**
      * @param  array|null  $fields
-     * @return AvegaCmsModel|array|static
+     * @return AvegaCmsModel
      */
-    public function filter(?array $fields = []): AvegaCmsModel|array|static
+    public function filter(?array $fields = []): AvegaCmsModel
     {
         if ( ! empty($fields = array_filter($fields, fn($value) => $value !== '' && $value !== null))) {
             $this->filterCastsFields[$this->searchFieldAlias] = 'string';
@@ -133,7 +133,7 @@ class AvegaCmsModel extends Model
             ]
         ];
     }
-    
+
     /**
      * @param  string  $type
      * @param  array  $fields

@@ -4,7 +4,7 @@ namespace AvegaCms\Controllers\Api\Public;
 
 use AvegaCms\Controllers\Api\CmsResourceController;
 use AvegaCms\Libraries\Authorization\Authorization;
-use AvegaCms\Libraries\Authorization\Exceptions\{AuthorizationException, ValidationException};
+use AvegaCms\Libraries\Authorization\Exceptions\AuthorizationException;
 use CodeIgniter\Events\Events;
 use CodeIgniter\HTTP\ResponseInterface;
 use Exception;
@@ -15,6 +15,9 @@ class Login extends CmsResourceController
     protected array         $settings = [];
     protected Authorization $Authorization;
 
+    /**
+     * @throws AuthorizationException
+     */
     public function __construct()
     {
         helper(['avegacms', 'date']);
@@ -25,7 +28,6 @@ class Login extends CmsResourceController
     /**
      * @param  string|null  $action
      * @return ResponseInterface
-     * @throws AuthorizationException|ValidationException|Exception
      */
     public function index(?string $action = null): ResponseInterface
     {
@@ -65,13 +67,11 @@ class Login extends CmsResourceController
                     throw AuthorizationException::forUnknownAuthType();
             }
             return $this->respondUpdated($result);
-        } catch (ValidationException $e) {
-            return $this->failValidationErrors($e->getMessages());
         } catch (AuthorizationException|Exception $e) {
             return match ($e->getCode()) {
                 403     => $this->failForbidden($e->getMessage()),
                 401     => $this->failUnauthorized($e->getMessage()),
-                default => $this->failValidationErrors($e->getMessage()),
+                default => $this->failValidationErrors(empty($e->getMessages()) ? $e->getMessage() : $e->getMessages())
             };
         }
     }

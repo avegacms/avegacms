@@ -6,27 +6,12 @@ use CodeIgniter\Entity\Entity;
 
 class ModulesEntity extends Entity
 {
-    protected $datamap = [
-        'id'            => null,
-        'parent'        => null,
-        'is_plugin'     => null,
-        'is_system'     => null,
-        'slug'          => null,
-        'name'          => null,
-        'version'       => null,
-        'description'   => null,
-        'extra'         => null,
-        'in_sitemap'    => null,
-        'active'        => null,
-        'created_by_id' => null,
-        'updated_by_id' => null,
-        'created_at'    => null,
-        'updated_at'    => null
-    ];
+    protected $datamap = [];
     protected $dates   = ['created_at', 'updated_at'];
     protected $casts   = [
         'id'            => 'integer',
         'parent'        => 'integer',
+        'is_core'       => 'integer',
         'is_plugin'     => 'integer',
         'is_system'     => 'integer',
         'slug'          => 'string',

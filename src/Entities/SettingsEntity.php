@@ -6,26 +6,12 @@ use CodeIgniter\Entity\Entity;
 
 class SettingsEntity extends Entity
 {
-    protected $datamap = [
-        'id'            => null,
-        'entity'        => null,
-        'slug'          => null,
-        'key'           => null,
-        'value'         => null,
-        'default_value' => null,
-        'return_type'   => null,
-        'label'         => null,
-        'context'       => null,
-        'rules'         => null,
-        'sort'          => null,
-        'created_by_id' => null,
-        'updated_by_id' => null,
-        'created_at'    => null,
-        'updated_at'    => null
-    ];
+    protected $datamap = [];
     protected $dates   = ['created_at', 'updated_at'];
     protected $casts   = [
         'id'            => 'integer',
+        'module_id'     => 'integer',
+        'is_core'       => 'integer',
         'entity'        => 'string',
         'slug'          => 'string',
         'key'           => 'string',
@@ -33,12 +19,23 @@ class SettingsEntity extends Entity
         'default_value' => 'string',
         'return_type'   => 'string',
         'label'         => 'string',
+        'lang_label'    => 'string',
         'context'       => 'string',
-        'rules'         => 'string',
+        'lang_context'  => 'string',
         'sort'          => 'integer',
         'created_by_id' => 'integer',
         'updated_by_id' => 'integer',
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime'
     ];
+
+    public function getLangLabel(): string
+    {
+        return lang($this->attributes['lang_label']);
+    }
+
+    public function getLangContext(): string
+    {
+        return lang($this->attributes['lang_context']);
+    }
 }

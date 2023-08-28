@@ -2,10 +2,10 @@
 
 namespace AvegaCms\Models\Admin;
 
-use CodeIgniter\Model;
+use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Entities\SettingsEntity;
 
-class SettingsModel extends Model
+class SettingsModel extends AvegaCmsModel
 {
     protected $DBGroup          = 'default';
     protected $table            = 'settings';
@@ -15,6 +15,8 @@ class SettingsModel extends Model
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
+        'module_id',
+        'is_core',
         'entity',
         'slug',
         'key',
@@ -23,7 +25,6 @@ class SettingsModel extends Model
         'return_type',
         'label',
         'context',
-        'rules',
         'sort',
         'created_by_id',
         'updated_by_id',
@@ -39,7 +40,22 @@ class SettingsModel extends Model
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'id'            => ['rules' => 'if_exist|is_natural_no_zero'],
+        'module_id'     => ['rules' => 'if_exist|is_natural'],
+        'is_core'       => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
+        'entity'        => ['rules' => 'if_exist|required|alpha_numeric|max_length[36]'],
+        'slug'          => ['rules' => 'if_exist|required|alpha_numeric|max_length[36]'],
+        'key'           => ['rules' => 'if_exist|required|alpha_numeric|max_length[36]'],
+        'value'         => ['rules' => 'if_exist|permit_empty'],
+        'default_value' => ['rules' => 'if_exist|permit_empty'],
+        'return_type'   => ['rules' => 'if_exist|in_list[integer,float,string,boolean,array,datetime,timestamp,json]'],
+        'label'         => ['rules' => 'if_exist|required|string|max_length[255]'],
+        'context'       => ['rules' => 'if_exist|permit_empty|string|max_length[512]'],
+        'sort'          => ['rules' => 'if_exist|is_natural'],
+        'created_by_id' => ['rules' => 'if_exist|is_natural'],
+        'updated_by_id' => ['rules' => 'if_exist|is_natural']
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
@@ -54,6 +70,51 @@ class SettingsModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    public array $filterFields = [
+        'id'     => 'settings.id',
+        'entity' => 'settings.entity',
+        'slug'   => 'settings.slug',
+        'key'    => 'settings.key',
+        'label'  => 'settings.label'
+    ];
+
+    public array $searchFields   = [];
+    public array $sortableFields = [];
+
+    public array  $filterCastsFields = [
+        'id'     => 'int|array',
+        'entity' => 'string',
+        'slug'   => 'string',
+        'key'    => 'string',
+        'label'  => 'string'
+    ];
+    public string $searchFieldAlias  = 'q';
+    public string $sortFieldAlias    = 's';
+    public int    $limit             = 20;
+    public int    $maxLimit          = 100;
+
+    /**
+     * @return AvegaCmsModel
+     */
+    public function selectSettings(): AvegaCmsModel
+    {
+        $this->builder()->select(
+            [
+                'settings.id',
+                'settings.module_id',
+                'settings.is_core',
+                'settings.entity',
+                'settings.slug',
+                'settings.key',
+                'settings.label AS lang_label',
+                'IFNULL(m.slug, "AvegaCms Core") AS module_slug',
+                'IFNULL(m.name, "AvegaCms Core") AS module_name',
+            ]
+        )->join('modules AS m', 'm.id = settings.module_id', 'left');
+
+        return $this;
+    }
 
     /**
      * @param  string  $entity
@@ -111,6 +172,30 @@ class SettingsModel extends Model
         }
 
         return $this->asArray()->findColumn('id')[0] ?? 0;
+    }
+
+    /**
+     * @param  int  $id
+     * @return array|object|null
+     */
+    public function forEdit(int $id): array|object|null
+    {
+        $this->builder()->select([
+            'id',
+            'module_id',
+            'is_core',
+            'entity',
+            'slug',
+            'key',
+            'value',
+            'default_value',
+            'return_type',
+            'label',
+            'context',
+            'sort'
+        ]);
+
+        return $this->find($id);
     }
 
     /**

@@ -84,7 +84,6 @@ class UserModel extends AvegaCmsModel
         'timezone' => ['rules' => 'if_exist|required|max_length[144]'],
         'password' => ['rules' => 'if_exist|required|max_length[144]'],
         'path'     => ['rules' => 'if_exist|permit_empty|max_length[512]'],
-        'reset'    => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'extra'    => ['rules' => 'if_exist|permit_empty'],
         'status'   => ['rules' => 'if_exist|in_list[pre-registration,active,banned,deleted]']
     ];
