@@ -114,7 +114,7 @@ class AvegaCmsModelGenerator extends BaseCommand
             }
 
             $return = '\\' . trim($return, '\\') . '::class';
-            $this->call('makecms:entity', array_merge([$baseClass], $this->params));
+            $this->call('make:entity', array_merge([$baseClass], $this->params));
         } else {
             $return = "'{$return}'";
         }

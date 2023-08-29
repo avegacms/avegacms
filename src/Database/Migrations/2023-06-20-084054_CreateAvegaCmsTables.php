@@ -23,7 +23,8 @@ class CreateAvegaCmsTables extends Migration
         'tags_links'  => 'tags_links',
         'files'       => 'files',
         'sessions'    => 'sessions',
-        'permissions' => 'permissions'
+        'permissions' => 'permissions',
+        'navigations' => 'navigations',
     ];
 
     public function __construct(?Forge $forge = null)
@@ -423,6 +424,27 @@ class CreateAvegaCmsTables extends Migration
         $this->forge->addPrimaryKey('id');
         $this->forge->addUniqueKey(['role_id', 'module_id', 'is_module', 'is_system', 'is_plugin', 'parent', 'slug']);
         $this->createTable($this->tables['permissions']);
+
+        $this->forge->addField([
+            'id'        => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'parent'    => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
+            'is_admin'  => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'object_id' => ['type' => 'smallint', 'constraint' => 6, 'unsigned' => true, 'default' => 0],
+            'locale_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => 0],
+            'nav_type'  => [
+                'type'    => 'enum', 'constraint' => ['group', 'link', 'button', 'divider'],
+                'default' => 'link'
+            ],
+            'meta'      => ['type' => 'text', 'null' => true],
+            'title'     => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
+            'slug'      => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
+            'sort'      => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true, 'default' => 0],
+            'active'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            ...$this->byId(),
+            ...$this->dateFields(['deleted_at'])
+        ]);
+        $this->forge->addPrimaryKey('id');
+        $this->createTable($this->tables['navigations']);
     }
 
     public function down()
