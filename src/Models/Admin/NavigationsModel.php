@@ -14,17 +14,45 @@ class NavigationsModel extends AvegaCmsModel
     protected $returnType       = NavigationsEntity::class;
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = [];
+    protected $allowedFields    = [
+        'parent',
+        'is_admin',
+        'object_id',
+        'locale_id',
+        'nav_type',
+        'meta',
+        'title',
+        'slug',
+        'sort',
+        'active',
+        'created_by_id',
+        'updated_by_id',
+        'created_at',
+        'updated_at'
+    ];
 
     // Dates
-    protected $useTimestamps = false;
+    protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'parent',
+        'is_admin',
+        'object_id',
+        'locale_id',
+        'nav_type',
+        'meta',
+        'title',
+        'slug',
+        'sort',
+        'active',
+        'created_by_id',
+        'updated_by_id'
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
@@ -40,14 +68,28 @@ class NavigationsModel extends AvegaCmsModel
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    // AvegaCms filter settings
-    protected array  $filterFields      = [];
-    protected array  $searchFields      = [];
-    protected array  $sortableFields    = [];
-    protected array  $filterCastsFields = [];
-    protected string $searchFieldAlias  = 'q';
-    protected string $sortFieldAlias    = 's';
-    protected array  $filterEnumValues  = [];
-    protected int    $limit             = 20;
-    protected int    $maxLimit          = 100;
+
+    /**
+     * @param  int  $id
+     * @return array|object|null
+     */
+    public function forEdit(int $id)
+    {
+        $this->builder()->select(
+            [
+                'parent',
+                'is_admin',
+                'object_id',
+                'locale_id',
+                'nav_type',
+                'meta',
+                'title',
+                'slug',
+                'sort',
+                'active'
+            ]
+        )->where(['is_admin' => 0]);
+
+        return $this->find($id);
+    }
 }

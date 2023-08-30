@@ -37,7 +37,9 @@ class Navigations extends AvegaCmsAdminAPI
      */
     public function show($id = null): ResponseInterface
     {
-        //
+        if ($this->NM->forEdit($id) === null) {
+            return $this->failNotFound();
+        }
     }
 
     /**
@@ -68,7 +70,9 @@ class Navigations extends AvegaCmsAdminAPI
      */
     public function edit($id = null): ResponseInterface
     {
-        //
+        if (($data = $this->NM->forEdit($id)) === null) {
+            return $this->failNotFound();
+        }
     }
 
     /**
@@ -79,7 +83,9 @@ class Navigations extends AvegaCmsAdminAPI
      */
     public function update($id = null): ResponseInterface
     {
-        //
+        if ($this->NM->forEdit($id) === null) {
+            return $this->failNotFound();
+        }
     }
 
     /**
@@ -90,6 +96,14 @@ class Navigations extends AvegaCmsAdminAPI
      */
     public function delete($id = null): ResponseInterface
     {
-        //
+        if ($this->NM->forEdit($id) === null) {
+            return $this->failNotFound();
+        }
+
+        if ( ! $this->NM->where(['is_admin' => 0])->delete($id)) {
+            return $this->failValidationErrors(lang('Api.errors.delete', ['Locales']));
+        }
+
+        return $this->respondNoContent();
     }
 }
