@@ -73,7 +73,7 @@ class NavigationsModel extends AvegaCmsModel
      * @param  int  $id
      * @return array|object|null
      */
-    public function forEdit(int $id)
+    public function forEdit(int $id): array|object|null
     {
         $this->builder()->select(
             [
