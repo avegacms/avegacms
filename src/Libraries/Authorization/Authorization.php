@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AvegaCms\Libraries\Authorization;
 
-use AvegaCms\Enums\{UserStatuses, UserConditions};
+use AvegaCms\Enums\UserConditions;
 use AvegaCms\Libraries\Authorization\Exceptions\{AuthorizationException, AuthenticationException};
 use AvegaCms\Entities\{LoginEntity, UserEntity, UserTokensEntity};
 use AvegaCms\Models\Admin\{LoginModel, UserAuthenticationModel, UserRolesModel, UserTokensModel};
