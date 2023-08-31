@@ -4,6 +4,7 @@ namespace AvegaCms\Models\Admin;
 
 use CodeIgniter\Model;
 use AvegaCms\Entities\LoginEntity;
+use AvegaCms\Enums\UserStatuses;
 
 class LoginModel extends Model
 {
@@ -81,7 +82,13 @@ class LoginModel extends Model
                 'condition'
             ]
         )->where($fields)
-            ->whereIn('status', ['active', 'pre-registration']);
+            ->whereIn(
+                'status',
+                [
+                    UserStatuses::Active->value,
+                    UserStatuses::Registration->value
+                ]
+            );
 
         return $this->first();
     }

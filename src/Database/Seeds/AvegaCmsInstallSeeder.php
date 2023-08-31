@@ -2,11 +2,13 @@
 
 namespace AvegaCms\Database\Seeds;
 
+use AvegaCms\Enums\UserConditions;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Database\Seeder;
 use Config\Database;
 use CodeIgniter\CLI\CLI;
 use AvegaCms\Config\AvegaCms;
+use AvegaCms\Enums\UserStatuses;
 use AvegaCms\Models\Admin\{ModulesModel,
     SettingsModel,
     LoginModel,
@@ -82,7 +84,7 @@ class AvegaCmsInstallSeeder extends Seeder
                     'login'    => 'admin',
                     'email'    => 'admin@avegacms.ru',
                     'password' => 123456,
-                    'status'   => 'active'
+                    'status'   => UserStatuses::Active->value
                 ]
             ))
         );

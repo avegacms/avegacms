@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AvegaCms\Libraries\Authorization;
 
+use AvegaCms\Enums\{UserStatuses, UserConditions};
 use AvegaCms\Libraries\Authorization\Exceptions\{AuthorizationException, AuthenticationException};
 use AvegaCms\Entities\{LoginEntity, UserEntity, UserTokensEntity};
 use AvegaCms\Models\Admin\{LoginModel, UserAuthenticationModel, UserRolesModel, UserTokensModel};
@@ -85,13 +86,13 @@ class Authorization
             'status'    => true,
             'direct'    => 'set_user',
             'userdata'  => ['user_id' => $user->id],
-            'condition' => 'auth'
+            'condition' => UserConditions::Auth->value
         ];
 
         $loginType = key($loginType);
 
         if ($this->settings['auth']['use2fa'] || $loginType === 'phone') {
-            $authResult['userdata']['code'] = $this->_setSecretCode($user->id, 'auth');
+            $authResult['userdata']['code'] = $this->_setSecretCode($user->id, UserConditions::Auth->value);
             if ($loginType === 'phone' || $this->settings['auth']['2faField'] === 'phone') {
                 $authResult['userdata']['phone'] = $user->phone;
             } elseif ($this->settings['auth']['2faField'] === 'email') {
@@ -141,22 +142,22 @@ class Authorization
             throw AuthorizationException::forWrongCode();
         }
 
-        if ($data['condition'] === 'recovery') {
-            $hash = $this->_hashCode($this->_setSecretCode($user->id, 'password'));
+        if ($data['condition'] === UserConditions::Recovery->value) {
+            $hash = $this->_hashCode($this->_setSecretCode($user->id, UserConditions::Password->value));
         }
 
         return match ($data['condition']) {
-            'auth'     => [
+            UserConditions::Auth->value     => [
                 'status'   => true,
                 'direct'   => 'set_user',
                 'userdata' => ['user_id' => $user->id]
             ],
-            'recovery' => [
+            UserConditions::Recovery->value => [
                 'status'   => true,
                 'direct'   => 'password',
                 'userdata' => ['user_id' => $user->id, 'hash' => $hash ?? '']
             ],
-            default    => throw AuthorizationException::forWrongCode()
+            default                         => throw AuthorizationException::forWrongCode()
         };
     }
 
@@ -249,7 +250,7 @@ class Authorization
                 'id'         => $user->id,
                 'secret'     => '',
                 'expires'    => 0,
-                'condition'  => '',
+                'condition'  => UserConditions::None->value,
                 'last_ip'    => $userIp,
                 'last_agent' => $userAgent,
                 'active_at'  => now($user->timezone)
@@ -284,7 +285,7 @@ class Authorization
             throw AuthorizationException::forUnknownUser();
         }
 
-        $code = $this->_setSecretCode($user->id, 'recovery');
+        $code = $this->_setSecretCode($user->id, UserConditions::Recovery->value);
 
         $recoveryResult = [
             'status'   => true,
@@ -292,7 +293,7 @@ class Authorization
             'userdata' => [
                 'user_id'   => $user->id,
                 'code'      => $code,
-                'condition' => 'recovery',
+                'condition' => UserConditions::Recovery->value,
                 'hash'      => $this->_hashCode($code)
             ],
         ];
@@ -348,7 +349,7 @@ class Authorization
                 'secret'     => '',
                 'expires'    => 0,
                 'password'   => $data['password'],
-                'condition'  => '',
+                'condition'  => UserConditions::None->value,
                 'last_ip'    => $request->getIPAddress(),
                 'last_agent' => $request->getUserAgent()->getAgentString(),
                 'active_at'  => now($user->timezone)
@@ -626,7 +627,7 @@ class Authorization
                     'id'        => $userId,
                     'secret'    => $this->_hashCode($code),
                     'expires'   => $this->_setExpiresTime($condition),
-                    'condition' => $condition
+                    'condition' => UserConditions::from($condition)->value
                 ]
             ))
         );

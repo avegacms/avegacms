@@ -7,6 +7,7 @@ use AvegaCms\Entities\UserEntity;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
 use Faker\Generator;
+use AvegaCms\Enums\UserStatuses;
 
 class UserModel extends AvegaCmsModel
 {
@@ -84,8 +85,7 @@ class UserModel extends AvegaCmsModel
         'timezone' => ['rules' => 'if_exist|required|max_length[144]'],
         'password' => ['rules' => 'if_exist|required|max_length[144]'],
         'path'     => ['rules' => 'if_exist|permit_empty|max_length[512]'],
-        'extra'    => ['rules' => 'if_exist|permit_empty'],
-        'status'   => ['rules' => 'if_exist|in_list[pre-registration,active,banned,deleted]']
+        'extra'    => ['rules' => 'if_exist|permit_empty']
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
@@ -134,6 +134,8 @@ class UserModel extends AvegaCmsModel
 
     protected function initUserValidationRules(): void
     {
+        $this->validationRules['status'] = 'if_exist|in_list[' . implode(',', UserStatuses::getValues()) . ']';
+
         $settings = service('settings')->get('core.auth.loginType');
 
         $loginType = explode(':', $settings);

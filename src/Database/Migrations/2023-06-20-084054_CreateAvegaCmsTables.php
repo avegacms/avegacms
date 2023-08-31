@@ -4,6 +4,7 @@ namespace AvegaCms\Database\Migrations;
 
 use CodeIgniter\Database\Forge;
 use CodeIgniter\Database\Migration;
+use AvegaCms\Enums\{UserStatuses, UserConditions, SettingsReturnTypes, FileTypes, MetaStatuses, NavigationTypes};
 
 class CreateAvegaCmsTables extends Migration
 {
@@ -40,10 +41,6 @@ class CreateAvegaCmsTables extends Migration
 
     public function up()
     {
-        // TODO Виды авторизации: email, sms, email:sms, 2fa:email, 2fa:sms:email
-        // TODO Права доступов модуль, модуль-slug и plugins
-        // TODO Кастомные атрибуты
-
         /**
          * Таблица пользователей
          */
@@ -64,23 +61,13 @@ class CreateAvegaCmsTables extends Migration
             // Доп. поля
             'status'     => [
                 'type'       => 'enum',
-                'constraint' => [
-                    'pre-registration',
-                    'active',
-                    'banned',
-                    'deleted',
-                    ''
-                ],
-                'default'    => ''
+                'constraint' => UserStatuses::getValues(),
+                'default'    => UserStatuses::NotDefined->value
             ],
             'condition'  => [
                 'type'       => 'enum',
-                'constraint' => [
-                    'auth',
-                    'recovery',
-                    ''
-                ],
-                'default'    => ''
+                'constraint' => UserConditions::getValues(),
+                'default'    => UserConditions::None->value
             ],
             'last_ip'    => ['type' => 'varchar', 'constraint' => 45],
             'last_agent' => ['type' => 'varchar', 'constraint' => 512],
@@ -177,17 +164,8 @@ class CreateAvegaCmsTables extends Migration
             'default_value' => ['type' => 'text', 'null' => true],
             'return_type'   => [
                 'type'       => 'enum',
-                'constraint' => [
-                    'integer',
-                    'float',
-                    'string',
-                    'boolean',
-                    'array',
-                    'datetime',
-                    'timestamp',
-                    'json'
-                ],
-                'default'    => 'string'
+                'constraint' => SettingsReturnTypes::getValues(),
+                'default'    => SettingsReturnTypes::String->value
             ],
             'label'         => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
             'context'       => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
@@ -268,8 +246,8 @@ class CreateAvegaCmsTables extends Migration
             // личный файл или будет доступен только пользователю загрузившего его
             'file_type'         => [
                 'type'       => 'enum',
-                'constraint' => ['image', 'file', 'link', 'video_link'],
-                'default'    => 'file'
+                'constraint' => FileTypes::getValues(),
+                'default'    => FileTypes::File->value
             ],
             // тип загруженного файла
             ...$this->byId(),
@@ -322,8 +300,8 @@ class CreateAvegaCmsTables extends Migration
             // объект, содержащий информацию о доп. данных
             'status'     => [
                 'type'       => 'enum',
-                'constraint' => ['publish', 'future', 'pending', 'draft', 'trash'],
-                'default'    => 'pending'
+                'constraint' => MetaStatuses::getValues(),
+                'default'    => MetaStatuses::Publish->value
             ],
             // статус страницы
             'in_sitemap' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
@@ -432,8 +410,9 @@ class CreateAvegaCmsTables extends Migration
             'object_id' => ['type' => 'smallint', 'constraint' => 6, 'unsigned' => true, 'default' => 0],
             'locale_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => 0],
             'nav_type'  => [
-                'type'    => 'enum', 'constraint' => ['group', 'link', 'button', 'divider'],
-                'default' => 'link'
+                'type'       => 'enum',
+                'constraint' => NavigationTypes::getValues(),
+                'default'    => NavigationTypes::Link->value
             ],
             'meta'      => ['type' => 'text', 'null' => true],
             'title'     => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
