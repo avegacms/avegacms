@@ -70,7 +70,7 @@ class AvegaCmsSettings
      * @param  string|null  $value
      * @param  array|null  $config
      * @return bool
-     * @throws ReflectionException
+     * @throws ReflectionException|Exception
      */
     public function set(string $key, ?string $value = null, ?array $config = []): bool
     {
