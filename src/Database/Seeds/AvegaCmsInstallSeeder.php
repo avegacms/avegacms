@@ -2,7 +2,7 @@
 
 namespace AvegaCms\Database\Seeds;
 
-use AvegaCms\Enums\UserConditions;
+use AvegaCms\Enums\SettingsReturnTypes;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Database\Seeder;
 use Config\Database;
@@ -807,7 +807,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'timezone',
                 'value'         => 'Europe/Moscow',
                 'default_value' => 'Europe/Moscow',
-                'return_type'   => 'string',
+                'return_type'   => SettingsReturnTypes::String->value,
                 'label'         => 'Settings.label.env.timezone',
                 'context'       => 'Settings.context.env.timezone'
             ],
@@ -819,7 +819,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'secretKey',
                 'value'         => bin2hex(random_bytes(32)),
                 'default_value' => '',
-                'return_type'   => 'string',
+                'return_type'   => SettingsReturnTypes::String->value,
                 'label'         => 'Settings.label.env.secretKey',
                 'context'       => 'Settings.context.env.secretKey'
             ],
@@ -831,7 +831,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'defLanguage',
                 'value'         => 'ru',
                 'default_value' => 'ru',
-                'return_type'   => 'string',
+                'return_type'   => SettingsReturnTypes::String->value,
                 'label'         => 'Settings.label.env.defLanguage',
                 'context'       => 'Settings.context.env.defLanguage'
             ],
@@ -843,7 +843,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'useMultiLanguages',
                 'value'         => 0,
                 'default_value' => 0,
-                'return_type'   => 'boolean',
+                'return_type'   => SettingsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.env.useMultiLanguages',
                 'context'       => 'Settings.context.env.useMultiLanguages'
             ],
@@ -857,7 +857,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'useCors',
                 'value'         => 0,
                 'default_value' => 0,
-                'return_type'   => 'boolean',
+                'return_type'   => SettingsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.auth.useCors',
                 'context'       => 'Settings.context.auth.useCors'
             ],
@@ -869,7 +869,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'useSession',
                 'value'         => 1,
                 'default_value' => 1,
-                'return_type'   => 'boolean',
+                'return_type'   => SettingsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.auth.useSession',
                 'context'       => 'Settings.context.auth.useSession'
             ],
@@ -881,7 +881,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'useToken',
                 'value'         => 0,
                 'default_value' => 0,
-                'return_type'   => 'boolean',
+                'return_type'   => SettingsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.auth.useToken',
                 'context'       => 'Settings.context.auth.useToken'
             ],
@@ -893,7 +893,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'useJwt',
                 'value'         => 0,
                 'default_value' => 0,
-                'return_type'   => 'boolean',
+                'return_type'   => SettingsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.auth.useJwt',
                 'context'       => 'Settings.context.auth.useJwt'
             ],
@@ -905,7 +905,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'jwtSecretKey',
                 'value'         => bin2hex(random_bytes(32)),
                 'default_value' => '',
-                'return_type'   => 'string',
+                'return_type'   => SettingsReturnTypes::String->value,
                 'label'         => 'Settings.label.auth.jwtSecretKey',
                 'context'       => 'Settings.context.auth.jwtSecretKey'
             ],
@@ -917,7 +917,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'jwtSessionsLimit',
                 'value'         => 3,
                 'default_value' => 3,
-                'return_type'   => 'integer',
+                'return_type'   => SettingsReturnTypes::Integer->value,
                 'label'         => 'Settings.label.auth.jwtSessionsLimit',
                 'context'       => 'Settings.context.auth.jwtSessionsLimit'
             ],
@@ -929,7 +929,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'jwtLiveTime',
                 'value'         => 30,
                 'default_value' => 30,
-                'return_type'   => 'integer',
+                'return_type'   => SettingsReturnTypes::Integer->value,
                 'label'         => 'Settings.label.auth.jwtLiveTime',
                 'context'       => 'Settings.context.auth.jwtLiveTime'
             ],
@@ -941,7 +941,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'jwtRefreshTime',
                 'value'         => 30,
                 'default_value' => 30,
-                'return_type'   => 'integer',
+                'return_type'   => SettingsReturnTypes::Integer->value,
                 'label'         => 'Settings.label.auth.jwtLiveTime',
                 'context'       => 'Settings.context.auth.jwtLiveTime'
             ],
@@ -953,7 +953,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'jwtAlg',
                 'value'         => 'HS256',
                 'default_value' => 'HS256',
-                'return_type'   => 'string',
+                'return_type'   => SettingsReturnTypes::String->value,
                 'label'         => 'Settings.label.auth.jwtAlg',
                 'context'       => 'Settings.context.auth.jwtAlg'
             ],
@@ -965,7 +965,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'useWhiteIpList',
                 'value'         => 1,
                 'default_value' => 0,
-                'return_type'   => 'boolean',
+                'return_type'   => SettingsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.auth.useWhiteIpList',
                 'context'       => 'Settings.context.auth.useWhiteIpList'
             ],
@@ -977,7 +977,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'whiteIpList',
                 'value'         => serialize([]),
                 'default_value' => serialize([]),
-                'return_type'   => 'array',
+                'return_type'   => SettingsReturnTypes::Array->value,
                 'label'         => 'Settings.label.auth.whiteIpList',
                 'context'       => 'Settings.context.auth.whiteIpList'
             ],
@@ -1007,7 +1007,7 @@ class AvegaCmsInstallSeeder extends Seeder
                         'login:email:phone'
                     ]
                 ),
-                'return_type'   => 'array',
+                'return_type'   => SettingsReturnTypes::Array->value,
                 'label'         => 'Settings.label.auth.loginTypeList',
                 'context'       => 'Settings.context.auth.loginTypeList'
             ],
@@ -1019,7 +1019,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'loginType',
                 'value'         => 'email',
                 'default_value' => 'email',
-                'return_type'   => 'string',
+                'return_type'   => SettingsReturnTypes::String->value,
                 'label'         => 'Settings.label.auth.loginType',
                 'context'       => 'Settings.context.auth.loginType'
             ],
@@ -1031,7 +1031,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'use2fa',
                 'value'         => 0,
                 'default_value' => 0,
-                'return_type'   => 'boolean',
+                'return_type'   => SettingsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.auth.use2fa',
                 'context'       => 'Settings.context.auth.use2fa'
             ],
@@ -1043,7 +1043,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => '2faField',
                 'value'         => 'email',
                 'default_value' => 'email',
-                'return_type'   => 'string',
+                'return_type'   => SettingsReturnTypes::String->value,
                 'label'         => 'Settings.label.auth.2faField',
                 'context'       => 'Settings.context.auth.2faField'
             ],
@@ -1055,7 +1055,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'verifyCodeLength',
                 'value'         => 4,
                 'default_value' => 4,
-                'return_type'   => 'integer',
+                'return_type'   => SettingsReturnTypes::Integer->value,
                 'label'         => 'Settings.label.auth.verifyCodeLength',
                 'context'       => 'Settings.context.auth.verifyCodeLength'
             ],
@@ -1067,7 +1067,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'verifyCodeTime',
                 'value'         => 5,
                 'default_value' => 5,
-                'return_type'   => 'integer',
+                'return_type'   => SettingsReturnTypes::Integer->value,
                 'label'         => 'Settings.label.auth.verifyCodeTime',
                 'context'       => 'Settings.context.auth.verifyCodeTime'
             ],
@@ -1079,7 +1079,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'useRecovery',
                 'value'         => 1,
                 'default_value' => 1,
-                'return_type'   => 'boolean',
+                'return_type'   => SettingsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.auth.useRecovery',
                 'context'       => 'Settings.context.auth.useRecovery'
             ],
@@ -1091,7 +1091,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'recoveryField',
                 'value'         => 'email',
                 'default_value' => 'email',
-                'return_type'   => 'string',
+                'return_type'   => SettingsReturnTypes::String->value,
                 'label'         => 'Settings.label.auth.recoveryField',
                 'context'       => 'Settings.context.auth.recoveryField'
             ],
@@ -1103,7 +1103,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'recoveryCodeTime',
                 'value'         => 10,
                 'default_value' => 10,
-                'return_type'   => 'integer',
+                'return_type'   => SettingsReturnTypes::Integer->value,
                 'label'         => 'Settings.label.auth.recoveryCodeTime',
                 'context'       => 'Settings.context.auth.recoveryCodeTime'
             ],
@@ -1115,7 +1115,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'authSmsMessage',
                 'value'         => '',
                 'default_value' => '',
-                'return_type'   => 'string',
+                'return_type'   => SettingsReturnTypes::String->value,
                 'label'         => 'Settings.label.auth.authSmsMessage',
                 'context'       => 'Settings.context.auth.authSmsMessage'
             ]
