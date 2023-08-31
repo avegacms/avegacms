@@ -8,6 +8,7 @@ use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\NavigationsModel;
 use AvegaCms\Entities\NavigationsEntity;
+use AvegaCms\Enums\NavigationTypes;
 
 class Navigations extends AvegaCmsAdminAPI
 {

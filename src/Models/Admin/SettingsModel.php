@@ -99,8 +99,8 @@ class SettingsModel extends AvegaCmsModel
     public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
     {
         parent::__construct($db, $validation);
-        
-        $this->validationRules['return_type'] .= 'if_exist|in_list[' . implode(',',
+
+        $this->validationRules['return_type'] = 'if_exist|in_list[' . implode(',',
                 SettingsReturnTypes::getValues()) . ']';
     }
 
