@@ -4,8 +4,7 @@ namespace AvegaCms\Libraries;
 
 use AvegaCms\Models\Admin\SettingsModel;
 use AvegaCms\Entities\SettingsEntity;
-use InvalidArgumentException;
-use RuntimeException;
+use Exception;
 use ReflectionException;
 
 class AvegaCmsSettings
@@ -21,7 +20,7 @@ class AvegaCmsSettings
     /**
      * @param  string  $key
      * @return mixed
-     * @throws RuntimeException
+     * @throws Exception
      */
     public function get(string $key): mixed
     {
@@ -29,7 +28,7 @@ class AvegaCmsSettings
 
         if (is_null($settings = cache($fileCacheName = $this->prefix . $entity))) {
             if (empty($settings = $this->settings->getSettings($entity))) {
-                throw new RuntimeException('Unable to find a Settings array in DB.');
+                throw new Exception('Unable to find a Settings array in DB.');
             }
 
             $processArray = function (&$settings) use (&$processArray) {
@@ -53,12 +52,12 @@ class AvegaCmsSettings
 
         if ( ! is_null($slug) && ! is_null($property)) {
             if ( ! isset($settings[$slug][$property])) {
-                throw new RuntimeException('Unable to find in Settings array slug/key.');
+                throw new Exception('Unable to find in Settings array slug/key.');
             }
             $settings = $settings[$slug][$property];
         } elseif ( ! is_null($slug)) {
             if ( ! isset($settings[$slug])) {
-                throw new RuntimeException('Unable to find in Settings array slug/key');
+                throw new Exception('Unable to find in Settings array slug/key');
             }
             $settings = $settings[$slug];
         }
@@ -137,13 +136,12 @@ class AvegaCmsSettings
     /**
      * @param  string  $key
      * @return array
-     *
-     * @throws InvalidArgumentException
+     * @throws Exception
      */
     private function _parseKey(string $key): array
     {
         if (count($parts = explode('.', $key)) === 0) {
-            throw new InvalidArgumentException('$key cannot be empty');
+            throw new Exception('$key cannot be empty');
         }
 
         $parts[1] = $parts[1] ?? null;
