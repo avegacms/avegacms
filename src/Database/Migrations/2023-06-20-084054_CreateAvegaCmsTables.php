@@ -417,12 +417,14 @@ class CreateAvegaCmsTables extends Migration
             'meta'      => ['type' => 'text', 'null' => true],
             'title'     => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
             'slug'      => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
+            'icon'      => ['type' => 'varchar', 'constraint' => 512, 'null' => true, 'default' => ''],
             'sort'      => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true, 'default' => 0],
             'active'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             ...$this->byId(),
             ...$this->dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
+        $this->forge->addUniqueKey(['parent', 'is_admin', 'locale_id', 'nav_type', 'slug']);
         $this->createTable($this->tables['navigations']);
     }
 

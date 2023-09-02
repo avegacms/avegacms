@@ -4,6 +4,10 @@ namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Entities\NavigationsEntity;
+use CodeIgniter\Database\ConnectionInterface;
+use CodeIgniter\Validation\ValidationInterface;
+use Faker\Generator;
+use AvegaCms\Enums\NavigationTypes;
 
 class NavigationsModel extends AvegaCmsModel
 {
@@ -23,6 +27,7 @@ class NavigationsModel extends AvegaCmsModel
         'meta',
         'title',
         'slug',
+        'icon',
         'sort',
         'active',
         'created_by_id',
@@ -40,18 +45,18 @@ class NavigationsModel extends AvegaCmsModel
 
     // Validation
     protected $validationRules      = [
-        'parent',
-        'is_admin',
-        'object_id',
-        'locale_id',
-        'nav_type',
-        'meta',
-        'title',
-        'slug',
-        'sort',
-        'active',
-        'created_by_id',
-        'updated_by_id'
+        'parent'        => ['rules' => 'if_exist|is_natural'],
+        'is_admin'      => ['rules' => 'if_exist|permit_empty|max_length[255]'],
+        'object_id'     => ['rules' => 'if_exist|is_natural'],
+        'locale_id'     => ['rules' => 'if_exist|is_natural_no_zero'],
+        'meta'          => ['rules' => 'if_exist|permit_empty'],
+        'title'         => ['rules' => 'if_exist|required|string|max_length[512]'],
+        'slug'          => ['rules' => 'if_exist|permit_empty|string|max_length[512]'],
+        'icon'          => ['rules' => 'if_exist|permit_empty|string|max_length[512]'],
+        'sort'          => ['rules' => 'if_exist|is_natural_no_zero'],
+        'active'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
+        'created_by_id' => ['rules' => 'if_exist|is_natural'],
+        'updated_by_id' => ['rules' => 'if_exist|is_natural']
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
@@ -68,6 +73,13 @@ class NavigationsModel extends AvegaCmsModel
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
+    public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
+    {
+        parent::__construct($db, $validation);
+
+        $this->validationRules['nav_type'] = 'if_exist|required|in_list[' . implode(',',
+                NavigationTypes::getValues()) . ']';
+    }
 
     /**
      * @param  int  $id
@@ -85,11 +97,37 @@ class NavigationsModel extends AvegaCmsModel
                 'meta',
                 'title',
                 'slug',
+                'icon',
                 'sort',
                 'active'
             ]
         )->where(['is_admin' => 0]);
 
         return $this->find($id);
+    }
+
+    /**
+     * @param  Generator  $faker
+     * @return int[]
+     */
+    public function fake(Generator &$faker): array
+    {
+        helper(['url']);
+        $word = $faker->word();
+
+        return [
+            'parent'        => 0,
+            'is_admin'      => 1,
+            'object_id'     => 0,
+            'locale_id'     => 0,
+            'nav_type'      => '',
+            'meta'          => '',
+            'title'         => $word,
+            'slug'          => mb_url_title($word),
+            'sort'          => 1,
+            'active'        => 1,
+            'created_by_id' => 1,
+            'updated_by_id' => 0
+        ];
     }
 }

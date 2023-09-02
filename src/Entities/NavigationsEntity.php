@@ -18,6 +18,7 @@ class NavigationsEntity extends Entity
         'meta'          => 'menuMeta',
         'title'         => 'string',
         'slug'          => 'string',
+        'icon'          => 'string',
         'sort'          => 'integer',
         'active'        => 'integer',
         'created_by_id' => 'integer',

@@ -46,6 +46,11 @@ $routes->group('api', function (RouteCollection $routes) {
                 });
                 $routes->group('navigations', function (RouteCollection $routes) {
                     $routes->get('/', [Navigations::class, 'index']);
+                    $routes->get('new', [Navigations::class, 'new']);
+                    $routes->get('(:num)/edit', [[Navigations::class, 'edit'], '$1']);
+                    $routes->post('/', [Navigations::class, 'create']);
+                    $routes->put('(:num)', [[Navigations::class, 'update'], '$1']);
+                    $routes->patch('(:num)', [[Navigations::class, 'update'], '$1']);
                     $routes->delete('(:num)', [[Navigations::class, 'delete'], '$1']);
                 });
                 $routes->group('permissions', function (RouteCollection $routes) {

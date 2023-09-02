@@ -79,7 +79,7 @@ class UserModel extends AvegaCmsModel
     protected $validationRules      = [
         'id'       => ['rules' => 'if_exist|is_natural_no_zero'],
         'login'    => ['rules' => 'if_exist|required|alpha_dash|max_length[36]|is_unique[users.login,id,{id}]'],
-        'avatar'   => ['rules' => 'if_exist|permit_empty|permit_empty|max_length[255]'],
+        'avatar'   => ['rules' => 'if_exist|permit_empty|max_length[255]'],
         'phone'    => ['rules' => 'if_exist|is_natural|exact_length[11]|regex_match[/^79\d{9}/]'],
         'email'    => ['rules' => 'if_exist|max_length[255]|valid_email'],
         'timezone' => ['rules' => 'if_exist|required|max_length[144]'],
