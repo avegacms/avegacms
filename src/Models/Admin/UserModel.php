@@ -132,6 +132,9 @@ class UserModel extends AvegaCmsModel
         return $this->find($id);
     }
 
+    /**
+     * @return void
+     */
     protected function initUserValidationRules(): void
     {
         $this->validationRules['status'] = 'if_exist|in_list[' . implode(',', UserStatuses::getValues()) . ']';
@@ -158,18 +161,14 @@ class UserModel extends AvegaCmsModel
      */
     public function fake(Generator &$faker): array
     {
+        $statuses = UserStatuses::getValues();
+
         return [
             'login'         => $faker->word() . '_' . $faker->word(),
             'email'         => $faker->email,
             'phone'         => '79' . rand(100000000, 999999999),
-            'status'        => array_rand(
-                [
-                    'pre-registration',
-                    'active',
-                    'banned',
-                    'deleted',
-                    ''
-                ], 1),
+            'status'        => $statuses[array_rand($statuses)],
+            'password'      => $faker->password(),
             'active_at'     => $faker->dateTimeBetween('-1 week', 'now', 'Asia/Omsk')->format('Y-m-d H:i:s'),
             'created_by_id' => 1
         ];

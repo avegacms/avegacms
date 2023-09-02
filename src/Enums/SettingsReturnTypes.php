@@ -6,6 +6,7 @@ enum SettingsReturnTypes: string
 {
     case Integer   = 'INTEGER';
     case Float     = 'FLOAT';
+    case Double    = 'DOUBLE';
     case String    = 'STRING';
     case Boolean   = 'BOOLEAN';
     case Array     = 'ARRAY';

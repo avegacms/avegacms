@@ -6,6 +6,7 @@ use AvegaCms\Models\Admin\SettingsModel;
 use AvegaCms\Entities\SettingsEntity;
 use Exception;
 use ReflectionException;
+use AvegaCms\Enums\SettingsReturnTypes;
 
 class AvegaCmsSettings
 {
@@ -49,7 +50,7 @@ class AvegaCmsSettings
 
             cache()->save($fileCacheName, $settings, DAY * 30);
         }
-
+        
         if ( ! is_null($slug) && ! is_null($property)) {
             if ( ! isset($settings[$slug][$property])) {
                 throw new Exception('Unable to find in Settings array slug/key.');
@@ -85,7 +86,7 @@ class AvegaCmsSettings
                     'key'           => $property ?? '',
                     'value'         => $value,
                     'default_value' => $config['default_value'] ?? '',
-                    'return_type'   => $config['return_type'] ?? 'string',
+                    'return_type'   => $config['return_type'] ?? SettingsReturnTypes::String->value,
                     'label'         => $config['label'] ?? '',
                     'context'       => $config['context'] ?? '',
                     'sort'          => $config['sort'] ?? 100
@@ -115,21 +116,20 @@ class AvegaCmsSettings
     private function _castAs($value, string $type): mixed
     {
         return match ($type) {
-            'int',
-            'integer' => (int) $value,
-            'double',
-            'float'   => (float) $value,
-            'string'  => (string) $value,
-            'bool',
-            'boolean' => (bool) $value,
-            'array'   => (array) (
+            SettingsReturnTypes::Integer->value => (int) $value,
+            SettingsReturnTypes::Double->value  => (double) $value,
+            SettingsReturnTypes::Float->value   => (float) $value,
+            SettingsReturnTypes::String->value  => (string) $value,
+            SettingsReturnTypes::Boolean->value => (bool) $value,
+            SettingsReturnTypes::Json->value    => $value,
+            SettingsReturnTypes::Array->value   => (array) (
             (
             (is_string($value) && (str_starts_with($value, 'a:') || str_starts_with($value, 's:'))) ?
                 unserialize($value) :
                 $value
             )
             ),
-            default   => null
+            default                             => null
         };
     }
 
