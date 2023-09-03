@@ -48,7 +48,7 @@ class SettingsModel extends AvegaCmsModel
         'module_id'     => ['rules' => 'if_exist|is_natural'],
         'is_core'       => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'entity'        => ['rules' => 'if_exist|required|alpha_numeric|max_length[36]'],
-        'slug'          => ['rules' => 'if_exist|required|alpha_numeric|max_length[36]'],
+        'slug'          => ['rules' => 'if_exist|required|alpha_numeric|max_length[36]|unique_db_key[settings.module_id+entity+slug+key,id,{id}]'],
         'key'           => ['rules' => 'if_exist|required|alpha_numeric|max_length[36]'],
         'value'         => ['rules' => 'if_exist|permit_empty'],
         'default_value' => ['rules' => 'if_exist|permit_empty'],

@@ -45,13 +45,14 @@ class NavigationsModel extends AvegaCmsModel
 
     // Validation
     protected $validationRules      = [
+        'id'            => ['rules' => 'if_exist|is_natural'],
         'parent'        => ['rules' => 'if_exist|is_natural'],
         'is_admin'      => ['rules' => 'if_exist|permit_empty|max_length[255]'],
         'object_id'     => ['rules' => 'if_exist|is_natural'],
         'locale_id'     => ['rules' => 'if_exist|is_natural_no_zero'],
         'meta'          => ['rules' => 'if_exist|permit_empty'],
         'title'         => ['rules' => 'if_exist|required|string|max_length[512]'],
-        'slug'          => ['rules' => 'if_exist|permit_empty|string|max_length[512]'],
+        'slug'          => ['rules' => 'if_exist|permit_empty|string|max_length[512]|unique_db_key[navigations.parent+is_admin+locale_id+nav_type+slug,id,{id}]'],
         'icon'          => ['rules' => 'if_exist|permit_empty|string|max_length[512]'],
         'sort'          => ['rules' => 'if_exist|is_natural_no_zero'],
         'active'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
