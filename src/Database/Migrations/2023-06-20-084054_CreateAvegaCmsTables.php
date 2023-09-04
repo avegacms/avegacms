@@ -4,7 +4,15 @@ namespace AvegaCms\Database\Migrations;
 
 use CodeIgniter\Database\Forge;
 use CodeIgniter\Database\Migration;
-use AvegaCms\Enums\{UserStatuses, UserConditions, SettingsReturnTypes, FileTypes, MetaStatuses, NavigationTypes};
+use AvegaCms\Enums\{
+    UserStatuses,
+    UserConditions,
+    SettingsReturnTypes,
+    FileTypes,
+    MetaStatuses,
+    NavigationTypes,
+    MetaDataTypes
+};
 
 class CreateAvegaCmsTables extends Migration
 {
@@ -18,7 +26,7 @@ class CreateAvegaCmsTables extends Migration
         'locales'     => 'locales',
         'modules'     => 'modules',
         'settings'    => 'settings',
-        'content_seo' => 'content_seo',
+        'metadata'    => 'metadata',
         'content'     => 'content',
         'tags'        => 'tags',
         'tags_links'  => 'tags_links',
@@ -303,6 +311,11 @@ class CreateAvegaCmsTables extends Migration
                 'constraint' => MetaStatuses::getValues(),
                 'default'    => MetaStatuses::Publish->value
             ],
+            'meta_type'  => [
+                'type'       => 'enum',
+                'constraint' => MetaDataTypes::getValues(),
+                'default'    => MetaDataTypes::Undefined->value
+            ],
             // статус страницы
             'in_sitemap' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // флаг добавления в карту сайта
@@ -316,20 +329,21 @@ class CreateAvegaCmsTables extends Migration
         $this->forge->addForeignKey('creator_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
         $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
         $this->forge->addForeignKey('updated_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
-        $this->createTable($this->tables['content_seo']);
+        $this->createTable($this->tables['metadata']);
 
         /**
          * Таблица для хранения страниц
          */
         $this->forge->addField([
-            'id'      => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'auto_increment' => true],
+            'meta_id' => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
             'anons'   => ['type' => 'text', 'null' => true], // краткая информация
             'content' => ['type' => 'longtext', 'null' => true], // остальная информация
             'extra'   => ['type' => 'longtext', 'null' => true], // объект, содержащий информацию о доп. данных
             ...$this->byId(),
             ...$this->dateFields(['deleted_at'])
         ]);
-        $this->forge->addKey('id');
+        $this->forge->addUniqueKey(['meta_id']);
+        $this->forge->addForeignKey('meta_id', $this->tables['metadata'], 'id', '', 'CASCADE');
         $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
         $this->forge->addForeignKey('updated_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
         $this->createTable($this->tables['content']);
@@ -355,13 +369,13 @@ class CreateAvegaCmsTables extends Migration
          */
         $this->forge->addField([
             'tag_id'        => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
-            'seo_id'        => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
+            'meta_id'       => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
             'created_by_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => 0, 'default' => 0],
             ...$this->dateFields(['updated_at', 'deleted_at'])
         ]);
-        $this->forge->addUniqueKey(['tag_id', 'seo_id']);
+        $this->forge->addUniqueKey(['tag_id', 'meta_id']);
         $this->forge->addForeignKey('tag_id', $this->tables['tags'], 'id', '', 'CASCADE');
-        $this->forge->addForeignKey('seo_id', $this->tables['content_seo'], 'id', '', 'CASCADE');
+        $this->forge->addForeignKey('meta_id', $this->tables['metadata'], 'id', '', 'CASCADE');
         $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
         $this->createTable($this->tables['tags_links']);
 

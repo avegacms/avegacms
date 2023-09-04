@@ -89,3 +89,5 @@ $routes->group('api', function (RouteCollection $routes) {
             });
         });
 });
+
+$routes->get('(.*)', 'Content::index', ['priority' => 10000]);
