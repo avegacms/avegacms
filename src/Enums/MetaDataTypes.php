@@ -9,7 +9,7 @@ enum MetaDataTypes: string
     case Category  = 'CATEGORY';
     case Module    = 'MODULE';
     case Custom    = 'CUSTOM';
-    case Undefined = 'Undefined';
+    case Undefined = 'UNDEFINED';
 
     public static function getValues(): array
     {
