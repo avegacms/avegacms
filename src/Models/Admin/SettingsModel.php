@@ -4,6 +4,9 @@ namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Entities\SettingsEntity;
+use AvegaCms\Enums\SettingsReturnTypes;
+use CodeIgniter\Database\ConnectionInterface;
+use CodeIgniter\Validation\ValidationInterface;
 
 class SettingsModel extends AvegaCmsModel
 {
@@ -45,11 +48,10 @@ class SettingsModel extends AvegaCmsModel
         'module_id'     => ['rules' => 'if_exist|is_natural'],
         'is_core'       => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'entity'        => ['rules' => 'if_exist|required|alpha_numeric|max_length[36]'],
-        'slug'          => ['rules' => 'if_exist|required|alpha_numeric|max_length[36]'],
+        'slug'          => ['rules' => 'if_exist|required|alpha_numeric|max_length[36]|unique_db_key[settings.module_id+entity+slug+key,id,{id}]'],
         'key'           => ['rules' => 'if_exist|required|alpha_numeric|max_length[36]'],
         'value'         => ['rules' => 'if_exist|permit_empty'],
         'default_value' => ['rules' => 'if_exist|permit_empty'],
-        'return_type'   => ['rules' => 'if_exist|in_list[integer,float,string,boolean,array,datetime,timestamp,json]'],
         'label'         => ['rules' => 'if_exist|required|string|max_length[255]'],
         'context'       => ['rules' => 'if_exist|permit_empty|string|max_length[512]'],
         'sort'          => ['rules' => 'if_exist|is_natural'],
@@ -93,6 +95,14 @@ class SettingsModel extends AvegaCmsModel
     public string $sortFieldAlias    = 's';
     public int    $limit             = 20;
     public int    $maxLimit          = 100;
+
+    public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
+    {
+        parent::__construct($db, $validation);
+
+        $this->validationRules['return_type'] = 'if_exist|in_list[' . implode(',',
+                SettingsReturnTypes::getValues()) . ']';
+    }
 
     /**
      * @return AvegaCmsModel

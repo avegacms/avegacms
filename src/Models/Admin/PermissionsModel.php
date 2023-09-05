@@ -43,7 +43,7 @@ class PermissionsModel extends Model
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
-
+    
     // Validation
     protected $validationRules      = [
         'id'            => ['rules' => 'if_exist|is_natural_no_zero'],
@@ -52,7 +52,7 @@ class PermissionsModel extends Model
         'module_id'     => ['rules' => 'if_exist|is_natural'],
         'is_module'     => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'is_plugin'     => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
-        'slug'          => ['rules' => 'if_exist|permit_empty|alpha_dash|max_length[64]'],
+        'slug'          => ['rules' => 'if_exist|permit_empty|alpha_dash|max_length[64]|unique_db_key[permissions.role_id+module_id+is_module+is_system+is_plugin+parent+slug,id,{id}]'],
         'access'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'self'          => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'create'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
@@ -90,7 +90,7 @@ class PermissionsModel extends Model
 
         return $this->findAll();
     }
-    
+
     /**
      * @param  int  $roleId
      * @param  int  $moduleId

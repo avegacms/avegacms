@@ -5,28 +5,9 @@ namespace AvegaCms\Entities;
 use CodeIgniter\Entity\Entity;
 use AvegaCms\Entities\Cast\ContentSeoMetaCast;
 
-class ContentSeoEntity extends Entity
+class MetaDataEntity extends Entity
 {
-    protected $datamap = [
-        'parent'        => null,
-        'locale_id'     => null,
-        'module_id'     => null,
-        'slug'          => null,
-        'creator_id'    => null,
-        'item_id'       => null,
-        'title'         => null,
-        'sort'          => null,
-        'url'           => null,
-        'meta'          => null,
-        'extra'         => null,
-        'status'        => null,
-        'in_sitemap'    => null,
-        'created_by_id' => null,
-        'updated_by_id' => null,
-        'publish_at'    => null,
-        'created_at'    => null,
-        'updated_at'    => null
-    ];
+    protected $datamap = [];
     protected $dates   = ['created_at', 'updated_at', 'publish_at'];
     protected $casts   = [
         'parent'        => 'integer',
@@ -41,6 +22,7 @@ class ContentSeoEntity extends Entity
         'meta'          => 'seoMeta',
         'extra'         => 'json-array',
         'status'        => 'string',
+        'meta_type'     => 'string',
         'in_sitemap'    => 'integer',
         'created_by_id' => 'integer',
         'updated_by_id' => 'integer',

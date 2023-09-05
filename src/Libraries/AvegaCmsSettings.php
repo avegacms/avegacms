@@ -4,9 +4,9 @@ namespace AvegaCms\Libraries;
 
 use AvegaCms\Models\Admin\SettingsModel;
 use AvegaCms\Entities\SettingsEntity;
-use InvalidArgumentException;
-use RuntimeException;
+use Exception;
 use ReflectionException;
+use AvegaCms\Enums\SettingsReturnTypes;
 
 class AvegaCmsSettings
 {
@@ -21,7 +21,7 @@ class AvegaCmsSettings
     /**
      * @param  string  $key
      * @return mixed
-     * @throws RuntimeException
+     * @throws Exception
      */
     public function get(string $key): mixed
     {
@@ -29,7 +29,7 @@ class AvegaCmsSettings
 
         if (is_null($settings = cache($fileCacheName = $this->prefix . $entity))) {
             if (empty($settings = $this->settings->getSettings($entity))) {
-                throw new RuntimeException('Unable to find a Settings array in DB.');
+                throw new Exception('Unable to find a Settings array in DB.');
             }
 
             $processArray = function (&$settings) use (&$processArray) {
@@ -50,15 +50,15 @@ class AvegaCmsSettings
 
             cache()->save($fileCacheName, $settings, DAY * 30);
         }
-
+        
         if ( ! is_null($slug) && ! is_null($property)) {
             if ( ! isset($settings[$slug][$property])) {
-                throw new RuntimeException('Unable to find in Settings array slug/key.');
+                throw new Exception('Unable to find in Settings array slug/key.');
             }
             $settings = $settings[$slug][$property];
         } elseif ( ! is_null($slug)) {
             if ( ! isset($settings[$slug])) {
-                throw new RuntimeException('Unable to find in Settings array slug/key');
+                throw new Exception('Unable to find in Settings array slug/key');
             }
             $settings = $settings[$slug];
         }
@@ -71,7 +71,7 @@ class AvegaCmsSettings
      * @param  string|null  $value
      * @param  array|null  $config
      * @return bool
-     * @throws ReflectionException
+     * @throws ReflectionException|Exception
      */
     public function set(string $key, ?string $value = null, ?array $config = []): bool
     {
@@ -86,7 +86,7 @@ class AvegaCmsSettings
                     'key'           => $property ?? '',
                     'value'         => $value,
                     'default_value' => $config['default_value'] ?? '',
-                    'return_type'   => $config['return_type'] ?? 'string',
+                    'return_type'   => $config['return_type'] ?? SettingsReturnTypes::String->value,
                     'label'         => $config['label'] ?? '',
                     'context'       => $config['context'] ?? '',
                     'sort'          => $config['sort'] ?? 100
@@ -116,34 +116,32 @@ class AvegaCmsSettings
     private function _castAs($value, string $type): mixed
     {
         return match ($type) {
-            'int',
-            'integer' => (int) $value,
-            'double',
-            'float'   => (float) $value,
-            'string'  => (string) $value,
-            'bool',
-            'boolean' => (bool) $value,
-            'array'   => (array) (
+            SettingsReturnTypes::Integer->value => (int) $value,
+            SettingsReturnTypes::Double->value  => (double) $value,
+            SettingsReturnTypes::Float->value   => (float) $value,
+            SettingsReturnTypes::String->value  => (string) $value,
+            SettingsReturnTypes::Boolean->value => (bool) $value,
+            SettingsReturnTypes::Json->value    => $value,
+            SettingsReturnTypes::Array->value   => (array) (
             (
             (is_string($value) && (str_starts_with($value, 'a:') || str_starts_with($value, 's:'))) ?
                 unserialize($value) :
                 $value
             )
             ),
-            default   => null
+            default                             => null
         };
     }
 
     /**
      * @param  string  $key
      * @return array
-     *
-     * @throws InvalidArgumentException
+     * @throws Exception
      */
     private function _parseKey(string $key): array
     {
         if (count($parts = explode('.', $key)) === 0) {
-            throw new InvalidArgumentException('$key cannot be empty');
+            throw new Exception('$key cannot be empty');
         }
 
         $parts[1] = $parts[1] ?? null;

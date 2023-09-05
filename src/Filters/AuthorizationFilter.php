@@ -30,7 +30,10 @@ class AuthorizationFilter implements FilterInterface
     public function before(RequestInterface $request, $arguments = null)
     {
         try {
-            (new Authorization(service('settings')->get('core.auth')))->checkUserAccess();
+            if (($settings = service('settings')->get('core.auth')) === null) {
+                throw new Exception('Auth settings not found');
+            }
+            (new Authorization($settings))->checkUserAccess();
         } catch (AuthenticationException|Exception $e) {
             return Services::response()->setStatusCode($e->getCode(), $e->getMessage());
         }

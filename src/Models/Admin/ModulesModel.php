@@ -46,7 +46,7 @@ class ModulesModel extends Model
         'parent'        => ['rules' => 'if_exist|is_natural'],
         'is_plugin'     => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'is_system'     => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
-        'slug'          => ['rules' => 'if_exist|permit_empty|alpha_dash|max_length[64]'],
+        'slug'          => ['rules' => 'if_exist|permit_empty|alpha_dash|max_length[64]|unique_db_key[modules.parent+is_core+slug,id,{id}]'],
         'name'          => ['rules' => 'if_exist|permit_empty|max_length[255]'],
         'version'       => ['rules' => 'if_exist|permit_empty|max_length[64]'],
         'description'   => ['rules' => 'if_exist|permit_empty|max_length[2048]'],

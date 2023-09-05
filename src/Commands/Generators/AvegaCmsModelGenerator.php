@@ -2,6 +2,7 @@
 
 namespace AvegaCms\Commands\Generators;
 
+use AvegaCms\Config\AvegaCms;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\CLI\GeneratorTrait;
@@ -15,7 +16,7 @@ class AvegaCmsModelGenerator extends BaseCommand
      *
      * @var string
      */
-    protected $group = 'AvegaCMS';
+    protected $group = 'AvegaCMS (v ' . AvegaCms::AVEGACMS_VERSION . ')';
 
     /**
      * The Command's Name
@@ -114,7 +115,7 @@ class AvegaCmsModelGenerator extends BaseCommand
             }
 
             $return = '\\' . trim($return, '\\') . '::class';
-            $this->call('makecms:entity', array_merge([$baseClass], $this->params));
+            $this->call('make:entity', array_merge([$baseClass], $this->params));
         } else {
             $return = "'{$return}'";
         }

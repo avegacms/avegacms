@@ -3,15 +3,15 @@
 namespace AvegaCms\Models\Admin;
 
 use CodeIgniter\Model;
-use AvegaCms\Entities\ContentSeoEntity;
+use AvegaCms\Entities\MetaDataEntity;
 
-class ContentSeoModel extends Model
+class MetaDataModel extends Model
 {
     protected $DBGroup          = 'default';
-    protected $table            = 'content_seo';
+    protected $table            = 'metadata';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = ContentSeoEntity::class;
+    protected $returnType       = MetaDataEntity::class;
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
@@ -27,6 +27,7 @@ class ContentSeoModel extends Model
         'meta',
         'extra',
         'status',
+        'meta_type',
         'in_sitemap',
         'created_by_id',
         'updated_by_id',

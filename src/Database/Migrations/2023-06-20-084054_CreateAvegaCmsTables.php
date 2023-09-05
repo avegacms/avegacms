@@ -4,6 +4,15 @@ namespace AvegaCms\Database\Migrations;
 
 use CodeIgniter\Database\Forge;
 use CodeIgniter\Database\Migration;
+use AvegaCms\Enums\{
+    UserStatuses,
+    UserConditions,
+    SettingsReturnTypes,
+    FileTypes,
+    MetaStatuses,
+    NavigationTypes,
+    MetaDataTypes
+};
 
 class CreateAvegaCmsTables extends Migration
 {
@@ -17,13 +26,14 @@ class CreateAvegaCmsTables extends Migration
         'locales'     => 'locales',
         'modules'     => 'modules',
         'settings'    => 'settings',
-        'content_seo' => 'content_seo',
+        'metadata'    => 'metadata',
         'content'     => 'content',
         'tags'        => 'tags',
         'tags_links'  => 'tags_links',
         'files'       => 'files',
         'sessions'    => 'sessions',
-        'permissions' => 'permissions'
+        'permissions' => 'permissions',
+        'navigations' => 'navigations',
     ];
 
     public function __construct(?Forge $forge = null)
@@ -39,10 +49,6 @@ class CreateAvegaCmsTables extends Migration
 
     public function up()
     {
-        // TODO Виды авторизации: email, sms, email:sms, 2fa:email, 2fa:sms:email
-        // TODO Права доступов модуль, модуль-slug и plugins
-        // TODO Кастомные атрибуты
-
         /**
          * Таблица пользователей
          */
@@ -63,23 +69,13 @@ class CreateAvegaCmsTables extends Migration
             // Доп. поля
             'status'     => [
                 'type'       => 'enum',
-                'constraint' => [
-                    'pre-registration',
-                    'active',
-                    'banned',
-                    'deleted',
-                    ''
-                ],
-                'default'    => ''
+                'constraint' => UserStatuses::getValues(),
+                'default'    => UserStatuses::NotDefined->value
             ],
             'condition'  => [
                 'type'       => 'enum',
-                'constraint' => [
-                    'auth',
-                    'recovery',
-                    ''
-                ],
-                'default'    => ''
+                'constraint' => UserConditions::getValues(),
+                'default'    => UserConditions::None->value
             ],
             'last_ip'    => ['type' => 'varchar', 'constraint' => 45],
             'last_agent' => ['type' => 'varchar', 'constraint' => 512],
@@ -176,17 +172,8 @@ class CreateAvegaCmsTables extends Migration
             'default_value' => ['type' => 'text', 'null' => true],
             'return_type'   => [
                 'type'       => 'enum',
-                'constraint' => [
-                    'integer',
-                    'float',
-                    'string',
-                    'boolean',
-                    'array',
-                    'datetime',
-                    'timestamp',
-                    'json'
-                ],
-                'default'    => 'string'
+                'constraint' => SettingsReturnTypes::getValues(),
+                'default'    => SettingsReturnTypes::String->value
             ],
             'label'         => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
             'context'       => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
@@ -267,8 +254,8 @@ class CreateAvegaCmsTables extends Migration
             // личный файл или будет доступен только пользователю загрузившего его
             'file_type'         => [
                 'type'       => 'enum',
-                'constraint' => ['image', 'file', 'link', 'video_link'],
-                'default'    => 'file'
+                'constraint' => FileTypes::getValues(),
+                'default'    => FileTypes::File->value
             ],
             // тип загруженного файла
             ...$this->byId(),
@@ -321,8 +308,13 @@ class CreateAvegaCmsTables extends Migration
             // объект, содержащий информацию о доп. данных
             'status'     => [
                 'type'       => 'enum',
-                'constraint' => ['publish', 'future', 'pending', 'draft', 'trash'],
-                'default'    => 'pending'
+                'constraint' => MetaStatuses::getValues(),
+                'default'    => MetaStatuses::Publish->value
+            ],
+            'meta_type'  => [
+                'type'       => 'enum',
+                'constraint' => MetaDataTypes::getValues(),
+                'default'    => MetaDataTypes::Undefined->value
             ],
             // статус страницы
             'in_sitemap' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
@@ -337,20 +329,21 @@ class CreateAvegaCmsTables extends Migration
         $this->forge->addForeignKey('creator_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
         $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
         $this->forge->addForeignKey('updated_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
-        $this->createTable($this->tables['content_seo']);
+        $this->createTable($this->tables['metadata']);
 
         /**
          * Таблица для хранения страниц
          */
         $this->forge->addField([
-            'id'      => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'auto_increment' => true],
+            'meta_id' => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
             'anons'   => ['type' => 'text', 'null' => true], // краткая информация
             'content' => ['type' => 'longtext', 'null' => true], // остальная информация
             'extra'   => ['type' => 'longtext', 'null' => true], // объект, содержащий информацию о доп. данных
             ...$this->byId(),
             ...$this->dateFields(['deleted_at'])
         ]);
-        $this->forge->addKey('id');
+        $this->forge->addUniqueKey(['meta_id']);
+        $this->forge->addForeignKey('meta_id', $this->tables['metadata'], 'id', '', 'CASCADE');
         $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
         $this->forge->addForeignKey('updated_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
         $this->createTable($this->tables['content']);
@@ -376,13 +369,13 @@ class CreateAvegaCmsTables extends Migration
          */
         $this->forge->addField([
             'tag_id'        => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
-            'seo_id'        => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
+            'meta_id'       => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
             'created_by_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => 0, 'default' => 0],
             ...$this->dateFields(['updated_at', 'deleted_at'])
         ]);
-        $this->forge->addUniqueKey(['tag_id', 'seo_id']);
+        $this->forge->addUniqueKey(['tag_id', 'meta_id']);
         $this->forge->addForeignKey('tag_id', $this->tables['tags'], 'id', '', 'CASCADE');
-        $this->forge->addForeignKey('seo_id', $this->tables['content_seo'], 'id', '', 'CASCADE');
+        $this->forge->addForeignKey('meta_id', $this->tables['metadata'], 'id', '', 'CASCADE');
         $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
         $this->createTable($this->tables['tags_links']);
 
@@ -423,6 +416,30 @@ class CreateAvegaCmsTables extends Migration
         $this->forge->addPrimaryKey('id');
         $this->forge->addUniqueKey(['role_id', 'module_id', 'is_module', 'is_system', 'is_plugin', 'parent', 'slug']);
         $this->createTable($this->tables['permissions']);
+
+        $this->forge->addField([
+            'id'        => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'parent'    => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
+            'is_admin'  => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'object_id' => ['type' => 'smallint', 'constraint' => 6, 'unsigned' => true, 'default' => 0],
+            'locale_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => 0],
+            'nav_type'  => [
+                'type'       => 'enum',
+                'constraint' => NavigationTypes::getValues(),
+                'default'    => NavigationTypes::Link->value
+            ],
+            'meta'      => ['type' => 'text', 'null' => true],
+            'title'     => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
+            'slug'      => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
+            'icon'      => ['type' => 'varchar', 'constraint' => 512, 'null' => true, 'default' => ''],
+            'sort'      => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true, 'default' => 0],
+            'active'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            ...$this->byId(),
+            ...$this->dateFields(['deleted_at'])
+        ]);
+        $this->forge->addPrimaryKey('id');
+        $this->forge->addUniqueKey(['parent', 'is_admin', 'locale_id', 'nav_type', 'slug']);
+        $this->createTable($this->tables['navigations']);
     }
 
     public function down()

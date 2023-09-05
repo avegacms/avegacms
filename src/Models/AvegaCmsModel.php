@@ -3,6 +3,7 @@
 namespace AvegaCms\Models;
 
 use CodeIgniter\Model;
+use Config\Services;
 
 class AvegaCmsModel extends Model
 {
@@ -93,6 +94,11 @@ class AvegaCmsModel extends Model
             }
 
             $this->limit = (int) (is_int($fields['limit'] ?? '') && $fields['limit'] > 0 ? $fields['limit'] : $this->limit);
+
+            if ( ! isset($fields['page'])) {
+                $fields['page'] = Services::request()->getGet('page');
+            }
+
             $this->page = (int) (is_int($fields['page'] ?? '') && $fields['page'] > 0 ? $fields['page'] : $this->page);
 
             if ($this->limit > $this->maxLimit) {

@@ -7,6 +7,7 @@ use AvegaCms\Entities\UserEntity;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
 use Faker\Generator;
+use AvegaCms\Enums\UserStatuses;
 
 class UserModel extends AvegaCmsModel
 {
@@ -78,14 +79,13 @@ class UserModel extends AvegaCmsModel
     protected $validationRules      = [
         'id'       => ['rules' => 'if_exist|is_natural_no_zero'],
         'login'    => ['rules' => 'if_exist|required|alpha_dash|max_length[36]|is_unique[users.login,id,{id}]'],
-        'avatar'   => ['rules' => 'if_exist|permit_empty|permit_empty|max_length[255]'],
+        'avatar'   => ['rules' => 'if_exist|permit_empty|max_length[255]'],
         'phone'    => ['rules' => 'if_exist|is_natural|exact_length[11]|regex_match[/^79\d{9}/]'],
         'email'    => ['rules' => 'if_exist|max_length[255]|valid_email'],
         'timezone' => ['rules' => 'if_exist|required|max_length[144]'],
         'password' => ['rules' => 'if_exist|required|max_length[144]'],
         'path'     => ['rules' => 'if_exist|permit_empty|max_length[512]'],
-        'extra'    => ['rules' => 'if_exist|permit_empty'],
-        'status'   => ['rules' => 'if_exist|in_list[pre-registration,active,banned,deleted]']
+        'extra'    => ['rules' => 'if_exist|permit_empty']
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
@@ -132,8 +132,13 @@ class UserModel extends AvegaCmsModel
         return $this->find($id);
     }
 
+    /**
+     * @return void
+     */
     protected function initUserValidationRules(): void
     {
+        $this->validationRules['status'] = 'if_exist|in_list[' . implode(',', UserStatuses::getValues()) . ']';
+
         $settings = service('settings')->get('core.auth.loginType');
 
         $loginType = explode(':', $settings);
@@ -156,18 +161,14 @@ class UserModel extends AvegaCmsModel
      */
     public function fake(Generator &$faker): array
     {
+        $statuses = UserStatuses::getValues();
+
         return [
             'login'         => $faker->word() . '_' . $faker->word(),
             'email'         => $faker->email,
             'phone'         => '79' . rand(100000000, 999999999),
-            'status'        => array_rand(
-                [
-                    'pre-registration',
-                    'active',
-                    'banned',
-                    'deleted',
-                    ''
-                ], 1),
+            'status'        => $statuses[array_rand($statuses)],
+            'password'      => $faker->password(),
             'active_at'     => $faker->dateTimeBetween('-1 week', 'now', 'Asia/Omsk')->format('Y-m-d H:i:s'),
             'created_by_id' => 1
         ];

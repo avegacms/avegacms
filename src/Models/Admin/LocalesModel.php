@@ -4,8 +4,6 @@ namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Entities\LocalesEntity;
-use CodeIgniter\Database\ConnectionInterface;
-use CodeIgniter\Validation\ValidationInterface;
 
 class LocalesModel extends AvegaCmsModel
 {
@@ -83,5 +81,12 @@ class LocalesModel extends AvegaCmsModel
         ]);
 
         return $this->find($id);
+    }
+
+    public function getLocalesList(): array
+    {
+        $this->builder()->select(['id', 'locale_name'])->where(['active' => 1]);
+
+        return array_column($this->findAll(), 'locale_name', 'id');
     }
 }
