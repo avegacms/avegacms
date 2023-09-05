@@ -8,6 +8,7 @@ use CodeIgniter\CLI\GeneratorTrait;
 use AvegaCms\Controllers\AvegaCmsFrontend;
 use AvegaCms\Controllers\Api\CmsResourceController;
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
+use AvegaCms\Config\AvegaCms;
 
 class AvegaCmsControllerGenerator extends BaseCommand
 {
@@ -18,7 +19,7 @@ class AvegaCmsControllerGenerator extends BaseCommand
      *
      * @var string
      */
-    protected $group = 'AvegaCMS';
+    protected $group = 'AvegaCMS (v ' . AvegaCms::AVEGACMS_VERSION . ')';
 
     /**
      * The Command's Name

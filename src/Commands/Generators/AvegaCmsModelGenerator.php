@@ -2,6 +2,7 @@
 
 namespace AvegaCms\Commands\Generators;
 
+use AvegaCms\Config\AvegaCms;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\CLI\GeneratorTrait;
@@ -15,7 +16,7 @@ class AvegaCmsModelGenerator extends BaseCommand
      *
      * @var string
      */
-    protected $group = 'AvegaCMS';
+    protected $group = 'AvegaCMS (v ' . AvegaCms::AVEGACMS_VERSION . ')';
 
     /**
      * The Command's Name
