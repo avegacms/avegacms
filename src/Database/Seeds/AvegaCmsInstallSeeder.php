@@ -840,12 +840,12 @@ class AvegaCmsInstallSeeder extends Seeder
                 'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'env',
-                'key'           => 'useMultiLanguages',
+                'key'           => 'useMultiLocales',
                 'value'         => 0,
                 'default_value' => 0,
                 'return_type'   => SettingsReturnTypes::Boolean->value,
-                'label'         => 'Settings.label.env.useMultiLanguages',
-                'context'       => 'Settings.context.env.useMultiLanguages'
+                'label'         => 'Settings.label.env.useMultiLocales',
+                'context'       => 'Settings.context.env.useMultiLocales'
             ],
 
             // auth

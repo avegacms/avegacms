@@ -15,6 +15,7 @@ class LocalesModel extends AvegaCmsModel
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
+        'parent',
         'slug',
         'locale',
         'locale_name',
@@ -38,6 +39,7 @@ class LocalesModel extends AvegaCmsModel
     // Validation
     protected $validationRules      = [
         'id'            => ['rules' => 'if_exist|is_natural_no_zero'],
+        'parent'        => ['rules' => 'if_exist|is_natural'],
         'slug'          => ['rules' => 'if_exist|required|alpha_dash|max_length[20]|is_unique[locales.slug,id,{id}]'],
         'locale'        => ['rules' => 'if_exist|required|max_length[32]'],
         'locale_name'   => ['rules' => 'if_exist|required|max_length[100]'],
@@ -71,6 +73,7 @@ class LocalesModel extends AvegaCmsModel
     {
         $this->builder()->select([
             'id',
+            'parent',
             'slug',
             'locale',
             'locale_name',

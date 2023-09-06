@@ -3,10 +3,10 @@
 return [
     'label'   => [
         'env'  => [
-            'timezone'          => 'Часовой пояс',
-            'secretKey'         => 'Секретный ключ',
-            'defLanguage'       => 'Язык по-умолчанию',
-            'useMultiLanguages' => 'Использовать мультиязычность'
+            'timezone'        => 'Часовой пояс',
+            'secretKey'       => 'Секретный ключ',
+            'defLanguage'     => 'Язык по-умолчанию',
+            'useMultiLocales' => 'Использовать мультиязычность'
         ],
         'auth' => [
             'useCors'          => 'Использовать CORS',
@@ -34,10 +34,10 @@ return [
     ],
     'context' => [
         'env'  => [
-            'timezone'          => 'Часовой пояс',
-            'secretKey'         => '',
-            'defLanguage'       => '',
-            'useMultiLanguages' => ''
+            'timezone'        => 'Часовой пояс',
+            'secretKey'       => '',
+            'defLanguage'     => '',
+            'useMultiLocales' => ''
         ],
         'auth' => [
             'useCors'          => 'Технология современных браузеров, которая позволяет предоставить веб-страницам доступ к ресурсам другого домена',

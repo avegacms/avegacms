@@ -2,16 +2,21 @@
 
 declare(strict_types=1);
 
-namespace AvegaCms\Controllers\Api\Admin\Content;
+namespace AvegaCms\Controllers\Api\Admin;
 
-use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use CodeIgniter\HTTP\ResponseInterface;
+use AvegaCms\Models\Admin\{ContentModel, MetaDataModel};
 
-class Pages extends AvegaCmsAdminAPI
+class Content extends AvegaCmsAdminAPI
 {
+    protected ContentModel  $CM;
+    protected MetaDataModel $MDM;
+
     public function __construct()
     {
         parent::__construct();
+        $this->CM = model(ContentModel::class);
+        $this->MDM = model(MetaDataModel::class);
     }
 
     /**

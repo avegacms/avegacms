@@ -4,25 +4,23 @@ namespace AvegaCms\Models\Admin;
 
 use CodeIgniter\Model;
 use AvegaCms\Entities\ContentEntity;
+use Faker\Generator;
 
 class ContentModel extends Model
 {
     protected $DBGroup          = 'default';
     protected $table            = 'content';
-    protected $primaryKey       = 'id';
+    protected $primaryKey       = 'meta_id';
     protected $useAutoIncrement = false;
     protected $returnType       = ContentEntity::class;
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'id',
+        'meta_id',
+        'caption',
         'anons',
         'content',
-        'extra',
-        'created_by_id',
-        'updated_by_id',
-        'created_at',
-        'updated_at'
+        'extra'
     ];
 
     // Dates
@@ -48,4 +46,14 @@ class ContentModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    public function fake(Generator &$faker): array
+    {
+        return [
+            'meta_id' => 0,
+            'caption' => $faker->sentence(),
+            'anons'   => $faker->paragraph(1),
+            'content' => $faker->paragraph(rand(6, 36))
+        ];
+    }
 }

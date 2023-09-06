@@ -4,6 +4,7 @@ namespace AvegaCms\Enums;
 
 enum MetaDataTypes: string
 {
+    case Main      = 'MAIN';
     case Page      = 'PAGE';
     case Post      = 'POST';
     case Category  = 'CATEGORY';

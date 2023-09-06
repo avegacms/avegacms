@@ -192,6 +192,7 @@ class CreateAvegaCmsTables extends Migration
          */
         $this->forge->addField([
             'id'          => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'parent'      => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
             'slug'        => ['type' => 'varchar', 'constraint' => 20, 'unique' => true, 'null' => true],
             // Значение, которое будет отображаться в ULR (пример: ru / omsk)
             'locale'      => ['type' => 'varchar', 'constraint' => 32, 'null' => true],
@@ -336,16 +337,13 @@ class CreateAvegaCmsTables extends Migration
          */
         $this->forge->addField([
             'meta_id' => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
+            'caption' => ['type' => 'varchar', 'constraint' => 1024, 'null' => true], // Название страницы
             'anons'   => ['type' => 'text', 'null' => true], // краткая информация
             'content' => ['type' => 'longtext', 'null' => true], // остальная информация
-            'extra'   => ['type' => 'longtext', 'null' => true], // объект, содержащий информацию о доп. данных
-            ...$this->byId(),
-            ...$this->dateFields(['deleted_at'])
+            'extra'   => ['type' => 'longtext', 'null' => true] // объект, содержащий информацию о доп. данных
         ]);
         $this->forge->addUniqueKey(['meta_id']);
         $this->forge->addForeignKey('meta_id', $this->tables['metadata'], 'id', '', 'CASCADE');
-        $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
-        $this->forge->addForeignKey('updated_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
         $this->createTable($this->tables['content']);
 
         /**

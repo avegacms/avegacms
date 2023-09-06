@@ -3,7 +3,7 @@
 use CodeIgniter\Router\RouteCollection;
 
 use AvegaCms\Controllers\Api\Public\Login;
-use AvegaCms\Controllers\Api\Admin\Content\Pages;
+use AvegaCms\Controllers\Api\Admin\Content;
 use AvegaCms\Controllers\Api\Admin\Settings\{Locales, Modules, Navigations, Permissions, Roles, Settings, Users};
 
 /**
@@ -22,9 +22,7 @@ $routes->group('api', function (RouteCollection $routes) {
     $routes->group('admin', ['namespace' => 'AvegaCms\Controllers\Api\Admin', 'filter' => 'auth'],
         function (RouteCollection $routes) {
             $routes->group('content', function (RouteCollection $routes) {
-                $routes->group('pages', function (RouteCollection $routes) {
-                    $routes->get('/', [Pages::class, 'index']);
-                });
+                $routes->get('/', [Content::class, 'index']);
             });
 
             $routes->group('settings', function (RouteCollection $routes) {
