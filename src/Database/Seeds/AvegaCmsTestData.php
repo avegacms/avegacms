@@ -138,12 +138,23 @@ class AvegaCmsTestData extends Seeder
 
             $mainPages = [];
 
+
             foreach ($locales as $locale) {
                 $mainPages[] = $this->_createMetaData(MetaDataTypes::Main->value, $locale);
             }
         }
     }
 
+    /**
+     * @param  string  $type
+     * @param  int  $locale
+     * @param  int  $creator
+     * @param  int  $module
+     * @param  int  $parent
+     * @param  int  $item_id
+     * @return int
+     * @throws ReflectionException
+     */
     private function _createMetaData(
         string $type,
         int $locale = 1,
@@ -153,13 +164,19 @@ class AvegaCmsTestData extends Seeder
         int $item_id = 0
     ): int {
         $meta = (new Fabricator($this->MDM, null))->make(1);
+        d($meta, $type);
+        $meta->meta_type = $type;
+        $meta->locale_id = $locale;
+        $meta->creator_id = $creator;
+        $meta->module_id = $module;
+        $meta->parent = $parent;
+        $meta->item_id = $item_id;
+        dd($meta);
+        if ($metaId = $this->MDM->insert($meta)) {
+            $this->CM->insert((new Fabricator($this->CM, null))->make(1));
+        }
 
-        $meta['meta_type'] = $type;
-        $meta['locale_id'] = $locale;
-        $meta['creator_id'] = $creator;
-        $meta['module_id'] = $module;
-        $meta['parent'] = $parent;
-        $meta['item_id'] = $item_id;
+        return $metaId;
     }
 
 }
