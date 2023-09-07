@@ -2,7 +2,6 @@
 
 namespace AvegaCms\Database\Seeds;
 
-use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Database\Seeder;
@@ -18,7 +17,6 @@ use AvegaCms\Models\Admin\{
     LoginModel,
     RolesModel,
     UserRolesModel,
-    PermissionsModel,
     LocalesModel
 };
 use AvegaCms\Entities\{
@@ -30,7 +28,6 @@ use AvegaCms\Entities\{
     SettingsEntity,
     UserEntity,
     UserRolesEntity,
-    PermissionsEntity,
     LocalesEntity
 };
 use ReflectionException;
@@ -46,10 +43,7 @@ class AvegaCmsTestData extends Seeder
     protected SettingsModel  $SM;
     protected RolesModel     $RM;
     protected UserRolesModel $URM;
-
-    protected PermissionsModel $PM;
-
-    protected LocalesModel $LLM;
+    protected LocalesModel   $LLM;
 
     protected array $settings = [];
 
@@ -68,7 +62,6 @@ class AvegaCmsTestData extends Seeder
         $this->MDM = model(MetaDataModel::class);
         $this->SM = model(SettingsModel::class);
         $this->RM = model(RolesModel::class);
-        $this->PM = model(PermissionsModel::class);
         $this->URM = model(UserRolesModel::class);
         $this->LLM = model(LocalesModel::class);
     }
@@ -163,6 +156,8 @@ class AvegaCmsTestData extends Seeder
                 );
                 $this->_createSubPages($num, $nesting, $locale, $mainId);
             }
+
+            $this->MDM->where(['meta_type' => MetaDataTypes::Main->value])->update(['in_sitemap' => 1]);
         }
     }
 
