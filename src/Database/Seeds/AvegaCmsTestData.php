@@ -17,7 +17,8 @@ use AvegaCms\Models\Admin\{
     LoginModel,
     RolesModel,
     UserRolesModel,
-    LocalesModel
+    LocalesModel,
+    PostCategoriesModel
 };
 use AvegaCms\Entities\{
     ContentEntity,
@@ -28,22 +29,24 @@ use AvegaCms\Entities\{
     SettingsEntity,
     UserEntity,
     UserRolesEntity,
-    LocalesEntity
+    LocalesEntity,
+    PostCategoriesEntity
 };
 use ReflectionException;
 use Exception;
 
 class AvegaCmsTestData extends Seeder
 {
-    protected UserModel      $UM;
-    protected ContentModel   $CM;
-    protected MetaDataModel  $MDM;
-    protected ModulesModel   $MM;
-    protected LoginModel     $LM;
-    protected SettingsModel  $SM;
-    protected RolesModel     $RM;
-    protected UserRolesModel $URM;
-    protected LocalesModel   $LLM;
+    protected UserModel           $UM;
+    protected ContentModel        $CM;
+    protected MetaDataModel       $MDM;
+    protected ModulesModel        $MM;
+    protected LoginModel          $LM;
+    protected SettingsModel       $SM;
+    protected RolesModel          $RM;
+    protected UserRolesModel      $URM;
+    protected LocalesModel        $LLM;
+    protected PostCategoriesModel $PCM;
 
     protected array $settings = [];
 
@@ -59,11 +62,12 @@ class AvegaCmsTestData extends Seeder
         $this->LM = model(LoginModel::class);
         $this->UM = model(UserModel::class);
         $this->CM = model(ContentModel::class);
-        $this->MDM = model(MetaDataModel::class);
         $this->SM = model(SettingsModel::class);
         $this->RM = model(RolesModel::class);
+        $this->MDM = model(MetaDataModel::class);
         $this->URM = model(UserRolesModel::class);
         $this->LLM = model(LocalesModel::class);
+        $this->PCM = model(PostCategoriesModel::class);
     }
 
     /**
@@ -212,6 +216,40 @@ class AvegaCmsTestData extends Seeder
                 }
                 CLI::showProgress(false);
                 CLI::newLine();
+            }
+
+            foreach ($locales as $locale) {
+                $categoriesId = $this->MDM->where(
+                    [
+                        'locale_id' => $locale,
+                        'meta_type' => MetaDataTypes::Category->value
+                    ]
+                )->findColumn('id');
+
+                $postsId = $this->MDM->where(
+                    [
+                        'locale_id' => $locale,
+                        'meta_type' => MetaDataTypes::Page->value
+                    ]
+                )->findColumn('id');
+
+                $postCategories = [];
+
+                $PCE = new PostCategoriesEntity();
+
+                foreach ($postsId as $postId) {
+                    $num = array_rand($categoriesId, rand(1, count($categoriesId)));
+                    $num = ! is_array($num) ? [$num] : $num;
+                    foreach ($num as $c) {
+                        $postCategories[] = $PCE->fill(
+                            [
+                                'post_id'     => $postId,
+                                'category_id' => $categoriesId[$c]
+                            ]
+                        );
+                    }
+                }
+                $this->PCM->upsertBatch($postCategories);
             }
         }
     }

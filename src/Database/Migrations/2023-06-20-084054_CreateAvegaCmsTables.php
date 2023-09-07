@@ -19,21 +19,22 @@ class CreateAvegaCmsTables extends Migration
     private array $attributes;
 
     private array $tables = [
-        'users'       => 'users',
-        'roles'       => 'roles',
-        'user_roles'  => 'user_roles',
-        'user_tokens' => 'user_tokens',
-        'locales'     => 'locales',
-        'modules'     => 'modules',
-        'settings'    => 'settings',
-        'metadata'    => 'metadata',
-        'content'     => 'content',
-        'tags'        => 'tags',
-        'tags_links'  => 'tags_links',
-        'files'       => 'files',
-        'sessions'    => 'sessions',
-        'permissions' => 'permissions',
-        'navigations' => 'navigations',
+        'users'           => 'users',
+        'roles'           => 'roles',
+        'user_roles'      => 'user_roles',
+        'user_tokens'     => 'user_tokens',
+        'locales'         => 'locales',
+        'modules'         => 'modules',
+        'settings'        => 'settings',
+        'metadata'        => 'metadata',
+        'content'         => 'content',
+        'post_categories' => 'post_categories',
+        'tags'            => 'tags',
+        'tags_links'      => 'tags_links',
+        'files'           => 'files',
+        'sessions'        => 'sessions',
+        'permissions'     => 'permissions',
+        'navigations'     => 'navigations',
     ];
 
     public function __construct(?Forge $forge = null)
@@ -339,6 +340,19 @@ class CreateAvegaCmsTables extends Migration
         ]);
         $this->forge->addUniqueKey(['meta_id']);
         $this->createTable($this->tables['content']);
+
+        /**
+         * Таблица для хранения связок поста и категории
+         */
+        $this->forge->addField([
+            'post_id'       => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
+            'category_id'   => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
+            'created_by_id' => ['type' => 'int', 'constraint' => 11, 'null' => true, 'default' => 0],
+        ]);
+        $this->forge->addUniqueKey(['post_id', 'category_id']);
+        $this->forge->addForeignKey('post_id', $this->tables['metadata'], 'id', '', 'CASCADE');
+        $this->forge->addForeignKey('category_id', $this->tables['metadata'], 'id', '', 'CASCADE');
+        $this->createTable($this->tables['post_categories']);
 
         /**
          * Таблица с тегами
