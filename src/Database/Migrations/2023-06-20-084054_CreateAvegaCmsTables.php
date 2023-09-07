@@ -338,7 +338,6 @@ class CreateAvegaCmsTables extends Migration
             'extra'   => ['type' => 'longtext', 'null' => true] // объект, содержащий информацию о доп. данных
         ]);
         $this->forge->addUniqueKey(['meta_id']);
-        $this->forge->addForeignKey('meta_id', $this->tables['metadata'], 'id', '', 'CASCADE');
         $this->createTable($this->tables['content']);
 
         /**

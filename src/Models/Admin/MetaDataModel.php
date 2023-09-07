@@ -78,7 +78,7 @@ class MetaDataModel extends Model
             'item_id'       => 0,
             'title'         => $title,
             'sort'          => rand(1, 1000),
-            'url'           => $url,
+            'url'           => strtolower($url),
             'meta'          => json_encode(
                 [
                     'keywords'     => $faker->sentence(1),

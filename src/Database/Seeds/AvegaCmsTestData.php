@@ -8,7 +8,7 @@ use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Database\Seeder;
 use CodeIgniter\Test\Fabricator;
 use Config\Database;
-use AvegaCms\Enums\MetaDataTypes;
+use AvegaCms\Enums\{MetaDataTypes, MetaStatuses};
 use AvegaCms\Models\Admin\{
     UserModel,
     ContentModel,
@@ -51,13 +51,15 @@ class AvegaCmsTestData extends Seeder
 
     protected LocalesModel $LLM;
 
-    protected $settings = [];
+    protected array $settings = [];
+
+    protected int $numPages = 0;
 
     public function __construct(Database $config, ?BaseConnection $db = null)
     {
         parent::__construct($config, $db);
 
-        helper(['avegacms', 'date']);
+        helper(['avegacms', 'date', 'array']);
 
         $this->MM = model(ModulesModel::class);
         $this->LM = model(LoginModel::class);
@@ -71,6 +73,10 @@ class AvegaCmsTestData extends Seeder
         $this->LLM = model(LocalesModel::class);
     }
 
+    /**
+     * @return void
+     * @throws Exception|ReflectionException
+     */
     public function run()
     {
         $this->createUsers();
@@ -98,7 +104,11 @@ class AvegaCmsTestData extends Seeder
 
             $fakeUsers = (new Fabricator($this->UM, null))->make($num);
 
+            $count = count($fakeUsers);
+            $i = 1;
+
             foreach ($fakeUsers as $item) {
+                CLI::showProgress($i++, $count);
                 if ($id = $this->UM->insert($UE->fill($item->toArray()))) {
                     $this->URM->save(
                         $URE->fill(
@@ -111,6 +121,8 @@ class AvegaCmsTestData extends Seeder
                     );
                 }
             }
+            CLI::showProgress(false);
+            CLI::newLine();
         }
     }
 
@@ -136,11 +148,20 @@ class AvegaCmsTestData extends Seeder
                 'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
             ])->findColumn('id');
 
-            $mainPages = [];
-
+            $this->numPages = $num;
 
             foreach ($locales as $locale) {
-                $mainPages[] = $this->_createMetaData(MetaDataTypes::Main->value, $locale);
+                // Создание главных страниц
+                $mainId = $this->_createMetaData(
+                    MetaDataTypes::Main->value,
+                    $locale,
+                    1,
+                    0,
+                    0,
+                    0,
+                    MetaStatuses::Publish->value
+                );
+                $this->_createSubPages($num, $nesting, $locale, $mainId);
             }
         }
     }
@@ -153,7 +174,7 @@ class AvegaCmsTestData extends Seeder
      * @param  int  $parent
      * @param  int  $item_id
      * @return int
-     * @throws ReflectionException
+     * @throws Exception|ReflectionException
      */
     private function _createMetaData(
         string $type,
@@ -161,22 +182,102 @@ class AvegaCmsTestData extends Seeder
         int $creator = 1,
         int $module = 0,
         int $parent = 0,
-        int $item_id = 0
+        int $item_id = 0,
+        ?string $status = null
     ): int {
-        $meta = (new Fabricator($this->MDM, null))->make(1);
-        d($meta, $type);
-        $meta->meta_type = $type;
-        $meta->locale_id = $locale;
-        $meta->creator_id = $creator;
-        $meta->module_id = $module;
-        $meta->parent = $parent;
-        $meta->item_id = $item_id;
-        dd($meta);
-        if ($metaId = $this->MDM->insert($meta)) {
-            $this->CM->insert((new Fabricator($this->CM, null))->make(1));
+        $meta = (new Fabricator($this->MDM, null))->makeArray();
+
+        $meta['meta_type'] = $type;
+        $meta['locale_id'] = $locale;
+        $meta['creator_id'] = $creator;
+        $meta['module_id'] = $module;
+        $meta['parent'] = $parent;
+        $meta['item_id'] = $item_id;
+
+        if ( ! is_null($status)) {
+            $meta['status'] = $status;
+        }
+
+        if ($metaId = $this->MDM->insert((new MetaDataEntity($meta)))) {
+            $content = (new Fabricator($this->CM, null))->makeArray();
+            $content['meta_id'] = $metaId;
+            $this->CM->insert((new ContentEntity($content)));
         }
 
         return $metaId;
     }
 
+    /**
+     * @param  int  $num
+     * @param  int  $nesting
+     * @param  int  $locale
+     * @param  int  $parent
+     * @return void
+     * @throws Exception|ReflectionException
+     */
+    private function _createSubPages(int $num, int $nesting, int $locale, int $parent): void
+    {
+        if ($num > 0) {
+            if ($this->numPages === $num) {
+                $subId = $this->_createMetaData(
+                    MetaDataTypes::Page->value,
+                    $locale,
+                    1,
+                    0,
+                    $parent,
+                    0
+                );
+
+                $num--;
+
+                $this->_createSubPages(
+                    $num,
+                    $nesting,
+                    $locale,
+                    ($nesting > 1) ? $subId : $parent
+                );
+            } else {
+                if ($nesting > 1) {
+                    $parentId = $this->_getParentPageId($locale, rand(0, $nesting));
+                    d($parentId);
+                    if ($parentId !== null) {
+                        $subId = $this->_createMetaData(MetaDataTypes::Page->value, $locale, 1, 0, $parentId, 0);
+                    } else {
+                        $subId = $this->_createMetaData(MetaDataTypes::Page->value, $locale, 1, 0, $parent, 0);
+                    }
+                    $num--;
+                    $this->_createSubPages($num, $nesting, $locale, $subId);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param  int  $locale
+     * @param  int  $level
+     * @return int|null
+     */
+    public function _getParentPageId(int $locale, int $level): int|null
+    {
+        $object = $this->MDM->select(['id', 'parent'])
+            ->where(['locale_id' => $locale, 'module_id' => 0, 'item_id' => 0])
+            ->whereIn('meta_type', [MetaDataTypes::Page->value, MetaDataTypes::Main->value])
+            ->findAll();
+
+        $list = [];
+
+        foreach ($object as $item) {
+            $list[] = $item->toArray();
+        }
+
+        $list = getTree($list);
+
+        if ($level === 0) {
+            return $list[0]['id'] ?? null;
+        }
+
+        $parent = dot_array_search(str_repeat('*.list', $level - 1), $list);
+
+        return ! is_null($parent) ? ($parent[array_rand($parent)]['id'] ?? null) : null;
+    }
 }

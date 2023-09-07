@@ -10,6 +10,7 @@ class MetaDataEntity extends Entity
     protected $datamap = [];
     protected $dates   = ['created_at', 'updated_at', 'publish_at'];
     protected $casts   = [
+        'id'            => 'integer',
         'parent'        => 'integer',
         'locale_id'     => 'integer',
         'module_id'     => 'integer',
