@@ -74,6 +74,7 @@ class AvegaCmsTestData extends Seeder
     {
         $this->createUsers();
         $this->createPages();
+        $this->createPosts();
     }
 
     /**
@@ -157,7 +158,53 @@ class AvegaCmsTestData extends Seeder
                 $this->_createSubPages($num, $nesting, $locale, $mainId);
             }
 
-            $this->MDM->where(['meta_type' => MetaDataTypes::Main->value])->update(['in_sitemap' => 1]);
+            $this->MDM->update(['meta_type' => MetaDataTypes::Main->value], ['in_sitemap' => 1]);
+        }
+    }
+
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    protected function createPosts(): void
+    {
+        if (
+            CLI::prompt('Create new posts?', ['y', 'n']) === 'y' &&
+            ($num = CLI::prompt(
+                    'How many posts do you want to create?',
+                    null,
+                    ['required', 'is_natural_no_zero']
+                ) &&
+                ($categories = CLI::prompt(
+                    'How many categories do you want to create?',
+                    null,
+                    ['required', 'is_natural_no_zero']
+                ))
+            )
+        ) {
+            $useMultiLocales = settings('core.env.useMultiLocales');
+
+            $locales = $this->LLM->where([
+                'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
+            ])->findColumn('id');
+
+            foreach ($locales as $locale) {
+                for ($i = 0; $categories > $i; $i++) {
+                    CLI::showProgress($i, $categories);
+                    $this->_createMetaData(MetaDataTypes::Category->value, $locale);
+                }
+                CLI::showProgress(false);
+                CLI::newLine();
+            }
+
+            foreach ($locales as $locale) {
+                for ($i = 0; $num > $i; $i++) {
+                    CLI::showProgress($i, $num);
+                    $this->_createMetaData(MetaDataTypes::Post->value, $locale);
+                }
+                CLI::showProgress(false);
+                CLI::newLine();
+            }
         }
     }
 
@@ -234,7 +281,6 @@ class AvegaCmsTestData extends Seeder
             } else {
                 if ($nesting > 1) {
                     $parentId = $this->_getParentPageId($locale, rand(0, $nesting));
-                    d($parentId);
                     if ($parentId !== null) {
                         $subId = $this->_createMetaData(MetaDataTypes::Page->value, $locale, 1, 0, $parentId, 0);
                     } else {
@@ -252,7 +298,7 @@ class AvegaCmsTestData extends Seeder
      * @param  int  $level
      * @return int|null
      */
-    public function _getParentPageId(int $locale, int $level): int|null
+    private function _getParentPageId(int $locale, int $level): int|null
     {
         $object = $this->MDM->select(['id', 'parent'])
             ->where(['locale_id' => $locale, 'module_id' => 0, 'item_id' => 0])

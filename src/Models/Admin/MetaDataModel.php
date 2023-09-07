@@ -83,7 +83,7 @@ class MetaDataModel extends Model
                 [
                     'keywords'     => $faker->sentence(1),
                     'descriptions' => $faker->sentence(1),
-                    'breadcrumb'   => rand(0, 1) ? $faker->word : ''
+                    'breadcrumb'   => rand(0, 1) ? $faker->word() : ''
                 ]
             ),
             'status'        => $status[array_rand($status)],
