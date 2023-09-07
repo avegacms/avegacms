@@ -20,7 +20,7 @@ class MetaDataEntity extends Entity
         'title'         => 'string',
         'sort'          => 'integer',
         'url'           => 'string',
-        'meta'          => 'seoMeta',
+        'meta'          => 'json-array',
         'extra'         => 'json-array',
         'status'        => 'string',
         'meta_type'     => 'string',

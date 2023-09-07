@@ -79,13 +79,11 @@ class MetaDataModel extends Model
             'title'         => $title,
             'sort'          => rand(1, 1000),
             'url'           => strtolower($url),
-            'meta'          => json_encode(
-                [
-                    'keywords'     => $faker->sentence(1),
-                    'descriptions' => $faker->sentence(1),
-                    'breadcrumb'   => rand(0, 1) ? $faker->word() : ''
-                ]
-            ),
+            'meta'          => [
+                'keywords'     => $faker->sentence(1),
+                'descriptions' => $faker->sentence(1),
+                'breadcrumb'   => rand(0, 1) ? $faker->word() : ''
+            ],
             'status'        => $status[array_rand($status)],
             'meta_type'     => '',
             'in_sitemap'    => rand(0, 1),

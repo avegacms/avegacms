@@ -74,6 +74,7 @@ class AvegaCmsTestData extends Seeder
     {
         $this->createUsers();
         $this->createPages();
+        $this->createCategories();
         $this->createPosts();
     }
 
@@ -162,6 +163,27 @@ class AvegaCmsTestData extends Seeder
         }
     }
 
+    protected function createCategories(): void
+    {
+        if ($categories = CLI::prompt(
+            'How many categories do you want to create?',
+            null,
+            ['required', 'is_natural_no_zero']
+        )) {
+            $useMultiLocales = settings('core.env.useMultiLocales');
+            $locales = $this->LLM->where([
+                'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
+            ])->findColumn('id');
+
+            foreach ($locales as $locale) {
+                for ($i = 0; $categories > $i; $i++) {
+                    $this->_createMetaData(MetaDataTypes::Category->value, $locale);
+                }
+            }
+            CLI::newLine();
+        }
+    }
+
     /**
      * @return void
      * @throws ReflectionException
@@ -171,16 +193,10 @@ class AvegaCmsTestData extends Seeder
         if (
             CLI::prompt('Create new posts?', ['y', 'n']) === 'y' &&
             ($num = CLI::prompt(
-                    'How many posts do you want to create?',
-                    null,
-                    ['required', 'is_natural_no_zero']
-                ) &&
-                ($categories = CLI::prompt(
-                    'How many categories do you want to create?',
-                    null,
-                    ['required', 'is_natural_no_zero']
-                ))
-            )
+                'How many posts do you want to create?',
+                null,
+                ['required', 'is_natural_no_zero']
+            ))
         ) {
             $useMultiLocales = settings('core.env.useMultiLocales');
 
@@ -189,17 +205,9 @@ class AvegaCmsTestData extends Seeder
             ])->findColumn('id');
 
             foreach ($locales as $locale) {
-                for ($i = 0; $categories > $i; $i++) {
-                    CLI::showProgress($i, $categories);
-                    $this->_createMetaData(MetaDataTypes::Category->value, $locale);
-                }
-                CLI::showProgress(false);
-                CLI::newLine();
-            }
-
-            foreach ($locales as $locale) {
+                $j = 1;
                 for ($i = 0; $num > $i; $i++) {
-                    CLI::showProgress($i, $num);
+                    CLI::showProgress($j++, $num);
                     $this->_createMetaData(MetaDataTypes::Post->value, $locale);
                 }
                 CLI::showProgress(false);
