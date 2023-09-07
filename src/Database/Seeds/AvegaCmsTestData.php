@@ -243,13 +243,14 @@ class AvegaCmsTestData extends Seeder
                     foreach ($num as $c) {
                         $postCategories[] = $PCE->fill(
                             [
-                                'post_id'     => $postId,
-                                'category_id' => $categoriesId[$c]
+                                'post_id'       => $postId,
+                                'category_id'   => $categoriesId[$c],
+                                'created_by_id' => 1
                             ]
                         );
                     }
                 }
-                $this->PCM->upsertBatch($postCategories);
+                $this->PCM->insertBatch($postCategories);
             }
         }
     }
