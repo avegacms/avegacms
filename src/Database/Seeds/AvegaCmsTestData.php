@@ -226,20 +226,20 @@ class AvegaCmsTestData extends Seeder
                     ]
                 )->findColumn('id');
 
-                $postsId = $this->MDM->where(
+                $postsId = array_unique($this->MDM->where(
                     [
                         'locale_id' => $locale,
-                        'meta_type' => MetaDataTypes::Page->value
+                        'meta_type' => MetaDataTypes::Post->value
                     ]
-                )->findColumn('id');
-
-                $postCategories = [];
+                )->findColumn('id'));
 
                 $PCE = new PostCategoriesEntity();
 
+                $postCategories = [];
+
                 foreach ($postsId as $postId) {
                     $num = array_rand($categoriesId, rand(1, count($categoriesId)));
-                    $num = ! is_array($num) ? [$num] : $num;
+                    $num = array_unique(! is_array($num) ? [$num] : $num);
                     foreach ($num as $c) {
                         $postCategories[] = $PCE->fill(
                             [
@@ -247,10 +247,11 @@ class AvegaCmsTestData extends Seeder
                                 'category_id'   => $categoriesId[$c],
                                 'created_by_id' => 1
                             ]
-                        );
+                        )->toArray();
                     }
                 }
-                $this->PCM->insertBatch($postCategories);
+                
+                $this->PCM->insertBatch(array_unique($postCategories, SORT_REGULAR));
             }
         }
     }
