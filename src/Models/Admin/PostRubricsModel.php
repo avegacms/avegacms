@@ -3,13 +3,13 @@
 namespace AvegaCms\Models\Admin;
 
 use CodeIgniter\Model;
-use AvegaCms\Entities\PostCategoriesEntity;
+use AvegaCms\Entities\PostRubricsEntity;
 
-class PostCategoriesModel extends Model
+class PostRubricsModel extends Model
 {
     protected $DBGroup        = 'default';
-    protected $table          = 'post_categories';
-    protected $returnType     = PostCategoriesEntity::class;
+    protected $table          = 'post_rubrics';
+    protected $returnType     = PostRubricsEntity::class;
     protected $useSoftDeletes = false;
     protected $protectFields  = true;
     protected $allowedFields  = [

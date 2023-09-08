@@ -18,7 +18,7 @@ use AvegaCms\Models\Admin\{
     RolesModel,
     UserRolesModel,
     LocalesModel,
-    PostCategoriesModel
+    PostRubricsModel
 };
 use AvegaCms\Entities\{
     ContentEntity,
@@ -30,23 +30,23 @@ use AvegaCms\Entities\{
     UserEntity,
     UserRolesEntity,
     LocalesEntity,
-    PostCategoriesEntity
+    PostRubricsEntity
 };
 use ReflectionException;
 use Exception;
 
 class AvegaCmsTestData extends Seeder
 {
-    protected UserModel           $UM;
-    protected ContentModel        $CM;
-    protected MetaDataModel       $MDM;
-    protected ModulesModel        $MM;
-    protected LoginModel          $LM;
-    protected SettingsModel       $SM;
-    protected RolesModel          $RM;
-    protected UserRolesModel      $URM;
-    protected LocalesModel        $LLM;
-    protected PostCategoriesModel $PCM;
+    protected UserModel        $UM;
+    protected ContentModel     $CM;
+    protected MetaDataModel    $MDM;
+    protected ModulesModel     $MM;
+    protected LoginModel       $LM;
+    protected SettingsModel    $SM;
+    protected RolesModel       $RM;
+    protected UserRolesModel   $URM;
+    protected LocalesModel     $LLM;
+    protected PostRubricsModel $PRM;
 
     protected array $settings = [];
 
@@ -67,7 +67,7 @@ class AvegaCmsTestData extends Seeder
         $this->MDM = model(MetaDataModel::class);
         $this->URM = model(UserRolesModel::class);
         $this->LLM = model(LocalesModel::class);
-        $this->PCM = model(PostCategoriesModel::class);
+        $this->PRM = model(PostRubricsModel::class);
     }
 
     /**
@@ -78,7 +78,7 @@ class AvegaCmsTestData extends Seeder
     {
         $this->createUsers();
         $this->createPages();
-        $this->createCategories();
+        $this->createRubrics();
         $this->createPosts();
     }
 
@@ -167,10 +167,10 @@ class AvegaCmsTestData extends Seeder
         }
     }
 
-    protected function createCategories(): void
+    protected function createRubrics(): void
     {
         if ($categories = CLI::prompt(
-            'How many categories do you want to create?',
+            'How many rubrics do you want to create?',
             null,
             ['required', 'is_natural_no_zero']
         )) {
@@ -181,7 +181,7 @@ class AvegaCmsTestData extends Seeder
 
             foreach ($locales as $locale) {
                 for ($i = 0; $categories > $i; $i++) {
-                    $this->_createMetaData(MetaDataTypes::Category->value, $locale);
+                    $this->_createMetaData(MetaDataTypes::Rubric->value, $locale);
                 }
             }
             CLI::newLine();
@@ -222,7 +222,7 @@ class AvegaCmsTestData extends Seeder
                 $categoriesId = $this->MDM->where(
                     [
                         'locale_id' => $locale,
-                        'meta_type' => MetaDataTypes::Category->value
+                        'meta_type' => MetaDataTypes::Rubric->value
                     ]
                 )->findColumn('id');
 
@@ -233,7 +233,7 @@ class AvegaCmsTestData extends Seeder
                     ]
                 )->findColumn('id'));
 
-                $PCE = new PostCategoriesEntity();
+                $PCE = new PostRubricsEntity();
 
                 $postCategories = [];
 
@@ -250,8 +250,8 @@ class AvegaCmsTestData extends Seeder
                         )->toArray();
                     }
                 }
-                
-                $this->PCM->insertBatch(array_unique($postCategories, SORT_REGULAR));
+
+                $this->PRM->insertBatch(array_unique($postCategories, SORT_REGULAR));
             }
         }
     }

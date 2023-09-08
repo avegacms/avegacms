@@ -4,7 +4,7 @@ namespace AvegaCms\Entities;
 
 use CodeIgniter\Entity\Entity;
 
-class PostCategoriesEntity extends Entity
+class PostRubricsEntity extends Entity
 {
     protected $datamap = [];
     protected $dates   = [];

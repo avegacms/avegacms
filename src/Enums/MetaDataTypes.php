@@ -7,7 +7,7 @@ enum MetaDataTypes: string
     case Main      = 'MAIN';
     case Page      = 'PAGE';
     case Post      = 'POST';
-    case Category  = 'CATEGORY';
+    case Rubric    = 'RUBRIC';
     case Module    = 'MODULE';
     case Custom    = 'CUSTOM';
     case Undefined = 'UNDEFINED';

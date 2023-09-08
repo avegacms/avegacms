@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace AvegaCms\Controllers\Api\Admin;
+namespace AvegaCms\Controllers\Api\Admin\Content;
 
+use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\{ContentModel, MetaDataModel};
 
-class Content extends AvegaCmsAdminAPI
+class Categories extends AvegaCmsAdminAPI
 {
     protected ContentModel  $CM;
     protected MetaDataModel $MDM;
