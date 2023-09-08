@@ -2,12 +2,12 @@
 
 namespace AvegaCms\Models\Admin;
 
-use CodeIgniter\Model;
+use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Entities\MetaDataEntity;
 use Faker\Generator;
-use AvegaCms\Enums\MetaStatuses;
+use AvegaCms\Enums\{MetaStatuses, MetaDataTypes};
 
-class MetaDataModel extends Model
+class MetaDataModel extends AvegaCmsModel
 {
     protected $DBGroup          = 'default';
     protected $table            = 'metadata';
@@ -62,6 +62,26 @@ class MetaDataModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
+    /**
+     * @return AvegaCmsModel
+     */
+    public function selectPages(): AvegaCmsModel
+    {
+        $this->builder()->select(
+            [
+                'metadata.*',
+                'pm.title AS parent_title'
+            ]
+        )->join('metadata AS pm', 'pm.id = metadata.parent', 'left')
+            ->whereIn('metadata.meta_type', [MetaDataTypes::Main->value, MetaDataTypes::Page->value]);
+
+        return $this;
+    }
+
+    /**
+     * @param  Generator  $faker
+     * @return array
+     */
     public function fake(Generator &$faker): array
     {
         $title = $faker->sentence();

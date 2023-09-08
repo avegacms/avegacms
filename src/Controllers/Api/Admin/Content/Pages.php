@@ -7,6 +7,7 @@ namespace AvegaCms\Controllers\Api\Admin\Content;
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\{ContentModel, MetaDataModel};
+use AvegaCms\Enums\MetaDataTypes;
 
 class Pages extends AvegaCmsAdminAPI
 {
@@ -27,7 +28,11 @@ class Pages extends AvegaCmsAdminAPI
      */
     public function index(): ResponseInterface
     {
-        //
+        $meta = $this->MDM->selectPages()
+            ->filter($this->request->getGet() ?? [])
+            ->pagination();
+
+        return $this->cmsRespond($meta['list'], $meta['pagination']);
     }
 
     /**
