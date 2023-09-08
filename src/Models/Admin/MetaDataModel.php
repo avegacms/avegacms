@@ -62,6 +62,33 @@ class MetaDataModel extends AvegaCmsModel
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
+    //AvegaCms model settings
+    public array  $filterFields      = [
+        'id'     => 'id',
+        'login'  => 'login',
+        'phone'  => 'phone',
+        'email'  => 'email',
+        'status' => 'status',
+    ];
+    public array  $searchFields      = [
+        'login' => 'login',
+        'phone' => 'phone',
+        'email' => 'email'
+    ];
+    public array  $sortableFields    = [];
+    public array  $filterCastsFields = [
+        'id'     => 'int|array',
+        'login'  => 'string',
+        'avatar' => 'string',
+        'phone'  => 'int',
+        'email'  => 'string',
+        'status' => 'string',
+    ];
+    public string $searchFieldAlias  = 'q';
+    public string $sortFieldAlias    = 's';
+    public int    $limit             = 20;
+    public int    $maxLimit          = 100;
+
     /**
      * @return AvegaCmsModel
      */
@@ -69,12 +96,29 @@ class MetaDataModel extends AvegaCmsModel
     {
         $this->builder()->select(
             [
-                'metadata.*',
-                'pm.title AS parent_title'
+                'metadata.id',
+                'metadata.title',
+                'metadata.url',
+                'metadata.creator_id',
+                'metadata.status',
+                'metadata.meta_type',
+                'metadata.in_sitemap',
+                'metadata.publish_at',
+                'pm.title AS parent_title',
+                'l.locale_name',
+                'u.login AS author'
             ]
-        )->join('metadata AS pm', 'pm.id = metadata.parent', 'left')
-            ->whereIn('metadata.meta_type', [MetaDataTypes::Main->value, MetaDataTypes::Page->value]);
+        )->join('locales AS l', 'l.id = metadata.locale_id')
+            ->join('metadata AS pm', 'pm.id = metadata.parent', 'left')
+            ->join('users AS u', 'u.id = metadata.creator_id', 'left')
+            ->whereIn('metadata.meta_type', [MetaDataTypes::Main->value, MetaDataTypes::Page->value])
+            ->where(['metadata.module_id' => 0]);
 
+        return $this;
+    }
+
+    public function forEdit(int $id)
+    {
         return $this;
     }
 

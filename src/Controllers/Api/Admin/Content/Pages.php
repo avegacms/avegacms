@@ -74,7 +74,11 @@ class Pages extends AvegaCmsAdminAPI
      */
     public function edit($id = null): ResponseInterface
     {
-        //
+        if (($data = $this->MDM->forEdit($id)) === null) {
+            return $this->failNotFound();
+        }
+
+        return $this->cmsRespond($data->toArray());
     }
 
     /**
