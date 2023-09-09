@@ -15,12 +15,11 @@ class ContentModel extends Model
     protected $protectFields  = true;
     protected $allowedFields  = [
         'meta_id',
-        'caption',
         'anons',
         'content',
         'extra'
     ];
-    
+
     // Validation
     protected $validationRules      = [];
     protected $validationMessages   = [];

@@ -179,7 +179,7 @@ class AvegaCmsModel extends Model
                                 }
 
                                 if ( ! empty($this->sortableFields)) {
-                                    if (in_array($sortField, $this->sortableFields)) {
+                                    if (in_array($sortField, array_keys($this->sortableFields))) {
                                         $this->filterFieldsMap[$type][$sortField] = [
                                             'field' => $this->filterFields[$sortField],
                                             'value' => $sortFlag

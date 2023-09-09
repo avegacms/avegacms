@@ -27,7 +27,7 @@ class MetaDataModel extends AvegaCmsModel
         'sort',
         'url',
         'meta',
-        'extra',
+        'extra_data',
         'status',
         'meta_type',
         'in_sitemap',
@@ -64,25 +64,28 @@ class MetaDataModel extends AvegaCmsModel
 
     //AvegaCms model settings
     public array  $filterFields      = [
-        'id'     => 'id',
-        'login'  => 'login',
-        'phone'  => 'phone',
-        'email'  => 'email',
-        'status' => 'status',
+        'id'         => 'metadata.id',
+        'locale_id'  => 'metadata.locale_id',
+        'login'      => 'u.login',
+        'type'       => 'metadata.meta_type',
+        'status'     => 'metadata.status',
+        'publish_at' => 'metadata.publish_at'
     ];
     public array  $searchFields      = [
-        'login' => 'login',
-        'phone' => 'phone',
-        'email' => 'email'
+        'login' => 'u.login',
+        'title' => 'metadata.title'
     ];
-    public array  $sortableFields    = [];
+    public array  $sortableFields    = [
+        'publish_at' => 'metadata.publish_at'
+    ];
     public array  $filterCastsFields = [
-        'id'     => 'int|array',
-        'login'  => 'string',
-        'avatar' => 'string',
-        'phone'  => 'int',
-        'email'  => 'string',
-        'status' => 'string',
+        'id'         => 'int|array',
+        'locale_id'  => 'int',
+        'login'      => 'string',
+        'title'      => 'string',
+        'type'       => 'string',
+        'status'     => 'string',
+        'publish_at' => 'string'
     ];
     public string $searchFieldAlias  = 'q';
     public string $sortFieldAlias    = 's';
@@ -97,6 +100,8 @@ class MetaDataModel extends AvegaCmsModel
         $this->builder()->select(
             [
                 'metadata.id',
+                'metadata.parent',
+                'metadata.locale_id',
                 'metadata.title',
                 'metadata.url',
                 'metadata.creator_id',
@@ -119,7 +124,31 @@ class MetaDataModel extends AvegaCmsModel
 
     public function forEdit(int $id)
     {
-        return $this;
+        $this->builder()->select(
+            [
+                'metadata.parent',
+                'metadata.locale_id',
+                'metadata.module_id',
+                'metadata.slug',
+                'metadata.creator_id',
+                'metadata.item_id',
+                'metadata.title',
+                'metadata.sort',
+                'metadata.url',
+                'metadata.meta',
+                'metadata.extra_data',
+                'metadata.status',
+                'metadata.meta_type',
+                'metadata.in_sitemap',
+                'c.caption',
+                'c.anons',
+                'c.content',
+                'c.extra'
+            ]
+        )->join('content AS c', 'c.meta_id = metadata.id')
+            ->whereIn('metadata.meta_type', [MetaDataTypes::Main->value, MetaDataTypes::Page->value]);
+
+        return $this->find($id);
     }
 
     /**
@@ -144,9 +173,15 @@ class MetaDataModel extends AvegaCmsModel
             'sort'          => rand(1, 1000),
             'url'           => strtolower($url),
             'meta'          => [
+                'title'        => $title,
                 'keywords'     => $faker->sentence(1),
                 'descriptions' => $faker->sentence(1),
-                'breadcrumb'   => rand(0, 1) ? $faker->word() : ''
+                'breadcrumb'   => rand(0, 1) ? $faker->word() : '',
+
+                'og:title' => $title,
+                'og:type'  => 'website',
+                'og:url'   => base_url($url),
+                'og:image' => base_url('uploads/open_graph.png')
             ],
             'status'        => $status[array_rand($status)],
             'meta_type'     => '',

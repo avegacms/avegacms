@@ -7,7 +7,6 @@ namespace AvegaCms\Controllers\Api\Admin\Content;
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\{ContentModel, MetaDataModel};
-use AvegaCms\Enums\MetaDataTypes;
 
 class Pages extends AvegaCmsAdminAPI
 {
@@ -67,14 +66,12 @@ class Pages extends AvegaCmsAdminAPI
     }
 
     /**
-     * Return the editable properties of a resource object
-     *
      * @param $id
      * @return ResponseInterface
      */
     public function edit($id = null): ResponseInterface
     {
-        if (($data = $this->MDM->forEdit($id)) === null) {
+        if (($data = $this->MDM->forEdit((int) $id)) === null) {
             return $this->failNotFound();
         }
 

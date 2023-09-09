@@ -21,7 +21,7 @@ class MetaDataEntity extends Entity
         'sort'          => 'integer',
         'url'           => 'string',
         'meta'          => 'json-array',
-        'extra'         => 'json-array',
+        'extra_data'    => 'json-array',
         'status'        => 'string',
         'meta_type'     => 'string',
         'in_sitemap'    => 'integer',

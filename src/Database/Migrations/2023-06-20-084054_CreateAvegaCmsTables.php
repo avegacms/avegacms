@@ -306,7 +306,7 @@ class CreateAvegaCmsTables extends Migration
             // URL-адрес без указания base_url
             'meta'       => ['type' => 'text', 'null' => true],
             // объект, содержащий информацию о метаданных
-            'extra'      => ['type' => 'text', 'null' => true],
+            'extra_data' => ['type' => 'text', 'null' => true],
             // объект, содержащий информацию о доп. данных
             'status'     => [
                 'type'       => 'enum',
@@ -333,7 +333,6 @@ class CreateAvegaCmsTables extends Migration
          */
         $this->forge->addField([
             'meta_id' => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
-            'caption' => ['type' => 'varchar', 'constraint' => 1024, 'null' => true], // Название страницы
             'anons'   => ['type' => 'text', 'null' => true], // краткая информация
             'content' => ['type' => 'longtext', 'null' => true], // остальная информация
             'extra'   => ['type' => 'longtext', 'null' => true] // объект, содержащий информацию о доп. данных
