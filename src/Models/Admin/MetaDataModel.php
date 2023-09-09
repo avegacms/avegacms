@@ -4,6 +4,8 @@ namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Entities\MetaDataEntity;
+use CodeIgniter\Database\ConnectionInterface;
+use CodeIgniter\Validation\ValidationInterface;
 use Faker\Generator;
 use AvegaCms\Enums\{MetaStatuses, MetaDataTypes};
 
@@ -46,7 +48,23 @@ class MetaDataModel extends AvegaCmsModel
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'id'            => ['rules' => 'if_exist|is_natural'],
+        'parent'        => ['rules' => 'if_exist|is_natural'],
+        'locale_id'     => ['rules' => 'if_exist|required|is_natural_no_zero'],
+        'module_id'     => ['rules' => 'if_exist|is_natural'],
+        'slug'          => ['rules' => 'if_exist|permit_empty|string|max_length[64]'],
+        'creator_id'    => ['rules' => 'if_exist|is_natural_no_zero'],
+        'item_id'       => ['rules' => 'if_exist|is_natural'],
+        'title'         => ['rules' => 'if_exist|required|string|max_length[1024]'],
+        'sort'          => ['rules' => 'if_exist|is_natural_no_zero'],
+        'url'           => ['rules' => 'if_exist|required|string|max_length[2048]'],
+        'in_sitemap'    => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
+        'extra_data'    => ['rules' => 'if_exist|permit_empty|string'],
+        'publish_at'    => ['rules' => 'if_exist|valid_date[Y-m-d H:i:s]'],
+        'created_by_id' => ['rules' => 'if_exist|is_natural'],
+        'updated_by_id' => ['rules' => 'if_exist|is_natural']
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
@@ -66,6 +84,8 @@ class MetaDataModel extends AvegaCmsModel
     public array  $filterFields      = [
         'id'         => 'metadata.id',
         'locale_id'  => 'metadata.locale_id',
+        'module_id'  => 'metadata.module_id',
+        'item_id'    => 'metadata.item_id',
         'login'      => 'u.login',
         'type'       => 'metadata.meta_type',
         'status'     => 'metadata.status',
@@ -81,6 +101,8 @@ class MetaDataModel extends AvegaCmsModel
     public array  $filterCastsFields = [
         'id'         => 'int|array',
         'locale_id'  => 'int',
+        'module_id'  => 'int',
+        'item_id'    => 'int',
         'login'      => 'string',
         'title'      => 'string',
         'type'       => 'string',
@@ -91,6 +113,30 @@ class MetaDataModel extends AvegaCmsModel
     public string $sortFieldAlias    = 's';
     public int    $limit             = 20;
     public int    $maxLimit          = 100;
+
+    public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
+    {
+        parent::__construct($db, $validation);
+
+        $this->validationRules['meta.title'] = ['rules' => 'if_exist|permit_empty|string|max_length[255]'];
+        $this->validationRules['meta.keywords'] = ['rules' => 'if_exist|permit_empty|string|max_length[255]'];
+        $this->validationRules['meta.descriptions'] = ['rules' => 'if_exist|permit_empty|string|max_length[255]'];
+
+        $this->validationRules['meta.breadcrumb'] = ['rules' => 'if_exist|permit_empty|string|max_length[255]'];
+
+        $this->validationRules['meta.og:title'] = ['rules' => 'if_exist|permit_empty|string|max_length[255]'];
+        $this->validationRules['meta.og:type'] = ['rules' => 'if_exist|permit_empty|string|max_length[255]'];
+        $this->validationRules['meta.og:url'] = ['rules' => 'if_exist|permit_empty|string|max_length[2048]'];
+        $this->validationRules['meta.og:image'] = ['rules' => 'if_exist|permit_empty|string|max_length[512]'];
+
+        $this->validationRules['status'] = 'if_exist|required|in_list[' . implode(',',
+                MetaStatuses::getValues()
+            ) . ']';
+
+        $this->validationRules['meta_type'] = 'if_exist|required|in_list[' . implode(',',
+                MetaDataTypes::getValues()
+            ) . ']';
+    }
 
     /**
      * @return AvegaCmsModel
@@ -171,7 +217,7 @@ class MetaDataModel extends AvegaCmsModel
             'item_id'       => 0,
             'title'         => $title,
             'sort'          => rand(1, 1000),
-            'url'           => strtolower($url),
+            'url'           => base_url(strtolower($url)),
             'meta'          => [
                 'title'        => $title,
                 'keywords'     => $faker->sentence(1),
