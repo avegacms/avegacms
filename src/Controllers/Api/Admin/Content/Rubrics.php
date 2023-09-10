@@ -136,6 +136,30 @@ class Rubrics extends AvegaCmsAdminAPI
     /**
      * @param $id
      * @return ResponseInterface
+     * @throws ReflectionException
+     */
+    public function patch($id = null): ResponseInterface
+    {
+        if (empty($data = $this->request->getJSON(true))) {
+            return $this->failValidationErrors(lang('Api.errors.noData'));
+        }
+
+        if ($this->MDM->rubricEdit((int) $id) === null) {
+            return $this->failNotFound();
+        }
+
+        $data['updated_by_id'] = $this->userData->userId;
+
+        if ($this->MDM->save((new MetaDataEntity($data))) === false) {
+            return $this->failValidationErrors($this->MDM->errors());
+        }
+
+        return $this->respondNoContent();
+    }
+
+    /**
+     * @param $id
+     * @return ResponseInterface
      */
     public function delete($id = null): ResponseInterface
     {

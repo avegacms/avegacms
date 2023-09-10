@@ -16,7 +16,6 @@ $routes->group('api', function (RouteCollection $routes) {
         $routes->group('content', function (RouteCollection $routes) {
             $routes->get('/', 'Content::index');
         });
-
         $routes->post('login/(:segment)', [Login::class, 'index/$1']);
     });
     $routes->group('admin', ['namespace' => 'AvegaCms\Controllers\Api\Admin', 'filter' => 'auth'],
@@ -46,6 +45,7 @@ $routes->group('api', function (RouteCollection $routes) {
                     $routes->get('(:num)/edit', [[Rubrics::class, 'edit'], '$1']);
                     $routes->post('/', [Rubrics::class, 'create']);
                     $routes->put('(:num)', [[Rubrics::class, 'update'], '$1']);
+                    $routes->patch('(:num)', [[Rubrics::class, 'patch'], '$1']);
                     $routes->delete('(:num)', [[Rubrics::class, 'delete'], '$1']);
                 });
             });
