@@ -38,6 +38,18 @@ class Pages extends AvegaCmsAdminAPI
 
     /**
      * @return ResponseInterface
+     */
+    public function new(): ResponseInterface
+    {
+        return $this->cmsRespond(
+            [
+                'statuses' => MetaStatuses::getValues()
+            ]
+        );
+    }
+
+    /**
+     * @return ResponseInterface
      * @throws ReflectionException
      */
     public function create(): ResponseInterface
@@ -47,6 +59,7 @@ class Pages extends AvegaCmsAdminAPI
         }
 
         $data['module_id'] = 0;
+        $data['item_id'] = 0;
         $data['creator_id'] = $data['created_by_id'] = $this->userData->userId;
 
         $content['anons'] = $data['anons'];
@@ -97,6 +110,7 @@ class Pages extends AvegaCmsAdminAPI
         }
 
         $data['module_id'] = 0;
+        $data['item_id'] = 0;
         unset($data['creator_id']);
         $data['updated_by_id'] = $this->userData->userId;
 
@@ -156,11 +170,11 @@ class Pages extends AvegaCmsAdminAPI
             return $this->failValidationErrors(lang('Content.errors.deleteIsDefault'));
         }
 
-        if ( ! $this->MDM->delete($id)) {
+        if ($this->MDM->delete($id) === false) {
             return $this->failValidationErrors(lang('Api.errors.delete', ['Metadata']));
         }
 
-        if ( ! $this->CM->where(['meta_id' => $id])->delete()) {
+        if ($this->CM->where(['meta_id' => $id])->delete() === false) {
             return $this->failValidationErrors(lang('Api.errors.delete', ['Content']));
         }
 

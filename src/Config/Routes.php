@@ -24,6 +24,7 @@ $routes->group('api', function (RouteCollection $routes) {
             $routes->group('content', function (RouteCollection $routes) {
                 $routes->group('pages', function (RouteCollection $routes) {
                     $routes->get('/', [Pages::class, 'index']);
+                    $routes->get('new', [Pages::class, 'new']);
                     $routes->get('(:num)/edit', [[Pages::class, 'edit'], '$1']);
                     $routes->post('/', [Pages::class, 'create']);
                     $routes->put('(:num)', [[Pages::class, 'update'], '$1']);
@@ -32,11 +33,20 @@ $routes->group('api', function (RouteCollection $routes) {
                 });
                 $routes->group('posts', function (RouteCollection $routes) {
                     $routes->get('/', [Posts::class, 'index']);
+                    $routes->get('new', [Posts::class, 'new']);
                     $routes->get('(:num)/edit', [[Posts::class, 'edit'], '$1']);
                     $routes->post('/', [Posts::class, 'create']);
+                    $routes->put('(:num)', [[Posts::class, 'update'], '$1']);
+                    $routes->patch('(:num)', [[Posts::class, 'patch'], '$1']);
+                    $routes->delete('(:num)', [[Posts::class, 'delete'], '$1']);
                 });
                 $routes->group('rubrics', function (RouteCollection $routes) {
                     $routes->get('/', [Rubrics::class, 'index']);
+                    $routes->get('new', [Rubrics::class, 'new']);
+                    $routes->get('(:num)/edit', [[Rubrics::class, 'edit'], '$1']);
+                    $routes->post('/', [Rubrics::class, 'create']);
+                    $routes->put('(:num)', [[Rubrics::class, 'update'], '$1']);
+                    $routes->delete('(:num)', [[Rubrics::class, 'delete'], '$1']);
                 });
             });
 

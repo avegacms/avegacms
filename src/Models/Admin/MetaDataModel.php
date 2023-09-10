@@ -8,6 +8,7 @@ use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
 use Faker\Generator;
 use AvegaCms\Enums\{MetaStatuses, MetaDataTypes};
+use phpDocumentor\Reflection\DocBlock\Tags\Deprecated;
 
 class MetaDataModel extends AvegaCmsModel
 {
@@ -172,6 +173,32 @@ class MetaDataModel extends AvegaCmsModel
     /**
      * @return AvegaCmsModel
      */
+    public function selectRubrics(): AvegaCmsModel
+    {
+        $this->builder()->select(
+            [
+                'metadata.id',
+                'metadata.locale_id',
+                'metadata.title',
+                'metadata.url',
+                'metadata.creator_id',
+                'metadata.status',
+                'metadata.meta_type',
+                'metadata.in_sitemap',
+                'metadata.publish_at',
+                'l.locale_name',
+                'u.login AS author'
+            ]
+        )->join('locales AS l', 'l.id = metadata.locale_id')
+            ->join('users AS u', 'u.id = metadata.creator_id', 'left')
+            ->where(['metadata.module_id' => 0, 'metadata.meta_type' => MetaDataTypes::Rubric->value]);
+
+        return $this;
+    }
+
+    /**
+     * @return AvegaCmsModel
+     */
     public function selectMetaData(): AvegaCmsModel
     {
         $this->builder()->select(
@@ -235,6 +262,17 @@ class MetaDataModel extends AvegaCmsModel
             ->where(['metadata.meta_type' => MetaDataTypes::Rubric->value]);
 
         return $this->find($id);
+    }
+
+    /**
+     * @return array
+     */
+    public function getRubrics(): array
+    {
+        $this->builder()->select(['id', 'title'])
+            ->where(['meta_type' => MetaDataTypes::Rubric->value]);
+        
+        return $this->findAll();
     }
 
     /**

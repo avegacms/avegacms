@@ -6,6 +6,7 @@ namespace AvegaCms\Controllers\Api\Admin\Content;
 
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use AvegaCms\Enums\MetaDataTypes;
+use AvegaCms\Enums\MetaStatuses;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\{ContentModel, MetaDataModel, PostRubricsModel};
 use AvegaCms\Entities\{MetaDataEntity, ContentEntity, PostRubricsEntity};
@@ -26,8 +27,6 @@ class Posts extends AvegaCmsAdminAPI
     }
 
     /**
-     * Return an array of resource objects, themselves in array format
-     *
      * @return ResponseInterface
      */
     public function index(): ResponseInterface
@@ -40,24 +39,16 @@ class Posts extends AvegaCmsAdminAPI
     }
 
     /**
-     * Return the properties of a resource object
-     *
-     * @param $id
-     * @return ResponseInterface
-     */
-    public function show($id = null): ResponseInterface
-    {
-        //
-    }
-
-    /**
-     * Return a new resource object, with default properties
-     *
      * @return ResponseInterface
      */
     public function new(): ResponseInterface
     {
-        //
+        return $this->cmsRespond(
+            [
+                'statuses' => MetaStatuses::getValues(),
+                'rubrics'  => $this->MDM->getRubrics()
+            ]
+        );
     }
 
     /**
@@ -71,6 +62,8 @@ class Posts extends AvegaCmsAdminAPI
         }
 
         $data['module_id'] = 0;
+        $data['parent'] = 0;
+        $data['item_id'] = 0;
         $data['meta_type'] = MetaDataTypes::Post->value;
         $data['creator_id'] = $data['created_by_id'] = $this->userData->userId;
 
@@ -109,8 +102,6 @@ class Posts extends AvegaCmsAdminAPI
     }
 
     /**
-     * Return the editable properties of a resource object
-     *
      * @param $id
      * @return ResponseInterface
      */
@@ -136,11 +127,13 @@ class Posts extends AvegaCmsAdminAPI
             return $this->failValidationErrors(lang('Api.errors.noData'));
         }
 
-        if ($this->MDM->pageEdit((int) $id) === null) {
+        if ($this->MDM->postEdit((int) $id) === null) {
             return $this->failNotFound();
         }
 
         $data['module_id'] = 0;
+        $data['parent'] = 0;
+        $data['item_id'] = 0;
         unset($data['creator_id']);
         $data['updated_by_id'] = $this->userData->userId;
 
@@ -160,8 +153,9 @@ class Posts extends AvegaCmsAdminAPI
             return $this->failValidationErrors($this->CM->errors());
         }
 
-        // Очищаем список категорий
-        $this->PRM->where(['post_id' => $id])->delete();
+        $this->_removeRubrics((int) $id);
+
+        $postRubrics = [];
 
         foreach ($rubrics as $rubric) {
             $postRubrics[] = (new PostRubricsEntity(
@@ -178,13 +172,37 @@ class Posts extends AvegaCmsAdminAPI
     }
 
     /**
-     * Delete the designated resource object from the model
-     *
      * @param $id
      * @return ResponseInterface
      */
     public function delete($id = null): ResponseInterface
     {
-        //
+        if ($this->MDM->postEdit((int) $id) === null) {
+            return $this->failNotFound();
+        }
+
+        if ($this->MDM->delete($id) === false) {
+            return $this->failValidationErrors(lang('Api.errors.delete', ['Metadata']));
+        }
+
+        if ($this->CM->where(['meta_id' => $id])->delete() === false) {
+            return $this->failValidationErrors(lang('Api.errors.delete', ['Content']));
+        }
+
+        if ($this->_removeRubrics((int) $id) === false) {
+            return $this->failValidationErrors(lang('Api.errors.delete', ['PostRubrics']));
+        }
+
+        return $this->respondNoContent();
+    }
+
+    /**
+     * @param  int  $postId
+     * @return bool
+     */
+    private function _removeRubrics(int $postId): bool
+    {
+        // Очищаем список категорий
+        return $this->PRM->where(['post_id' => $postId])->delete();
     }
 }
