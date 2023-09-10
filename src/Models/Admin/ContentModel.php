@@ -41,7 +41,6 @@ class ContentModel extends Model
     {
         return [
             'meta_id' => 0,
-            'caption' => $faker->sentence(),
             'anons'   => $faker->paragraph(1),
             'content' => $faker->paragraph(rand(6, 36))
         ];

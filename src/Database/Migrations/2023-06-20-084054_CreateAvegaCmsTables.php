@@ -344,13 +344,12 @@ class CreateAvegaCmsTables extends Migration
          * Таблица для хранения связок поста и категории
          */
         $this->forge->addField([
-            'post_id'       => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
-            'category_id'   => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
-            'created_by_id' => ['type' => 'int', 'constraint' => 11, 'null' => true, 'default' => 0],
+            'post_id'   => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
+            'rubric_id' => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true]
         ]);
-        $this->forge->addUniqueKey(['post_id', 'category_id']);
+        $this->forge->addUniqueKey(['post_id', 'rubric_id']);
         $this->forge->addForeignKey('post_id', $this->tables['metadata'], 'id', '', 'CASCADE');
-        $this->forge->addForeignKey('category_id', $this->tables['metadata'], 'id', '', 'CASCADE');
+        $this->forge->addForeignKey('rubric_id', $this->tables['metadata'], 'id', '', 'CASCADE');
         $this->createTable($this->tables['post_rubrics']);
 
         /**

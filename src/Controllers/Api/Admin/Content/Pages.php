@@ -47,8 +47,7 @@ class Pages extends AvegaCmsAdminAPI
         }
 
         $data['module_id'] = 0;
-        $data['creator_id'] = $this->userData->userId;
-        $data['created_by_id'] = $this->userData->userId;
+        $data['creator_id'] = $data['created_by_id'] = $this->userData->userId;
 
         $content['anons'] = $data['anons'];
         $content['content'] = $data['content'];
@@ -75,7 +74,7 @@ class Pages extends AvegaCmsAdminAPI
      */
     public function edit($id = null): ResponseInterface
     {
-        if (($data = $this->MDM->forEdit((int) $id)) === null) {
+        if (($data = $this->MDM->pageEdit((int) $id)) === null) {
             return $this->failNotFound();
         }
 
@@ -93,7 +92,7 @@ class Pages extends AvegaCmsAdminAPI
             return $this->failValidationErrors(lang('Api.errors.noData'));
         }
 
-        if ($this->MDM->forEdit((int) $id) === null) {
+        if ($this->MDM->pageEdit((int) $id) === null) {
             return $this->failNotFound();
         }
 
@@ -129,7 +128,7 @@ class Pages extends AvegaCmsAdminAPI
             return $this->failValidationErrors(lang('Api.errors.noData'));
         }
 
-        if ($this->MDM->forEdit((int) $id) === null) {
+        if ($this->MDM->pageEdit((int) $id) === null) {
             return $this->failNotFound();
         }
 
@@ -149,7 +148,7 @@ class Pages extends AvegaCmsAdminAPI
      */
     public function delete($id = null): ResponseInterface
     {
-        if (($data = $this->MDM->forEdit((int) $id)) === null) {
+        if (($data = $this->MDM->pageEdit((int) $id)) === null) {
             return $this->failNotFound();
         }
 

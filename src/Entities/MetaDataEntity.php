@@ -11,6 +11,8 @@ class MetaDataEntity extends Entity
     protected $dates   = ['created_at', 'updated_at', 'publish_at'];
     protected $casts   = [
         'id'            => 'integer',
+        'post_id'       => 'integer',
+        'rubric_id'     => 'integer',
         'parent'        => 'integer',
         'locale_id'     => 'integer',
         'module_id'     => 'integer',
@@ -25,12 +27,23 @@ class MetaDataEntity extends Entity
         'status'        => 'string',
         'meta_type'     => 'string',
         'in_sitemap'    => 'integer',
+        'rubrics'       => 'array',
         'created_by_id' => 'integer',
         'updated_by_id' => 'integer',
         'publish_at'    => 'datetime',
         'created_at'    => 'datetime',
-        'updated_at'    => 'datetime'
+        'updated_at'    => 'datetime',
     ];
+
+    /**
+     * @return array
+     */
+    public function getRubrics(): array
+    {
+        return array_map(function ($k) {
+            return intval($k);
+        }, unserialize($this->attributes['rubrics']));
+    }
 
     protected $castHandlers = [
         'seoMeta' => ContentSeoMetaCast::class,

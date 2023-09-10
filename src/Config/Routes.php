@@ -3,7 +3,7 @@
 use CodeIgniter\Router\RouteCollection;
 
 use AvegaCms\Controllers\Api\Public\Login;
-use AvegaCms\Controllers\Api\Admin\Content\{Pages};
+use AvegaCms\Controllers\Api\Admin\Content\{Pages, Rubrics, Posts};
 use AvegaCms\Controllers\Api\Admin\Settings\{Locales, Modules, Navigations, Permissions, Roles, Settings, Users};
 
 /**
@@ -29,6 +29,14 @@ $routes->group('api', function (RouteCollection $routes) {
                     $routes->put('(:num)', [[Pages::class, 'update'], '$1']);
                     $routes->patch('(:num)', [[Pages::class, 'patch'], '$1']);
                     $routes->delete('(:num)', [[Pages::class, 'delete'], '$1']);
+                });
+                $routes->group('posts', function (RouteCollection $routes) {
+                    $routes->get('/', [Posts::class, 'index']);
+                    $routes->get('(:num)/edit', [[Posts::class, 'edit'], '$1']);
+                    $routes->post('/', [Posts::class, 'create']);
+                });
+                $routes->group('rubrics', function (RouteCollection $routes) {
+                    $routes->get('/', [Rubrics::class, 'index']);
                 });
             });
 

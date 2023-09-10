@@ -219,7 +219,7 @@ class AvegaCmsTestData extends Seeder
             }
 
             foreach ($locales as $locale) {
-                $categoriesId = $this->MDM->where(
+                $rubricsId = $this->MDM->where(
                     [
                         'locale_id' => $locale,
                         'meta_type' => MetaDataTypes::Rubric->value
@@ -238,13 +238,13 @@ class AvegaCmsTestData extends Seeder
                 $postCategories = [];
 
                 foreach ($postsId as $postId) {
-                    $num = array_rand($categoriesId, rand(1, count($categoriesId)));
+                    $num = array_rand($rubricsId, rand(1, count($rubricsId)));
                     $num = array_unique(! is_array($num) ? [$num] : $num);
                     foreach ($num as $c) {
                         $postCategories[] = $PCE->fill(
                             [
                                 'post_id'       => $postId,
-                                'category_id'   => $categoriesId[$c],
+                                'rubric_id'     => $rubricsId[$c],
                                 'created_by_id' => 1
                             ]
                         )->toArray();

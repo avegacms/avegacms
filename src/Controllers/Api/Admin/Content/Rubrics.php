@@ -6,18 +6,22 @@ namespace AvegaCms\Controllers\Api\Admin\Content;
 
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Models\Admin\{ContentModel, MetaDataModel};
+use AvegaCms\Models\Admin\{ContentModel, MetaDataModel, PostRubricsModel};
+use AvegaCms\Entities\{MetaDataEntity, ContentEntity};
+use ReflectionException;
 
-class Categories extends AvegaCmsAdminAPI
+class Rubrics extends AvegaCmsAdminAPI
 {
-    protected ContentModel  $CM;
-    protected MetaDataModel $MDM;
+    protected ContentModel     $CM;
+    protected MetaDataModel    $MDM;
+    protected PostRubricsModel $PRM;
 
     public function __construct()
     {
         parent::__construct();
         $this->CM = model(ContentModel::class);
         $this->MDM = model(MetaDataModel::class);
+        $this->PRM = model(PostRubricsModel::class);
     }
 
     /**
@@ -27,7 +31,11 @@ class Categories extends AvegaCmsAdminAPI
      */
     public function index(): ResponseInterface
     {
-        //
+        $meta = $this->MDM->selectPosts()
+            ->filter($this->request->getGet() ?? [])
+            ->pagination();
+
+        return $this->cmsRespond($meta['list'], $meta['pagination']);
     }
 
     /**

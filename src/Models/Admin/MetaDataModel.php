@@ -62,6 +62,7 @@ class MetaDataModel extends AvegaCmsModel
         'in_sitemap'    => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'extra_data'    => ['rules' => 'if_exist|permit_empty|string'],
         'publish_at'    => ['rules' => 'if_exist|valid_date[Y-m-d H:i:s]'],
+        'rubrics.*'     => ['rules' => 'if_exist|required|is_natural_no_zero'],
         'created_by_id' => ['rules' => 'if_exist|is_natural'],
         'updated_by_id' => ['rules' => 'if_exist|is_natural']
     ];
@@ -168,10 +169,14 @@ class MetaDataModel extends AvegaCmsModel
         return $this;
     }
 
-    public function forEdit(int $id)
+    /**
+     * @return AvegaCmsModel
+     */
+    public function selectMetaData(): AvegaCmsModel
     {
         $this->builder()->select(
             [
+                'metadata.id',
                 'metadata.parent',
                 'metadata.locale_id',
                 'metadata.module_id',
@@ -186,13 +191,48 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.status',
                 'metadata.meta_type',
                 'metadata.in_sitemap',
-                'c.caption',
                 'c.anons',
                 'c.content',
                 'c.extra'
             ]
         )->join('content AS c', 'c.meta_id = metadata.id')
+            ->where(['metadata.module_id' => 0]);
+
+        return $this;
+    }
+
+    /**
+     * @param  int  $id
+     * @return array|object|null
+     */
+    public function pageEdit(int $id): array|object|null
+    {
+        $this->selectMetaData()->builder()
             ->whereIn('metadata.meta_type', [MetaDataTypes::Main->value, MetaDataTypes::Page->value]);
+
+        return $this->find($id);
+    }
+
+    /**
+     * @param  int  $id
+     * @return array|object|null
+     */
+    public function postEdit(int $id): array|object|null
+    {
+        $this->selectMetaData()->builder()
+            ->where(['metadata.meta_type' => MetaDataTypes::Post->value]);
+
+        return $this->find($id);
+    }
+
+    /**
+     * @param  int  $id
+     * @return array|object|null
+     */
+    public function rubricEdit(int $id): array|object|null
+    {
+        $this->selectMetaData()->builder()
+            ->where(['metadata.meta_type' => MetaDataTypes::Rubric->value]);
 
         return $this->find($id);
     }
