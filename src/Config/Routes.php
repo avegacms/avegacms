@@ -27,6 +27,7 @@ $routes->group('api', function (RouteCollection $routes) {
                     $routes->get('(:num)/edit', [[Pages::class, 'edit'], '$1']);
                     $routes->post('/', [Pages::class, 'create']);
                     $routes->put('(:num)', [[Pages::class, 'update'], '$1']);
+                    $routes->patch('(:num)', [[Pages::class, 'patch'], '$1']);
                     $routes->delete('(:num)', [[Pages::class, 'delete'], '$1']);
                 });
             });

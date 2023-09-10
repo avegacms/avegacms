@@ -25,8 +25,6 @@ class Pages extends AvegaCmsAdminAPI
     }
 
     /**
-     * Return an array of resource objects, themselves in array format
-     *
      * @return ResponseInterface
      */
     public function index(): ResponseInterface
@@ -37,7 +35,7 @@ class Pages extends AvegaCmsAdminAPI
 
         return $this->cmsRespond($meta['list'], $meta['pagination']);
     }
-    
+
     /**
      * @return ResponseInterface
      * @throws ReflectionException
@@ -115,6 +113,30 @@ class Pages extends AvegaCmsAdminAPI
 
         if ($this->CM->where(['meta_id' => $id])->update(null, (new ContentEntity($content))) === false) {
             return $this->failValidationErrors($this->CM->errors());
+        }
+
+        return $this->respondNoContent();
+    }
+
+    /**
+     * @param $id
+     * @return ResponseInterface
+     * @throws ReflectionException
+     */
+    public function patch($id = null): ResponseInterface
+    {
+        if (empty($data = $this->request->getJSON(true))) {
+            return $this->failValidationErrors(lang('Api.errors.noData'));
+        }
+
+        if ($this->MDM->forEdit((int) $id) === null) {
+            return $this->failNotFound();
+        }
+
+        $data['updated_by_id'] = $this->userData->userId;
+
+        if ($this->MDM->save((new MetaDataEntity($data))) === false) {
+            return $this->failValidationErrors($this->MDM->errors());
         }
 
         return $this->respondNoContent();
