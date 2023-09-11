@@ -3,6 +3,8 @@
 namespace AvegaCms\Entities;
 
 use CodeIgniter\Entity\Entity;
+use Exception;
+
 
 class AvegaCmsEntity extends Entity
 {
@@ -13,7 +15,26 @@ class AvegaCmsEntity extends Entity
 
     public function __construct(?array $data = null)
     {
-        $this->rawData = $data;
         parent::__construct($data);
+    }
+
+    /**
+     * @param  array|null  $data
+     * @return $this|AvegaCmsEntity
+     * @throws Exception
+     */
+    public function fill(?array $data = null): AvegaCmsEntity|static
+    {
+        $this->rawData = $data;
+
+        if ( ! is_array($data)) {
+            return $this;
+        }
+
+        foreach ($data as $key => $value) {
+            $this->__set($key, $value);
+        }
+
+        return $this;
     }
 }
