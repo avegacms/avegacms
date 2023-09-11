@@ -2,9 +2,10 @@
 
 namespace AvegaCms\Entities;
 
-use CodeIgniter\Entity\Entity;
+use AvegaCms\Models\Admin\MetaDataModel;
+use AvegaCms\Enums\MetaDataTypes;
 
-class MetaDataEntity extends Entity
+class MetaDataEntity extends AvegaCmsEntity
 {
     protected $datamap = [];
     protected $dates   = ['created_at', 'updated_at', 'publish_at'];
@@ -21,7 +22,7 @@ class MetaDataEntity extends Entity
         'title'         => 'string',
         'sort'          => 'integer',
         'url'           => 'string',
-        'meta'          => 'json',
+        'meta'          => 'json-array',
         'extra_data'    => 'json-array',
         'status'        => 'string',
         'meta_type'     => 'string',
@@ -34,20 +35,21 @@ class MetaDataEntity extends Entity
         'updated_at'    => 'datetime',
     ];
 
-    public function __construct(?array $data = null)
-    {
-        parent::__construct($data);
-
-        helper(['url']);
-    }
-
     /**
      * @param  string  $url
      * @return $this
      */
-    public function setUrl(string $url): Entity
+    public function setUrl(string $url): AvegaCmsEntity
     {
-        $this->attributes['url'] = empty($url) ? mb_url_title($this->attributes['title']) : $url;
+        helper(['url']);
+
+        $url = empty($url) ? mb_url_title(strtolower($this->rawData['title'])) : $url;
+
+        if ($this->rawData['meta_type'] === MetaDataTypes::Page->value) {
+            $url = model(MetaDataModel::class)->getParentPageUrl($this->rawData['parent']) . '/' . $url;
+        }
+
+        $this->attributes['url'] = $url;
 
         return $this;
     }
@@ -56,7 +58,7 @@ class MetaDataEntity extends Entity
      * @param  string  $meta
      * @return $this
      */
-    public function setMeta(string $meta): Entity
+    public function setMeta(string $meta): AvegaCmsEntity
     {
         $meta = json_decode($meta, true);
 

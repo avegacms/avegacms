@@ -284,6 +284,10 @@ class AvegaCmsTestData extends Seeder
         $meta['parent'] = $parent;
         $meta['item_id'] = $item_id;
 
+        if ($type === MetaDataTypes::Main->value) {
+            $meta['url'] = '';
+        }
+
         if ( ! is_null($status)) {
             $meta['status'] = $status;
         }

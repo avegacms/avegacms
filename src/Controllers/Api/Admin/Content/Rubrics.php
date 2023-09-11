@@ -66,9 +66,11 @@ class Rubrics extends AvegaCmsAdminAPI
         $data['module_id'] = $data['parent'] = $data['item_id'] = 0;
         $data['creator_id'] = $data['created_by_id'] = $this->userData->userId;
 
-        $content['anons'] = $data['anons'];
-        $content['content'] = $data['content'];
-        $content['extra'] = $data['extra'];
+        $content = [
+            'anons'   => $data['anons'],
+            'content' => $data['content'],
+            'extra'   => $data['extra']
+        ];
 
         unset($data['anons'], $data['content'], $data['extra']);
 

@@ -69,9 +69,11 @@ class Posts extends AvegaCmsAdminAPI
         $data['meta_type'] = MetaDataTypes::Post->value;
         $data['creator_id'] = $data['created_by_id'] = $this->userData->userId;
 
-        $content['anons'] = $data['anons'];
-        $content['content'] = $data['content'];
-        $content['extra'] = $data['extra'];
+        $content = [
+            'anons'   => $data['anons'],
+            'content' => $data['content'],
+            'extra'   => $data['extra']
+        ];
 
         $rubrics = array_unique($data['rubrics'], SORT_NUMERIC);
 

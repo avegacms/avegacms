@@ -8,7 +8,6 @@ use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
 use Faker\Generator;
 use AvegaCms\Enums\{MetaStatuses, MetaDataTypes};
-use phpDocumentor\Reflection\DocBlock\Tags\Deprecated;
 
 class MetaDataModel extends AvegaCmsModel
 {
@@ -282,7 +281,6 @@ class MetaDataModel extends AvegaCmsModel
     public function fake(Generator &$faker): array
     {
         $title = $faker->sentence();
-        $url = mb_url_title($title);
         $status = MetaStatuses::getValues();
 
         return [
@@ -290,12 +288,12 @@ class MetaDataModel extends AvegaCmsModel
             'parent'        => 0,
             'locale_id'     => 0,
             'module_id'     => 0,
-            'slug'          => $url,
+            'slug'          => '',
             'creator_id'    => 0,
             'item_id'       => 0,
             'title'         => $title,
             'sort'          => rand(1, 1000),
-            'url'           => base_url(strtolower($url)),
+            'url'           => '',
             'meta'          => [
                 'title'       => $title,
                 'keywords'    => $faker->sentence(1),
@@ -304,7 +302,7 @@ class MetaDataModel extends AvegaCmsModel
 
                 'og:title' => $title,
                 'og:type'  => 'website',
-                'og:url'   => base_url($url),
+                'og:url'   => '',
                 'og:image' => base_url('uploads/open_graph.png')
             ],
             'status'        => $status[array_rand($status)],
@@ -313,5 +311,21 @@ class MetaDataModel extends AvegaCmsModel
             'created_by_id' => 0,
             'publish_at'    => $faker->dateTimeBetween('-1 year', 'now', 'Asia/Omsk')->format('Y-m-d H:i:s')
         ];
+    }
+
+    /**
+     * @param  int  $parentId
+     * @return string|null
+     */
+    public function getParentPageUrl(int $parentId): null|string
+    {
+        $this->builder()->select(['url'])
+            ->whereIn('meta_type', [MetaDataTypes::Main->value, MetaDataTypes::Page->value]);
+
+        if (($url = $this->find($parentId)) !== null) {
+            $url = $url->url;
+        }
+
+        return $url;
     }
 }
