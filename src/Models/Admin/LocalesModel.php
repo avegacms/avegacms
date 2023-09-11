@@ -93,7 +93,7 @@ class LocalesModel extends AvegaCmsModel
     public function getLocalesList(bool $active = true): array
     {
         if (is_null($locales = cache($fileCacheName = 'Locales' . ($active ? 'Active' : 'All')))) {
-            $this->builder()->select(['id', 'locale_name', 'is_default']);
+            $this->builder()->select(['id', 'slug', 'locale_name', 'is_default']);
             if ($active) {
                 $this->builder()->where(['active' => 1]);
             }

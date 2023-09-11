@@ -5,8 +5,9 @@ return [
         'env'  => [
             'timezone'        => 'Часовой пояс',
             'secretKey'       => 'Секретный ключ',
-            'defLanguage'     => 'Язык по-умолчанию',
-            'useMultiLocales' => 'Использовать мультиязычность'
+            'defLocale'       => 'Локаль по-умолчанию',
+            'useMultiLocales' => 'Использовать мультиязычность',
+            'useFrontend'     => 'Использовать Frontend-контроллер'
         ],
         'auth' => [
             'useCors'          => 'Использовать CORS',
@@ -36,8 +37,9 @@ return [
         'env'  => [
             'timezone'        => 'Часовой пояс',
             'secretKey'       => '',
-            'defLanguage'     => '',
-            'useMultiLocales' => ''
+            'defLocale'       => '',
+            'useMultiLocales' => '',
+            'useFrontend'     => ''
         ],
         'auth' => [
             'useCors'          => 'Технология современных браузеров, которая позволяет предоставить веб-страницам доступ к ресурсам другого домена',

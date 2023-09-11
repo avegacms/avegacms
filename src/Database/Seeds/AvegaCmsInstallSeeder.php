@@ -828,12 +828,12 @@ class AvegaCmsInstallSeeder extends Seeder
                 'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'env',
-                'key'           => 'defLanguage',
+                'key'           => 'defLocale',
                 'value'         => 'ru',
                 'default_value' => 'ru',
                 'return_type'   => SettingsReturnTypes::String->value,
-                'label'         => 'Settings.label.env.defLanguage',
-                'context'       => 'Settings.context.env.defLanguage'
+                'label'         => 'Settings.label.env.defLocale',
+                'context'       => 'Settings.context.env.defLocale'
             ],
             [
                 'module_id'     => 0,
@@ -846,6 +846,18 @@ class AvegaCmsInstallSeeder extends Seeder
                 'return_type'   => SettingsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.env.useMultiLocales',
                 'context'       => 'Settings.context.env.useMultiLocales'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'env',
+                'key'           => 'useFrontend',
+                'value'         => 1,
+                'default_value' => 1,
+                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'label'         => 'Settings.label.env.useFrontend',
+                'context'       => 'Settings.context.env.useFrontend'
             ],
 
             // auth

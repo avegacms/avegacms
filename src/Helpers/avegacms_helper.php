@@ -1,7 +1,11 @@
 <?php
 
 if ( ! function_exists('initClientSession')) {
-    function initClientSession(): void
+    /**
+     * @param  array  $data
+     * @return void
+     */
+    function initClientSession(array $data = []): void
     {
         $session = session();
 
@@ -10,13 +14,9 @@ if ( ! function_exists('initClientSession')) {
                 [
                     'client'  => [
 
-                        'lang'        => [],
-                        'user'        => [],
-                        'geolocation' => [
-
-                            'city' => ''
-                        ],
-                        'confirm'     => [
+                        'locale'  => $data['client']['locale'] ?? [],
+                        'user'    => $data['client']['user'] ?? [],
+                        'confirm' => [
 
                             'use_cookie' => false,
                             'gdpr'       => false

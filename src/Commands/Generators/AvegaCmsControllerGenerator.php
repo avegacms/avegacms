@@ -5,7 +5,7 @@ namespace AvegaCms\Commands\Generators;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\CLI\GeneratorTrait;
-use AvegaCms\Controllers\AvegaCmsFrontend;
+use AvegaCms\Controllers\AvegaCmsFrontendController;
 use AvegaCms\Controllers\Api\CmsResourceController;
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use AvegaCms\Config\AvegaCms;
@@ -94,8 +94,8 @@ class AvegaCmsControllerGenerator extends BaseCommand
         $type = strtolower($classPath[2] ?? 'controller');
         $access = strtolower($classPath[3] ?? 'public');
 
-        $useStatement = AvegaCmsFrontend::class;
-        $extends = 'AvegaCmsFrontend';
+        $useStatement = AvegaCmsFrontendController::class;
+        $extends = 'AvegaCmsFrontendController';
 
         if ($type === 'controller' && $access === 'admin') {
             CLI::error(lang('CLI.commandNotFound', [$access]), 'light_gray', 'red');

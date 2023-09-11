@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AvegaCms\Entities;
 
 use CodeIgniter\Entity\Entity;
