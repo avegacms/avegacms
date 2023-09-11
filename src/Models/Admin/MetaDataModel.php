@@ -122,7 +122,7 @@ class MetaDataModel extends AvegaCmsModel
 
         $this->validationRules['meta.title'] = ['rules' => 'if_exist|permit_empty|string|max_length[255]'];
         $this->validationRules['meta.keywords'] = ['rules' => 'if_exist|permit_empty|string|max_length[255]'];
-        $this->validationRules['meta.descriptions'] = ['rules' => 'if_exist|permit_empty|string|max_length[255]'];
+        $this->validationRules['meta.description'] = ['rules' => 'if_exist|permit_empty|string|max_length[255]'];
 
         $this->validationRules['meta.breadcrumb'] = ['rules' => 'if_exist|permit_empty|string|max_length[255]'];
 
@@ -271,7 +271,7 @@ class MetaDataModel extends AvegaCmsModel
     {
         $this->builder()->select(['id', 'title'])
             ->where(['meta_type' => MetaDataTypes::Rubric->value]);
-        
+
         return $this->findAll();
     }
 
@@ -297,10 +297,10 @@ class MetaDataModel extends AvegaCmsModel
             'sort'          => rand(1, 1000),
             'url'           => base_url(strtolower($url)),
             'meta'          => [
-                'title'        => $title,
-                'keywords'     => $faker->sentence(1),
-                'descriptions' => $faker->sentence(1),
-                'breadcrumb'   => rand(0, 1) ? $faker->word() : '',
+                'title'       => $title,
+                'keywords'    => $faker->sentence(1),
+                'description' => $faker->sentence(1),
+                'breadcrumb'  => rand(0, 1) ? $faker->word() : '',
 
                 'og:title' => $title,
                 'og:type'  => 'website',

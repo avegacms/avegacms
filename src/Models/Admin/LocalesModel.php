@@ -57,9 +57,9 @@ class LocalesModel extends AvegaCmsModel
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
-    protected $afterInsert    = [];
+    protected $afterInsert    = ['clearCacheLocales'];
     protected $beforeUpdate   = [];
-    protected $afterUpdate    = [];
+    protected $afterUpdate    = ['clearCacheLocales'];
     protected $beforeFind     = [];
     protected $afterFind      = [];
     protected $beforeDelete   = [];
@@ -86,10 +86,35 @@ class LocalesModel extends AvegaCmsModel
         return $this->find($id);
     }
 
-    public function getLocalesList(): array
+    /**
+     * @param  bool  $active
+     * @return array
+     */
+    public function getLocalesList(bool $active = true): array
     {
-        $this->builder()->select(['id', 'locale_name'])->where(['active' => 1]);
+        if (is_null($locales = cache($fileCacheName = 'Locales' . ($active ? 'Active' : 'All')))) {
+            $this->builder()->select(['id', 'locale_name', 'is_default']);
+            if ($active) {
+                $this->builder()->where(['active' => 1]);
+            }
+            foreach ($this->findAll() as $locale) {
+                $locales[] = $locale->toArray();
+            }
+            cache()->save($fileCacheName, $locales, DAY * 30);
+        }
 
-        return array_column($this->findAll(), 'locale_name', 'id');
+        return $locales;
     }
+
+    /**
+     * @return void
+     */
+    protected function clearCacheLocales(): void
+    {
+        cache()->delete('LocalesActive');
+        cache()->delete('LocalesAll');
+        $this->getLocalesList();
+        $this->getLocalesList(false);
+    }
+
 }

@@ -7,13 +7,14 @@ namespace AvegaCms\Controllers\Api\Admin\Content;
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use AvegaCms\Enums\MetaStatuses;
 use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Models\Admin\{ContentModel, MetaDataModel, PostRubricsModel};
+use AvegaCms\Models\Admin\{ContentModel, MetaDataModel, PostRubricsModel, LocalesModel};
 use AvegaCms\Entities\{MetaDataEntity, ContentEntity};
 use ReflectionException;
 
 class Rubrics extends AvegaCmsAdminAPI
 {
     protected ContentModel     $CM;
+    protected LocalesModel     $LM;
     protected MetaDataModel    $MDM;
     protected PostRubricsModel $PRM;
 
@@ -21,6 +22,7 @@ class Rubrics extends AvegaCmsAdminAPI
     {
         parent::__construct();
         $this->CM = model(ContentModel::class);
+        $this->LM = model(LocalesModel::class);
         $this->MDM = model(MetaDataModel::class);
         $this->PRM = model(PostRubricsModel::class);
     }
@@ -44,7 +46,9 @@ class Rubrics extends AvegaCmsAdminAPI
     {
         return $this->cmsRespond(
             [
-                'statuses' => MetaStatuses::getValues()
+                'statuses'  => MetaStatuses::getValues(),
+                'defStatus' => MetaStatuses::Draft->value,
+                'locales'   => $this->LM->getLocalesList()
             ]
         );
     }
@@ -59,9 +63,7 @@ class Rubrics extends AvegaCmsAdminAPI
             return $this->failValidationErrors(lang('Api.errors.noData'));
         }
 
-        $data['module_id'] = 0;
-        $data['parent'] = 0;
-        $data['item_id'] = 0;
+        $data['module_id'] = $data['parent'] = $data['item_id'] = 0;
         $data['creator_id'] = $data['created_by_id'] = $this->userData->userId;
 
         $content['anons'] = $data['anons'];
@@ -111,16 +113,14 @@ class Rubrics extends AvegaCmsAdminAPI
             return $this->failNotFound();
         }
 
-        $data['module_id'] = 0;
-        $data['item_id'] = 0;
-        unset($data['creator_id']);
+        $data['module_id'] = $data['item_id'] = 0;
         $data['updated_by_id'] = $this->userData->userId;
 
         $content['anons'] = $data['anons'];
         $content['content'] = $data['content'];
         $content['extra'] = $data['extra'];
 
-        unset($data['anons'], $data['content'], $data['extra']);
+        unset($data['creator_id'], $data['anons'], $data['content'], $data['extra']);
 
         if ($this->MDM->save((new MetaDataEntity($data))) === false) {
             return $this->failValidationErrors($this->MDM->errors());
