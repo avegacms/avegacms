@@ -47,11 +47,11 @@ class MetaDataEntity extends AvegaCmsEntity
 
         $url = empty($url) ? mb_url_title(strtolower($this->rawData['title'])) : $url;
 
-        if ($this->rawData['meta_type'] === MetaDataTypes::Page->value) {
-            $url = model(MetaDataModel::class)->getParentPageUrl($this->rawData['parent']) . '/' . $url;
-        }
-
-        $this->attributes['url'] = $url;
+        $this->attributes['url'] = match ($this->rawData['meta_type']) {
+            MetaDataTypes::Main->value => '/',
+            MetaDataTypes::Page->value => model(MetaDataModel::class)->getParentPageUrl($this->rawData['parent']) . $url,
+            default                    => $url
+        };
 
         return $this;
     }

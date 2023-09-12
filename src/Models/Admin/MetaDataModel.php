@@ -53,7 +53,7 @@ class MetaDataModel extends AvegaCmsModel
         'parent'        => ['rules' => 'if_exist|is_natural'],
         'locale_id'     => ['rules' => 'if_exist|required|is_natural_no_zero'],
         'module_id'     => ['rules' => 'if_exist|is_natural'],
-        'slug'          => ['rules' => 'if_exist|permit_empty|string|max_length[64]'],
+        'slug'          => ['rules' => 'if_exist|permit_empty|string|max_length[64]|unique_db_key[metadata.locale_id+module_id+item_id+slug,id,{id}]'],
         'creator_id'    => ['rules' => 'if_exist|is_natural_no_zero'],
         'item_id'       => ['rules' => 'if_exist|is_natural'],
         'title'         => ['rules' => 'if_exist|required|string|max_length[1024]'],
@@ -282,18 +282,19 @@ class MetaDataModel extends AvegaCmsModel
     {
         $title = $faker->sentence();
         $status = MetaStatuses::getValues();
+        $slug = $faker->slug(rand(1, 6));
 
         return [
 
             'parent'        => 0,
             'locale_id'     => 0,
             'module_id'     => 0,
-            'slug'          => '',
+            'slug'          => $slug,
             'creator_id'    => 0,
             'item_id'       => 0,
             'title'         => $title,
             'sort'          => rand(1, 1000),
-            'url'           => '',
+            'url'           => $slug,
             'meta'          => [
                 'title'       => $title,
                 'keywords'    => $faker->sentence(1),
@@ -315,17 +316,19 @@ class MetaDataModel extends AvegaCmsModel
 
     /**
      * @param  int  $parentId
-     * @return string|null
+     * @return string
      */
-    public function getParentPageUrl(int $parentId): null|string
+    public function getParentPageUrl(int $parentId): string
     {
         $this->builder()->select(['url'])
             ->whereIn('meta_type', [MetaDataTypes::Main->value, MetaDataTypes::Page->value]);
 
-        if (($url = $this->find($parentId)) !== null) {
-            $url = $url->url;
+        if (($url = $this->find($parentId)) === null) {
+            return '';
         }
 
-        return $url;
+        $url = $url->url;
+
+        return ($url === '/') ? '' : $url . '/';
     }
 }

@@ -9,8 +9,6 @@ use AvegaCms\Controllers\Api\Admin\Settings\{Locales, Modules, Navigations, Perm
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'Home::index');
-
 $routes->group('api', function (RouteCollection $routes) {
     $routes->group('public', ['namespace' => 'AvegaCms\Controllers\Api\Public'], function (RouteCollection $routes) {
         $routes->group('content', function (RouteCollection $routes) {

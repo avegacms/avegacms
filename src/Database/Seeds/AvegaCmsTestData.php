@@ -286,6 +286,7 @@ class AvegaCmsTestData extends Seeder
 
         if ($type === MetaDataTypes::Main->value) {
             $meta['url'] = '';
+            $meta['slug'] = 'main';
         }
 
         if ( ! is_null($status)) {
