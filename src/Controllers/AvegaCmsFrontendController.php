@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace AvegaCms\Controllers;
 
+use CodeIgniter\HTTP\ResponseInterface;
+
 class AvegaCmsFrontendController extends BaseController
 {
     protected array $metaData    = [];
@@ -25,7 +27,11 @@ class AvegaCmsFrontendController extends BaseController
         return view('template/foundation_view', $data);
     }
 
-    public function viewRender(array $data, string $view = '', array $options = []): string
+    /**
+     * @return ResponseInterface
+     */
+    public function error404(): ResponseInterface
     {
+        return $this->response->setStatusCode(404)->setBody($this->render([], 'main/pages/page_404'));
     }
 }

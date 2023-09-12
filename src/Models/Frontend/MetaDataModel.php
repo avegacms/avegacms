@@ -59,20 +59,71 @@ class MetaDataModel extends AvegaCmsModel
      */
     public function getContentMetaData(int $locale, string $slug = ''): array|object|null
     {
-        $this->builder()
-            ->whereIn('meta_type',
-                [MetaDataTypes::Main->value, MetaDataTypes::Page->value, MetaDataTypes::Rubric->value])
-            ->whereIn('meta_type',
-                [MetaStatuses::Publish->value, MetaStatuses::Moderated->value]
-            )
-            ->where(
-                [
-                    ...(! empty($slug) ? ['slug' => $slug] : []),
-                    'locale_id'     => $locale,
-                    'publish_at >=' => date('Y-m-d H:i:s')
-                ]
-            );
+        $this->builder()->select(
+            [
+                'metadata.id',
+                'metadata.parent',
+                'metadata.locale_id',
+                'metadata.title',
+                'metadata.meta',
+                'metadata.extra_data',
+                'metadata.meta_type',
+                'metadata.publish_at'
+            ]
+        )->whereIn('metadata.meta_type',
+            [
+                MetaDataTypes::Main->value,
+                MetaDataTypes::Page->value,
+                MetaDataTypes::Rubric->value,
+                MetaDataTypes::Post->value
+            ]
+        )->whereIn('metadata.status',
+            [
+                MetaStatuses::Publish->value,
+                MetaStatuses::Future->value
+            ]
+        )->where(
+            [
+                'metadata.module_id'     => 0,
+                'metadata.item_id'       => 0,
+                'metadata.slug'          => ! empty($slug) ? $slug : 'main',
+                'metadata.locale_id'     => $locale,
+                'metadata.publish_at <=' => date('Y-m-d H:i:s')
+            ]
+        );
 
         return $this->first();
+    }
+
+    /**
+     * @param  int  $locale
+     * @param  array  $segments
+     * @return array
+     */
+    public function getContentMetaMap(int $locale, array $segments): array
+    {
+        $this->builder()->select(['metadata.id', 'metadata.locale_id', 'metadata.meta'])
+            ->whereIn('metadata.slug', $segments)
+            ->whereIn('metadata.status',
+                [
+                    MetaStatuses::Publish->value,
+                    MetaStatuses::Future->value
+                ]
+            )->whereIn('metadata.meta_type',
+                [
+                    MetaDataTypes::Main->value,
+                    MetaDataTypes::Page->value,
+                    MetaDataTypes::Rubric->value
+                ]
+            )->where(
+                [
+                    'metadata.module_id'     => 0,
+                    'metadata.item_id'       => 0,
+                    'metadata.locale_id'     => $locale,
+                    'metadata.publish_at <=' => date('Y-m-d H:i:s')
+                ]
+            )->orderBy('metadata.parent', 'DESC');
+
+        return $this->findAll();
     }
 }
