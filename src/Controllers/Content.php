@@ -7,7 +7,6 @@ namespace AvegaCms\Controllers;
 use AvegaCms\Models\Frontend\MetaDataModel;
 use AvegaCms\Enums\MetaDataTypes;
 
-use function _PHPStan_7711bdf39\RingCentral\Psr7\str;
 
 class Content extends AvegaCmsFrontendController
 {
@@ -36,7 +35,7 @@ class Content extends AvegaCmsFrontendController
         if (($meta = $this->MDM->getContentMetaData($locale, $segment)) === null) {
             return $this->error404();
         }
-
+        $parentMeta = [];
         // Проверяем цепочку записей
         if ($meta->meta_type !== MetaDataTypes::Main->value) {
             array_pop($segments);
@@ -45,21 +44,19 @@ class Content extends AvegaCmsFrontendController
                 MetaDataTypes::Rubric->value => $this->MDM->getContentMetaMap($locale, $segments),
                 MetaDataTypes::Post->value   => []
             };
-            //dd((string) $this->MDM->getLastQuery());
+
+            if (empty($parentMeta)) {
+                return $this->error404();
+            }
         }
 
-        dd($meta, $parentMeta);
+        $this->metaData = $meta->metaRender();
+        $this->breadCrumbs = $meta->breadCrumbs($parentMeta);
 
-        /*switch ($meta->meta_type) {
-            case MetaDataTypes::Main->value:
-                break;
-            case MetaDataTypes::Page->value:
-                break;
-            case MetaDataTypes::Rubric->value:
-                break;
-            case MetaDataTypes::Post->value:
-                break;
-        }*/
+        $template = '';
+        //dd($meta, $parentMeta, $meta->metaRender(), $meta->breadCrumbs($parentMeta));
+        //dd($meta, $parentMeta);
+
 
         // TODO 1. Последний сегмент проверяется в slug
         // TODO 1.1 если нет, то 404 (согласно локали)
@@ -70,6 +67,6 @@ class Content extends AvegaCmsFrontendController
         // TODO 3.2 Отправляем на вывод
         //dd($segments);
 
-        return $this->render([]);
+        return $this->render([], $template);
     }
 }

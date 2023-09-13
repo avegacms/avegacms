@@ -770,7 +770,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'locale_name'   => 'English version',
                 'home'          => 'Home',
                 'is_default'    => 0,
-                'active'        => 0,
+                'active'        => 1,
                 'created_by_id' => $userId
             ],
             [
@@ -779,7 +779,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'locale_name'   => 'Deutsche version',
                 'home'          => 'Startseite',
                 'is_default'    => 0,
-                'active'        => 0,
+                'active'        => 1,
                 'created_by_id' => $userId
             ]
         ];
@@ -841,7 +841,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'entity'        => 'core',
                 'slug'          => 'env',
                 'key'           => 'useMultiLocales',
-                'value'         => 0,
+                'value'         => 1,
                 'default_value' => 0,
                 'return_type'   => SettingsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.env.useMultiLocales',

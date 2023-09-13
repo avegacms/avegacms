@@ -146,7 +146,7 @@ class AvegaCmsTestData extends Seeder
             $locales = $this->LLM->where([
                 'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
             ])->findColumn('id');
-
+            
             $this->numPages = $num;
 
             foreach ($locales as $locale) {

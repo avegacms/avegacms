@@ -5,26 +5,36 @@ declare(strict_types=1);
 namespace AvegaCms\Controllers;
 
 use CodeIgniter\HTTP\ResponseInterface;
+use RuntimeException;
+
+;
 
 class AvegaCmsFrontendController extends BaseController
 {
     protected array $metaData    = [];
     protected array $breadCrumbs = [];
 
+    private readonly array $specialVars;
+
     public function __construct()
     {
         helper(['avegacms']);
+        $this->specialVars = ['meta', 'breadcrumbs'];
     }
 
-    /**
-     * @param  array  $data
-     * @param  string  $view
-     * @param  array  $options
-     * @return string
-     */
+
     public function render(array $data, string $view = '', array $options = []): string
     {
-        return view('template/foundation_view', $data);
+        if ( ! empty($arr = array_flip(array_intersect_key(array_flip($this->specialVars), $data)))) {
+            throw new RuntimeException('Attempt to overwrite system variables: ' . implode(',', $arr));
+        }
+
+        $data['meta'] = $this->metaData;
+        $data['breadcrumbs'] = $this->breadCrumbs;
+
+        $data['template'] = '';
+
+        return view('template/foundation_view', $data, $options);
     }
 
     /**

@@ -102,8 +102,15 @@ class MetaDataModel extends AvegaCmsModel
      */
     public function getContentMetaMap(int $locale, array $segments): array
     {
-        $this->builder()->select(['metadata.id', 'metadata.locale_id', 'metadata.meta'])
-            ->whereIn('metadata.slug', $segments)
+        $this->builder()->select(
+            [
+                'metadata.id',
+                'metadata.locale_id',
+                'metadata.title',
+                'metadata.url',
+                'metadata.meta'
+            ]
+        )->whereIn('metadata.slug', $segments)
             ->whereIn('metadata.status',
                 [
                     MetaStatuses::Publish->value,
