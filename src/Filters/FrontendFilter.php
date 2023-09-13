@@ -6,8 +6,8 @@ use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\HTTP\RedirectResponse;
-use AvegaCms\Models\Admin\LocalesModel;
 use Config\Services;
+use AvegaCms\Utilities\SeoUtilites;
 
 class FrontendFilter implements FilterInterface
 {
@@ -33,12 +33,16 @@ class FrontendFilter implements FilterInterface
             return Services::response()->setStatusCode(404);
         }
 
-        $locales = model(LocalesModel::class)->getLocalesList();
+        $locales = array_column(SeoUtilites::Locales(), null, 'slug');
 
-        $defLocale = array_column($locales, null, 'is_default')[1];
-        unset($defLocale['is_default']);
-
-        initClientSession(['client' => ['locale' => $defLocale]]);
+        initClientSession([
+            'client' => [
+                'locale' => [
+                    'id'   => $locales[$settings['defLocale']]['id'],
+                    'slug' => $settings['defLocale']
+                ]
+            ]
+        ]);
 
         if ($settings['useMultiLocales']) {
             if (empty($segment = strtolower($request->uri->getSegment(1)))) {
@@ -54,7 +58,7 @@ class FrontendFilter implements FilterInterface
             $user = session()->get('avegacms');
 
             if ($user['client']['locale']['slug'] !== $segment) {
-                $user['client']['locale'] = array_column($locales, null, 'slug')[$segment];
+                $user['client']['locale'] = ['id' => $locales[$segment]['id'], 'slug' => $locales[$segment]['slug']];
                 session()->set('avegacms', $user);
             }
         }

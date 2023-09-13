@@ -60,4 +60,17 @@ class RolesModel extends AvegaCmsModel
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    public function getRolesList()
+    {
+        return cache()->remember('UserRolesList', DAY * 30, function () {
+            $roles = [];
+            $this->builder()->select(['id', 'role'])->orderBy('role', 'ASC');
+            $rolesData = $this->findAll();
+            foreach ($rolesData as $role) {
+                $roles[] = $role->toArray();
+            }
+            return array_column($roles, 'role', 'id');
+        });
+    }
 }

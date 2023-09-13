@@ -40,7 +40,7 @@ class Users extends AvegaCmsAdminAPI
     public function index(): ResponseInterface
     {
         $users = $this->URM->getUsers()->filter($this->request->getGet() ?? [])->pagination();
-        
+
         return $this->cmsRespond($users['list'], $users['pagination']);
     }
 
@@ -51,7 +51,7 @@ class Users extends AvegaCmsAdminAPI
     {
         return $this->cmsRespond(
             [
-                'roles'    => $this->_getRoles(),
+                'roles'    => $this->RM->getRolesList(),
                 'statuses' => $this->userStatus
             ]
         );
@@ -205,23 +205,6 @@ class Users extends AvegaCmsAdminAPI
         if ( ! empty($file) && file_exists($path = FCPATH . 'uploads/users' . $file)) {
             unlink($path);
         }
-    }
-
-    /**
-     * @return array
-     */
-    private function _getRoles(): array
-    {
-        if (is_null($roles = cache($fileCacheName = 'UserRolesList'))) {
-            $rolesData = $this->RM->select(['id', 'role'])->orderBy('role', 'ASC')->findAll();
-            foreach ($rolesData as $role) {
-                $roles[(int) $role->id] = $role->role;
-            }
-            cache()->save($fileCacheName, $roles, DAY * 30);
-            unset($rolesData);
-        }
-
-        return $roles;
     }
 
     /**

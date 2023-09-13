@@ -145,23 +145,23 @@ class SettingsModel extends AvegaCmsModel
 
         $settings = [];
 
-        if ( ! empty($result = $this->asArray()->findAll())) {
+        if ( ! empty($result = $this->findAll())) {
             foreach ($result as $item) {
-                if ( ! empty($item['slug']) && ! empty($item['key'])) {
-                    $settings[$item['slug']][$item['key']] = [
-                        'value'       => $item['value'],
-                        'return_type' => $item['return_type']
+                if ( ! empty($item->slug) && ! empty($item->key)) {
+                    $settings[$item->slug][$item->key] = [
+                        'value'       => $item->value,
+                        'return_type' => $item->return_type
                     ];
                 } else {
                     $settings[$item['slug']] = [
-                        'value'       => $item['value'],
-                        'return_type' => $item['return_type']
+                        'value'       => $item->value,
+                        'return_type' => $item->return_type
                     ];
                 }
             }
             unset($result);
         }
-
+        
         return $settings;
     }
 

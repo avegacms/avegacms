@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="">
+<html class="no-js" lang="<?php echo $meta['lang'] ?>">
 <head>
     <meta charset="utf-8">
     <title><?php echo $meta['title'] ?></title>
@@ -8,11 +8,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <meta property="og:site_name" content="<?php echo $meta['og:title'] ?>">
-    <meta property="og:locale" content="<?php echo $meta['og:title'] ?>">
+    <meta property="og:locale" content="<?php echo $meta['og:locale'] ?>">
     <meta property="og:title" content="<?php echo $meta['og:title'] ?>">
     <meta property="og:type" content="<?php echo $meta['og:type'] ?>">
     <meta property="og:url" content="<?php echo $meta['og:url'] ?>">
     <meta property="og:image" content="<?php echo $meta['og:image'] ?>">
+
+    <?php if ($meta['useMultiLocales']) : foreach ($meta['alternate'] as $item): ?>
+        <link rel="alternate" hreflang="<?php echo $item['hreflang'] ?>" href="<?php echo $item['href'] ?>">
+    <?php endforeach; endif; ?>
+
+    <link rel="canonical" href="<?php echo $meta['canonical'] ?>">
+
+    <meta name="robots" content="index, follow">
 
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">

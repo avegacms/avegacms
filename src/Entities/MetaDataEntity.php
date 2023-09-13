@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace AvegaCms\Entities;
 
-use AvegaCms\Models\Admin\{MetaDataModel, LocalesModel};
+use AvegaCms\Models\Admin\MetaDataModel;
 use AvegaCms\Enums\MetaDataTypes;
+use AvegaCms\Utilities\SeoUtilites;
+use Config\Services;
 
 class MetaDataEntity extends AvegaCmsEntity
 {
@@ -44,24 +46,32 @@ class MetaDataEntity extends AvegaCmsEntity
     }
 
     /**
+     * @param  string  $slug
+     * @return AvegaCmsEntity
+     */
+    public function setSlug(string $slug): MetaDataEntity
+    {
+        if (empty($slug)) {
+            helper(['url']);
+            $slug = mb_url_title(strtolower($this->rawData['title']));
+        }
+
+        $this->attributes['slug'] = mb_substr($slug, 0, 63);
+
+        return $this;
+    }
+
+
+    /**
      * @param  string  $url
      * @return $this
      */
-    public function setUrl(string $url): AvegaCmsEntity
+    public function setUrl(string $url): MetaDataEntity
     {
-        helper(['url']);
-
-        $settings = settings('core.env');
-        $locales = array_column(model(LocalesModel::class)->getLocalesList(), 'slug', 'id');
-
         $url = empty($url) ? mb_url_title(strtolower($this->rawData['title'])) : $url;
 
-        if ($settings['useMultiLocales']) {
-            $url = $locales[$this->rawData['locale_id']] . '/' . $url;
-        }
-
         $this->attributes['url'] = match ($this->rawData['meta_type']) {
-            MetaDataTypes::Main->value => $settings['useMultiLocales'] ? $locales[$this->rawData['locale_id']] : '/',
+            MetaDataTypes::Main->value => settings('core.env.useMultiLocales') ? SeoUtilites::Locales($this->rawData['locale_id'])['slug'] : '/',
             MetaDataTypes::Page->value => model(MetaDataModel::class)->getParentPageUrl($this->rawData['parent']) . $url,
             default                    => $url
         };
@@ -73,7 +83,7 @@ class MetaDataEntity extends AvegaCmsEntity
      * @param  string  $meta
      * @return $this
      */
-    public function setMeta(string $meta): AvegaCmsEntity
+    public function setMeta(string $meta): MetaDataEntity
     {
         $meta = json_decode($meta, true);
 
@@ -103,14 +113,28 @@ class MetaDataEntity extends AvegaCmsEntity
 
         unset($meta['breadcrumb']);
 
+        $locales = SeoUtilites::Locales();
+
         $meta['title'] = esc($meta['title']);
         $meta['keywords'] = esc($meta['keywords']);
         $meta['description'] = esc($meta['description']);
 
+        $meta['lang'] = $meta['og:locale'] = $locales[$this->locale_id]['locale'];
         $meta['og:title'] = esc($meta['og:title']);
         $meta['og:type'] = esc($meta['og:type']);
         $meta['og:url'] = base_url($meta['og:url']);
         $meta['og:image'] = '';
+
+        if ($meta['useMultiLocales'] = settings('core.env.useMultiLocales')) {
+            foreach ($locales as $locale) {
+                $meta['alternate'][] = [
+                    'hreflang' => ($this->locale_id === $locale['id']) ? 'x-default' : $locale['slug'],
+                    'href'     => base_url($locale['slug']),
+                ];
+            }
+        }
+
+        $meta['canonical'] = base_url(Services::request()->uri->getRoutePath());
 
         return $meta;
     }
@@ -134,6 +158,14 @@ class MetaDataEntity extends AvegaCmsEntity
                 ];
             }
         }
+
+        if ( ! empty($locale = SeoUtilites::Locales($this->locale_id))) {
+            $breadCrumbs[] = [
+                'url'   => base_url(settings('core.env.useMultiLocales') ? $locale['slug'] : ''),
+                'title' => esc($locale['home'])
+            ];
+        }
+
 
         return array_reverse($breadCrumbs);
     }

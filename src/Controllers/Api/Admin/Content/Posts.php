@@ -8,14 +8,14 @@ use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use AvegaCms\Enums\MetaDataTypes;
 use AvegaCms\Enums\MetaStatuses;
 use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Models\Admin\{ContentModel, MetaDataModel, PostRubricsModel, LocalesModel};
+use AvegaCms\Models\Admin\{ContentModel, MetaDataModel, PostRubricsModel};
 use AvegaCms\Entities\{MetaDataEntity, ContentEntity, PostRubricsEntity};
+use AvegaCms\Utilities\SeoUtilites;
 use ReflectionException;
 
 class Posts extends AvegaCmsAdminAPI
 {
     protected ContentModel     $CM;
-    protected LocalesModel     $LM;
     protected MetaDataModel    $MDM;
     protected PostRubricsModel $PRM;
 
@@ -23,7 +23,6 @@ class Posts extends AvegaCmsAdminAPI
     {
         parent::__construct();
         $this->CM = model(ContentModel::class);
-        $this->LM = model(LocalesModel::class);
         $this->MDM = model(MetaDataModel::class);
         $this->PRM = model(PostRubricsModel::class);
     }
@@ -49,7 +48,7 @@ class Posts extends AvegaCmsAdminAPI
             [
                 'statuses'  => MetaStatuses::getValues(),
                 'defStatus' => MetaStatuses::Draft->value,
-                'locales'   => $this->LM->getLocalesList(),
+                'locales'   => array_column(SeoUtilites::Locales(), 'locale_name', 'id'),
                 'rubrics'   => $this->MDM->getRubrics()
             ]
         );

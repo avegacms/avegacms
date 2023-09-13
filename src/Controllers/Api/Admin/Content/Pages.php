@@ -7,22 +7,21 @@ namespace AvegaCms\Controllers\Api\Admin\Content;
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use AvegaCms\Enums\MetaDataTypes;
 use AvegaCms\Enums\MetaStatuses;
+use AvegaCms\Utilities\SeoUtilites;
 use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Models\Admin\{ContentModel, MetaDataModel, LocalesModel};
+use AvegaCms\Models\Admin\{ContentModel, MetaDataModel};
 use AvegaCms\Entities\{MetaDataEntity, ContentEntity};
 use ReflectionException;
 
 class Pages extends AvegaCmsAdminAPI
 {
     protected ContentModel  $CM;
-    protected LocalesModel  $LM;
     protected MetaDataModel $MDM;
 
     public function __construct()
     {
         parent::__construct();
         $this->CM = model(ContentModel::class);
-        $this->LM = model(LocalesModel::class);
         $this->MDM = model(MetaDataModel::class);
     }
 
@@ -47,7 +46,7 @@ class Pages extends AvegaCmsAdminAPI
             [
                 'statuses'  => MetaStatuses::getValues(),
                 'defStatus' => MetaStatuses::Draft->value,
-                'locales'   => $this->LM->getLocalesList()
+                'locales'   => array_column(SeoUtilites::Locales(), 'locale_name', 'id')
             ]
         );
     }
@@ -72,7 +71,7 @@ class Pages extends AvegaCmsAdminAPI
         ];
 
         unset($data['anons'], $data['content'], $data['extra']);
-        
+
         if ( ! $id = $this->MDM->insert((new MetaDataEntity($data)))) {
             return $this->failValidationErrors($this->MDM->errors());
         }
