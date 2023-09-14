@@ -9,7 +9,9 @@ class ContentEntity extends Entity
     protected $datamap = [];
     protected $dates   = [];
     protected $casts   = [
-        'meta_id' => 'integer',
+        'id'      => 'integer',
+        'title'   => 'string',
+        'url'     => 'string',
         'anons'   => 'string',
         'content' => 'string',
         'extra'   => 'json-array'

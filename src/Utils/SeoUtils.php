@@ -1,11 +1,11 @@
 <?php
 
-namespace AvegaCms\Utilities;
+namespace AvegaCms\Utils;
 
 use AvegaCms\Models\Admin\LocalesModel;
 use RuntimeException;
 
-class SeoUtilites
+class SeoUtils
 {
     /**
      * @param  int  $id

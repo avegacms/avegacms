@@ -303,7 +303,7 @@ class AvegaCmsTestData extends Seeder
 
         if ($metaId = $this->MDM->insert((new MetaDataEntity($meta)))) {
             $content = (new Fabricator($this->CM, null))->makeArray();
-            $content['meta_id'] = $metaId;
+            $content['id'] = $metaId;
             $this->CM->insert((new ContentEntity($content)));
         }
 

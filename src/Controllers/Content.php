@@ -4,24 +4,26 @@ declare(strict_types=1);
 
 namespace AvegaCms\Controllers;
 
-use AvegaCms\Models\Frontend\MetaDataModel;
+use AvegaCms\Models\Frontend\{MetaDataModel, ContentModel};
 use AvegaCms\Enums\MetaDataTypes;
 
 class Content extends AvegaCmsFrontendController
 {
     protected MetaDataModel $MDM;
+    protected ContentModel  $CM;
 
     public function __construct()
     {
         parent::__construct();
         $this->MDM = model(MetaDataModel::class);
+        $this->CM = model(ContentModel::class);
     }
 
     public function index()
     {
         $settings = settings('core.env');
-
         $segments = $this->request->uri->getSegments();
+        $filter = $this->request->getGet() ?? [];
 
         if ($settings['useMultiLocales']) {
             unset($segments[0]); // Удаляем языковой сегмент
@@ -49,7 +51,7 @@ class Content extends AvegaCmsFrontendController
             }
         }
 
-        $this->metaData = $meta->metaRender();
+        $this->meta = $meta->metaRender();
         $this->breadCrumbs = $meta->breadCrumbs($parentMeta);
 
         $template = 'template/content/';
@@ -60,9 +62,11 @@ class Content extends AvegaCmsFrontendController
                 break;
             case MetaDataTypes::Page->value:
                 $template .= 'page';
+                $data['subPages'] = $this->CM->getSubPages($meta->id);
                 break;
             case MetaDataTypes::Rubric->value:
                 $template .= 'rubric';
+                // TODO Список постов и пагинация
                 break;
             case MetaDataTypes::Post->value:
                 $template .= 'post';
@@ -71,21 +75,8 @@ class Content extends AvegaCmsFrontendController
                 return $this->error404();
         }
 
-        //$data['content'] =
+        $data['content'] = $this->CM->find($meta->id);
 
-        //dd($meta, $parentMeta, $meta->metaRender(), $meta->breadCrumbs($parentMeta));
-        //dd($meta, $parentMeta);
-
-
-        // TODO 1. Последний сегмент проверяется в slug
-        // TODO 1.1 если нет, то 404 (согласно локали)
-        // TODO 2. проверяем тип записи (главная|страница|рубрика|пост)
-        // TODO 2.1 Проверяем цепочку по parent (если указана страница)
-        // TODO 2.2 В случае, если цепочка не активна, то 404
-        // TODO 3.1 Формируем мета и breadcrumbs
-        // TODO 3.2 Отправляем на вывод
-        //dd($segments);
-
-        return $this->render([], $template);
+        return $this->render($data, $template);
     }
 }

@@ -6,7 +6,7 @@ namespace AvegaCms\Entities;
 
 use AvegaCms\Models\Admin\MetaDataModel;
 use AvegaCms\Enums\MetaDataTypes;
-use AvegaCms\Utilities\SeoUtilites;
+use AvegaCms\Utils\SeoUtils;
 use Config\Services;
 
 class MetaDataEntity extends AvegaCmsEntity
@@ -71,7 +71,7 @@ class MetaDataEntity extends AvegaCmsEntity
         $url = empty($url) ? mb_url_title(strtolower($this->rawData['title'])) : $url;
 
         $this->attributes['url'] = match ($this->rawData['meta_type']) {
-            MetaDataTypes::Main->value => settings('core.env.useMultiLocales') ? SeoUtilites::Locales($this->rawData['locale_id'])['slug'] : '/',
+            MetaDataTypes::Main->value => settings('core.env.useMultiLocales') ? SeoUtils::Locales($this->rawData['locale_id'])['slug'] : '/',
             MetaDataTypes::Page->value => model(MetaDataModel::class)->getParentPageUrl($this->rawData['parent']) . $url,
             default                    => $url
         };
@@ -113,8 +113,8 @@ class MetaDataEntity extends AvegaCmsEntity
 
         unset($meta['breadcrumb']);
 
-        $locales = SeoUtilites::Locales();
-        $data = SeoUtilites::LocaleData($this->locale_id);
+        $locales = SeoUtils::Locales();
+        $data = SeoUtils::LocaleData($this->locale_id);
 
         $meta['title'] = esc($meta['title']);
         $meta['keywords'] = esc($meta['keywords']);
@@ -163,7 +163,7 @@ class MetaDataEntity extends AvegaCmsEntity
             }
         }
 
-        if ( ! empty($locale = SeoUtilites::Locales($this->locale_id))) {
+        if ( ! empty($locale = SeoUtils::Locales($this->locale_id))) {
             $breadCrumbs[] = [
                 'url'   => base_url(settings('core.env.useMultiLocales') ? $locale['slug'] : ''),
                 'title' => esc($locale['home'])

@@ -5,19 +5,21 @@ declare(strict_types=1);
 namespace AvegaCms\Controllers;
 
 use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\Pager\Pager;
 use RuntimeException;
 
 class AvegaCmsFrontendController extends BaseController
 {
-    protected array $metaData    = [];
+    protected array $meta        = [];
     protected array $breadCrumbs = [];
+    protected Pager $pager;
 
     private readonly array $specialVars;
 
     public function __construct()
     {
         helper(['avegacms']);
-        $this->specialVars = ['meta', 'breadcrumbs'];
+        $this->specialVars = ['meta', 'breadcrumbs', 'pager'];
     }
 
 
@@ -27,8 +29,9 @@ class AvegaCmsFrontendController extends BaseController
             throw new RuntimeException('Attempt to overwrite system variables: ' . implode(',', $arr));
         }
 
-        $data['meta'] = $this->metaData;
+        $data['meta'] = $this->meta;
         $data['breadcrumbs'] = $this->breadCrumbs;
+        $data['pager'] = $this->pager;
 
         $data['template'] = '';
 

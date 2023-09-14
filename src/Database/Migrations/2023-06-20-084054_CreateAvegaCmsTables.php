@@ -333,12 +333,12 @@ class CreateAvegaCmsTables extends Migration
          * Таблица для хранения страниц
          */
         $this->forge->addField([
-            'meta_id' => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
+            'id'      => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
             'anons'   => ['type' => 'text', 'null' => true], // краткая информация
             'content' => ['type' => 'longtext', 'null' => true], // остальная информация
             'extra'   => ['type' => 'longtext', 'null' => true] // объект, содержащий информацию о доп. данных
         ]);
-        $this->forge->addUniqueKey(['meta_id']);
+        $this->forge->addUniqueKey(['id']);
         $this->createTable($this->tables['content']);
 
         /**

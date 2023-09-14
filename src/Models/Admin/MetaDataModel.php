@@ -218,7 +218,7 @@ class MetaDataModel extends AvegaCmsModel
                 'c.content',
                 'c.extra'
             ]
-        )->join('content AS c', 'c.meta_id = metadata.id')
+        )->join('content AS c', 'c.id = metadata.id')
             ->where(['metadata.module_id' => 0]);
 
         return $this;

@@ -126,7 +126,6 @@ class MetaDataModel extends AvegaCmsModel
             )->where(
                 [
                     'metadata.module_id'     => 0,
-                    'metadata.item_id'       => 0,
                     'metadata.locale_id'     => $locale,
                     'metadata.publish_at <=' => date('Y-m-d H:i:s')
                 ]

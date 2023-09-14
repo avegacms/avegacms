@@ -14,7 +14,7 @@ class ContentModel extends Model
     protected $useSoftDeletes = false;
     protected $protectFields  = true;
     protected $allowedFields  = [
-        'meta_id',
+        'id',
         'anons',
         'content',
         'extra'
@@ -40,7 +40,7 @@ class ContentModel extends Model
     public function fake(Generator &$faker): array
     {
         return [
-            'meta_id' => 0,
+            'id'      => 0,
             'anons'   => $faker->paragraph(1),
             'content' => $faker->paragraph(rand(6, 36))
         ];

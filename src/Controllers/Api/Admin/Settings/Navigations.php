@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace AvegaCms\Controllers\Api\Admin\Settings;
 
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
-use AvegaCms\Utilities\SeoUtilites;
+use AvegaCms\Utils\SeoUtils;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\NavigationsModel;
 use AvegaCms\Entities\NavigationsEntity;
@@ -31,7 +31,7 @@ class Navigations extends AvegaCmsAdminAPI
     {
         return $this->cmsRespond(
             [
-                'locales'  => array_column(SeoUtilites::Locales(), 'locale_name', 'id'),
+                'locales'  => array_column(SeoUtils::Locales(), 'locale_name', 'id'),
                 'navTypes' => NavigationTypes::getValues()
             ]
         );

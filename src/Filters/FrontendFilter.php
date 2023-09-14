@@ -7,7 +7,7 @@ use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\HTTP\RedirectResponse;
 use Config\Services;
-use AvegaCms\Utilities\SeoUtilites;
+use AvegaCms\Utils\SeoUtils;
 
 class FrontendFilter implements FilterInterface
 {
@@ -33,7 +33,7 @@ class FrontendFilter implements FilterInterface
             return Services::response()->setStatusCode(404);
         }
 
-        $locales = array_column(SeoUtilites::Locales(), null, 'slug');
+        $locales = array_column(SeoUtils::Locales(), null, 'slug');
 
         initClientSession([
             'client' => [

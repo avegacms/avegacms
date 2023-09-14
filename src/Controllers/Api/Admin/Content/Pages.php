@@ -7,7 +7,7 @@ namespace AvegaCms\Controllers\Api\Admin\Content;
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use AvegaCms\Enums\MetaDataTypes;
 use AvegaCms\Enums\MetaStatuses;
-use AvegaCms\Utilities\SeoUtilites;
+use AvegaCms\Utils\SeoUtils;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\{ContentModel, MetaDataModel};
 use AvegaCms\Entities\{MetaDataEntity, ContentEntity};
@@ -46,7 +46,7 @@ class Pages extends AvegaCmsAdminAPI
             [
                 'statuses'  => MetaStatuses::getValues(),
                 'defStatus' => MetaStatuses::Draft->value,
-                'locales'   => array_column(SeoUtilites::Locales(), 'locale_name', 'id')
+                'locales'   => array_column(SeoUtils::Locales(), 'locale_name', 'id')
             ]
         );
     }
