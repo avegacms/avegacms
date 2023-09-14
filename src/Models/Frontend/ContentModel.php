@@ -50,7 +50,11 @@ class ContentModel extends AvegaCmsModel
     protected int    $limit             = 20;
     protected int    $maxLimit          = 100;
 
-    public function getSubPages(int $id)
+    /**
+     * @param  int  $id
+     * @return array
+     */
+    public function getSubPages(int $id): array
     {
         $this->builder()->select(
             [
@@ -75,6 +79,6 @@ class ContentModel extends AvegaCmsModel
                 ]
             )->orderBy('m.sort', 'ASC');
 
-        return $this;
+        return $this->findAll();
     }
 }

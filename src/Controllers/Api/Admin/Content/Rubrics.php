@@ -33,7 +33,7 @@ class Rubrics extends AvegaCmsAdminAPI
     {
         $meta = $this->MDM->selectRubrics()
             ->filter($this->request->getGet() ?? [])
-            ->pagination();
+            ->apiPagination();
 
         return $this->cmsRespond($meta['list'], $meta['pagination']);
     }

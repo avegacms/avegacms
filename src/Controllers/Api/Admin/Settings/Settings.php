@@ -27,7 +27,7 @@ class Settings extends AvegaCmsAdminAPI
      */
     public function index(): ResponseInterface
     {
-        $settings = $this->SM->selectSettings()->filter($this->request->getGet() ?? [])->pagination();
+        $settings = $this->SM->selectSettings()->filter($this->request->getGet() ?? [])->apiPagination();
 
         return $this->cmsRespond($settings['list'], $settings['pagination']);
     }

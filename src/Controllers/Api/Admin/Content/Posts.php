@@ -34,7 +34,7 @@ class Posts extends AvegaCmsAdminAPI
     {
         $meta = $this->PRM->selectPosts()
             ->filter($this->request->getGet() ?? [])
-            ->pagination();
+            ->apiPagination();
 
         return $this->cmsRespond($meta['list'], $meta['pagination']);
     }

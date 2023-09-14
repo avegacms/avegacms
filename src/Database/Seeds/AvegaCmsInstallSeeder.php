@@ -1142,7 +1142,21 @@ class AvegaCmsInstallSeeder extends Seeder
                 'return_type'   => SettingsReturnTypes::String->value,
                 'label'         => 'Settings.label.auth.authSmsMessage',
                 'context'       => 'Settings.context.auth.authSmsMessage'
-            ]
+            ],
+
+            // Content
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'content',
+                'slug'          => 'posts',
+                'key'           => 'postsPerPage',
+                'value'         => 20,
+                'default_value' => 20,
+                'return_type'   => SettingsReturnTypes::Integer->value,
+                'label'         => 'Settings.label.posts.postsPerPage',
+                'context'       => 'Settings.context.posts.postsPerPage'
+            ],
         ];
 
         $settingEntity = new SettingsEntity();

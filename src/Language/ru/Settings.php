@@ -2,14 +2,14 @@
 
 return [
     'label'   => [
-        'env'  => [
+        'env'   => [
             'timezone'        => 'Часовой пояс',
             'secretKey'       => 'Секретный ключ',
             'defLocale'       => 'Локаль по-умолчанию',
             'useMultiLocales' => 'Использовать мультиязычность',
             'useFrontend'     => 'Использовать Frontend-контроллер'
         ],
-        'auth' => [
+        'auth'  => [
             'useCors'          => 'Использовать CORS',
             'loginType'        => 'Вариант авторизации',
             'loginTypeList'    => 'Варианты видов авторизации',
@@ -32,16 +32,19 @@ return [
             'recoveryCodeTime' => 'Время действия хеша восстановления (минут)',
             'authSmsMessage'   => 'Текст смс для авторизации',
         ],
+        'posts' => [
+            'postsPerPage' => 'Количество записей на странице'
+        ]
     ],
     'context' => [
-        'env'  => [
+        'env'   => [
             'timezone'        => 'Часовой пояс',
             'secretKey'       => '',
             'defLocale'       => '',
             'useMultiLocales' => '',
             'useFrontend'     => ''
         ],
-        'auth' => [
+        'auth'  => [
             'useCors'          => 'Технология современных браузеров, которая позволяет предоставить веб-страницам доступ к ресурсам другого домена',
             'loginType'        => 'Варианты авторизации:: email, sms, email:sms, 2fa:email, 2fa:sms:email',
             'loginTypeList'    => 'Варианты видов авторизации',
@@ -63,6 +66,9 @@ return [
             'recoveryField'    => 'Доступные поля для восстановления пароля: ',
             'recoveryCodeTime' => 'Время действия хеша восстановления (минут)',
             'authSmsMessage'   => 'Код:{0} для входа. Никому не сообщайте его.',
+        ],
+        'posts' => [
+            'postsPerPage' => 'Количество записей на странице'
         ]
     ],
     'errors'  => [

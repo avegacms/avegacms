@@ -32,7 +32,7 @@ class Pages extends AvegaCmsAdminAPI
     {
         $meta = $this->MDM->selectPages()
             ->filter($this->request->getGet() ?? [])
-            ->pagination();
+            ->apiPagination();
 
         return $this->cmsRespond($meta['list'], $meta['pagination']);
     }

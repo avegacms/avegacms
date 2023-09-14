@@ -39,7 +39,7 @@ class Users extends AvegaCmsAdminAPI
      */
     public function index(): ResponseInterface
     {
-        $users = $this->URM->getUsers()->filter($this->request->getGet() ?? [])->pagination();
+        $users = $this->URM->getUsers()->filter($this->request->getGet() ?? [])->apiPagination();
 
         return $this->cmsRespond($users['list'], $users['pagination']);
     }

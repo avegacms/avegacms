@@ -4,24 +4,27 @@ declare(strict_types=1);
 
 namespace AvegaCms\Controllers;
 
-use AvegaCms\Models\Frontend\{MetaDataModel, ContentModel};
+use AvegaCms\Models\Frontend\{MetaDataModel, ContentModel, PostRubricsModel};
 use AvegaCms\Enums\MetaDataTypes;
 
 class Content extends AvegaCmsFrontendController
 {
-    protected MetaDataModel $MDM;
-    protected ContentModel  $CM;
+    protected ContentModel     $CM;
+    protected MetaDataModel    $MDM;
+    protected PostRubricsModel $PRM;
 
     public function __construct()
     {
         parent::__construct();
-        $this->MDM = model(MetaDataModel::class);
         $this->CM = model(ContentModel::class);
+        $this->MDM = model(MetaDataModel::class);
+        $this->PRM = model(PostRubricsModel::class);
     }
 
     public function index()
     {
         $settings = settings('core.env');
+        $contentSettings = settings('content');
         $segments = $this->request->uri->getSegments();
         $filter = $this->request->getGet() ?? [];
 
@@ -66,7 +69,9 @@ class Content extends AvegaCmsFrontendController
                 break;
             case MetaDataTypes::Rubric->value:
                 $template .= 'rubric';
-                // TODO Список постов и пагинация
+                $filter['rubric'] = $meta->id;
+                $data['posts'] = $this->PRM->getRubricPosts($filter)->paginate($contentSettings['posts']['postsPerPage'] ?? 20);
+                $this->pager = $this->PRM->pager();
                 break;
             case MetaDataTypes::Post->value:
                 $template .= 'post';
@@ -76,6 +81,10 @@ class Content extends AvegaCmsFrontendController
         }
 
         $data['content'] = $this->CM->find($meta->id);
+
+        // TODO 1. Добавить публичное имя в users
+        // TODO 2. Сделать базовую рубрику для поста
+        // TODO 3. Сделать 404 страницу
 
         return $this->render($data, $template);
     }

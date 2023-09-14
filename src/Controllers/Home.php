@@ -24,7 +24,7 @@ class Home extends BaseController
             d($UM->filter($filter)->asArray()->find());
         }*/
 
-        d($UM->asArray()->filter(['!id' => [1, 7, 8], 's' => '+login,-phone'])->pagination(10));
+        d($UM->asArray()->filter(['!id' => [1, 7, 8], 's' => '+login,-phone'])->apiPagination(10));
         //d($UM->filter(['!id'=>[1,2,3],'q'=>'hotmail','limit'=>5,'page'=>3,'usePagination'=>true]));
 
         // $UM->builder()->getCompiledSelect()

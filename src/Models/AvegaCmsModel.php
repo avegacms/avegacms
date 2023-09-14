@@ -120,7 +120,7 @@ class AvegaCmsModel extends Model
      * @param  int|null  $offset
      * @return array
      */
-    public function pagination(int|null $limit = null, int|null $offset = null): array
+    public function apiPagination(int|null $limit = null, int|null $offset = null): array
     {
         if (is_null($limit)) {
             $limit = $this->limit;
