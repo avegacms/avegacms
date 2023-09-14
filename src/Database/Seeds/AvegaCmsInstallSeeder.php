@@ -1157,6 +1157,18 @@ class AvegaCmsInstallSeeder extends Seeder
                 'label'         => 'Settings.label.posts.postsPerPage',
                 'context'       => 'Settings.context.posts.postsPerPage'
             ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'content',
+                'slug'          => 'posts',
+                'key'           => 'showAuthorPost',
+                'value'         => 1,
+                'default_value' => 1,
+                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'label'         => 'Settings.label.posts.showAuthorPost',
+                'context'       => 'Settings.context.posts.showAuthorPost'
+            ],
         ];
 
         $settingEntity = new SettingsEntity();

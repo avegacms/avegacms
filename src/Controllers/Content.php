@@ -85,6 +85,8 @@ class Content extends AvegaCmsFrontendController
         // TODO 1. Добавить публичное имя в users
         // TODO 2. Сделать базовую рубрику для поста
         // TODO 3. Сделать 404 страницу
+        // TODO 4. Добавить выбор при установки использовать мультиязычность или нет
+        // TODO 5. Добавить отображение $parentMeta для постов + при редактировании/удалении сделать проверку
 
         return $this->render($data, $template);
     }

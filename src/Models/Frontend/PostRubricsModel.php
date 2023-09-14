@@ -43,10 +43,27 @@ class PostRubricsModel extends AvegaCmsModel
     protected $afterDelete    = [];
 
     // AvegaCms filter settings
-    protected array  $filterFields      = [];
-    protected array  $searchFields      = [];
-    protected array  $sortableFields    = [];
-    protected array  $filterCastsFields = [];
+    protected array  $filterFields      = [
+        'rubric'  => 'post_rubrics.rubric_id',
+        'locale'  => 'p.locale_id',
+        'login'   => 'u.login',
+        'title'   => 'p.title',
+        'publish' => 'p.publish_at'
+    ];
+    protected array  $searchFields      = [
+        'login' => 'u.login',
+        'title' => 'p.title'
+    ];
+    protected array  $sortableFields    = [
+        'publish' => 'p.publish_at'
+    ];
+    protected array  $filterCastsFields = [
+        'rubric'     => 'int',
+        'locale'     => 'int',
+        'login'      => 'string',
+        'title'      => 'string',
+        'publish_at' => 'string'
+    ];
     protected string $searchFieldAlias  = 'q';
     protected string $sortFieldAlias    = 's';
     protected array  $filterEnumValues  = [];

@@ -10,6 +10,7 @@ class PostRubricsEntity extends Entity
     protected $dates   = [];
     protected $casts   = [
         'post_id'     => 'integer',
-        'category_id' => 'integer'
+        'category_id' => 'integer',
+        'is_main'     => 'integer'
     ];
 }
