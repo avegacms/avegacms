@@ -244,14 +244,16 @@ class AvegaCmsTestData extends Seeder
                 foreach ($postsId as $postId) {
                     $num = array_rand($rubricsId, rand(1, count($rubricsId)));
                     $num = array_unique(! is_array($num) ? [$num] : $num);
-                    foreach ($num as $k => $c) {
+                    $i = 0;
+                    foreach ($num as $c) {
                         $postCategories[] = $PCE->fill(
                             [
                                 'post_id'   => $postId,
                                 'rubric_id' => $rubricsId[$c],
-                                'is_main'   => ($k === 0) ? 1 : 0
+                                'is_main'   => ($i === 0) ? 1 : 0
                             ]
                         )->toArray();
+                        $i++;
                     }
                 }
 

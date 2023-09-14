@@ -14,7 +14,8 @@ class PostRubricsModel extends AvegaCmsModel
     protected $protectFields  = true;
     protected $allowedFields  = [
         'post_id',
-        'rubric_id'
+        'rubric_id',
+        'is_main'
     ];
 
     // Validation
