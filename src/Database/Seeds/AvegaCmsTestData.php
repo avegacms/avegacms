@@ -76,10 +76,19 @@ class AvegaCmsTestData extends Seeder
      */
     public function run()
     {
+        $this->createLocales();
         $this->createUsers();
         $this->createPages();
         $this->createRubrics();
         $this->createPosts();
+    }
+
+    protected function createLocales(): void
+    {
+        if (CLI::prompt('Use multi locales?', ['y', 'n']) === 'y') {
+            settings('core.env.useMultiLocales', 1);
+        }
+        CLI::newLine();
     }
 
     /**
@@ -168,6 +177,8 @@ class AvegaCmsTestData extends Seeder
             }
 
             $this->MDM->update(['meta_type' => MetaDataTypes::Main->value], ['in_sitemap' => 1]);
+
+            CLI::newLine();
         }
     }
 

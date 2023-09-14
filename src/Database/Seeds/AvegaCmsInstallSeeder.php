@@ -853,7 +853,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'entity'        => 'core',
                 'slug'          => 'env',
                 'key'           => 'useMultiLocales',
-                'value'         => 1,
+                'value'         => 0,
                 'default_value' => 0,
                 'return_type'   => SettingsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.env.useMultiLocales',

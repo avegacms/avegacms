@@ -29,8 +29,6 @@ class SettingsModel extends AvegaCmsModel
         'label',
         'context',
         'sort',
-        'created_by_id',
-        'updated_by_id',
         'created_at',
         'updated_at'
     ];
@@ -54,9 +52,7 @@ class SettingsModel extends AvegaCmsModel
         'default_value' => ['rules' => 'if_exist|permit_empty'],
         'label'         => ['rules' => 'if_exist|required|string|max_length[255]'],
         'context'       => ['rules' => 'if_exist|permit_empty|string|max_length[512]'],
-        'sort'          => ['rules' => 'if_exist|is_natural'],
-        'created_by_id' => ['rules' => 'if_exist|is_natural'],
-        'updated_by_id' => ['rules' => 'if_exist|is_natural']
+        'sort'          => ['rules' => 'if_exist|is_natural']
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
@@ -161,7 +157,7 @@ class SettingsModel extends AvegaCmsModel
             }
             unset($result);
         }
-        
+
         return $settings;
     }
 
@@ -212,11 +208,9 @@ class SettingsModel extends AvegaCmsModel
      * @param  array  $data
      * @return void
      */
-    protected function dropSettingsCache(array $data): void
+    protected function dropSettingsCache(): void
     {
-        if ($data['result']) {
-            cache()->delete('settings_' . $data['data']['entity']);
-        }
+        cache()->deleteMatching('settings_*');
     }
 
     /**

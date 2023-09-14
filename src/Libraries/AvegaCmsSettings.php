@@ -77,10 +77,16 @@ class AvegaCmsSettings
     {
         [$entity, $slug, $property] = $this->_parseKey($key);
 
-        return $this->SM->save(
+        $id = $this->SM->getId($entity, $slug, $property);
+
+        if ($id > 0) {
+            return $this->SM->update($id, ['value' => $value]);
+        }
+
+        return $this->SM->insert(
             (new SettingsEntity(
                 [
-                    'id'            => $this->SM->getId($entity, $slug, $property),
+                    'id'            => $id,
                     'entity'        => $entity,
                     'slug'          => $slug ?? '',
                     'key'           => $property ?? '',

@@ -184,8 +184,6 @@ class CreateAvegaCmsTables extends Migration
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addUniqueKey(['module_id', 'entity', 'slug', 'key']);
-        $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
-        $this->forge->addForeignKey('updated_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
         $this->createTable($this->tables['settings']);
 
         /**
