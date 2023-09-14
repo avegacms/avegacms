@@ -56,7 +56,7 @@ class SeoUtils
 
         if ($locale > 0) {
             $rubrics = array_map(
-                callback: function (&$item) use ($locale) {
+                callback: function ($item) use ($locale) {
                     if ($item['locale'] === $locale) {
                         return $item;
                     }
