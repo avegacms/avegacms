@@ -23,4 +23,16 @@ class LocalesEntity extends Entity
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime'
     ];
+
+    /**
+     * @return string
+     */
+    public function getExtra(): string
+    {
+        $extra = json_decode($this->attributes['extra'], true);
+
+        $extra['og:image'] = base_url('uploads/locales/' . $extra['og:image']);
+
+        return json_encode($extra);
+    }
 }

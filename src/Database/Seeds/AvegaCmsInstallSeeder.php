@@ -760,6 +760,10 @@ class AvegaCmsInstallSeeder extends Seeder
                 'locale'        => 'ru_RU',
                 'locale_name'   => 'Русская версия',
                 'home'          => 'Главная',
+                'extra'         => [
+                    'app_name' => 'Мой новый проект',
+                    'og:image' => 'ogDefaultRu.jpg'
+                ],
                 'is_default'    => 1,
                 'active'        => 1,
                 'created_by_id' => $userId
@@ -769,6 +773,10 @@ class AvegaCmsInstallSeeder extends Seeder
                 'locale'        => 'en_EN',
                 'locale_name'   => 'English version',
                 'home'          => 'Home',
+                'extra'         => [
+                    'app_name' => 'My new project',
+                    'og:image' => 'ogDefaultEn.jpg'
+                ],
                 'is_default'    => 0,
                 'active'        => 1,
                 'created_by_id' => $userId
@@ -778,6 +786,10 @@ class AvegaCmsInstallSeeder extends Seeder
                 'locale'        => 'de_DE',
                 'locale_name'   => 'Deutsche version',
                 'home'          => 'Startseite',
+                'extra'         => [
+                    'app_name' => 'Mein neues Projekt',
+                    'og:image' => 'ogDefaultDe.jpg'
+                ],
                 'is_default'    => 0,
                 'active'        => 1,
                 'created_by_id' => $userId
@@ -1148,6 +1160,7 @@ class AvegaCmsInstallSeeder extends Seeder
         $directories = [
             'uploads',
             'uploads/users',
+            'uploads/locales',
             'uploads/content',
             'uploads/content/thumbs'
         ];

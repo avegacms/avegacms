@@ -146,19 +146,23 @@ class AvegaCmsTestData extends Seeder
             $locales = $this->LLM->where([
                 'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
             ])->findColumn('id');
-            
+
             $this->numPages = $num;
 
             foreach ($locales as $locale) {
-                // Создание главных страниц
+                // Создание главной страницы
                 $mainId = $this->_createMetaData(
-                    MetaDataTypes::Main->value,
-                    $locale,
-                    1,
-                    0,
-                    0,
-                    0,
-                    MetaStatuses::Publish->value
+                    type: MetaDataTypes::Main->value,
+                    locale: $locale,
+                    status: MetaStatuses::Publish->value
+                );
+
+                // Создание 404 страницы
+                $this->_createMetaData(
+                    type: MetaDataTypes::Page404->value,
+                    locale: $locale,
+                    parent: $mainId,
+                    status: MetaStatuses::Publish->value
                 );
                 $this->_createSubPages($num, $nesting, $locale, $mainId);
             }
@@ -287,6 +291,10 @@ class AvegaCmsTestData extends Seeder
         if ($type === MetaDataTypes::Main->value) {
             $meta['url'] = '';
             $meta['slug'] = 'main';
+        }
+
+        if ($type === MetaDataTypes::Page404->value) {
+            $meta['url'] = $meta['slug'] = 'page-not-found';
         }
 
         if ( ! is_null($status)) {

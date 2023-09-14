@@ -7,7 +7,7 @@
     <meta name="description" content="<?php echo $meta['description'] ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <meta property="og:site_name" content="<?php echo $meta['og:title'] ?>">
+    <meta property="og:site_name" content="<?php echo $meta['og:site_name'] ?>">
     <meta property="og:locale" content="<?php echo $meta['og:locale'] ?>">
     <meta property="og:title" content="<?php echo $meta['og:title'] ?>">
     <meta property="og:type" content="<?php echo $meta['og:type'] ?>">
@@ -20,7 +20,7 @@
 
     <link rel="canonical" href="<?php echo $meta['canonical'] ?>">
 
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="<?php echo $meta['robots'] ?>">
 
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">

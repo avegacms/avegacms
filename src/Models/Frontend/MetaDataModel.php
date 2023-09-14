@@ -64,6 +64,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.id',
                 'metadata.parent',
                 'metadata.locale_id',
+                'metadata.in_sitemap',
                 'metadata.title',
                 'metadata.meta',
                 'metadata.extra_data',

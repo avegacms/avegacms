@@ -7,8 +7,6 @@ namespace AvegaCms\Controllers;
 use CodeIgniter\HTTP\ResponseInterface;
 use RuntimeException;
 
-;
-
 class AvegaCmsFrontendController extends BaseController
 {
     protected array $metaData    = [];

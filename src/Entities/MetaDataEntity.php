@@ -47,7 +47,7 @@ class MetaDataEntity extends AvegaCmsEntity
 
     /**
      * @param  string  $slug
-     * @return AvegaCmsEntity
+     * @return $this
      */
     public function setSlug(string $slug): MetaDataEntity
     {
@@ -114,16 +114,19 @@ class MetaDataEntity extends AvegaCmsEntity
         unset($meta['breadcrumb']);
 
         $locales = SeoUtilites::Locales();
+        $data = SeoUtilites::LocaleData($this->locale_id);
 
         $meta['title'] = esc($meta['title']);
         $meta['keywords'] = esc($meta['keywords']);
         $meta['description'] = esc($meta['description']);
 
         $meta['lang'] = $meta['og:locale'] = $locales[$this->locale_id]['locale'];
+
+        $meta['og:site_name'] = esc($data['app_name']);
         $meta['og:title'] = esc($meta['og:title']);
         $meta['og:type'] = esc($meta['og:type']);
         $meta['og:url'] = base_url($meta['og:url']);
-        $meta['og:image'] = '';
+        $meta['og:image'] = empty($item['og:image']) ? $data['og:image'] : base_url('uploads/content/' . $item['og:image']);
 
         if ($meta['useMultiLocales'] = settings('core.env.useMultiLocales')) {
             foreach ($locales as $locale) {
@@ -135,6 +138,7 @@ class MetaDataEntity extends AvegaCmsEntity
         }
 
         $meta['canonical'] = base_url(Services::request()->uri->getRoutePath());
+        $meta['robots'] = ($this->in_sitemap === 1) ? 'index, follow' : 'noindex, nofollow';
 
         return $meta;
     }
