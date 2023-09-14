@@ -21,7 +21,12 @@ class ContentModel extends Model
     ];
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'id'      => ['rules' => 'if_exist|required|is_natural_no_zero'],
+        'anons'   => ['rules' => 'if_exist|required|permit_empty|string'],
+        'content' => ['rules' => 'if_exist|permit_empty|string'],
+        'extra'   => ['rules' => 'if_exist|permit_empty|string']
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;

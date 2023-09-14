@@ -19,22 +19,21 @@ class CreateAvegaCmsTables extends Migration
     private array $attributes;
 
     private array $tables = [
-        'users'        => 'users',
-        'roles'        => 'roles',
-        'user_roles'   => 'user_roles',
-        'user_tokens'  => 'user_tokens',
-        'locales'      => 'locales',
-        'modules'      => 'modules',
-        'settings'     => 'settings',
-        'metadata'     => 'metadata',
-        'content'      => 'content',
-        'post_rubrics' => 'post_rubrics',
-        'tags'         => 'tags',
-        'tags_links'   => 'tags_links',
-        'files'        => 'files',
-        'sessions'     => 'sessions',
-        'permissions'  => 'permissions',
-        'navigations'  => 'navigations',
+        'users'       => 'users',
+        'roles'       => 'roles',
+        'user_roles'  => 'user_roles',
+        'user_tokens' => 'user_tokens',
+        'locales'     => 'locales',
+        'modules'     => 'modules',
+        'settings'    => 'settings',
+        'metadata'    => 'metadata',
+        'content'     => 'content',
+        'tags'        => 'tags',
+        'tags_links'  => 'tags_links',
+        'files'       => 'files',
+        'sessions'    => 'sessions',
+        'permissions' => 'permissions',
+        'navigations' => 'navigations',
     ];
 
     public function __construct(?Forge $forge = null)
@@ -338,19 +337,6 @@ class CreateAvegaCmsTables extends Migration
         ]);
         $this->forge->addUniqueKey(['id']);
         $this->createTable($this->tables['content']);
-
-        /**
-         * Таблица для хранения связок поста и категории
-         */
-        $this->forge->addField([
-            'post_id'   => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
-            'rubric_id' => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
-            'is_main'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0]
-        ]);
-        $this->forge->addUniqueKey(['post_id', 'rubric_id', 'is_main']);
-        $this->forge->addForeignKey('post_id', $this->tables['metadata'], 'id', '', 'CASCADE');
-        $this->forge->addForeignKey('rubric_id', $this->tables['metadata'], 'id', '', 'CASCADE');
-        $this->createTable($this->tables['post_rubrics']);
 
         /**
          * Таблица с тегами

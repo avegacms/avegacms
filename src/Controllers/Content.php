@@ -4,24 +4,26 @@ declare(strict_types=1);
 
 namespace AvegaCms\Controllers;
 
-use AvegaCms\Models\Frontend\{MetaDataModel, ContentModel, PostRubricsModel};
+use AvegaCms\Models\Frontend\{MetaDataModel, ContentModel};
 use AvegaCms\Enums\MetaDataTypes;
+use CodeIgniter\HTTP\ResponseInterface;
 
 class Content extends AvegaCmsFrontendController
 {
-    protected ContentModel     $CM;
-    protected MetaDataModel    $MDM;
-    protected PostRubricsModel $PRM;
+    protected ContentModel  $CM;
+    protected MetaDataModel $MDM;
 
     public function __construct()
     {
         parent::__construct();
         $this->CM = model(ContentModel::class);
         $this->MDM = model(MetaDataModel::class);
-        $this->PRM = model(PostRubricsModel::class);
     }
 
-    public function index()
+    /**
+     * @return ResponseInterface|string
+     */
+    public function index(): ResponseInterface|string
     {
         $settings = settings('core.env');
         $contentSettings = settings('content');
@@ -43,13 +45,7 @@ class Content extends AvegaCmsFrontendController
         // Проверяем цепочку записей
         if ($meta->meta_type !== MetaDataTypes::Main->value) {
             array_pop($segments);
-            $parentMeta = match ($meta->meta_type) {
-                MetaDataTypes::Page->value,
-                MetaDataTypes::Rubric->value => $this->MDM->getContentMetaMap($locale, $segments),
-                MetaDataTypes::Post->value   => []
-            };
-
-            if (empty($parentMeta)) {
+            if (empty($parentMeta = $this->MDM->getContentMetaMap($locale, $segments))) {
                 return $this->error404();
             }
         }

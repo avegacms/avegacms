@@ -17,20 +17,20 @@ class MetaDataModel extends AvegaCmsModel
     protected $protectFields    = true;
     protected $allowedFields    = [];
 
-// Dates
+    // Dates
     protected $useTimestamps = false;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
 
-// Validation
+    // Validation
     protected $validationRules      = [];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
 
-// Callbacks
+    // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
     protected $afterInsert    = [];
@@ -41,7 +41,7 @@ class MetaDataModel extends AvegaCmsModel
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-// AvegaCms filter settings
+    // AvegaCms filter settings
     protected array  $filterFields      = [];
     protected array  $searchFields      = [];
     protected array  $sortableFields    = [];
@@ -121,7 +121,8 @@ class MetaDataModel extends AvegaCmsModel
                 [
                     MetaDataTypes::Main->value,
                     MetaDataTypes::Page->value,
-                    MetaDataTypes::Rubric->value
+                    MetaDataTypes::Rubric->value,
+                    MetaDataTypes::Post->value
                 ]
             )->where(
                 [
@@ -133,4 +134,5 @@ class MetaDataModel extends AvegaCmsModel
 
         return $this->findAll();
     }
+    
 }

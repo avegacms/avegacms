@@ -15,6 +15,7 @@ class FrontendFilter implements FilterInterface
         'sitemap.xml',
         'robots.txt',
         'uploads',
+        'admin',
         'api'
     ];
 
@@ -48,18 +49,21 @@ class FrontendFilter implements FilterInterface
             if (empty($segment = strtolower($request->uri->getSegment(1)))) {
                 return redirect()->to('/' . $settings['defLocale'], 301);
             }
+            
+            if ( ! in_array($segment, $this->excludedUrls, true)) {
+                if ( ! in_array($segment, array_column($locales, 'slug'), true)) {
+                    return redirect()->to('/' . $settings['defLocale'] . '/page-not-found', 301);
+                }
 
-            if ( ! in_array($segment, $this->excludedUrls, true) &&
-                ! in_array($segment, array_column($locales, 'slug'), true)
-            ) {
-                return redirect()->to('/' . $settings['defLocale'] . '/page-not-found', 301);
-            }
+                $user = session()->get('avegacms');
 
-            $user = session()->get('avegacms');
-
-            if ($user['client']['locale']['slug'] !== $segment) {
-                $user['client']['locale'] = ['id' => $locales[$segment]['id'], 'slug' => $locales[$segment]['slug']];
-                session()->set('avegacms', $user);
+                if ($user['client']['locale']['slug'] !== $segment) {
+                    $user['client']['locale'] = [
+                        'id'   => $locales[$segment]['id'],
+                        'slug' => $locales[$segment]['slug']
+                    ];
+                    session()->set('avegacms', $user);
+                }
             }
         }
     }

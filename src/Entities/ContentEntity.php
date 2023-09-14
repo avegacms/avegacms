@@ -10,8 +10,6 @@ class ContentEntity extends Entity
     protected $dates   = [];
     protected $casts   = [
         'id'      => 'integer',
-        'title'   => 'string',
-        'url'     => 'string',
         'anons'   => 'string',
         'content' => 'string',
         'extra'   => 'json-array'

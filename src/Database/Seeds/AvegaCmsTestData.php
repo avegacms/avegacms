@@ -17,8 +17,7 @@ use AvegaCms\Models\Admin\{
     LoginModel,
     RolesModel,
     UserRolesModel,
-    LocalesModel,
-    PostRubricsModel
+    LocalesModel
 };
 use AvegaCms\Entities\{
     ContentEntity,
@@ -30,24 +29,21 @@ use AvegaCms\Entities\{
     UserEntity,
     UserRolesEntity,
     LocalesEntity,
-    PostRubricsEntity
 };
-use AvegaCms\Utils\SeoUtils;
 use ReflectionException;
 use Exception;
 
 class AvegaCmsTestData extends Seeder
 {
-    protected UserModel        $UM;
-    protected ContentModel     $CM;
-    protected MetaDataModel    $MDM;
-    protected ModulesModel     $MM;
-    protected LoginModel       $LM;
-    protected SettingsModel    $SM;
-    protected RolesModel       $RM;
-    protected UserRolesModel   $URM;
-    protected LocalesModel     $LLM;
-    protected PostRubricsModel $PRM;
+    protected UserModel      $UM;
+    protected ContentModel   $CM;
+    protected MetaDataModel  $MDM;
+    protected ModulesModel   $MM;
+    protected LoginModel     $LM;
+    protected SettingsModel  $SM;
+    protected RolesModel     $RM;
+    protected UserRolesModel $URM;
+    protected LocalesModel   $LLM;
 
     protected array $settings = [];
 
@@ -68,7 +64,6 @@ class AvegaCmsTestData extends Seeder
         $this->MDM = model(MetaDataModel::class);
         $this->URM = model(UserRolesModel::class);
         $this->LLM = model(LocalesModel::class);
-        $this->PRM = model(PostRubricsModel::class);
     }
 
     /**

@@ -7,23 +7,21 @@ namespace AvegaCms\Controllers\Api\Admin\Content;
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use AvegaCms\Enums\MetaStatuses;
 use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Models\Admin\{ContentModel, MetaDataModel, PostRubricsModel};
+use AvegaCms\Models\Admin\{ContentModel, MetaDataModel};
 use AvegaCms\Entities\{MetaDataEntity, ContentEntity};
 use AvegaCms\Utils\SeoUtils;
 use ReflectionException;
 
 class Rubrics extends AvegaCmsAdminAPI
 {
-    protected ContentModel     $CM;
-    protected MetaDataModel    $MDM;
-    protected PostRubricsModel $PRM;
+    protected ContentModel  $CM;
+    protected MetaDataModel $MDM;
 
     public function __construct()
     {
         parent::__construct();
         $this->CM = model(ContentModel::class);
         $this->MDM = model(MetaDataModel::class);
-        $this->PRM = model(PostRubricsModel::class);
     }
 
     /**
@@ -77,7 +75,7 @@ class Rubrics extends AvegaCmsAdminAPI
             return $this->failValidationErrors($this->MDM->errors());
         }
 
-        $content['meta_id'] = $id;
+        $content['id'] = $id;
 
         if ($this->CM->insert((new ContentEntity($content))) === false) {
             return $this->failValidationErrors($this->CM->errors());
@@ -127,7 +125,7 @@ class Rubrics extends AvegaCmsAdminAPI
             return $this->failValidationErrors($this->MDM->errors());
         }
 
-        if ($this->CM->where(['meta_id' => $id])->update(null, (new ContentEntity($content))) === false) {
+        if ($this->CM->where(['id' => $id])->update(null, (new ContentEntity($content))) === false) {
             return $this->failValidationErrors($this->CM->errors());
         }
 
@@ -172,11 +170,9 @@ class Rubrics extends AvegaCmsAdminAPI
             return $this->failValidationErrors(lang('Api.errors.delete', ['Metadata']));
         }
 
-        if ($this->CM->where(['meta_id' => $id])->delete() === false) {
+        if ($this->CM->where(['id' => $id])->delete() === false) {
             return $this->failValidationErrors(lang('Api.errors.delete', ['Content']));
         }
-
-        $this->PRM->where(['rubric_id' => $id])->delete();
 
         return $this->respondNoContent();
     }

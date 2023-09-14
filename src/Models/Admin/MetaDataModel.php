@@ -192,6 +192,37 @@ class MetaDataModel extends AvegaCmsModel
         return $this;
     }
 
+    public function selectPosts(): AvegaCmsModel
+    {
+        $this->builder()->select(
+            [
+                'metadata.id',
+                'metadata.parent',
+                'metadata.locale_id',
+                'metadata.title',
+                'metadata.url',
+                'metadata.creator_id',
+                'metadata.status',
+                'metadata.meta_type',
+                'metadata.in_sitemap',
+                'metadata.publish_at',
+                'pm.title AS rubric',
+                'l.locale_name',
+                'u.login AS author'
+            ]
+        )->join('locales AS l', 'l.id = metadata.locale_id')
+            ->join('metadata AS pm', 'pm.id = metadata.parent')
+            ->join('users AS u', 'u.id = metadata.creator_id', 'left')
+            ->where(
+                [
+                    'metadata.module_id' => 0,
+                    'metadata.meta_type' => MetaDataTypes::Post->value
+                ]
+            );
+
+        return $this;
+    }
+
     /**
      * @return AvegaCmsModel
      */
