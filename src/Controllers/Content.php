@@ -7,7 +7,6 @@ namespace AvegaCms\Controllers;
 use AvegaCms\Models\Frontend\MetaDataModel;
 use AvegaCms\Enums\MetaDataTypes;
 
-
 class Content extends AvegaCmsFrontendController
 {
     protected MetaDataModel $MDM;
@@ -53,7 +52,27 @@ class Content extends AvegaCmsFrontendController
         $this->metaData = $meta->metaRender();
         $this->breadCrumbs = $meta->breadCrumbs($parentMeta);
 
-        $template = '';
+        $template = 'template/content/';
+
+        switch ($meta->meta_type) {
+            case MetaDataTypes::Main->value:
+                $template .= 'main';
+                break;
+            case MetaDataTypes::Page->value:
+                $template .= 'page';
+                break;
+            case MetaDataTypes::Rubric->value:
+                $template .= 'rubric';
+                break;
+            case MetaDataTypes::Post->value:
+                $template .= 'post';
+                break;
+            default:
+                return $this->error404();
+        }
+
+        //$data['content'] =
+
         //dd($meta, $parentMeta, $meta->metaRender(), $meta->breadCrumbs($parentMeta));
         //dd($meta, $parentMeta);
 
