@@ -81,13 +81,13 @@ class MetaDataModel extends AvegaCmsModel
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
-    protected $afterInsert    = [];
+    protected $afterInsert    = ['clearCache'];
     protected $beforeUpdate   = [];
-    protected $afterUpdate    = [];
+    protected $afterUpdate    = ['clearCache'];
     protected $beforeFind     = [];
     protected $afterFind      = [];
     protected $beforeDelete   = [];
-    protected $afterDelete    = [];
+    protected $afterDelete    = ['clearCache'];
 
     //AvegaCms model settings
     public array  $filterFields      = [
@@ -296,10 +296,23 @@ class MetaDataModel extends AvegaCmsModel
      */
     public function getRubrics(): array
     {
-        $this->builder()->select(['id', 'title'])
-            ->where(['meta_type' => MetaDataTypes::Rubric->value]);
+        return cache()->remember('rubricsList', 30 * DAY, function () {
+            $this->builder()->select(['id', 'url', 'title', 'locale'])
+                ->where(['meta_type' => MetaDataTypes::Rubric->value]);
 
-        return $this->findAll();
+            return $this->asArray()->findAll();
+        });
+    }
+
+    /**
+     * @return array
+     */
+    public function mainPages(): array
+    {
+        return cache()->remember('mainPages', 30 * DAY, function () {
+            $this->builder()->select(['id', 'locale']);
+            return $this->asArray()->findAll();
+        });
     }
 
     /**
@@ -358,5 +371,14 @@ class MetaDataModel extends AvegaCmsModel
         $url = $url->url;
 
         return ($url === '/') ? '' : $url . '/';
+    }
+
+    public function clearCache(array $data)
+    {
+        if (isset($data['meta_type'])) {
+            if ($data['meta_type'] === MetaDataTypes::Rubric->value) {
+                cache()->delete('rubricsList');
+            }
+        }
     }
 }

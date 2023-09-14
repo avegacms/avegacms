@@ -2,7 +2,7 @@
 
 namespace AvegaCms\Utils;
 
-use AvegaCms\Models\Admin\LocalesModel;
+use AvegaCms\Models\Admin\{LocalesModel, MetaDataModel};
 use RuntimeException;
 
 class SeoUtils
@@ -28,5 +28,46 @@ class SeoUtils
     public static function LocaleData(int $id): array
     {
         return self::Locales($id)['extra'];
+    }
+
+    /**
+     * @param  int  $id
+     * @return array
+     */
+    public static function mainPages(int $id = 0): array
+    {
+        $pages = array_column(model(MetaDataModel::class)->mainPages(), 'id', 'locale');
+
+        if ($id > 0 && ! isset($pages[$id])) {
+            throw new RuntimeException('Undefined main page');
+        }
+        return ($id > 0) ? $pages[$id] : $pages;
+    }
+
+    /**
+     * @param  int  $locale
+     * @param  string|null  $key
+     * @param  string|null  $value
+     * @return array
+     */
+    public static function rubricsList(int $locale = 0, ?string $key = null, ?string $value = null): array
+    {
+        $rubrics = model(MetaDataModel::class)->getRubrics();
+
+        if ($locale > 0) {
+            $rubrics = array_map(
+                callback: function (&$item) use ($locale) {
+                    if ($item['locale'] === $locale) {
+                        return $item;
+                    }
+                }, array: $rubrics
+            );
+
+            if ( ! is_null($key) || ! is_null($value)) {
+                $rubrics = array_column($rubrics, $key, $value);
+            }
+        }
+
+        return $rubrics;
     }
 }
