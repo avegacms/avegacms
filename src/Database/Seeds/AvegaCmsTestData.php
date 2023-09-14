@@ -32,6 +32,7 @@ use AvegaCms\Entities\{
     LocalesEntity,
     PostRubricsEntity
 };
+use AvegaCms\Utils\SeoUtils;
 use ReflectionException;
 use Exception;
 
@@ -184,7 +185,7 @@ class AvegaCmsTestData extends Seeder
 
     protected function createRubrics(): void
     {
-        if ($categories = CLI::prompt(
+        if ($rubrics = CLI::prompt(
             'How many rubrics do you want to create?',
             null,
             ['required', 'is_natural_no_zero']
@@ -194,9 +195,22 @@ class AvegaCmsTestData extends Seeder
                 'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
             ])->findColumn('id');
 
+            $mainPages = array_column(
+                $this->MDM->select(['id', 'locale_id', 'url'])
+                    ->where(['meta_type' => MetaDataTypes::Main->value])->findAll(),
+                null,
+                'locale_id'
+            );
+
             foreach ($locales as $locale) {
-                for ($i = 0; $categories > $i; $i++) {
-                    $this->_createMetaData(MetaDataTypes::Rubric->value, $locale);
+                $mainPage = $mainPages[$locale];
+                for ($i = 0; $rubrics > $i; $i++) {
+                    $this->_createMetaData(
+                        type: MetaDataTypes::Rubric->value,
+                        locale: $locale,
+                        parent: $mainPage->id,
+                        url: $mainPage->url
+                    );
                 }
             }
             CLI::newLine();
@@ -224,51 +238,31 @@ class AvegaCmsTestData extends Seeder
             ])->findColumn('id');
 
             foreach ($locales as $locale) {
+                $rubricsId = array_column(
+                    $this->MDM->select(['id', 'url'])
+                        ->where(
+                            [
+                                'locale_id' => $locale,
+                                'meta_type' => MetaDataTypes::Rubric->value
+                            ]
+                        )->findAll(),
+                    'url',
+                    'id'
+                );
+
                 $j = 1;
                 for ($i = 0; $num > $i; $i++) {
                     CLI::showProgress($j++, $num);
-                    $this->_createMetaData(MetaDataTypes::Post->value, $locale);
+                    $rubricId = array_rand($rubricsId);
+                    $this->_createMetaData(
+                        type: MetaDataTypes::Post->value,
+                        locale: $locale,
+                        parent: $rubricId,
+                        url: $rubricsId[$rubricId]
+                    );
                 }
                 CLI::showProgress(false);
                 CLI::newLine();
-            }
-
-            foreach ($locales as $locale) {
-                $rubricsId = $this->MDM->where(
-                    [
-                        'locale_id' => $locale,
-                        'meta_type' => MetaDataTypes::Rubric->value
-                    ]
-                )->findColumn('id');
-
-                $postsId = array_unique($this->MDM->where(
-                    [
-                        'locale_id' => $locale,
-                        'meta_type' => MetaDataTypes::Post->value
-                    ]
-                )->findColumn('id'));
-
-                $PCE = new PostRubricsEntity();
-
-                $postCategories = [];
-
-                foreach ($postsId as $postId) {
-                    $num = array_rand($rubricsId, rand(1, count($rubricsId)));
-                    $num = array_unique(! is_array($num) ? [$num] : $num);
-                    $i = 0;
-                    foreach ($num as $c) {
-                        $postCategories[] = $PCE->fill(
-                            [
-                                'post_id'   => $postId,
-                                'rubric_id' => $rubricsId[$c],
-                                'is_main'   => ($i === 0) ? 1 : 0
-                            ]
-                        )->toArray();
-                        $i++;
-                    }
-                }
-
-                $this->PRM->insertBatch(array_unique($postCategories, SORT_REGULAR));
             }
         }
     }
@@ -280,8 +274,10 @@ class AvegaCmsTestData extends Seeder
      * @param  int  $module
      * @param  int  $parent
      * @param  int  $item_id
+     * @param  string|null  $status
+     * @param  string  $url
      * @return int
-     * @throws Exception|ReflectionException
+     * @throws ReflectionException
      */
     private function _createMetaData(
         string $type,
@@ -290,7 +286,8 @@ class AvegaCmsTestData extends Seeder
         int $module = 0,
         int $parent = 0,
         int $item_id = 0,
-        ?string $status = null
+        ?string $status = null,
+        ?string $url = null
     ): int {
         $meta = (new Fabricator($this->MDM, null))->makeArray();
 
@@ -304,6 +301,10 @@ class AvegaCmsTestData extends Seeder
         if ($type === MetaDataTypes::Main->value) {
             $meta['url'] = '';
             $meta['slug'] = 'main';
+        }
+
+        if (in_array($type, [MetaDataTypes::Rubric->value, MetaDataTypes::Post->value])) {
+            $meta['url'] = $url . '/' . $meta['slug'];
         }
 
         if ($type === MetaDataTypes::Page404->value) {
@@ -336,12 +337,9 @@ class AvegaCmsTestData extends Seeder
         if ($num > 0) {
             if ($this->numPages === $num) {
                 $subId = $this->_createMetaData(
-                    MetaDataTypes::Page->value,
-                    $locale,
-                    1,
-                    0,
-                    $parent,
-                    0
+                    type: MetaDataTypes::Page->value,
+                    locale: $locale,
+                    parent: $parent,
                 );
 
                 $num--;
@@ -356,9 +354,17 @@ class AvegaCmsTestData extends Seeder
                 if ($nesting > 1) {
                     $parentId = $this->_getParentPageId($locale, rand(0, $nesting));
                     if ($parentId !== null) {
-                        $subId = $this->_createMetaData(MetaDataTypes::Page->value, $locale, 1, 0, $parentId, 0);
+                        $subId = $this->_createMetaData(
+                            type: MetaDataTypes::Page->value,
+                            locale: $locale,
+                            parent: $parentId
+                        );
                     } else {
-                        $subId = $this->_createMetaData(MetaDataTypes::Page->value, $locale, 1, 0, $parent, 0);
+                        $subId = $this->_createMetaData(
+                            type: MetaDataTypes::Page->value,
+                            locale: $locale,
+                            parent: $parent
+                        );
                     }
                     $num--;
                     $this->_createSubPages($num, $nesting, $locale, $subId);
