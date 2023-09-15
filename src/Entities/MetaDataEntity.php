@@ -8,6 +8,8 @@ use AvegaCms\Models\Admin\MetaDataModel;
 use AvegaCms\Enums\MetaDataTypes;
 use AvegaCms\Utils\SeoUtils;
 use Config\Services;
+use AvegaCms\Entities\Seo\{BreadCrumbsEntity, MetaEntity, OpenGraphEntity};
+
 
 class MetaDataEntity extends AvegaCmsEntity
 {
@@ -105,28 +107,33 @@ class MetaDataEntity extends AvegaCmsEntity
     }
 
     /**
-     * @return array
+     * @return MetaEntity
      */
-    public function metaRender(): array
+    public function metaRender(): MetaEntity
     {
-        $meta = $this->meta;
+        $page = $this->meta;
 
-        unset($meta['breadcrumb']);
+        unset($page['breadcrumb']);
 
         $locales = SeoUtils::Locales();
         $data = SeoUtils::LocaleData($this->locale_id);
 
-        $meta['title'] = esc($meta['title']);
-        $meta['keywords'] = esc($meta['keywords']);
-        $meta['description'] = esc($meta['description']);
+        $meta['title'] = esc($page['title']);
+        $meta['keywords'] = esc($page['keywords']);
+        $meta['description'] = esc($page['description']);
 
-        $meta['lang'] = $meta['og:locale'] = $locales[$this->locale_id]['locale'];
+        $meta['lang'] = $locales[$this->locale_id]['locale'];
 
-        $meta['og:site_name'] = esc($data['app_name']);
-        $meta['og:title'] = esc($meta['og:title']);
-        $meta['og:type'] = esc($meta['og:type']);
-        $meta['og:url'] = base_url($meta['og:url']);
-        $meta['og:image'] = empty($item['og:image']) ? $data['og:image'] : base_url('uploads/content/' . $item['og:image']);
+        $meta['openGraph'] = (new OpenGraphEntity(
+            [
+                'locale'   => $meta['lang'],
+                'siteName' => esc($data['app_name']),
+                'title'    => esc($page['og:title']),
+                'type'     => esc($page['og:type']),
+                'url'      => esc($page['og:url']),
+                'image'    => empty($page['og:image']) ? $data['og:image'] : base_url('uploads/content/' . $page['og:image'])
+            ]
+        ));
 
         if ($meta['useMultiLocales'] = settings('core.env.useMultiLocales')) {
             foreach ($locales as $locale) {
@@ -140,38 +147,47 @@ class MetaDataEntity extends AvegaCmsEntity
         $meta['canonical'] = base_url(Services::request()->uri->getRoutePath());
         $meta['robots'] = ($this->in_sitemap === 1) ? 'index, follow' : 'noindex, nofollow';
 
-        return $meta;
+        return (new MetaEntity($meta));
     }
 
     /**
+     * @param  string  $type
      * @param  array  $parentBreadCrumbs
-     * @return array
+     * @return BreadCrumbsEntity[]
      */
-    public function breadCrumbs(array $parentBreadCrumbs = []): array
+    public function breadCrumbs(string $type, array $parentBreadCrumbs = []): array
     {
-        $breadCrumbs[] = [
-            'url'   => '',
-            'title' => esc(! empty($this->meta->breadcrumb) ? $this->meta->breadcrumb : $this->title)
-        ];
+        $breadCrumbs = [];
+        
+        if ($type !== MetaDataTypes::Main->value) {
+            $breadCrumbs[] = [
+                'url'    => '',
+                'title'  => esc(! empty($this->meta->breadcrumb) ? $this->meta->breadcrumb : $this->title),
+                'active' => true
+            ];
+        }
 
         if ( ! empty($parentBreadCrumbs)) {
             foreach ($parentBreadCrumbs as $crumb) {
                 $breadCrumbs[] = [
-                    'url'   => base_url($crumb->url),
-                    'title' => esc(! empty($crumb->meta->breadcrumb) ? $crumb->meta->breadcrumb : $crumb->title)
+                    'url'    => base_url($crumb->url),
+                    'title'  => esc(! empty($crumb->meta->breadcrumb) ? $crumb->meta->breadcrumb : $crumb->title),
+                    'active' => false
                 ];
             }
         }
 
         if ( ! empty($locale = SeoUtils::Locales($this->locale_id))) {
             $breadCrumbs[] = [
-                'url'   => base_url(settings('core.env.useMultiLocales') ? $locale['slug'] : ''),
-                'title' => esc($locale['home'])
+                'url'    => base_url(settings('core.env.useMultiLocales') ? $locale['slug'] : ''),
+                'title'  => esc($locale['home']),
+                'active' => false
             ];
         }
 
-
-        return array_reverse($breadCrumbs);
+        return array_map(function ($item) {
+            return (new BreadCrumbsEntity($item));
+        }, array_reverse($breadCrumbs));
     }
 
     /**

@@ -8,11 +8,15 @@ use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\Pager\Pager;
 use RuntimeException;
 
+use AvegaCms\Entities\Seo\MetaEntity;
+use AvegaCms\Models\Frontend\MetaDataModel;
+
 class AvegaCmsFrontendController extends BaseController
 {
-    protected array $meta        = [];
-    protected array $breadCrumbs = [];
-    protected Pager $pager;
+    protected MetaDataModel $MDM;
+    protected ?MetaEntity   $meta        = null;
+    protected array         $breadCrumbs = [];
+    protected ?Pager        $pager       = null;
 
     private readonly array $specialVars;
 
@@ -20,6 +24,7 @@ class AvegaCmsFrontendController extends BaseController
     {
         helper(['avegacms']);
         $this->specialVars = ['meta', 'breadcrumbs', 'pager'];
+        $this->MDM = model(MetaDataModel::class);
     }
 
 
@@ -43,6 +48,11 @@ class AvegaCmsFrontendController extends BaseController
      */
     public function error404(): ResponseInterface
     {
+        $meta = $this->MDM->getContentMetaData(session('avegacms.client.locale.id'), 'page-not-found');
+
+        $this->meta = $meta->metaRender();
+        $this->breadCrumbs = $meta->breadCrumbs($meta->meta_type);
+
         return $this->response->setStatusCode(404)->setBody($this->render([], 'main/pages/page_404'));
     }
 }

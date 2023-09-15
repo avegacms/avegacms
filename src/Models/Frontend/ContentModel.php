@@ -8,7 +8,7 @@ use AvegaCms\Models\AvegaCmsModel;
 class ContentModel extends AvegaCmsModel
 {
     protected $DBGroup        = 'default';
-    protected $table          = 'contents';
+    protected $table          = 'content';
     protected $returnType     = ContentEntity::class;
     protected $useSoftDeletes = false;
     protected $protectFields  = true;

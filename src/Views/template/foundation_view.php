@@ -1,26 +1,39 @@
+<?php
+
+use AvegaCms\Entities\Seo\{MetaEntity, BreadCrumbsEntity};
+use CodeIgniter\Pager\Pager;
+
+/**
+ * @var MetaEntity|null $meta
+ * @var BreadCrumbsEntity[] $breadcrumbs
+ * @var Pager|null $pager
+ */
+
+?>
+
 <!doctype html>
-<html class="no-js" lang="<?php echo $meta['lang'] ?>">
+<html class="no-js" lang="<?php echo $meta->lang ?>">
 <head>
     <meta charset="utf-8">
-    <title><?php echo $meta['title'] ?></title>
-    <meta name="keywords" content="<?php echo $meta['keywords'] ?>">
-    <meta name="description" content="<?php echo $meta['description'] ?>">
+    <title><?php echo $meta->title ?></title>
+    <meta name="keywords" content="<?php echo $meta->keywords ?>">
+    <meta name="description" content="<?php echo $meta->description ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <meta property="og:site_name" content="<?php echo $meta['og:site_name'] ?>">
-    <meta property="og:locale" content="<?php echo $meta['og:locale'] ?>">
-    <meta property="og:title" content="<?php echo $meta['og:title'] ?>">
-    <meta property="og:type" content="<?php echo $meta['og:type'] ?>">
-    <meta property="og:url" content="<?php echo $meta['og:url'] ?>">
-    <meta property="og:image" content="<?php echo $meta['og:image'] ?>">
+    <meta property="og:site_name" content="<?php echo $meta->openGraph->siteName ?>">
+    <meta property="og:locale" content="<?php echo $meta->openGraph->locale ?>">
+    <meta property="og:title" content="<?php echo $meta->openGraph->title ?>">
+    <meta property="og:type" content="<?php echo $meta->openGraph->type ?>">
+    <meta property="og:url" content="<?php echo $meta->openGraph->url ?>">
+    <meta property="og:image" content="<?php echo $meta->openGraph->image ?>">
 
-    <?php if ($meta['useMultiLocales']) : foreach ($meta['alternate'] as $item): ?>
+    <?php if ($meta->useMultiLocales) : foreach ($meta->alternate as $item): ?>
         <link rel="alternate" hreflang="<?php echo $item['hreflang'] ?>" href="<?php echo $item['href'] ?>">
     <?php endforeach; endif; ?>
 
-    <link rel="canonical" href="<?php echo $meta['canonical'] ?>">
+    <link rel="canonical" href="<?php echo $meta->canonical ?>">
 
-    <meta name="robots" content="<?php echo $meta['robots'] ?>">
+    <meta name="robots" content="<?php echo $meta->robots ?>">
 
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
@@ -40,5 +53,17 @@
 <script src="js/app.js"></script>
 
 </body>
+
+<nav aria-label="breadcrumb">
+    <ul class="breadcrumb my-3">
+        <?php foreach ($breadcrumbs as $item): ?>
+            <li class="<?php echo 'breadcrumb-item' . ($item->active ? ' active' : '') ?>" <?php echo ($item->active) ? 'aria-current="page"' : '' ?>>
+                <?php echo ($item->active) ? $item->title : anchor($item->url, $item->title,
+                    ['class' => 'breadcrumb-link']) ?>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+</nav>
+
 
 </html>

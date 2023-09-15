@@ -4,20 +4,18 @@ declare(strict_types=1);
 
 namespace AvegaCms\Controllers;
 
-use AvegaCms\Models\Frontend\{MetaDataModel, ContentModel};
+use AvegaCms\Models\Frontend\ContentModel;
 use AvegaCms\Enums\MetaDataTypes;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class Content extends AvegaCmsFrontendController
 {
-    protected ContentModel  $CM;
-    protected MetaDataModel $MDM;
+    protected ContentModel $CM;
 
     public function __construct()
     {
         parent::__construct();
         $this->CM = model(ContentModel::class);
-        $this->MDM = model(MetaDataModel::class);
     }
 
     /**
@@ -45,13 +43,13 @@ class Content extends AvegaCmsFrontendController
         // Проверяем цепочку записей
         if ($meta->meta_type !== MetaDataTypes::Main->value) {
             array_pop($segments);
-            if (empty($parentMeta = $this->MDM->getContentMetaMap($locale, $segments))) {
+            if ( ! empty($segments) && empty($parentMeta = $this->MDM->getContentMetaMap($locale, $segments))) {
                 return $this->error404();
             }
         }
 
         $this->meta = $meta->metaRender();
-        $this->breadCrumbs = $meta->breadCrumbs($parentMeta);
+        $this->breadCrumbs = $meta->breadCrumbs($meta->meta_type, $parentMeta);
 
         $template = 'template/content/';
 
@@ -66,8 +64,8 @@ class Content extends AvegaCmsFrontendController
             case MetaDataTypes::Rubric->value:
                 $template .= 'rubric';
                 $filter['rubric'] = $meta->id;
-                $data['posts'] = $this->MDM->getRubricPosts()->filter($filter)->paginate($contentSettings['posts']['postsPerPage'] ?? 20);
-                $this->pager = $this->MDM->pager();
+                $data['posts'] = $this->MDM->getRubricPosts($filter)->paginate($contentSettings['posts']['postsPerPage'] ?? 20);
+                $this->pager = $this->MDM->pager;
                 break;
             case MetaDataTypes::Post->value:
                 $template .= 'post';
@@ -79,9 +77,7 @@ class Content extends AvegaCmsFrontendController
         $data['content'] = $this->CM->find($meta->id);
 
         // TODO 1. Добавить публичное имя в users
-        // TODO 2. Сделать базовую рубрику для поста
         // TODO 3. Сделать 404 страницу
-        // TODO 4. Добавить отображение $parentMeta для постов + при редактировании/удалении сделать проверку
 
         return $this->render($data, $template);
     }

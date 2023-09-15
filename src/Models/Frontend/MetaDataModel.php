@@ -76,22 +76,19 @@ class MetaDataModel extends AvegaCmsModel
                 MetaDataTypes::Main->value,
                 MetaDataTypes::Page->value,
                 MetaDataTypes::Rubric->value,
-                MetaDataTypes::Post->value
-            ]
-        )->whereIn('metadata.status',
-            [
-                MetaStatuses::Publish->value,
-                MetaStatuses::Future->value
+                MetaDataTypes::Post->value,
+                MetaDataTypes::Page404->value
             ]
         )->where(
             [
-                'metadata.module_id'     => 0,
-                'metadata.item_id'       => 0,
-                'metadata.slug'          => ! empty($slug) ? $slug : 'main',
-                'metadata.locale_id'     => $locale,
-                'metadata.publish_at <=' => date('Y-m-d H:i:s')
+                'metadata.module_id' => 0,
+                'metadata.item_id'   => 0,
+                'metadata.slug'      => ! empty($slug) ? $slug : 'main',
+                'metadata.locale_id' => $locale
             ]
         );
+
+        $this->checkStatus();
 
         return $this->first();
     }
@@ -112,12 +109,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.meta'
             ]
         )->whereIn('metadata.slug', $segments)
-            ->whereIn('metadata.status',
-                [
-                    MetaStatuses::Publish->value,
-                    MetaStatuses::Future->value
-                ]
-            )->whereIn('metadata.meta_type',
+            ->whereIn('metadata.meta_type',
                 [
                     MetaDataTypes::Main->value,
                     MetaDataTypes::Page->value,
@@ -126,11 +118,12 @@ class MetaDataModel extends AvegaCmsModel
                 ]
             )->where(
                 [
-                    'metadata.module_id'     => 0,
-                    'metadata.locale_id'     => $locale,
-                    'metadata.publish_at <=' => date('Y-m-d H:i:s')
+                    'metadata.module_id' => 0,
+                    'metadata.locale_id' => $locale
                 ]
             )->orderBy('metadata.parent', 'DESC');
+
+        $this->checkStatus();
 
         return $this->findAll();
     }
@@ -148,21 +141,15 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.url',
                 'c.anons',
             ]
-        )->join('content AS c', 'c.id = metadata.id')
-            ->whereIn('metadata.status',
-                [
-                    MetaStatuses::Publish->value,
-                    MetaStatuses::Future->value
-                ]
-            )
-            ->where(
-                [
-                    'metadata.parent'        => $id,
-                    'metadata.meta_type'     => MetaDataTypes::Page->value,
-                    'metadata.module_id'     => 0,
-                    'metadata.publish_at <=' => date('Y-m-d H:i:s')
-                ]
-            )->orderBy('metadata.sort', 'ASC');
+        )->join('content AS c', 'c.id = metadata.id')->where(
+            [
+                'metadata.parent'    => $id,
+                'metadata.meta_type' => MetaDataTypes::Page->value,
+                'metadata.module_id' => 0
+            ]
+        )->orderBy('metadata.sort', 'ASC');
+
+        $this->checkStatus();
 
         return $this->findAll();
     }
@@ -173,8 +160,6 @@ class MetaDataModel extends AvegaCmsModel
      */
     public function getRubricPosts(array $filter = []): AvegaCmsModel
     {
-        $date = date('Y-m-d H:i:s');
-
         $this->builder()->select(
             [
                 'metadata.title',
@@ -186,21 +171,39 @@ class MetaDataModel extends AvegaCmsModel
             ]
         )->join('content AS c', 'c.id = post_rubrics.post_id')
             ->join('users AS u', 'u.id = p.creator_id', 'left')
-            ->groupStart()
-            ->whereIn('metadata.status',
-                [
-                    MetaStatuses::Publish->value,
-                    MetaStatuses::Future->value
-                ]
-            )->where(
-                [
-                    'metadata.meta_type'     => MetaDataTypes::Post->value,
-                    'metadata.module_id'     => 0,
-                    'metadata.publish_at <=' => $date
-                ]
-            )
-            ->groupEnd();
+            ->groupStart();
+
+        $this->checkStatus();
+
+        $this->builder()->where(
+            [
+                'metadata.meta_type' => MetaDataTypes::Post->value,
+                'metadata.module_id' => 0
+            ]
+        )->groupEnd();
 
         return $this->filter($filter);
+    }
+
+
+    /**
+     * @return MetaDataModel
+     */
+    protected function checkStatus(): MetaDataModel
+    {
+        $this->builder()
+            ->groupStart()
+            ->where(
+                [
+                    'metadata.status' => MetaStatuses::Publish->value
+                ]
+            )->orWhere(
+                [
+                    'metadata.status'        => MetaStatuses::Future->value,
+                    'metadata.publish_at <=' => date('Y-m-d H:i:s')
+                ])
+            ->groupEnd();
+
+        return $this;
     }
 }
