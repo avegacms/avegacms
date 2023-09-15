@@ -297,7 +297,7 @@ class MetaDataModel extends AvegaCmsModel
     public function getRubrics(): array
     {
         return cache()->remember('rubricsList', 30 * DAY, function () {
-            $this->builder()->select(['id', 'url', 'title', 'locale'])
+            $this->builder()->select(['id', 'url', 'title', 'locale_id'])
                 ->where(['meta_type' => MetaDataTypes::Rubric->value]);
 
             return $this->asArray()->findAll();
@@ -310,7 +310,7 @@ class MetaDataModel extends AvegaCmsModel
     public function mainPages(): array
     {
         return cache()->remember('mainPages', 30 * DAY, function () {
-            $this->builder()->select(['id', 'locale']);
+            $this->builder()->select(['id', 'locale_id']);
             return $this->asArray()->findAll();
         });
     }

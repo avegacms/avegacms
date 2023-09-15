@@ -134,5 +134,73 @@ class MetaDataModel extends AvegaCmsModel
 
         return $this->findAll();
     }
-    
+
+    /**
+     * @param  int  $id
+     * @return array
+     */
+    public function getSubPages(int $id): array
+    {
+        $this->builder()->select(
+            [
+                'metadata.id',
+                'metadata.title',
+                'metadata.url',
+                'c.anons',
+            ]
+        )->join('content AS c', 'c.id = metadata.id')
+            ->whereIn('metadata.status',
+                [
+                    MetaStatuses::Publish->value,
+                    MetaStatuses::Future->value
+                ]
+            )
+            ->where(
+                [
+                    'metadata.parent'        => $id,
+                    'metadata.meta_type'     => MetaDataTypes::Page->value,
+                    'metadata.module_id'     => 0,
+                    'metadata.publish_at <=' => date('Y-m-d H:i:s')
+                ]
+            )->orderBy('metadata.sort', 'ASC');
+
+        return $this->findAll();
+    }
+
+    /**
+     * @param  array  $filter
+     * @return AvegaCmsModel
+     */
+    public function getRubricPosts(array $filter = []): AvegaCmsModel
+    {
+        $date = date('Y-m-d H:i:s');
+
+        $this->builder()->select(
+            [
+                'metadata.title',
+                'metadata.url',
+                'c.anons',
+                'c.extra',
+                'u.login AS author',
+                'metadata.publish_at'
+            ]
+        )->join('content AS c', 'c.id = post_rubrics.post_id')
+            ->join('users AS u', 'u.id = p.creator_id', 'left')
+            ->groupStart()
+            ->whereIn('metadata.status',
+                [
+                    MetaStatuses::Publish->value,
+                    MetaStatuses::Future->value
+                ]
+            )->where(
+                [
+                    'metadata.meta_type'     => MetaDataTypes::Post->value,
+                    'metadata.module_id'     => 0,
+                    'metadata.publish_at <=' => $date
+                ]
+            )
+            ->groupEnd();
+
+        return $this->filter($filter);
+    }
 }

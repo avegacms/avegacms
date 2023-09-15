@@ -55,17 +55,19 @@ class SeoUtils
         $rubrics = model(MetaDataModel::class)->getRubrics();
 
         if ($locale > 0) {
-            $rubrics = array_map(
+            $rubrics = array_filter(array_map(
                 callback: function ($item) use ($locale) {
-                    if ($item['locale'] === $locale) {
-                        return $item;
-                    }
+                    return $item['locale_id'] === $locale ? $item : null;
                 }, array: $rubrics
-            );
+            ));
+        }
 
-            if ( ! is_null($key) || ! is_null($value)) {
-                $rubrics = array_column($rubrics, $key, $value);
-            }
+        if (empty($rubrics)) {
+            throw new RuntimeException('Undefined rubrics');
+        }
+
+        if ( ! is_null($key) || ! is_null($value)) {
+            $rubrics = array_column($rubrics, $value, $key);
         }
 
         return $rubrics;

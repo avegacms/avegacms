@@ -47,7 +47,7 @@ class Posts extends AvegaCmsAdminAPI
                 'statuses'  => MetaStatuses::getValues(),
                 'defStatus' => MetaStatuses::Draft->value,
                 'locales'   => array_column(SeoUtils::Locales(), 'locale_name', 'id'),
-                'rubrics'   => $this->MDM->getRubrics()
+                'rubrics'   => SeoUtils::rubricsList(key: 'id', value: 'title')
             ]
         );
     }

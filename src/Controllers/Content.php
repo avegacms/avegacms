@@ -61,13 +61,13 @@ class Content extends AvegaCmsFrontendController
                 break;
             case MetaDataTypes::Page->value:
                 $template .= 'page';
-                $data['subPages'] = $this->CM->getSubPages($meta->id);
+                $data['subPages'] = $this->MDM->getSubPages($meta->id);
                 break;
             case MetaDataTypes::Rubric->value:
                 $template .= 'rubric';
                 $filter['rubric'] = $meta->id;
-                $data['posts'] = $this->PRM->getRubricPosts($filter)->paginate($contentSettings['posts']['postsPerPage'] ?? 20);
-                $this->pager = $this->PRM->pager();
+                $data['posts'] = $this->MDM->getRubricPosts()->filter($filter)->paginate($contentSettings['posts']['postsPerPage'] ?? 20);
+                $this->pager = $this->MDM->pager();
                 break;
             case MetaDataTypes::Post->value:
                 $template .= 'post';
