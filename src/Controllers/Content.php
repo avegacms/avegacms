@@ -64,7 +64,7 @@ class Content extends AvegaCmsFrontendController
             case MetaDataTypes::Rubric->value:
                 $template .= 'rubric';
                 $filter['rubric'] = $meta->id;
-                $filter['s'] = '-published';
+                $filter['s'] = $filter['s'] ?? '-published';
                 $data['posts'] = $this->MDM->getRubricPosts($filter)->paginate($contentSettings['posts']['postsPerPage'] ?? 20);
                 $this->pager = $this->MDM->pager;
                 break;
