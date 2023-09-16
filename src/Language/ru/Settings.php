@@ -7,7 +7,8 @@ return [
             'secretKey'       => 'Секретный ключ',
             'defLocale'       => 'Локаль по-умолчанию',
             'useMultiLocales' => 'Использовать мультиязычность',
-            'useFrontend'     => 'Использовать Frontend-контроллер'
+            'useFrontend'     => 'Использовать Frontend-контроллер',
+            'useViewData'     => 'Использовать файлы отображения',
         ],
         'auth'  => [
             'useCors'          => 'Использовать CORS',
@@ -43,7 +44,8 @@ return [
             'secretKey'       => '',
             'defLocale'       => '',
             'useMultiLocales' => '',
-            'useFrontend'     => ''
+            'useFrontend'     => '',
+            'useViewData'     => '',
         ],
         'auth'  => [
             'useCors'          => 'Технология современных браузеров, которая позволяет предоставить веб-страницам доступ к ресурсам другого домена',
