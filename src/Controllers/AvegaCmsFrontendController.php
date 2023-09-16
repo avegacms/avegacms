@@ -47,7 +47,7 @@ class AvegaCmsFrontendController extends BaseController
             $data['template'] = view($view, $data, $options);
         }
 
-        return view('template/foundation_view', $data, $options);
+        return view('template/foundation', $data, $options);
     }
 
     /**
