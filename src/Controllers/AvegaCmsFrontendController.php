@@ -38,7 +38,14 @@ class AvegaCmsFrontendController extends BaseController
         $data['breadcrumbs'] = $this->breadCrumbs;
         $data['pager'] = $this->pager;
 
-        $data['template'] = '';
+        $data['template'] = null;
+
+        if (settings('core.env.useViewData')) {
+            if ( ! file_exists($file = APPPATH . 'Views/' . ($view = 'template/' . $view) . '.php')) {
+                throw new RuntimeException("File {$file} not found");
+            }
+            $data['template'] = view($view, $data, $options);
+        }
 
         return view('template/foundation_view', $data, $options);
     }
@@ -53,6 +60,6 @@ class AvegaCmsFrontendController extends BaseController
         $this->meta = $meta->metaRender();
         $this->breadCrumbs = $meta->breadCrumbs($meta->meta_type);
 
-        return $this->response->setStatusCode(404)->setBody($this->render([], 'main/pages/page_404'));
+        return $this->response->setStatusCode(404)->setBody($this->render([], 'content/404'));
     }
 }

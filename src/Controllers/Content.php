@@ -51,7 +51,7 @@ class Content extends AvegaCmsFrontendController
         $this->meta = $meta->metaRender();
         $this->breadCrumbs = $meta->breadCrumbs($meta->meta_type, $parentMeta);
 
-        $template = 'template/content/';
+        $template = 'content/';
 
         switch ($meta->meta_type) {
             case MetaDataTypes::Main->value:
@@ -64,6 +64,7 @@ class Content extends AvegaCmsFrontendController
             case MetaDataTypes::Rubric->value:
                 $template .= 'rubric';
                 $filter['rubric'] = $meta->id;
+                $filter['s'] = '-published';
                 $data['posts'] = $this->MDM->getRubricPosts($filter)->paginate($contentSettings['posts']['postsPerPage'] ?? 20);
                 $this->pager = $this->MDM->pager;
                 break;
@@ -75,9 +76,6 @@ class Content extends AvegaCmsFrontendController
         }
 
         $data['content'] = $this->CM->find($meta->id);
-
-        // TODO 1. Добавить публичное имя в users
-        // TODO 3. Сделать 404 страницу
 
         return $this->render($data, $template);
     }

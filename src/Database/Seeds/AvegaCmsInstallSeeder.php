@@ -871,6 +871,18 @@ class AvegaCmsInstallSeeder extends Seeder
                 'label'         => 'Settings.label.env.useFrontend',
                 'context'       => 'Settings.context.env.useFrontend'
             ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'env',
+                'key'           => 'useViewData',
+                'value'         => 1,
+                'default_value' => 1,
+                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'label'         => 'Settings.label.env.useViewData',
+                'context'       => 'Settings.context.env.useViewData'
+            ],
 
             // auth
             [

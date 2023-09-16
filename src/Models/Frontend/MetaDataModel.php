@@ -42,10 +42,31 @@ class MetaDataModel extends AvegaCmsModel
     protected $afterDelete    = [];
 
     // AvegaCms filter settings
-    protected array  $filterFields      = [];
-    protected array  $searchFields      = [];
-    protected array  $sortableFields    = [];
-    protected array  $filterCastsFields = [];
+    protected array  $filterFields      = [
+        'module_id' => 'metadata.module_id',
+        'item_id'   => 'metadata.item_id',
+        'rubric'    => 'metadata.parent',
+        'parent'    => 'metadata.parent',
+        'locale'    => 'metadata.locale_id',
+        'title'     => 'metadata.title',
+        'published' => 'metadata.publish_at'
+    ];
+    protected array  $searchFields      = [
+        'title' => 'metadata.title',
+    ];
+    protected array  $sortableFields    = [
+        'sort'      => 'metadata.sort',
+        'published' => 'metadata.publish_at'
+    ];
+    protected array  $filterCastsFields = [
+        'module_id'  => 'integer',
+        'item_id'    => 'integer',
+        'rubric'     => 'integer',
+        'parent'     => 'integer',
+        'locale'     => 'integer',
+        'title'      => 'string',
+        'publish_at' => 'string'
+    ];
     protected string $searchFieldAlias  = 'q';
     protected string $sortFieldAlias    = 's';
     protected array  $filterEnumValues  = [];
@@ -169,8 +190,8 @@ class MetaDataModel extends AvegaCmsModel
                 'u.login AS author',
                 'metadata.publish_at'
             ]
-        )->join('content AS c', 'c.id = post_rubrics.post_id')
-            ->join('users AS u', 'u.id = p.creator_id', 'left')
+        )->join('content AS c', 'c.id = metadata.id')
+            ->join('users AS u', 'u.id = metadata.creator_id', 'left')
             ->groupStart();
 
         $this->checkStatus();
