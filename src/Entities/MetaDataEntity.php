@@ -1,15 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AvegaCms\Entities;
 
-use CodeIgniter\Entity\Entity;
-use AvegaCms\Entities\Cast\ContentSeoMetaCast;
+use AvegaCms\Models\Admin\MetaDataModel;
+use AvegaCms\Enums\MetaDataTypes;
+use AvegaCms\Utils\SeoUtils;
+use Config\Services;
+use AvegaCms\Entities\Seo\{BreadCrumbsEntity, MetaEntity, OpenGraphEntity};
 
-class MetaDataEntity extends Entity
+
+class MetaDataEntity extends AvegaCmsEntity
 {
     protected $datamap = [];
     protected $dates   = ['created_at', 'updated_at', 'publish_at'];
     protected $casts   = [
+        'id'            => 'integer',
+        'post_id'       => 'integer',
+        'rubric_id'     => 'integer',
         'parent'        => 'integer',
         'locale_id'     => 'integer',
         'module_id'     => 'integer',
@@ -19,19 +28,175 @@ class MetaDataEntity extends Entity
         'title'         => 'string',
         'sort'          => 'integer',
         'url'           => 'string',
-        'meta'          => 'seoMeta',
-        'extra'         => 'json-array',
+        'meta'          => 'json-array',
+        'extra_data'    => 'json-array',
         'status'        => 'string',
         'meta_type'     => 'string',
         'in_sitemap'    => 'integer',
+        'rubrics'       => 'array',
         'created_by_id' => 'integer',
         'updated_by_id' => 'integer',
         'publish_at'    => 'datetime',
         'created_at'    => 'datetime',
-        'updated_at'    => 'datetime'
+        'updated_at'    => 'datetime',
     ];
 
-    protected $castHandlers = [
-        'seoMeta' => ContentSeoMetaCast::class,
-    ];
+    public function __construct(?array $data = null)
+    {
+        parent::__construct($data);
+        helper(['avegacms']);
+    }
+
+    /**
+     * @param  string  $slug
+     * @return $this
+     */
+    public function setSlug(string $slug): MetaDataEntity
+    {
+        if (empty($slug)) {
+            helper(['url']);
+            $slug = mb_url_title(strtolower($this->rawData['title']));
+        }
+
+        $this->attributes['slug'] = mb_substr($slug, 0, 63);
+
+        return $this;
+    }
+
+
+    /**
+     * @param  string  $url
+     * @return $this
+     */
+    public function setUrl(string $url): MetaDataEntity
+    {
+        $url = empty($url) ? mb_url_title(strtolower($this->rawData['title'])) : $url;
+
+        $this->attributes['url'] = match ($this->rawData['meta_type']) {
+            MetaDataTypes::Main->value => settings('core.env.useMultiLocales') ? SeoUtils::Locales($this->rawData['locale_id'])['slug'] : '/',
+            MetaDataTypes::Page->value => model(MetaDataModel::class)->getParentPageUrl($this->rawData['parent']) . $url,
+            default                    => $url
+        };
+
+        return $this;
+    }
+
+    /**
+     * @param  string  $meta
+     * @return $this
+     */
+    public function setMeta(string $meta): MetaDataEntity
+    {
+        $meta = json_decode($meta, true);
+
+        $meta['title'] = empty($meta['title']) ? $this->attributes['title'] : $meta['title'];
+        $meta['keywords'] = ! empty($meta['keywords']) ? $meta['keywords'] : '';
+        $meta['description'] = ! empty($meta['description']) ? $meta['description'] : '';
+
+        $meta['breadcrumb'] = ! empty($meta['breadcrumb']) ? $meta['breadcrumb'] : '';
+
+        $meta['og:title'] = empty($meta['og:title']) ? $this->attributes['title'] : $meta['og:title'];
+        $meta['og:type'] = empty($meta['og:type']) ? 'website' : $meta['og:type'];
+        $meta['og:url'] = empty($meta['og:url']) ? $this->attributes['url'] : $meta['og:url'];
+
+        $meta['og:image'] = ! empty($meta['og:image']) ? $meta['og:image'] : '';
+
+        $this->attributes['meta'] = json_encode($meta);
+
+        return $this;
+    }
+
+    /**
+     * @return MetaEntity
+     */
+    public function metaRender(): MetaEntity
+    {
+        $page = $this->meta;
+
+        unset($page['breadcrumb']);
+
+        $locales = SeoUtils::Locales();
+        $data = SeoUtils::LocaleData($this->locale_id);
+
+        $meta['title'] = esc($page['title']);
+        $meta['keywords'] = esc($page['keywords']);
+        $meta['description'] = esc($page['description']);
+
+        $meta['lang'] = $locales[$this->locale_id]['locale'];
+
+        $meta['openGraph'] = (new OpenGraphEntity(
+            [
+                'locale'   => $meta['lang'],
+                'siteName' => esc($data['app_name']),
+                'title'    => esc($page['og:title']),
+                'type'     => esc($page['og:type']),
+                'url'      => esc($page['og:url']),
+                'image'    => empty($page['og:image']) ? $data['og:image'] : base_url('uploads/content/' . $page['og:image'])
+            ]
+        ));
+
+        if ($meta['useMultiLocales'] = settings('core.env.useMultiLocales')) {
+            foreach ($locales as $locale) {
+                $meta['alternate'][] = [
+                    'hreflang' => ($this->locale_id === $locale['id']) ? 'x-default' : $locale['slug'],
+                    'href'     => base_url($locale['slug']),
+                ];
+            }
+        }
+
+        $meta['canonical'] = base_url(Services::request()->uri->getRoutePath());
+        $meta['robots'] = ($this->in_sitemap === 1) ? 'index, follow' : 'noindex, nofollow';
+
+        return (new MetaEntity($meta));
+    }
+
+    /**
+     * @param  string  $type
+     * @param  array  $parentBreadCrumbs
+     * @return BreadCrumbsEntity[]
+     */
+    public function breadCrumbs(string $type, array $parentBreadCrumbs = []): array
+    {
+        $breadCrumbs = [];
+        
+        if ($type !== MetaDataTypes::Main->value) {
+            $breadCrumbs[] = [
+                'url'    => '',
+                'title'  => esc(! empty($this->meta->breadcrumb) ? $this->meta->breadcrumb : $this->title),
+                'active' => true
+            ];
+        }
+
+        if ( ! empty($parentBreadCrumbs)) {
+            foreach ($parentBreadCrumbs as $crumb) {
+                $breadCrumbs[] = [
+                    'url'    => base_url($crumb->url),
+                    'title'  => esc(! empty($crumb->meta->breadcrumb) ? $crumb->meta->breadcrumb : $crumb->title),
+                    'active' => false
+                ];
+            }
+        }
+
+        if ( ! empty($locale = SeoUtils::Locales($this->locale_id))) {
+            $breadCrumbs[] = [
+                'url'    => base_url(settings('core.env.useMultiLocales') ? $locale['slug'] : ''),
+                'title'  => esc($locale['home']),
+                'active' => false
+            ];
+        }
+
+        return array_map(function ($item) {
+            return (new BreadCrumbsEntity($item));
+        }, array_reverse($breadCrumbs));
+    }
+
+    /**
+     * @return array
+     */
+    public function getRubrics(): array
+    {
+        return array_map(function ($k) {
+            return intval($k);
+        }, unserialize($this->attributes['rubrics']));
+    }
 }

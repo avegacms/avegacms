@@ -120,7 +120,7 @@ class AvegaCmsModel extends Model
      * @param  int|null  $offset
      * @return array
      */
-    public function pagination(int|null $limit = null, int|null $offset = null): array
+    public function apiPagination(int|null $limit = null, int|null $offset = null): array
     {
         if (is_null($limit)) {
             $limit = $this->limit;
@@ -179,7 +179,7 @@ class AvegaCmsModel extends Model
                                 }
 
                                 if ( ! empty($this->sortableFields)) {
-                                    if (in_array($sortField, $this->sortableFields)) {
+                                    if (in_array($sortField, array_keys($this->sortableFields))) {
                                         $this->filterFieldsMap[$type][$sortField] = [
                                             'field' => $this->filterFields[$sortField],
                                             'value' => $sortFlag

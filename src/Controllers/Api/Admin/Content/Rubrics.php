@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace AvegaCms\Controllers\Api\Admin\Content;
 
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
-use AvegaCms\Enums\MetaDataTypes;
 use AvegaCms\Enums\MetaStatuses;
-use AvegaCms\Utils\SeoUtils;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\{ContentModel, MetaDataModel};
 use AvegaCms\Entities\{MetaDataEntity, ContentEntity};
+use AvegaCms\Utils\SeoUtils;
 use ReflectionException;
 
-class Pages extends AvegaCmsAdminAPI
+class Rubrics extends AvegaCmsAdminAPI
 {
     protected ContentModel  $CM;
     protected MetaDataModel $MDM;
@@ -30,7 +29,7 @@ class Pages extends AvegaCmsAdminAPI
      */
     public function index(): ResponseInterface
     {
-        $meta = $this->MDM->selectPages()
+        $meta = $this->MDM->selectRubrics()
             ->filter($this->request->getGet() ?? [])
             ->apiPagination();
 
@@ -61,7 +60,7 @@ class Pages extends AvegaCmsAdminAPI
             return $this->failValidationErrors(lang('Api.errors.noData'));
         }
 
-        $data['module_id'] = $data['item_id'] = 0;
+        $data['parent'] = SeoUtils::mainPages($data['locale_id']);
         $data['creator_id'] = $data['created_by_id'] = $this->userData->userId;
 
         $content = [
@@ -76,7 +75,7 @@ class Pages extends AvegaCmsAdminAPI
             return $this->failValidationErrors($this->MDM->errors());
         }
 
-        $content['meta_id'] = $id;
+        $content['id'] = $id;
 
         if ($this->CM->insert((new ContentEntity($content))) === false) {
             return $this->failValidationErrors($this->CM->errors());
@@ -91,7 +90,7 @@ class Pages extends AvegaCmsAdminAPI
      */
     public function edit($id = null): ResponseInterface
     {
-        if (($data = $this->MDM->pageEdit((int) $id)) === null) {
+        if (($data = $this->MDM->rubricEdit((int) $id)) === null) {
             return $this->failNotFound();
         }
 
@@ -109,18 +108,16 @@ class Pages extends AvegaCmsAdminAPI
             return $this->failValidationErrors(lang('Api.errors.noData'));
         }
 
-        if ($this->MDM->pageEdit((int) $id) === null) {
+        if ($this->MDM->rubricEdit((int) $id) === null) {
             return $this->failNotFound();
         }
 
-        $data['module_id'] = $data['item_id'] = 0;
+        $data['parent'] = SeoUtils::mainPages($data['locale_id']);
         $data['updated_by_id'] = $this->userData->userId;
 
-        $content = [
-            'anons'   => $data['anons'],
-            'content' => $data['content'],
-            'extra'   => $data['extra']
-        ];
+        $content['anons'] = $data['anons'];
+        $content['content'] = $data['content'];
+        $content['extra'] = $data['extra'];
 
         unset($data['creator_id'], $data['anons'], $data['content'], $data['extra']);
 
@@ -128,7 +125,7 @@ class Pages extends AvegaCmsAdminAPI
             return $this->failValidationErrors($this->MDM->errors());
         }
 
-        if ($this->CM->where(['meta_id' => $id])->update(null, (new ContentEntity($content))) === false) {
+        if ($this->CM->where(['id' => $id])->update(null, (new ContentEntity($content))) === false) {
             return $this->failValidationErrors($this->CM->errors());
         }
 
@@ -146,7 +143,7 @@ class Pages extends AvegaCmsAdminAPI
             return $this->failValidationErrors(lang('Api.errors.noData'));
         }
 
-        if ($this->MDM->pageEdit((int) $id) === null) {
+        if ($this->MDM->rubricEdit((int) $id) === null) {
             return $this->failNotFound();
         }
 
@@ -162,29 +159,19 @@ class Pages extends AvegaCmsAdminAPI
     /**
      * @param $id
      * @return ResponseInterface
-     * @throws ReflectionException
      */
     public function delete($id = null): ResponseInterface
     {
-        if (($data = $this->MDM->pageEdit((int) $id)) === null) {
+        if ($this->MDM->rubricEdit((int) $id) === null) {
             return $this->failNotFound();
-        }
-
-        if ($data->meta_type === MetaDataTypes::Main->value) {
-            return $this->failValidationErrors(lang('Content.errors.deleteIsDefault'));
         }
 
         if ($this->MDM->delete($id) === false) {
             return $this->failValidationErrors(lang('Api.errors.delete', ['Metadata']));
         }
 
-        if ($this->CM->where(['meta_id' => $id])->delete() === false) {
+        if ($this->CM->where(['id' => $id])->delete() === false) {
             return $this->failValidationErrors(lang('Api.errors.delete', ['Content']));
-        }
-
-        if ($this->MDM->where(['parent' => $id])->update(null,
-                ['parent' => $data->parent, 'status' => MetaStatuses::Draft->value]) === false) {
-            return $this->failValidationErrors(lang('Api.errors.update', ['Metadata']));
         }
 
         return $this->respondNoContent();

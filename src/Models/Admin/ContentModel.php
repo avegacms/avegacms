@@ -4,36 +4,29 @@ namespace AvegaCms\Models\Admin;
 
 use CodeIgniter\Model;
 use AvegaCms\Entities\ContentEntity;
+use Faker\Generator;
 
 class ContentModel extends Model
 {
-    protected $DBGroup          = 'default';
-    protected $table            = 'content';
-    protected $primaryKey       = 'id';
-    protected $useAutoIncrement = false;
-    protected $returnType       = ContentEntity::class;
-    protected $useSoftDeletes   = false;
-    protected $protectFields    = true;
-    protected $allowedFields    = [
+    protected $DBGroup        = 'default';
+    protected $table          = 'content';
+    protected $returnType     = ContentEntity::class;
+    protected $useSoftDeletes = false;
+    protected $protectFields  = true;
+    protected $allowedFields  = [
         'id',
         'anons',
         'content',
-        'extra',
-        'created_by_id',
-        'updated_by_id',
-        'created_at',
-        'updated_at'
+        'extra'
     ];
 
-    // Dates
-    protected $useTimestamps = true;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
-    protected $deletedField  = 'deleted_at';
-
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'id'      => ['rules' => 'if_exist|required|is_natural_no_zero'],
+        'anons'   => ['rules' => 'if_exist|required|permit_empty|string'],
+        'content' => ['rules' => 'if_exist|permit_empty|string'],
+        'extra'   => ['rules' => 'if_exist|permit_empty|string']
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
@@ -48,4 +41,13 @@ class ContentModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    public function fake(Generator &$faker): array
+    {
+        return [
+            'id'      => 0,
+            'anons'   => $faker->paragraph(1),
+            'content' => $faker->paragraph(rand(6, 36))
+        ];
+    }
 }

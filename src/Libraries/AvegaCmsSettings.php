@@ -10,12 +10,12 @@ use AvegaCms\Enums\SettingsReturnTypes;
 
 class AvegaCmsSettings
 {
-    public object $settings;
-    public string $prefix = 'settings_';
+    public SettingsModel $SM;
+    public string        $prefix = 'settings_';
 
     public function __construct()
     {
-        $this->settings = model(SettingsModel::class);
+        $this->SM = model(SettingsModel::class);
     }
 
     /**
@@ -27,8 +27,8 @@ class AvegaCmsSettings
     {
         [$entity, $slug, $property] = $this->_parseKey($key);
 
-        if (is_null($settings = cache($fileCacheName = $this->prefix . $entity))) {
-            if (empty($settings = $this->settings->getSettings($entity))) {
+        $settings = cache()->remember($this->prefix . $entity, DAY * 30, function () use ($entity) {
+            if (empty($settings = $this->SM->getSettings($entity))) {
                 throw new Exception('Unable to find a Settings array in DB.');
             }
 
@@ -48,9 +48,9 @@ class AvegaCmsSettings
 
             $processArray($settings);
 
-            cache()->save($fileCacheName, $settings, DAY * 30);
-        }
-        
+            return $settings;
+        });
+
         if ( ! is_null($slug) && ! is_null($property)) {
             if ( ! isset($settings[$slug][$property])) {
                 throw new Exception('Unable to find in Settings array slug/key.');
@@ -77,10 +77,16 @@ class AvegaCmsSettings
     {
         [$entity, $slug, $property] = $this->_parseKey($key);
 
-        return $this->settings->save(
+        $id = $this->SM->getId($entity, $slug, $property);
+
+        if ($id > 0) {
+            return $this->SM->update($id, ['value' => $value]);
+        }
+
+        return $this->SM->insert(
             (new SettingsEntity(
                 [
-                    'id'            => $this->settings->getId($entity, $slug, $property),
+                    'id'            => $id,
                     'entity'        => $entity,
                     'slug'          => $slug ?? '',
                     'key'           => $property ?? '',

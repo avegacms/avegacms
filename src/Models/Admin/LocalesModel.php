@@ -15,6 +15,7 @@ class LocalesModel extends AvegaCmsModel
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
+        'parent',
         'slug',
         'locale',
         'locale_name',
@@ -38,6 +39,7 @@ class LocalesModel extends AvegaCmsModel
     // Validation
     protected $validationRules      = [
         'id'            => ['rules' => 'if_exist|is_natural_no_zero'],
+        'parent'        => ['rules' => 'if_exist|is_natural'],
         'slug'          => ['rules' => 'if_exist|required|alpha_dash|max_length[20]|is_unique[locales.slug,id,{id}]'],
         'locale'        => ['rules' => 'if_exist|required|max_length[32]'],
         'locale_name'   => ['rules' => 'if_exist|required|max_length[100]'],
@@ -55,13 +57,13 @@ class LocalesModel extends AvegaCmsModel
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
-    protected $afterInsert    = [];
+    protected $afterInsert    = ['clearCacheLocales'];
     protected $beforeUpdate   = [];
-    protected $afterUpdate    = [];
+    protected $afterUpdate    = ['clearCacheLocales'];
     protected $beforeFind     = [];
     protected $afterFind      = [];
     protected $beforeDelete   = [];
-    protected $afterDelete    = [];
+    protected $afterDelete    = ['clearCacheLocales'];
 
     /**
      * @param  int  $id
@@ -71,6 +73,7 @@ class LocalesModel extends AvegaCmsModel
     {
         $this->builder()->select([
             'id',
+            'parent',
             'slug',
             'locale',
             'locale_name',
@@ -83,10 +86,35 @@ class LocalesModel extends AvegaCmsModel
         return $this->find($id);
     }
 
-    public function getLocalesList(): array
+    /**
+     * @param  bool  $active
+     * @return array
+     */
+    public function getLocalesList(bool $active = true): array
     {
-        $this->builder()->select(['id', 'locale_name'])->where(['active' => 1]);
-
-        return array_column($this->findAll(), 'locale_name', 'id');
+        return cache()->remember('Locales' . ($active ? 'Active' : 'All'), DAY * 30, function () use ($active) {
+            $this->builder()->select(['id', 'slug', 'locale', 'home', 'locale_name', 'is_default', 'extra']);
+            if ($active) {
+                $this->builder()->where(['active' => 1]);
+            }
+            $locales = [];
+            foreach ($this->findAll() as $locale) {
+                $locales[] = $locale->toArray();
+            }
+            return $locales;
+        });
     }
+
+    /**
+     * @return void
+     */
+    protected function clearCacheLocales(): void
+    {
+        cache()->delete('LocalesActive');
+        cache()->delete('LocalesAll');
+        cache()->delete('settings_core');
+        $this->getLocalesList();
+        $this->getLocalesList(false);
+    }
+
 }

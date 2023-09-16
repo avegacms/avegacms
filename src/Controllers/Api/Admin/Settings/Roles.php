@@ -29,7 +29,7 @@ class Roles extends AvegaCmsAdminAPI
      */
     public function index(): ResponseInterface
     {
-        $locales = $this->RM->filter($this->request->getGet() ?? [])->pagination();
+        $locales = $this->RM->filter($this->request->getGet() ?? [])->apiPagination();
 
         return $this->cmsRespond($locales['list'], $locales['pagination']);
     }

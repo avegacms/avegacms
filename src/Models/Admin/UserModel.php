@@ -165,7 +165,7 @@ class UserModel extends AvegaCmsModel
 
         return [
             'login'         => $faker->word() . '_' . $faker->word(),
-            'email'         => $faker->email,
+            'email'         => $faker->email(),
             'phone'         => '79' . rand(100000000, 999999999),
             'status'        => $statuses[array_rand($statuses)],
             'password'      => $faker->password(),

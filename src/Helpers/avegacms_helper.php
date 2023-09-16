@@ -1,7 +1,11 @@
 <?php
 
 if ( ! function_exists('initClientSession')) {
-    function initClientSession(): void
+    /**
+     * @param  array  $data
+     * @return void
+     */
+    function initClientSession(array $data = []): void
     {
         $session = session();
 
@@ -10,13 +14,9 @@ if ( ! function_exists('initClientSession')) {
                 [
                     'client'  => [
 
-                        'lang'        => [],
-                        'user'        => [],
-                        'geolocation' => [
-
-                            'city' => ''
-                        ],
-                        'confirm'     => [
+                        'locale'  => $data['client']['locale'] ?? [],
+                        'user'    => $data['client']['user'] ?? [],
+                        'confirm' => [
 
                             'use_cookie' => false,
                             'gdpr'       => false
@@ -44,26 +44,27 @@ if ( ! function_exists('arrayToObject')) {
 
 if ( ! function_exists('getTree')) {
     /**
-     * @param  array  $data
+     * @param  array  $input
+     * @param  int  $parentId
      * @return array
      */
-    function getTree(array $data = []): array
+    function getTree(array $input, int $parentId = 0): array
     {
-        $tree = [];
+        $outputArray = [];
 
-        if ( ! empty($data)) {
-            foreach ($data as $id => &$node) {
-                if (isset($node['parent'])) {
-                    if ( ! $node['parent']) {
-                        $tree[$id] = &$node;
-                    } else {
-                        $data[$node['parent']]['list'][$id] = &$node;
-                    }
+        foreach ($input as $item) {
+            if ($item['parent'] == $parentId) {
+                $children = getTree($input, $item['id']);
+
+                if ( ! empty($children)) {
+                    $item['list'] = $children;
                 }
+
+                $outputArray[] = $item;
             }
         }
 
-        return $tree;
+        return $outputArray;
     }
 }
 

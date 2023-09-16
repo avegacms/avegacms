@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace AvegaCms\Controllers\Api\Admin\Settings;
 
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
+use AvegaCms\Utils\SeoUtils;
 use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Models\Admin\{NavigationsModel, LocalesModel};
+use AvegaCms\Models\Admin\NavigationsModel;
 use AvegaCms\Entities\NavigationsEntity;
 use AvegaCms\Enums\NavigationTypes;
 use ReflectionException;
@@ -14,13 +15,11 @@ use ReflectionException;
 class Navigations extends AvegaCmsAdminAPI
 {
     protected NavigationsModel $NM;
-    protected LocalesModel     $LM;
 
     public function __construct()
     {
         parent::__construct();
         $this->NM = model(NavigationsModel::class);
-        $this->LM = model(LocalesModel::class);
     }
 
     /**
@@ -32,7 +31,7 @@ class Navigations extends AvegaCmsAdminAPI
     {
         return $this->cmsRespond(
             [
-                'locales'  => $this->LM->getLocalesList(),
+                'locales'  => array_column(SeoUtils::Locales(), 'locale_name', 'id'),
                 'navTypes' => NavigationTypes::getValues()
             ]
         );

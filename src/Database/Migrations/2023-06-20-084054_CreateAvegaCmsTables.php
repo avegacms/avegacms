@@ -183,8 +183,6 @@ class CreateAvegaCmsTables extends Migration
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addUniqueKey(['module_id', 'entity', 'slug', 'key']);
-        $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
-        $this->forge->addForeignKey('updated_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
         $this->createTable($this->tables['settings']);
 
         /**
@@ -192,6 +190,7 @@ class CreateAvegaCmsTables extends Migration
          */
         $this->forge->addField([
             'id'          => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'parent'      => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
             'slug'        => ['type' => 'varchar', 'constraint' => 20, 'unique' => true, 'null' => true],
             // Значение, которое будет отображаться в ULR (пример: ru / omsk)
             'locale'      => ['type' => 'varchar', 'constraint' => 32, 'null' => true],
@@ -304,7 +303,7 @@ class CreateAvegaCmsTables extends Migration
             // URL-адрес без указания base_url
             'meta'       => ['type' => 'text', 'null' => true],
             // объект, содержащий информацию о метаданных
-            'extra'      => ['type' => 'text', 'null' => true],
+            'extra_data' => ['type' => 'text', 'null' => true],
             // объект, содержащий информацию о доп. данных
             'status'     => [
                 'type'       => 'enum',
@@ -324,28 +323,19 @@ class CreateAvegaCmsTables extends Migration
             ...$this->dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
-        $this->forge->addForeignKey('locale_id', $this->tables['locales'], 'id', '', 'CASCADE');
-        $this->forge->addForeignKey('module_id', $this->tables['modules'], 'id', '', 'CASCADE');
-        $this->forge->addForeignKey('creator_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
-        $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
-        $this->forge->addForeignKey('updated_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
+        $this->forge->addUniqueKey(['locale_id', 'module_id', 'item_id', 'slug']);
         $this->createTable($this->tables['metadata']);
 
         /**
          * Таблица для хранения страниц
          */
         $this->forge->addField([
-            'meta_id' => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
+            'id'      => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
             'anons'   => ['type' => 'text', 'null' => true], // краткая информация
             'content' => ['type' => 'longtext', 'null' => true], // остальная информация
-            'extra'   => ['type' => 'longtext', 'null' => true], // объект, содержащий информацию о доп. данных
-            ...$this->byId(),
-            ...$this->dateFields(['deleted_at'])
+            'extra'   => ['type' => 'longtext', 'null' => true] // объект, содержащий информацию о доп. данных
         ]);
-        $this->forge->addUniqueKey(['meta_id']);
-        $this->forge->addForeignKey('meta_id', $this->tables['metadata'], 'id', '', 'CASCADE');
-        $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
-        $this->forge->addForeignKey('updated_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
+        $this->forge->addUniqueKey(['id']);
         $this->createTable($this->tables['content']);
 
         /**

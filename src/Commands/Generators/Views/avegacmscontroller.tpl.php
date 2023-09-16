@@ -17,13 +17,12 @@ endif; ?>
 
 class {class} extends {extends}
 {
-<?php
-if ($type === 'api'): ?>
     public function __construct()
     {
         parent::__construct();
     }
-
+<?php
+if ($type === 'api'): ?>
     /**
     * Return an array of resource objects, themselves in array format
     *

@@ -6,23 +6,11 @@ use CodeIgniter\Entity\Entity;
 
 class LocalesEntity extends Entity
 {
-    protected $datamap = [
-        'id'            => null,
-        'slug'          => null,
-        'locale'        => null,
-        'locale_name'   => null,
-        'home'          => null,
-        'extra'         => null,
-        'is_default'    => null,
-        'active'        => null,
-        'created_by_id' => null,
-        'updated_by_id' => null,
-        'created_at'    => null,
-        'updated_at'    => null,
-    ];
+    protected $datamap = [];
     protected $dates   = ['created_at', 'updated_at'];
     protected $casts   = [
         'id'            => 'integer',
+        'parent'        => 'integer',
         'slug'          => 'string',
         'locale'        => 'string',
         'locale_name'   => 'string',
@@ -35,4 +23,16 @@ class LocalesEntity extends Entity
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime'
     ];
+
+    /**
+     * @return string
+     */
+    public function getExtra(): string
+    {
+        $extra = json_decode($this->attributes['extra'], true);
+
+        $extra['og:image'] = base_url('uploads/locales/' . $extra['og:image']);
+
+        return json_encode($extra);
+    }
 }

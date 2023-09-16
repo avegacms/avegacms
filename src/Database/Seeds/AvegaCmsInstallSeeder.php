@@ -760,6 +760,10 @@ class AvegaCmsInstallSeeder extends Seeder
                 'locale'        => 'ru_RU',
                 'locale_name'   => 'Русская версия',
                 'home'          => 'Главная',
+                'extra'         => [
+                    'app_name' => 'Мой новый проект',
+                    'og:image' => 'ogDefaultRu.jpg'
+                ],
                 'is_default'    => 1,
                 'active'        => 1,
                 'created_by_id' => $userId
@@ -769,8 +773,12 @@ class AvegaCmsInstallSeeder extends Seeder
                 'locale'        => 'en_EN',
                 'locale_name'   => 'English version',
                 'home'          => 'Home',
+                'extra'         => [
+                    'app_name' => 'My new project',
+                    'og:image' => 'ogDefaultEn.jpg'
+                ],
                 'is_default'    => 0,
-                'active'        => 0,
+                'active'        => 1,
                 'created_by_id' => $userId
             ],
             [
@@ -778,8 +786,12 @@ class AvegaCmsInstallSeeder extends Seeder
                 'locale'        => 'de_DE',
                 'locale_name'   => 'Deutsche version',
                 'home'          => 'Startseite',
+                'extra'         => [
+                    'app_name' => 'Mein neues Projekt',
+                    'og:image' => 'ogDefaultDe.jpg'
+                ],
                 'is_default'    => 0,
-                'active'        => 0,
+                'active'        => 1,
                 'created_by_id' => $userId
             ]
         ];
@@ -828,24 +840,48 @@ class AvegaCmsInstallSeeder extends Seeder
                 'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'env',
-                'key'           => 'defLanguage',
+                'key'           => 'defLocale',
                 'value'         => 'ru',
                 'default_value' => 'ru',
                 'return_type'   => SettingsReturnTypes::String->value,
-                'label'         => 'Settings.label.env.defLanguage',
-                'context'       => 'Settings.context.env.defLanguage'
+                'label'         => 'Settings.label.env.defLocale',
+                'context'       => 'Settings.context.env.defLocale'
             ],
             [
                 'module_id'     => 0,
                 'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'env',
-                'key'           => 'useMultiLanguages',
+                'key'           => 'useMultiLocales',
                 'value'         => 0,
                 'default_value' => 0,
                 'return_type'   => SettingsReturnTypes::Boolean->value,
-                'label'         => 'Settings.label.env.useMultiLanguages',
-                'context'       => 'Settings.context.env.useMultiLanguages'
+                'label'         => 'Settings.label.env.useMultiLocales',
+                'context'       => 'Settings.context.env.useMultiLocales'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'env',
+                'key'           => 'useFrontend',
+                'value'         => 1,
+                'default_value' => 1,
+                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'label'         => 'Settings.label.env.useFrontend',
+                'context'       => 'Settings.context.env.useFrontend'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'env',
+                'key'           => 'useViewData',
+                'value'         => 1,
+                'default_value' => 1,
+                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'label'         => 'Settings.label.env.useViewData',
+                'context'       => 'Settings.context.env.useViewData'
             ],
 
             // auth
@@ -1118,7 +1154,33 @@ class AvegaCmsInstallSeeder extends Seeder
                 'return_type'   => SettingsReturnTypes::String->value,
                 'label'         => 'Settings.label.auth.authSmsMessage',
                 'context'       => 'Settings.context.auth.authSmsMessage'
-            ]
+            ],
+
+            // Content
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'content',
+                'slug'          => 'posts',
+                'key'           => 'postsPerPage',
+                'value'         => 20,
+                'default_value' => 20,
+                'return_type'   => SettingsReturnTypes::Integer->value,
+                'label'         => 'Settings.label.posts.postsPerPage',
+                'context'       => 'Settings.context.posts.postsPerPage'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'content',
+                'slug'          => 'posts',
+                'key'           => 'showAuthorPost',
+                'value'         => 1,
+                'default_value' => 1,
+                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'label'         => 'Settings.label.posts.showAuthorPost',
+                'context'       => 'Settings.context.posts.showAuthorPost'
+            ],
         ];
 
         $settingEntity = new SettingsEntity();
@@ -1136,6 +1198,7 @@ class AvegaCmsInstallSeeder extends Seeder
         $directories = [
             'uploads',
             'uploads/users',
+            'uploads/locales',
             'uploads/content',
             'uploads/content/thumbs'
         ];

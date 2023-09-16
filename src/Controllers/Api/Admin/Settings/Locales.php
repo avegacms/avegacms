@@ -25,7 +25,7 @@ class Locales extends AvegaCmsAdminAPI
      */
     public function index(): ResponseInterface
     {
-        $locales = $this->LM->filter($this->request->getGet() ?? [])->pagination();
+        $locales = $this->LM->filter($this->request->getGet() ?? [])->apiPagination();
 
         return $this->cmsRespond($locales['list'], $locales['pagination']);
     }
