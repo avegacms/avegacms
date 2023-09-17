@@ -159,10 +159,9 @@ class MetaDataModel extends AvegaCmsModel
             [
                 'metadata.id',
                 'metadata.title',
-                'metadata.url',
-                'c.anons',
+                'metadata.url'
             ]
-        )->join('content AS c', 'c.id = metadata.id')->where(
+        )->where(
             [
                 'metadata.parent'    => $id,
                 'metadata.meta_type' => MetaDataTypes::Page->value,
