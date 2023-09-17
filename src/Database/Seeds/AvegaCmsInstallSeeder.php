@@ -1267,6 +1267,18 @@ class AvegaCmsInstallSeeder extends Seeder
                 'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'email',
+                'key'           => 'priority',
+                'value'         => 1,
+                'default_value' => 3,
+                'return_type'   => SettingsReturnTypes::Integer->value,
+                'label'         => 'Settings.label.email.priority',
+                'context'       => 'Settings.context.email.priority'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'email',
                 'key'           => 'mailType',
                 'value'         => 'html',
                 'default_value' => 'html',

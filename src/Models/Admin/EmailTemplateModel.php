@@ -129,6 +129,33 @@ class EmailTemplateModel extends AvegaCmsModel
         return $this->find($id);
     }
 
+
+    /**
+     * @param  string  $slug
+     * @param  int  $locale
+     * @return array|object|null
+     */
+    public function getEmailTemplate(string $slug, int $locale): array|object|null
+    {
+        return cache()->remember("emailTemplate_{$slug}_{$locale}", 30 * DAY, function () use ($slug, $locale) {
+            $this->builder()->select(
+                [
+                    'subject',
+                    'content',
+                    'template',
+                ]
+            )->where(
+                [
+                    'slug'      => $slug,
+                    'locale_id' => $locale,
+                    'active'    => 1
+                ]
+            );
+
+            return $this->first();
+        });
+    }
+
     /**
      * @param  array  $data
      * @return void
@@ -136,7 +163,7 @@ class EmailTemplateModel extends AvegaCmsModel
     public function clearEmailTemplateCache(array $data): void
     {
         if (isset($data['slug']) && isset($data['locale_id'])) {
-            cache()->delete('emailTemplate_' . $data['slug'] . '_' . $data['locale_id']);
+            cache()->delete("emailTemplate_{$data['slug']}_{$data['locale_id']}");
         }
     }
 }
