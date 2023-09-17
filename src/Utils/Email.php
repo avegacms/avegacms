@@ -15,6 +15,7 @@ class Email
     public static function send(
         string $template,
         array $to,
+        int $locale = 0,
         array $data = [],
         array $attach = [],
         array $config = []

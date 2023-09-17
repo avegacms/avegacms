@@ -19,21 +19,22 @@ class CreateAvegaCmsTables extends Migration
     private array $attributes;
 
     private array $tables = [
-        'users'       => 'users',
-        'roles'       => 'roles',
-        'user_roles'  => 'user_roles',
-        'user_tokens' => 'user_tokens',
-        'locales'     => 'locales',
-        'modules'     => 'modules',
-        'settings'    => 'settings',
-        'metadata'    => 'metadata',
-        'content'     => 'content',
-        'tags'        => 'tags',
-        'tags_links'  => 'tags_links',
-        'files'       => 'files',
-        'sessions'    => 'sessions',
-        'permissions' => 'permissions',
-        'navigations' => 'navigations',
+        'users'           => 'users',
+        'roles'           => 'roles',
+        'user_roles'      => 'user_roles',
+        'user_tokens'     => 'user_tokens',
+        'locales'         => 'locales',
+        'modules'         => 'modules',
+        'settings'        => 'settings',
+        'metadata'        => 'metadata',
+        'content'         => 'content',
+        'tags'            => 'tags',
+        'tags_links'      => 'tags_links',
+        'files'           => 'files',
+        'sessions'        => 'sessions',
+        'permissions'     => 'permissions',
+        'navigations'     => 'navigations',
+        'email_templates' => 'email_templates',
     ];
 
     public function __construct(?Forge $forge = null)
@@ -430,6 +431,24 @@ class CreateAvegaCmsTables extends Migration
         $this->forge->addPrimaryKey('id');
         $this->forge->addUniqueKey(['parent', 'is_admin', 'locale_id', 'nav_type', 'slug']);
         $this->createTable($this->tables['navigations']);
+
+        $this->forge->addField([
+            'id'        => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'label'     => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
+            'slug'      => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
+            'locale_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => 0],
+            'is_system' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'subject'   => ['type' => 'text', 'null' => true],
+            'content'   => ['type' => 'text', 'null' => true],
+            'template'  => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
+            'active'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 1],
+            ...$this->byId(),
+            ...$this->dateFields(['deleted_at'])
+        ]);
+        $this->forge->addPrimaryKey('id');
+        $this->forge->addUniqueKey(['locale_id', 'is_system', 'slug']);
+        $this->forge->addForeignKey('locale_id', $this->tables['locales'], 'id', '', 'CASCADE');
+        $this->createTable($this->tables['email_templates']);
     }
 
     public function down()

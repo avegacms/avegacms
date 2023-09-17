@@ -15,7 +15,8 @@ use AvegaCms\Models\Admin\{ModulesModel,
     RolesModel,
     UserRolesModel,
     PermissionsModel,
-    LocalesModel
+    LocalesModel,
+    EmailTemplateModel
 };
 use AvegaCms\Entities\{ModulesEntity,
     LoginEntity,
@@ -23,7 +24,8 @@ use AvegaCms\Entities\{ModulesEntity,
     SettingsEntity,
     UserRolesEntity,
     PermissionsEntity,
-    LocalesEntity
+    LocalesEntity,
+    EmailTemplateEntity
 };
 use ReflectionException;
 use Exception;
@@ -41,6 +43,8 @@ class AvegaCmsInstallSeeder extends Seeder
 
     protected LocalesModel $LLM;
 
+    protected EmailTemplateModel $ETM;
+
     public function __construct(Database $config, ?BaseConnection $db = null)
     {
         parent::__construct($config, $db);
@@ -52,6 +56,7 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->PM = model(PermissionsModel::class);
         $this->URM = model(UserRolesModel::class);
         $this->LLM = model(LocalesModel::class);
+        $this->ETM = model(EmailTemplateModel::class);
     }
 
     /**
@@ -67,6 +72,7 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->_createPermissions($userId);
         $this->_createLocales($userId);
         $this->_createSettings();
+        $this->_createEmailSystemTemplate($userId);
         $this->_createPublicFolders();
 
         cache()->clean();
@@ -372,7 +378,22 @@ class AvegaCmsInstallSeeder extends Seeder
                     'active'        => 1,
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
-                ]
+                ],
+                [
+                    'parent'        => $list['settings'],
+                    'is_core'       => 1,
+                    'is_plugin'     => 0,
+                    'is_system'     => 0,
+                    'slug'          => 'email_template',
+                    'name'          => 'Cms.modules.name.email_template',
+                    'version'       => $this->version,
+                    'description'   => 'Cms.modules.description.email_template',
+                    'extra'         => '',
+                    'in_sitemap'    => 0,
+                    'active'        => 1,
+                    'created_by_id' => $userId,
+                    'updated_by_id' => 0
+                ],
             ],
             'content'  => [
                 [
@@ -1370,6 +1391,103 @@ class AvegaCmsInstallSeeder extends Seeder
         foreach ($settingsList as $item) {
             $this->SM->insert($settingEntity->fill($item));
         }
+    }
+
+    /**
+     * @param  int  $userId
+     * @return void
+     * @throws ReflectionException
+     */
+    private function _createEmailSystemTemplate(int $userId): void
+    {
+        $templates = [
+            'ru' => [
+                [
+                    'label'    => 'Подтверждение email',
+                    'slug'     => 'confirm',
+                    'subject'  => '{siteName} подтверждение email',
+                    'content'  => 'Ваш код подтверждения email {code}',
+                    'template' => 'auth'
+                ],
+                [
+                    'label'    => 'Подтверждение кода авторизации',
+                    'slug'     => 'auth',
+                    'subject'  => 'Код авторизации',
+                    'content'  => 'Ваш код авторизации {code}',
+                    'template' => 'auth'
+                ],
+                [
+                    'label'    => 'Подтверждение кода восстановления доступов',
+                    'slug'     => 'recovery',
+                    'subject'  => 'Восстановление доступов',
+                    'content'  => 'Ваш код подтверждения восстановления доступов {code}',
+                    'template' => 'auth'
+                ]
+            ],
+            'en' => [
+                [
+                    'label'    => 'Email confirmation',
+                    'slug'     => 'confirm',
+                    'subject'  => '{siteName} confirmation of email',
+                    'content'  => 'Your confirmation email code {code}',
+                    'template' => 'auth'
+                ],
+                [
+                    'label'    => 'Authorization code confirmation',
+                    'slug'     => 'auth',
+                    'subject'  => 'Authorization code',
+                    'content'  => 'Your authorization code {code}',
+                    'template' => 'auth'
+                ],
+                [
+                    'label'    => 'Restoring access',
+                    'slug'     => 'recovery',
+                    'subject'  => 'Restoring access',
+                    'content'  => 'Your access recovery confirmation code {code}',
+                    'template' => 'auth'
+                ]
+            ],
+            'de' => [
+                [
+                    'label'    => 'E-Mail-Bestätigung',
+                    'slug'     => 'confirm',
+                    'subject'  => '{siteName} E-Mail-Bestätigung',
+                    'content'  => 'Ihr Bestätigungscode email {code}',
+                    'template' => 'auth'
+                ],
+                [
+                    'label'    => 'Bestätigung des Autorisierungscodes',
+                    'slug'     => 'auth',
+                    'subject'  => 'Autorisierungscode',
+                    'content'  => 'Ihr Autorisierungscode ist {code}',
+                    'template' => 'auth'
+                ],
+                [
+                    'label'    => 'Bestätigung des Zugriffs-Wiederherstellungscodes',
+                    'slug'     => 'recovery',
+                    'subject'  => 'Zugriff wiederherstellen',
+                    'content'  => 'Ihr Zugangswiederherstellungsbestätigungscode ist {code}',
+                    'template' => 'auth'
+                ]
+            ]
+        ];
+
+        $locales = $this->LLM->select(['id', 'slug'])
+            ->orderBy('id', 'ASC')
+            ->findAll();
+
+        $emailTemplate = [];
+
+        foreach ($locales as $locale) {
+            foreach ($templates[$locale->slug] as $template) {
+                $template['locale_id'] = $locale->id;
+                $template['is_system'] = 1;
+                $template['created_by_id'] = $userId;
+                $emailTemplate[] = (new EmailTemplateEntity($template));
+            }
+        }
+
+        $this->ETM->insertBatch($emailTemplate);
     }
 
     /**

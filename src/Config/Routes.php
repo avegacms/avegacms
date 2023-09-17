@@ -4,7 +4,15 @@ use CodeIgniter\Router\RouteCollection;
 
 use AvegaCms\Controllers\Api\Public\Login;
 use AvegaCms\Controllers\Api\Admin\Content\{Pages, Rubrics, Posts};
-use AvegaCms\Controllers\Api\Admin\Settings\{Locales, Modules, Navigations, Permissions, Roles, Settings, Users};
+use AvegaCms\Controllers\Api\Admin\Settings\{Locales,
+    Modules,
+    Navigations,
+    Permissions,
+    Roles,
+    Settings,
+    Users,
+    EmailTemplate
+};
 
 /**
  * @var RouteCollection $routes
@@ -106,6 +114,14 @@ $routes->group('api', function (RouteCollection $routes) {
                     $routes->put('(:num)', [[Settings::class, 'update'], '$1']);
                     $routes->patch('(:num)', [[Settings::class, 'update'], '$1']);
                     $routes->delete('(:num)', [[Settings::class, 'delete'], '$1']);
+                });
+                $routes->group('email_template', function (RouteCollection $routes) {
+                    $routes->get('/', [EmailTemplate::class, 'index']);
+                    $routes->get('(:num)/edit', [[EmailTemplate::class, 'edit'], '$1']);
+                    $routes->post('/', [EmailTemplate::class, 'create']);
+                    $routes->put('(:num)', [[EmailTemplate::class, 'update'], '$1']);
+                    $routes->patch('(:num)', [[EmailTemplate::class, 'update'], '$1']);
+                    $routes->delete('(:num)', [[EmailTemplate::class, 'delete'], '$1']);
                 });
             });
         });
