@@ -54,6 +54,7 @@ src/Config/Autoload.php
 src/Config/Filters.php
 src/Config/Paths.php
 src/Config/Routing.php
+src/Config/Validation.php
 src/Views/template
 src/Views/template/*
 #-------------------------
