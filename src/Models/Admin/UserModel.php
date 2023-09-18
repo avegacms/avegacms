@@ -148,7 +148,7 @@ class UserModel extends AvegaCmsModel
         $this->validationRules['status'] = 'if_exist|in_list[' . implode(',', UserStatuses::getValues()) . ']';
 
         $settings = Cms::settings('core.auth.loginType');
-
+        
         $loginType = explode(':', $settings);
 
         foreach ($loginType as $type) {

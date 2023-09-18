@@ -54,7 +54,7 @@ class Cms
         $SM = model(SettingsModel::class);
 
         if (empty($value)) {
-            return cache()->remember($prefix . $entity, DAY * 30, function () use ($entity, $SM) {
+            $settings = cache()->remember($prefix . $entity, DAY * 30, function () use ($entity, $SM) {
                 if (empty($settings = $SM->getSettings($entity))) {
                     throw new RuntimeException('Unable to find a Settings array in DB.');
                 }
@@ -77,6 +77,20 @@ class Cms
 
                 return $settings;
             });
+
+            if ( ! is_null($slug) && ! is_null($property)) {
+                if ( ! isset($settings[$slug][$property])) {
+                    throw new RuntimeException('Unable to find in Settings array slug/key.');
+                }
+                $settings = $settings[$slug][$property];
+            } elseif ( ! is_null($slug)) {
+                if ( ! isset($settings[$slug])) {
+                    throw new RuntimeException('Unable to find in Settings array slug/key');
+                }
+                $settings = $settings[$slug];
+            }
+
+            return $settings;
         } else {
             $id = $SM->getId($entity, $slug, $property);
 
