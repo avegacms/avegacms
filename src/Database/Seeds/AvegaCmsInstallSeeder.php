@@ -1231,6 +1231,18 @@ class AvegaCmsInstallSeeder extends Seeder
                 'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'email',
+                'key'           => 'returnEmail',
+                'value'         => '',
+                'default_value' => '',
+                'return_type'   => SettingsReturnTypes::String->value,
+                'label'         => 'Settings.label.email.returnEmail',
+                'context'       => 'Settings.context.email.returnEmail'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'email',
                 'key'           => 'userAgent',
                 'value'         => '*',
                 'default_value' => '*',
@@ -1415,71 +1427,80 @@ class AvegaCmsInstallSeeder extends Seeder
         $templates = [
             'ru' => [
                 [
-                    'label'    => 'Подтверждение email',
-                    'slug'     => 'confirm',
-                    'subject'  => '{siteName} подтверждение email',
-                    'content'  => 'Ваш код подтверждения email {code}',
-                    'template' => 'auth'
+                    'label'     => 'Подтверждение email',
+                    'slug'      => 'confirm',
+                    'subject'   => '{siteName} подтверждение email',
+                    'content'   => 'Ваш код подтверждения email {code}',
+                    'variables' => '',
+                    'template'  => 'auth'
                 ],
                 [
-                    'label'    => 'Подтверждение кода авторизации',
-                    'slug'     => 'auth',
-                    'subject'  => 'Код авторизации',
-                    'content'  => 'Ваш код авторизации {code}',
-                    'template' => 'auth'
+                    'label'     => 'Подтверждение кода авторизации',
+                    'slug'      => 'auth',
+                    'subject'   => 'Код авторизации',
+                    'content'   => 'Ваш код авторизации {code}',
+                    'variables' => '',
+                    'template'  => 'auth'
                 ],
                 [
-                    'label'    => 'Подтверждение кода восстановления доступов',
-                    'slug'     => 'recovery',
-                    'subject'  => 'Восстановление доступов',
-                    'content'  => 'Ваш код подтверждения восстановления доступов {code}',
-                    'template' => 'auth'
+                    'label'     => 'Подтверждение кода восстановления доступов',
+                    'slug'      => 'recovery',
+                    'subject'   => 'Восстановление доступов',
+                    'content'   => 'Ваш код подтверждения восстановления доступов {code}',
+                    'variables' => '',
+                    'template'  => 'auth'
                 ]
             ],
             'en' => [
                 [
-                    'label'    => 'Email confirmation',
-                    'slug'     => 'confirm',
-                    'subject'  => '{siteName} confirmation of email',
-                    'content'  => 'Your confirmation email code {code}',
-                    'template' => 'auth'
+                    'label'     => 'Email confirmation',
+                    'slug'      => 'confirm',
+                    'subject'   => '{siteName} confirmation of email',
+                    'content'   => 'Your confirmation email code {code}',
+                    'variables' => '',
+                    'template'  => 'auth'
                 ],
                 [
-                    'label'    => 'Authorization code confirmation',
-                    'slug'     => 'auth',
-                    'subject'  => 'Authorization code',
-                    'content'  => 'Your authorization code {code}',
-                    'template' => 'auth'
+                    'label'     => 'Authorization code confirmation',
+                    'slug'      => 'auth',
+                    'subject'   => 'Authorization code',
+                    'content'   => 'Your authorization code {code}',
+                    'variables' => '',
+                    'template'  => 'auth'
                 ],
                 [
-                    'label'    => 'Restoring access',
-                    'slug'     => 'recovery',
-                    'subject'  => 'Restoring access',
-                    'content'  => 'Your access recovery confirmation code {code}',
-                    'template' => 'auth'
+                    'label'     => 'Restoring access',
+                    'slug'      => 'recovery',
+                    'subject'   => 'Restoring access',
+                    'content'   => 'Your access recovery confirmation code {code}',
+                    'variables' => '',
+                    'template'  => 'auth'
                 ]
             ],
             'de' => [
                 [
-                    'label'    => 'E-Mail-Bestätigung',
-                    'slug'     => 'confirm',
-                    'subject'  => '{siteName} E-Mail-Bestätigung',
-                    'content'  => 'Ihr Bestätigungscode email {code}',
-                    'template' => 'auth'
+                    'label'     => 'E-Mail-Bestätigung',
+                    'slug'      => 'confirm',
+                    'subject'   => '{siteName} E-Mail-Bestätigung',
+                    'content'   => 'Ihr Bestätigungscode email {code}',
+                    'variables' => '',
+                    'template'  => 'auth'
                 ],
                 [
-                    'label'    => 'Bestätigung des Autorisierungscodes',
-                    'slug'     => 'auth',
-                    'subject'  => 'Autorisierungscode',
-                    'content'  => 'Ihr Autorisierungscode ist {code}',
-                    'template' => 'auth'
+                    'label'     => 'Bestätigung des Autorisierungscodes',
+                    'slug'      => 'auth',
+                    'subject'   => 'Autorisierungscode',
+                    'content'   => 'Ihr Autorisierungscode ist {code}',
+                    'variables' => '',
+                    'template'  => 'auth'
                 ],
                 [
-                    'label'    => 'Bestätigung des Zugriffs-Wiederherstellungscodes',
-                    'slug'     => 'recovery',
-                    'subject'  => 'Zugriff wiederherstellen',
-                    'content'  => 'Ihr Zugangswiederherstellungsbestätigungscode ist {code}',
-                    'template' => 'auth'
+                    'label'     => 'Bestätigung des Zugriffs-Wiederherstellungscodes',
+                    'slug'      => 'recovery',
+                    'subject'   => 'Zugriff wiederherstellen',
+                    'content'   => 'Ihr Zugangswiederherstellungsbestätigungscode ist {code}',
+                    'variables' => '',
+                    'template'  => 'auth'
                 ]
             ]
         ];

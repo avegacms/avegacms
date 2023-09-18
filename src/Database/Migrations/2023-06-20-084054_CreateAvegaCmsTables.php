@@ -439,7 +439,8 @@ class CreateAvegaCmsTables extends Migration
             'locale_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => 0],
             'is_system' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             'subject'   => ['type' => 'text', 'null' => true],
-            'content'   => ['type' => 'text', 'null' => true],
+            'content'   => ['type' => 'text', 'null' => true],// Если нет шаблона, то код можно писать сюда
+            'variables' => ['type' => 'text', 'null' => true],
             'template'  => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
             'active'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 1],
             ...$this->byId(),

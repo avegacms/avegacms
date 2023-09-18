@@ -2,24 +2,23 @@
 
 namespace AvegaCms\Utils;
 
-use CodeIgniter\Email\Email;
 use AvegaCms\Models\Admin\EmailTemplateModel;
+use Config\Services;
 use RuntimeException;
 
 class Mail
 {
     /**
-     * @param  string  $template
-     * @param  array  $to
+     * @param  string  $slug
+     * @param  string|array  $to
      * @param  int  $locale
      * @param  array  $data
      * @param  array  $attach
      * @param  array  $config
-     * @return bool
      */
     public static function send(
         string $slug,
-        array $to,
+        string|array $to,
         int $locale = 0,
         array $data = [],
         array $attach = [],
@@ -29,7 +28,7 @@ class Mail
             throw new RuntimeException('Slug cannot be empty');
         }
 
-        if (empty($to) || empty($to['toEmail'] ?? '')) {
+        if (empty($to) || empty($to['recipient'] ?? '')) {
             throw new RuntimeException('The email address of the recipient of the letter is not specified');
         }
 
@@ -44,6 +43,56 @@ class Mail
         }
 
         $config = self::getConfig($config);
+        $parser = Services::parser();
+        $email = Services::email($config);
+
+        $email->setFrom(
+            $config['fromEmail'],
+            $config['fromName'] ?? [],
+            $config['protocol'] === 'smtp' ? null : ($config['returnEmail'] ?? null)
+        );
+
+        $email->setSubject($parser->setData($data)->renderString($tData->subject));
+
+        if ( ! empty($config['replyEmail'])) {
+            $email->setReplyTo($config['replyEmail'], $config['replyName']);
+        }
+
+        $email->setTo($to['recipient']);
+
+        if ( ! empty($to['ccRecipient'] ?? '')) {
+            $email->setCC($to['ccRecipient']);
+        }
+
+        if ( ! empty($to['bccRecipient'] ?? '')) {
+            $email->setBCC($to['bccRecipient']);
+        }
+
+        if ( ! empty($attach ?? '')) {
+            foreach ($attach as $item) {
+                $email->attach(
+                    $item['file'],
+                    '',
+                    $item['newName'] ?? '',
+                    $item['mimeType'] ?? '',
+                );
+            }
+        }
+
+        if ( ! empty($tData->template)) {
+            $data['emailTemplateData'] = $parser->setData($data)->render($tData->template);
+        } else {
+            $data['emailTemplateData'] = $parser->setData($data)->renderString($tData->content);
+        }
+
+        $email->setMessage(
+            $parser->setData($data)->render(
+                'template/email/foundation',
+                ['cascadeData' => true]
+            )
+        );
+
+        return $email->send();
     }
 
     /**
@@ -53,6 +102,7 @@ class Mail
     protected static function getConfig(array $config): array
     {
         helper(['avegacms']);
+
         $defConfig = settings('core.email');
 
         return [
@@ -61,11 +111,12 @@ class Mail
             'fromName'      => $config['fromName'] ?? $defConfig['fromEmail'],
             'replyEmail'    => $config['replyEmail'] ?? $defConfig['replyEmail'],
             'replyName'     => $config['replyName'] ?? $defConfig['replyName'],
+            'returnEmail'   => $config['returnEmail'] ?? $defConfig['returnEmail'],
             'userAgent'     => $config['userAgent'] ?? $defConfig['userAgent'],
-            'protocol'      => $config['protocol'] ?? $defConfig['protocol'],
+            'protocol'      => strtolower(($config['protocol'] ?? $defConfig['protocol']) ?? 'mail'),
             'wordWrap'      => $config['wordWrap'] ?? 76,
             'validate'      => true,
-            'mailType'      => $config['mailType'] ?? $defConfig['mailType'],
+            'mailType'      => strtolower($config['mailType'] ?? $defConfig['mailType']),
             'charset'       => $config['charset'] ?? $defConfig['charset'],
             'priority'      => $config['priority'] ?? $defConfig['priority'],
 

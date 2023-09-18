@@ -16,6 +16,7 @@ class EmailTemplateEntity extends Entity
         'is_system'     => 'integer',
         'subject'       => 'string',
         'content'       => 'string',
+        'variables'     => 'string',
         'template'      => 'string',
         'active'        => 'integer',
         'created_by_id' => 'integer',
@@ -23,5 +24,5 @@ class EmailTemplateEntity extends Entity
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime'
     ];
-    
+
 }
