@@ -6,27 +6,20 @@ use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Config\Services;
+use AvegaCms\Utils\Cms;
+use ReflectionException;
 
 class ThrottlerCorsFilter implements FilterInterface
 {
     /**
-     * Do whatever processing this filter needs to do.
-     * By default it should not return anything during
-     * normal execution. However, when an abnormal state
-     * is found, it should return an instance of
-     * CodeIgniter\HTTP\Response. If it does, scriptзрз
-     * execution will end and that Response will be
-     * sent back to the client, allowing for error pages,
-     * redirects, etc.
-     *
-     * @param RequestInterface $request
-     * @param array|null       $arguments
-     *
-     * @return mixed
+     * @param  RequestInterface  $request
+     * @param $arguments
+     * @return RequestInterface|ResponseInterface|string|void
+     * @throws ReflectionException
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        if (service('settings')->get('core.auth.useCors')) {
+        if (Cms::settings('core.auth.useCors')) {
             if (strtoupper($request->getMethod()) === 'OPTIONS') {
                 return Services::response()
                     ->setHeader('Access-Control-Allow-Origin', '*')
@@ -53,7 +46,7 @@ class ThrottlerCorsFilter implements FilterInterface
                             'Range'
                         ]
                     )
-                    ->setHeader('Access-Control-Allow-Methods', ['GET','PATCH','POST','PUT','OPTIONS','DELETE']);
+                    ->setHeader('Access-Control-Allow-Methods', ['GET', 'PATCH', 'POST', 'PUT', 'OPTIONS', 'DELETE']);
             }
 
             Services::response()->setHeader('Access-Control-Allow-Origin', '*');
@@ -73,9 +66,9 @@ class ThrottlerCorsFilter implements FilterInterface
      * to stop execution of other after filters, short of
      * throwing an Exception or Error.
      *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
-     * @param array|null        $arguments
+     * @param  RequestInterface  $request
+     * @param  ResponseInterface  $response
+     * @param  array|null  $arguments
      *
      * @return void
      */

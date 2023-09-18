@@ -5,6 +5,7 @@ namespace AvegaCms\Utils;
 use AvegaCms\Models\Admin\EmailTemplateModel;
 use Config\Services;
 use RuntimeException;
+use ReflectionException;
 
 class Mail
 {
@@ -15,6 +16,8 @@ class Mail
      * @param  array  $data
      * @param  array  $attach
      * @param  array  $config
+     * @return bool
+     * @throws ReflectionException
      */
     public static function send(
         string $slug,
@@ -39,7 +42,7 @@ class Mail
         }
 
         if ( ! empty($tData->template) && ! file_exists($file = APPPATH . 'Views/' . ($tData->template = 'template/email/templates/' . $tData->template) . '.php')) {
-            throw new RuntimeException("Email template file {$file} not found");
+            throw new RuntimeException("Email template file $file not found");
         }
 
         $config = self::getConfig($config);
@@ -98,12 +101,11 @@ class Mail
     /**
      * @param  array  $config
      * @return array
+     * @throws ReflectionException
      */
     protected static function getConfig(array $config): array
     {
-        helper(['avegacms']);
-
-        $defConfig = settings('core.email');
+        $defConfig = Cms::settings('core.email');
 
         return [
 

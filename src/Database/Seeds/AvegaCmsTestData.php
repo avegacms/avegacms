@@ -7,6 +7,7 @@ use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Database\Seeder;
 use CodeIgniter\Test\Fabricator;
 use Config\Database;
+use AvegaCms\Utils\Cms;
 use AvegaCms\Enums\{MetaDataTypes, MetaStatuses};
 use AvegaCms\Models\Admin\{
     UserModel,
@@ -53,7 +54,7 @@ class AvegaCmsTestData extends Seeder
     {
         parent::__construct($config, $db);
 
-        helper(['avegacms', 'date', 'array']);
+        helper(['date', 'array']);
 
         $this->MM = model(ModulesModel::class);
         $this->LM = model(LoginModel::class);
@@ -82,7 +83,7 @@ class AvegaCmsTestData extends Seeder
     protected function createLocales(): void
     {
         if (CLI::prompt('Use multi locales?', ['y', 'n']) === 'y') {
-            settings('core.env.useMultiLocales', 1);
+            Cms::settings('core.env.useMultiLocales', 1);
         }
         CLI::newLine();
     }
@@ -146,7 +147,7 @@ class AvegaCmsTestData extends Seeder
                 ['required', 'is_natural_no_zero']
             ))
         ) {
-            $useMultiLocales = settings('core.env.useMultiLocales');
+            $useMultiLocales = Cms::settings('core.env.useMultiLocales');
 
             $locales = $this->LLM->where([
                 'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
@@ -185,7 +186,7 @@ class AvegaCmsTestData extends Seeder
             null,
             ['required', 'is_natural_no_zero']
         )) {
-            $useMultiLocales = settings('core.env.useMultiLocales');
+            $useMultiLocales = Cms::settings('core.env.useMultiLocales');
             $locales = $this->LLM->where([
                 'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
             ])->findColumn('id');
@@ -226,7 +227,7 @@ class AvegaCmsTestData extends Seeder
                 ['required', 'is_natural_no_zero']
             ))
         ) {
-            $useMultiLocales = settings('core.env.useMultiLocales');
+            $useMultiLocales = Cms::settings('core.env.useMultiLocales');
 
             $locales = $this->LLM->where([
                 'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
@@ -386,7 +387,7 @@ class AvegaCmsTestData extends Seeder
             $list[] = $item->toArray();
         }
 
-        $list = getTree($list);
+        $list = Cms::getTree($list);
 
         if ($level === 0) {
             return $list[0]['id'] ?? null;

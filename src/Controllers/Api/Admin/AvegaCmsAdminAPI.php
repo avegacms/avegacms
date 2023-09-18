@@ -12,7 +12,7 @@ class AvegaCmsAdminAPI extends CmsResourceController
 
     public function __construct()
     {
-        helper(['avegacms', 'date']);
+        helper(['date']);
         $this->userData = AvegaCmsUser::data();
         $this->userPermission = AvegaCmsUser::permission();
     }

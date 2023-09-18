@@ -10,6 +10,7 @@ use AvegaCms\Models\Admin\{UserModel, UserRolesModel, RolesModel, UserTokensMode
 use AvegaCms\Entities\{UserEntity, UserRolesEntity};
 use AvegaCms\Libraries\Uploader\Uploader;
 use AvegaCms\Libraries\Uploader\Exceptions\UploaderException;
+use AvegaCms\Utils\Cms;
 use ReflectionException;
 
 class Users extends AvegaCmsAdminAPI
@@ -18,6 +19,9 @@ class Users extends AvegaCmsAdminAPI
     protected UserModel      $UM;
     protected UserRolesModel $URM;
 
+    /**
+     * @var array|string[]
+     */
     protected array $userStatus = [
         'pre-registration',
         'active',
@@ -131,7 +135,7 @@ class Users extends AvegaCmsAdminAPI
             return $this->failValidationErrors($this->UM->errors());
         }
 
-        if ($reset && settings('core.auth.useJwt')) {
+        if ($reset && Cms::settings('core.auth.useJwt')) {
             (new UserTokensModel())->where(['user_id' => $id])->delete();
         }
 

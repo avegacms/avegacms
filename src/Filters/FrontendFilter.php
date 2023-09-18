@@ -7,10 +7,14 @@ use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\HTTP\RedirectResponse;
 use Config\Services;
-use AvegaCms\Utils\SeoUtils;
+use AvegaCms\Utils\{SeoUtils, Cms};
+use ReflectionException;
 
 class FrontendFilter implements FilterInterface
 {
+    /**
+     * @var array|string[]
+     */
     protected array $excludedUrls = [
         'sitemap.xml',
         'robots.txt',
@@ -23,12 +27,11 @@ class FrontendFilter implements FilterInterface
      * @param  RequestInterface  $request
      * @param $arguments
      * @return RedirectResponse|ResponseInterface|void
+     * @throws ReflectionException
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        helper(['avegacms']);
-
-        $settings = settings('core.env');
+        $settings = Cms::settings('core.env');
 
         if ($settings['useFrontend'] === false) {
             return Services::response()->setStatusCode(404);
@@ -36,7 +39,7 @@ class FrontendFilter implements FilterInterface
 
         $locales = array_column(SeoUtils::Locales(), null, 'slug');
 
-        initClientSession([
+        Cms::initClientSession([
             'client' => [
                 'locale' => [
                     'id'   => $locales[$settings['defLocale']]['id'],
@@ -49,7 +52,7 @@ class FrontendFilter implements FilterInterface
             if (empty($segment = strtolower($request->uri->getSegment(1)))) {
                 return redirect()->to('/' . $settings['defLocale'], 301);
             }
-            
+
             if ( ! in_array($segment, $this->excludedUrls, true)) {
                 if ( ! in_array($segment, array_column($locales, 'slug'), true)) {
                     return redirect()->to('/' . $settings['defLocale'] . '/page-not-found', 301);
