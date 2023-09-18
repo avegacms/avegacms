@@ -1,0 +1,2515 @@
+{
+	"info": {
+		"_postman_id": "2d46f2a0-8007-4d31-b966-a093f313f875",
+		"name": "AvegaCms :: Api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21009098",
+		"_collection_link": "https://martian-zodiac-279128.postman.co/workspace/Kupi-kupi-API~7dc599ea-8f9f-4450-8f39-1c67f16d1683/collection/21009098-2d46f2a0-8007-4d31-b966-a093f313f875?action=share&source=collection_link&creator=21009098"
+	},
+	"item": [
+		{
+			"name": "PUBLIC",
+			"item": [
+				{
+					"name": "Login",
+					"item": [
+						{
+							"name": "Authorization",
+							"item": [
+								{
+									"name": "authorization :: login",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"login\": \"admin\",\n  \"password\": \"123456\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{publicURL}}/login/authorization",
+											"host": [
+												"{{publicURL}}"
+											],
+											"path": [
+												"login",
+												"authorization"
+											]
+										},
+										"description": "Авторизация пользователя по переданным данным"
+									},
+									"response": [
+										{
+											"name": "authorization :: login",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"login\": \"admin\",\n  \"password\": \"123456\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{publicURL}}/login/authorization",
+													"host": [
+														"{{publicURL}}"
+													],
+													"path": [
+														"login",
+														"authorization"
+													]
+												}
+											},
+											"_postman_previewlanguage": null,
+											"header": null,
+											"cookie": [],
+											"body": null
+										}
+									]
+								},
+								{
+									"name": "authorization :: email",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"email\": \"admin@avegacms.ru\",\n  \"password\": \"123456\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{publicURL}}/login/authorization",
+											"host": [
+												"{{publicURL}}"
+											],
+											"path": [
+												"login",
+												"authorization"
+											]
+										},
+										"description": "Авторизация пользователя по переданным данным"
+									},
+									"response": [
+										{
+											"name": "authorization :: email",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"email\": \"admin@avegacms.ru\",\n  \"password\": \"123456\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{publicURL}}/login/authorization",
+													"host": [
+														"{{publicURL}}"
+													],
+													"path": [
+														"login",
+														"authorization"
+													]
+												}
+											},
+											"_postman_previewlanguage": null,
+											"header": null,
+											"cookie": [],
+											"body": null
+										}
+									]
+								},
+								{
+									"name": "authorization :: phone",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"phone\": \"79293014028\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{publicURL}}/login/authorization",
+											"host": [
+												"{{publicURL}}"
+											],
+											"path": [
+												"login",
+												"authorization"
+											]
+										},
+										"description": "Авторизация пользователя по переданным данным"
+									},
+									"response": [
+										{
+											"name": "authorization :: phone",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"phone\": \"79293014028\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "https://cmsapi.avegacms.ru/api/public/login/authorization",
+													"protocol": "https",
+													"host": [
+														"cmsapi",
+														"avegacms",
+														"ru"
+													],
+													"path": [
+														"api",
+														"public",
+														"login",
+														"authorization"
+													]
+												}
+											},
+											"_postman_previewlanguage": null,
+											"header": null,
+											"cookie": [],
+											"body": null
+										}
+									]
+								}
+							],
+							"description": "Авторизация пользователя:\n\n- по логину\n    \n- по телефону\n    \n- по email"
+						},
+						{
+							"name": "Check",
+							"item": [
+								{
+									"name": "check",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"condition\": \"\",\n  \"pointer\": \"\",\n  \"code\": \"\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{publicURL}}/login/check",
+											"host": [
+												"{{publicURL}}"
+											],
+											"path": [
+												"login",
+												"check"
+											]
+										},
+										"description": "Метод проверки кода, используется для авторизации, регистрации и восстановления доступов"
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Refresh",
+							"item": [
+								{
+									"name": "refresh",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"token\": \"\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{publicURL}}/login/refresh",
+											"host": [
+												"{{publicURL}}"
+											],
+											"path": [
+												"login",
+												"refresh"
+											]
+										},
+										"description": "Метод проверки кода, используется для авторизации, регистрации и восстановления доступов"
+									},
+									"response": [
+										{
+											"name": "refresh",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"token\": \"\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{publicURL}}/login/refresh",
+													"host": [
+														"{{publicURL}}"
+													],
+													"path": [
+														"login",
+														"refresh"
+													]
+												}
+											},
+											"_postman_previewlanguage": null,
+											"header": null,
+											"cookie": [],
+											"body": null
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "Recovery",
+							"item": [
+								{
+									"name": "recovery :: login",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"recovery_field\": \"admin\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{publicURL}}/login/recovery",
+											"host": [
+												"{{publicURL}}"
+											],
+											"path": [
+												"login",
+												"recovery"
+											]
+										},
+										"description": "Метод проверки кода, используется для авторизации, регистрации и восстановления доступов"
+									},
+									"response": [
+										{
+											"name": "recovery",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"recovery_field\": \"admin\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{publicURL}}/login/recovery",
+													"host": [
+														"{{publicURL}}"
+													],
+													"path": [
+														"login",
+														"recovery"
+													]
+												}
+											},
+											"_postman_previewlanguage": null,
+											"header": null,
+											"cookie": [],
+											"body": null
+										}
+									]
+								},
+								{
+									"name": "recovery :: email",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"recovery_field\": \"admin@avegacms.ru\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{publicURL}}/login/recovery",
+											"host": [
+												"{{publicURL}}"
+											],
+											"path": [
+												"login",
+												"recovery"
+											]
+										},
+										"description": "Метод проверки кода, используется для авторизации, регистрации и восстановления доступов"
+									},
+									"response": [
+										{
+											"name": "recovery",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"recovery_field\": \"admin@avegacms.ru\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{publicURL}}/login/recovery",
+													"host": [
+														"{{publicURL}}"
+													],
+													"path": [
+														"login",
+														"recovery"
+													]
+												}
+											},
+											"_postman_previewlanguage": null,
+											"header": null,
+											"cookie": [],
+											"body": null
+										}
+									]
+								}
+							],
+							"description": "Запрос на восстановления доступов"
+						},
+						{
+							"name": "Password",
+							"item": [
+								{
+									"name": "password",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"password\": \"123456\",\n  \"passconf\": \"123456\",\n  \"hash\": \"hash\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{publicURL}}/login/password",
+											"host": [
+												"{{publicURL}}"
+											],
+											"path": [
+												"login",
+												"password"
+											]
+										},
+										"description": "Метод проверки кода, используется для авторизации, регистрации и восстановления доступов"
+									},
+									"response": [
+										{
+											"name": "password",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"password\": \"123456\",\n  \"passconf\": \"123456\",\n  \"hash\": \"hash\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{publicURL}}/login/recovery",
+													"host": [
+														"{{publicURL}}"
+													],
+													"path": [
+														"login",
+														"recovery"
+													]
+												}
+											},
+											"_postman_previewlanguage": null,
+											"header": null,
+											"cookie": [],
+											"body": null
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "Logout",
+							"item": [
+								{
+									"name": "logout",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"password\": \"123456\",\n  \"passconf\": \"123456\",\n  \"hash\": \"hash\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{publicURL}}/login/logout",
+											"host": [
+												"{{publicURL}}"
+											],
+											"path": [
+												"login",
+												"logout"
+											]
+										},
+										"description": "Метод проверки кода, используется для авторизации, регистрации и восстановления доступов"
+									},
+									"response": [
+										{
+											"name": "logout",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"password\": \"123456\",\n  \"passconf\": \"123456\",\n  \"hash\": \"hash\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{publicURL}}/login/logout",
+													"host": [
+														"{{publicURL}}"
+													],
+													"path": [
+														"login",
+														"logout"
+													]
+												}
+											},
+											"_postman_previewlanguage": null,
+											"header": null,
+											"cookie": [],
+											"body": null
+										}
+									]
+								}
+							]
+						}
+					],
+					"description": "Функционал авторизации и аунтефикации пользователя"
+				}
+			],
+			"description": "Публичная часть AvegaCMS API"
+		},
+		{
+			"name": "ADMIN",
+			"item": [
+				{
+					"name": "Content",
+					"item": [
+						{
+							"name": "Pages",
+							"item": [
+								{
+									"name": "Index",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/content/pages?id=&type=PAGE&status=PUBLISH&s=-publish_at&q=qui&locale_id=1",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"content",
+												"pages"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": ""
+												},
+												{
+													"key": "type",
+													"value": "PAGE"
+												},
+												{
+													"key": "status",
+													"value": "PUBLISH"
+												},
+												{
+													"key": "s",
+													"value": "-publish_at",
+													"description": "%2B / -"
+												},
+												{
+													"key": "q",
+													"value": "qui"
+												},
+												{
+													"key": "locale_id",
+													"value": "1"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "New",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/content/pages/new",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"content",
+												"pages",
+												"new"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Edit",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/content/pages/1312/edit",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"content",
+												"pages",
+												"1312",
+												"edit"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"parent\": 1334,\r\n    \"locale_id\": 1,\r\n    \"module_id\": 0,\r\n    \"slug\": \"Aspernatur-consequatur-placeat-aut\",\r\n    \"creator_id\": 1,\r\n    \"item_id\": 0,\r\n    \"title\": \"Rap\",\r\n    \"sort\": 536,\r\n    \"url\": \"aspernatur-consequatur-placeat-aut\",\r\n    \"meta\": {\r\n        \"title\": \"\",\r\n        \"keywords\": \"Atque placeat.\",\r\n        \"descriptions\": \"Debitis voluptatum.\",\r\n        \"breadcrumb\": \"aperiam\",\r\n        \"og:title\": \"\",\r\n        \"og:type\": \"website\",\r\n        \"og:url\": \"https://cmsapi.avegacms.ru/Aspernatur-consequatur-placeat-aut\",\r\n        \"og:image\": \"https://cmsapi.avegacms.ru/uploads/open_graph.png\"\r\n    },\r\n    \"extra_data\": \"\",\r\n    \"status\": \"DRAFT\",\r\n    \"meta_type\": \"PAGE\",\r\n    \"in_sitemap\": 1,\r\n    \"publish_at\": \"09.09.2023 14:34:52\",\r\n    \"anons\": \"Laudantium nihil dolore sed id ut molestiae ut. Qui nam rerum laboriosam sapiente.\",\r\n    \"content\": \"Voluptates eum ducimus aliquam non dolorum. Sed voluptatem qui eveniet ut corrupti aliquid voluptatem. Commodi quia ut qui sed. Maiores dolor possimus adipisci dignissimos. Est voluptatem laborum aut praesentium. Iusto iste labore delectus explicabo. Deserunt repudiandae velit quae tempore sunt iste. Aut consequatur dolorem aut. Et expedita eaque sint molestiae rerum modi. Itaque fuga tempore porro sed fugiat. Dicta et vero voluptatem et rem qui ut mollitia. Aut et facilis in est. Eum beatae maiores quia sint. Facilis mollitia quaerat quibusdam voluptatum. Sint minima quo eum nulla quidem et. Nam nihil distinctio dolor eaque. Voluptatem recusandae ab sed alias. Recusandae est veniam maiores aut aut praesentium. Ipsum non ad deserunt ut corporis illum. Doloribus quidem assumenda illum rerum qui dolor ut est. Sed officia voluptatum et rem expedita placeat. Quibusdam sit beatae ea ab. Perspiciatis enim magnam eaque laudantium excepturi iure voluptatem. Adipisci et pariatur in fugiat odit.\",\r\n    \"extra\": \"\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/content/pages",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"content",
+												"pages"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\": 1335,\r\n    \"parent\": 1334,\r\n    \"locale_id\": 1,\r\n    \"module_id\": 0,\r\n    \"slug\": \"Aspernatur-consequatur-placeat-aut\",\r\n    \"creator_id\": 1,\r\n    \"item_id\": 0,\r\n    \"title\": \"Aspernatur consequatur placeat aut.\",\r\n    \"sort\": 536,\r\n    \"url\": \"aspernatur-consequatur-placeat-aut\",\r\n    \"meta\": {\r\n        \"title\": \"Aspernatur consequatur placeat aut.\",\r\n        \"keywords\": \"Atque placeat.\",\r\n        \"descriptions\": \"Debitis voluptatum.\",\r\n        \"breadcrumb\": \"aperiam\",\r\n        \"og:title\": \"Aspernatur consequatur placeat aut.\",\r\n        \"og:type\": \"website\",\r\n        \"og:url\": \"https://cmsapi.avegacms.ru/Aspernatur-consequatur-placeat-aut\",\r\n        \"og:image\": \"https://cmsapi.avegacms.ru/uploads/open_graph.png\"\r\n    },\r\n    \"extra_data\": \"\",\r\n    \"status\": \"DRAFT\",\r\n    \"meta_type\": \"PAGE\",\r\n    \"in_sitemap\": 1,\r\n    \"anons\": \"Laudantium nihil dolore sed id ut molestiae ut. Qui nam rerum laboriosam sapiente.\",\r\n    \"content\": \"Voluptates eum ducimus aliquam non dolorum. Sed voluptatem qui eveniet ut corrupti aliquid voluptatem. Commodi quia ut qui sed. Maiores dolor possimus adipisci dignissimos. Est voluptatem laborum aut praesentium. Iusto iste labore delectus explicabo. Deserunt repudiandae velit quae tempore sunt iste. Aut consequatur dolorem aut. Et expedita eaque sint molestiae rerum modi. Itaque fuga tempore porro sed fugiat. Dicta et vero voluptatem et rem qui ut mollitia. Aut et facilis in est. Eum beatae maiores quia sint. Facilis mollitia quaerat quibusdam voluptatum. Sint minima quo eum nulla quidem et. Nam nihil distinctio dolor eaque. Voluptatem recusandae ab sed alias. Recusandae est veniam maiores aut aut praesentium. Ipsum non ad deserunt ut corporis illum. Doloribus quidem assumenda illum rerum qui dolor ut est. Sed officia voluptatum et rem expedita placeat. Quibusdam sit beatae ea ab. Perspiciatis enim magnam eaque laudantium excepturi iure voluptatem. Adipisci et pariatur in fugiat odit.\",\r\n    \"extra\": \"\\\"\\\"\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/content/pages/1335",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"content",
+												"pages",
+												"1335"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Patch",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\": 1335,\r\n    \"status\": \"DRAFT\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/content/pages/1335",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"content",
+												"pages",
+												"1335"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\": 1335,\r\n    \"parent\": 1334,\r\n    \"locale_id\": 1,\r\n    \"module_id\": 0,\r\n    \"slug\": \"Aspernatur-consequatur-placeat-aut\",\r\n    \"creator_id\": 1,\r\n    \"item_id\": 0,\r\n    \"title\": \"Aspernatur consequatur placeat aut.\",\r\n    \"sort\": 536,\r\n    \"url\": \"aspernatur-consequatur-placeat-aut\",\r\n    \"meta\": {\r\n        \"title\": \"Aspernatur consequatur placeat aut.\",\r\n        \"keywords\": \"Atque placeat.\",\r\n        \"descriptions\": \"Debitis voluptatum.\",\r\n        \"breadcrumb\": \"aperiam\",\r\n        \"og:title\": \"Aspernatur consequatur placeat aut.\",\r\n        \"og:type\": \"website\",\r\n        \"og:url\": \"https://cmsapi.avegacms.ru/Aspernatur-consequatur-placeat-aut\",\r\n        \"og:image\": \"https://cmsapi.avegacms.ru/uploads/open_graph.png\"\r\n    },\r\n    \"extra_data\": \"\",\r\n    \"status\": \"DRAFT\",\r\n    \"meta_type\": \"PAGE\",\r\n    \"in_sitemap\": 1,\r\n    \"anons\": \"Laudantium nihil dolore sed id ut molestiae ut. Qui nam rerum laboriosam sapiente.\",\r\n    \"content\": \"Voluptates eum ducimus aliquam non dolorum. Sed voluptatem qui eveniet ut corrupti aliquid voluptatem. Commodi quia ut qui sed. Maiores dolor possimus adipisci dignissimos. Est voluptatem laborum aut praesentium. Iusto iste labore delectus explicabo. Deserunt repudiandae velit quae tempore sunt iste. Aut consequatur dolorem aut. Et expedita eaque sint molestiae rerum modi. Itaque fuga tempore porro sed fugiat. Dicta et vero voluptatem et rem qui ut mollitia. Aut et facilis in est. Eum beatae maiores quia sint. Facilis mollitia quaerat quibusdam voluptatum. Sint minima quo eum nulla quidem et. Nam nihil distinctio dolor eaque. Voluptatem recusandae ab sed alias. Recusandae est veniam maiores aut aut praesentium. Ipsum non ad deserunt ut corporis illum. Doloribus quidem assumenda illum rerum qui dolor ut est. Sed officia voluptatum et rem expedita placeat. Quibusdam sit beatae ea ab. Perspiciatis enim magnam eaque laudantium excepturi iure voluptatem. Adipisci et pariatur in fugiat odit.\",\r\n    \"extra\": \"\\\"\\\"\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/content/pages/36",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"content",
+												"pages",
+												"36"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Posts",
+							"item": [
+								{
+									"name": "Index",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/content/posts?id=&status=PUBLISH&s=-publish_at&q=qui&locale_id=1&rubric_id",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"content",
+												"posts"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": ""
+												},
+												{
+													"key": "status",
+													"value": "PUBLISH"
+												},
+												{
+													"key": "s",
+													"value": "-publish_at"
+												},
+												{
+													"key": "q",
+													"value": "qui"
+												},
+												{
+													"key": "locale_id",
+													"value": "1"
+												},
+												{
+													"key": "rubric_id",
+													"value": null
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "New",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/content/posts/new",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"content",
+												"posts",
+												"new"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Edit",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/content/posts/1029/edit",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"content",
+												"posts",
+												"1029",
+												"edit"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"slug\": \"Fuga-illo-tenetur-dolorum-numquam-quis-inventore-dolorum\",\r\n    \"creator_id\": 1,\r\n    \"title\": \"Fuga illo tenetur dolorum numquam quis inventore dolorum.\",\r\n    \"url\": \"https://cmsapi.avegacms.ru/fuga-illo-tenetur-dolorum-numquam-quis-inventore-dolorum\",\r\n    \"meta\": {\r\n        \"title\": \"Fuga illo tenetur dolorum numquam quis inventore dolorum.\",\r\n        \"keywords\": \"Ut veniam.\",\r\n        \"descriptions\": \"Minima ut.\",\r\n        \"breadcrumb\": \"qui\",\r\n        \"og:title\": \"Fuga illo tenetur dolorum numquam quis inventore dolorum.\",\r\n        \"og:type\": \"website\",\r\n        \"og:url\": \"https://cmsapi.avegacms.ru/Fuga-illo-tenetur-dolorum-numquam-quis-inventore-dolorum\",\r\n        \"og:image\": \"https://cmsapi.avegacms.ru/uploads/open_graph.png\"\r\n    },\r\n    \"extra_data\": null,\r\n    \"status\": \"PUBLISH\",\r\n    \"meta_type\": \"POST\",\r\n    \"in_sitemap\": 0,\r\n    \"anons\": \"Id ipsa consequatur ad sit laboriosam sapiente alias autem. Itaque rem in velit unde nesciunt voluptas voluptatem.\",\r\n    \"content\": \"Illo dolores deleniti facilis recusandae eum non officia aut. Id in deleniti excepturi excepturi. Facere et est ut eveniet. Velit rerum mollitia quia maiores placeat. Impedit cum qui eos dolorem quibusdam nemo. Voluptate consequatur quo magnam officiis voluptatum. Non in a est dolor omnis. Eveniet dolores pariatur vel consequatur consequatur temporibus. Nisi in enim sit quia. Dicta voluptates et quidem explicabo numquam voluptatem quo. Rerum corrupti eius magnam accusantium et nesciunt fugit corrupti. Aut dolor ut veritatis facere et. Quo iste aliquid fugit fugiat.\",\r\n    \"extra\": null,\r\n    \"rubrics\": [\r\n        116,\r\n        118,\r\n        119,\r\n        122,\r\n        123,\r\n        124,\r\n        125,\r\n        126,\r\n        127\r\n    ]\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/content/posts",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"content",
+												"posts"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\": 1269,\r\n    \"slug\": \"Fuga-illo-tenetur-dolorum-numquam-quis-inventore-dolorum\",\r\n    \"creator_id\": 1,\r\n    \"title\": \"Fuga illo tenetur dolorum numquam quis inventore dolorum.\",\r\n    \"url\": \"https://cmsapi.avegacms.ru/fuga-illo-tenetur-dolorum-numquam-quis-inventore-dolorum\",\r\n    \"meta\": {\r\n        \"title\": \"Fuga illo tenetur dolorum numquam quis inventore dolorum.\",\r\n        \"keywords\": \"Ut veniam.\",\r\n        \"descriptions\": \"Minima ut.\",\r\n        \"breadcrumb\": \"qui\",\r\n        \"og:title\": \"Fuga illo tenetur dolorum numquam quis inventore dolorum.\",\r\n        \"og:type\": \"website\",\r\n        \"og:url\": \"https://cmsapi.avegacms.ru/Fuga-illo-tenetur-dolorum-numquam-quis-inventore-dolorum\",\r\n        \"og:image\": \"https://cmsapi.avegacms.ru/uploads/open_graph.png\"\r\n    },\r\n    \"extra_data\": null,\r\n    \"status\": \"PUBLISH\",\r\n    \"meta_type\": \"POST\",\r\n    \"in_sitemap\": 0,\r\n    \"anons\": \"Id ipsa consequatur ad sit laboriosam sapiente alias autem. Itaque rem in velit unde nesciunt voluptas voluptatem.\",\r\n    \"content\": \"Illo dolores deleniti facilis recusandae eum non officia aut. Id in deleniti excepturi excepturi. Facere et est ut eveniet. Velit rerum mollitia quia maiores placeat. Impedit cum qui eos dolorem quibusdam nemo. Voluptate consequatur quo magnam officiis voluptatum. Non in a est dolor omnis. Eveniet dolores pariatur vel consequatur consequatur temporibus. Nisi in enim sit quia. Dicta voluptates et quidem explicabo numquam voluptatem quo. Rerum corrupti eius magnam accusantium et nesciunt fugit corrupti. Aut dolor ut veritatis facere et. Quo iste aliquid fugit fugiat.\",\r\n    \"extra\": null,\r\n    \"rubrics\": [\r\n        116,\r\n        118,\r\n        119,\r\n        122,\r\n        123,\r\n        124,\r\n        125,\r\n        126,\r\n        127\r\n    ]\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/content/posts/1270",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"content",
+												"posts",
+												"1270"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Patch",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\": 1270,\r\n    \"status\": \"PUBLISH\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/content/posts/1270",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"content",
+												"posts",
+												"1270"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/content/posts/1029",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"content",
+												"posts",
+												"1029"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Rubrics",
+							"item": [
+								{
+									"name": "Index",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/content/rubrics?id&s=-publish_at&q&locale_id=1",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"content",
+												"rubrics"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": null
+												},
+												{
+													"key": "status",
+													"value": "DRAFT",
+													"disabled": true
+												},
+												{
+													"key": "s",
+													"value": "-publish_at"
+												},
+												{
+													"key": "q",
+													"value": null
+												},
+												{
+													"key": "locale_id",
+													"value": "1"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Edit",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/content/rubrics/457/edit",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"content",
+												"rubrics",
+												"457",
+												"edit"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"locale_id\": 1,\r\n    \"slug\": \"Qui-iure-sapiente-ipsa-pariatur-minima\",\r\n    \"title\": \"Qui iure sapiente ipsa pariatur minima.\",\r\n    \"sort\": 217,\r\n    \"url\": \"https://cmsapi.avegacms.ru/qui-iure-sapiente-ipsa-pariatur-minima\",\r\n    \"meta\": {\r\n        \"title\": \"Qui iure sapiente ipsa pariatur minima.\",\r\n        \"keywords\": \"Vitae.\",\r\n        \"descriptions\": \"Ratione.\",\r\n        \"breadcrumb\": \"dolores\",\r\n        \"og:title\": \"Qui iure sapiente ipsa pariatur minima.\",\r\n        \"og:type\": \"website\",\r\n        \"og:url\": \"https://cmsapi.avegacms.ru/Qui-iure-sapiente-ipsa-pariatur-minima\",\r\n        \"og:image\": \"https://cmsapi.avegacms.ru/uploads/open_graph.png\"\r\n    },\r\n    \"extra_data\": null,\r\n    \"status\": \"PUBLISH\",\r\n    \"meta_type\": \"RUBRIC\",\r\n    \"in_sitemap\": 1,\r\n    \"anons\": \"Qui ut repellat vitae et accusantium natus. Adipisci facere voluptatum deleniti molestiae repellat.\",\r\n    \"content\": \"Vel qui sit ipsa animi distinctio corrupti porro. Assumenda ut molestiae nihil eos. Voluptatem ad atque blanditiis et maxime. Optio deleniti voluptatibus est quam vero odit dolor. Porro soluta omnis et. Non ratione est dolorum quis molestiae harum magni. Vel aut odio aspernatur enim rem reiciendis cum. In fugit laudantium omnis reprehenderit optio commodi. Itaque et ut quia nostrum assumenda hic. Laborum amet nam voluptas fugiat exercitationem.\",\r\n    \"extra\": null\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/content/rubrics",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"content",
+												"rubrics"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\": 117,\r\n    \"parent\": 0,\r\n    \"slug\": \"Qui-iure-sapiente-ipsa-pariatur-minima\",\r\n    \"title\": \"Qui iure sapiente ipsa pariatur minima.\",\r\n    \"sort\": 217,\r\n    \"url\": \"https://cmsapi.avegacms.ru/qui-iure-sapiente-ipsa-pariatur-minima\",\r\n    \"meta\": {\r\n        \"title\": \"Qui iure sapiente ipsa pariatur minima.\",\r\n        \"keywords\": \"Vitae.\",\r\n        \"descriptions\": \"Ratione.\",\r\n        \"breadcrumb\": \"dolores\",\r\n        \"og:title\": \"Qui iure sapiente ipsa pariatur minima.\",\r\n        \"og:type\": \"website\",\r\n        \"og:url\": \"https://cmsapi.avegacms.ru/Qui-iure-sapiente-ipsa-pariatur-minima\",\r\n        \"og:image\": \"https://cmsapi.avegacms.ru/uploads/open_graph.png\"\r\n    },\r\n    \"extra_data\": null,\r\n    \"status\": \"PUBLISH\",\r\n    \"meta_type\": \"RUBRIC\",\r\n    \"in_sitemap\": 1,\r\n    \"anons\": \"Qui ut repellat vitae et accusantium natus. Adipisci facere voluptatum deleniti molestiae repellat.\",\r\n    \"content\": \"Vel qui sit ipsa animi distinctio corrupti porro. Assumenda ut molestiae nihil eos. Voluptatem ad atque blanditiis et maxime. Optio deleniti voluptatibus est quam vero odit dolor. Porro soluta omnis et. Non ratione est dolorum quis molestiae harum magni. Vel aut odio aspernatur enim rem reiciendis cum. In fugit laudantium omnis reprehenderit optio commodi. Itaque et ut quia nostrum assumenda hic. Laborum amet nam voluptas fugiat exercitationem.\",\r\n    \"extra\": null\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/content/rubrics/457",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"content",
+												"rubrics",
+												"457"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Patch",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\": 118,\r\n    \"status\": \"DRAFT\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/content/rubrics/118",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"content",
+												"rubrics",
+												"118"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/content/rubrics/117",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"content",
+												"rubrics",
+												"117"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Settings",
+					"item": [
+						{
+							"name": "Locales",
+							"item": [
+								{
+									"name": "Index",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/locales",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"locales"
+											]
+										},
+										"description": "Получение списка доступных локалей"
+									},
+									"response": []
+								},
+								{
+									"name": "Edit",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/locales/1/edit",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"locales",
+												"1",
+												"edit"
+											]
+										},
+										"description": "Получение информации по локали для редактирования"
+									},
+									"response": []
+								},
+								{
+									"name": "Create",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"slug\": \"cz\",\r\n    \"locale\": \"cz_CZ\",\r\n    \"locale_name\": \"Čeština\",\r\n    \"home\": \"Hlavní\",\r\n    \"extra\": \"\",\r\n    \"is_default\": 0,\r\n    \"active\": 0\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/settings/locales",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"locales"
+											]
+										},
+										"description": "Метод создания локали"
+									},
+									"response": []
+								},
+								{
+									"name": "Update",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\":4,\r\n    \"slug\": \"cz\",\r\n    \"locale\": \"cz_CZ\",\r\n    \"locale_name\": \"Čeština\",\r\n    \"home\": \"Hlavní stránka\",\r\n    \"extra\": \"\",\r\n    \"is_default\": 0,\r\n    \"active\": 0\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/settings/locales/4",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"locales",
+												"4"
+											]
+										},
+										"description": "Метод создания локали"
+									},
+									"response": []
+								},
+								{
+									"name": "Patch",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\":4,\r\n    \"active\": 1\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/settings/locales/4",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"locales",
+												"4"
+											]
+										},
+										"description": "Метод создания локали"
+									},
+									"response": []
+								},
+								{
+									"name": "Delete",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/locales/4",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"locales",
+												"4"
+											]
+										},
+										"description": "Получение информации по локали для редактирования"
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Roles",
+							"item": [
+								{
+									"name": "Index",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/roles",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"roles"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Edit",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/roles/1/edit",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"roles",
+												"1",
+												"edit"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"role\": \"editor\",\r\n    \"description\": \"\",\r\n    \"color\": \"#FAFAFA\",\r\n    \"path\": \"/\",\r\n    \"priority\": 1,\r\n    \"active\": 1\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/settings/roles",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"roles"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\":5,\r\n    \"role\": \"editor\",\r\n    \"description\": \"\",\r\n    \"color\": \"#FAFAFA\",\r\n    \"path\": \"/\",\r\n    \"priority\": 2,\r\n    \"active\": 1\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/settings/roles/5",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"roles",
+												"5"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Patch",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\":5,\r\n    \"active\": 0\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/settings/roles/5",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"roles",
+												"5"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/settings/roles/1",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"roles",
+												"1"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Permissions",
+							"item": [
+								{
+									"name": "Actions",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/permissions/1/1",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"permissions",
+												"1",
+												"1"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Edit",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/permissions/15/edit",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"permissions",
+												"15",
+												"edit"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\": 15,\r\n    \"role_id\": 3,\r\n    \"parent\": 0,\r\n    \"module_id\": 1,\r\n    \"is_module\": 1,\r\n    \"is_system\": 0,\r\n    \"is_plugin\": 0,\r\n    \"slug\": \"settings\",\r\n    \"access\": 1,\r\n    \"self\": 1,\r\n    \"create\": 1,\r\n    \"read\": 1,\r\n    \"update\": 1,\r\n    \"delete\": 1,\r\n    \"moderated\": 0,\r\n    \"settings\": 0,\r\n    \"extra\": \"\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/settings/permissions/15",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"permissions",
+												"15"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Modules",
+							"item": [
+								{
+									"name": "Index",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/modules",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"modules"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Show",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/modules/1",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"modules",
+												"1"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/modules/1",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"modules",
+												"1"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Users",
+							"item": [
+								{
+									"name": "Index",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/users?id&login&phone&email&status=&q",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"users"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": null
+												},
+												{
+													"key": "login",
+													"value": null
+												},
+												{
+													"key": "phone",
+													"value": null
+												},
+												{
+													"key": "email",
+													"value": null
+												},
+												{
+													"key": "status",
+													"value": ""
+												},
+												{
+													"key": "q",
+													"value": null
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "New",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/users/new",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"users",
+												"new"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"login\": \"omnis8\",\r\n    \"avatar\": \"\",\r\n    \"phone\": \"79613960427\",\r\n    \"email\": \"rley@yahoo.com\",\r\n    \"timezone\": \"Europe/Moscow\",\r\n    \"password\": \"qwerty\",\r\n    \"path\": \"\",\r\n    \"status\": \"ACTIVE\",\r\n    \"roles\": [\r\n        \"3\"\r\n    ]\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/settings/users",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"users"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Edit",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/users/1/edit",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"users",
+												"1",
+												"edit"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\": 7,\r\n    \"login\": \"omnis_labore\",\r\n    \"avatar\": \"\",\r\n    \"phone\": \"79613960422\",\r\n    \"email\": \"thompson.burley@yahoo.com\",\r\n    \"timezone\": \"Europe/Moscow\",\r\n    \"path\": \"\",\r\n    \"extra\": null,\r\n    \"status\": \"banned\",\r\n    \"role\": [\r\n        \"3\"\r\n    ]\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/settings/users/7",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"users",
+												"7"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Put",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\": 7,\r\n    \"reset\": \"active\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/settings/users/7",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"users",
+												"7"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Upload",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{jwt_admin_token}}",
+												"type": "text"
+											},
+											{
+												"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+												"key": "Content-Type",
+												"value": "multipart/form-data",
+												"type": "text"
+											},
+											{
+												"key": "X-Requested-With",
+												"value": "XMLHttpRequest",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "file",
+													"type": "file",
+													"src": "/C:/Users/Boss/Desktop/PMU_GVT01_dlya_WM.jpg"
+												},
+												{
+													"key": "_method",
+													"value": "PUT",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{adminURL}}/settings/users/upload/1",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"users",
+												"upload",
+												"1"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/users/319",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"users",
+												"319"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Settings",
+							"item": [
+								{
+									"name": "Index",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/settings?entity&slug=&key=",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"settings"
+											],
+											"query": [
+												{
+													"key": "entity",
+													"value": null
+												},
+												{
+													"key": "slug",
+													"value": ""
+												},
+												{
+													"key": "key",
+													"value": ""
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "New",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/settings/new",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"settings",
+												"new"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"module_id\": 0,\r\n    \"is_core\": 1,\r\n    \"entity\": \"core\",\r\n    \"slug\": \"email\",\r\n    \"key\": \"protocol\",\r\n    \"value\": \"MAIL\",\r\n    \"default_value\": \"MAIL, SENDMAIL, or SMTP\",\r\n    \"return_type\": \"STRING\",\r\n    \"label\": \"Settings.label.email.protocol\",\r\n    \"context\": \"Settings.context.email.protocol\",\r\n    \"sort\": 100\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/settings/settings",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"settings"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Edit",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/settings/26/edit",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"settings",
+												"26",
+												"edit"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\": 26,\r\n    \"module_id\": 0,\r\n    \"is_core\": 1,\r\n    \"entity\": \"core\",\r\n    \"slug\": \"email\",\r\n    \"key\": \"protocol\",\r\n    \"value\": \"MAIL\",\r\n    \"default_value\": \"MAIL, SENDMAIL, or SMTP\",\r\n    \"return_type\": \"string\",\r\n    \"label\": \"Settings.label.mail.protocol\",\r\n    \"context\": \"Settings.context.mail.protocol\",\r\n    \"sort\": 100\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/settings/settings/26",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"settings",
+												"26"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Patch",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\": 26,\r\n    \"sort\": 1\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/settings/settings/26",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"settings",
+												"26"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/settings/26",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"settings",
+												"26"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Navigations",
+							"item": [
+								{
+									"name": "New",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/navigations/new",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"navigations",
+												"new"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\": 0,\r\n    \"parent\": 0,\r\n    \"is_admin\": 0,\r\n    \"object_id\": 0,\r\n    \"locale_id\": 1,\r\n    \"nav_type\": \"GROUP\",\r\n    \"meta\": \"\",\r\n    \"title\": \"Вернее меню\",\r\n    \"slug\": \"menu_up\",\r\n    \"sort\": 100,\r\n    \"active\": 1\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/settings/navigations",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"navigations"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Edit",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/navigations/1/edit",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"navigations",
+												"1",
+												"edit"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\": 1,\r\n    \"parent\": 0,\r\n    \"is_admin\": 0,\r\n    \"object_id\": 0,\r\n    \"locale_id\": 1,\r\n    \"nav_type\": \"GROUP\",\r\n    \"meta\": \"\",\r\n    \"title\": \"Вернее меню\",\r\n    \"slug\": \"menu_up\",\r\n    \"sort\": 100,\r\n    \"active\": 1\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/settings/navigations/1",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"navigations",
+												"1"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Patch",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\": 1,\r\n    \"active\": 0\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/settings/navigations/1",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"navigations",
+												"1"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/navigations/1",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"navigations",
+												"1"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "EmailTemplate",
+							"item": [
+								{
+									"name": "Index",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/email_template",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"email_template"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Edit",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/email_template/10/edit",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"email_template",
+												"10",
+												"edit"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"slug\": \"rap\",\r\n    \"locale_id\": 1,\r\n    \"is_system\": 0,\r\n    \"label\": \"Подтверждение рэпа\",\r\n    \"subject\": \"{siteName} подтверждение рэпа\",\r\n    \"content\": \"Ваш код подтверждения рэпа {rap}\",\r\n    \"template\": \"rap\",\r\n    \"active\": 1\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/settings/email_template",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"email_template"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Updade",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\": 10,\r\n    \"slug\": \"rap\",\r\n    \"locale_id\": 1,\r\n    \"is_system\": 0,\r\n    \"label\": \"Подтверждение рэпа\",\r\n    \"subject\": \"{siteName} подтверждение рэпа\",\r\n    \"content\": \"Ваш код подтверждения рэпа {rap}\",\r\n    \"template\": \"rap\",\r\n    \"active\": 1\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/settings/email_template/10",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"email_template",
+												"10"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Patch",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\": 10,\r\n    \"active\": 1\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{adminURL}}/settings/email_template/10",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"email_template",
+												"10"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{adminURL}}/settings/email_template/10",
+											"host": [
+												"{{adminURL}}"
+											],
+											"path": [
+												"settings",
+												"email_template",
+												"10"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "Session",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "publicURL",
+			"value": "https://cmsapi.avegacms.ru/api/public",
+			"type": "string"
+		},
+		{
+			"key": "adminURL",
+			"value": "https://cmsapi.avegacms.ru/api/admin",
+			"type": "string"
+		}
+	]
+}

@@ -15,7 +15,8 @@ use AvegaCms\Models\Admin\{ModulesModel,
     RolesModel,
     UserRolesModel,
     PermissionsModel,
-    LocalesModel
+    LocalesModel,
+    EmailTemplateModel
 };
 use AvegaCms\Entities\{ModulesEntity,
     LoginEntity,
@@ -23,7 +24,8 @@ use AvegaCms\Entities\{ModulesEntity,
     SettingsEntity,
     UserRolesEntity,
     PermissionsEntity,
-    LocalesEntity
+    LocalesEntity,
+    EmailTemplateEntity
 };
 use ReflectionException;
 use Exception;
@@ -41,6 +43,8 @@ class AvegaCmsInstallSeeder extends Seeder
 
     protected LocalesModel $LLM;
 
+    protected EmailTemplateModel $ETM;
+
     public function __construct(Database $config, ?BaseConnection $db = null)
     {
         parent::__construct($config, $db);
@@ -52,6 +56,7 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->PM = model(PermissionsModel::class);
         $this->URM = model(UserRolesModel::class);
         $this->LLM = model(LocalesModel::class);
+        $this->ETM = model(EmailTemplateModel::class);
     }
 
     /**
@@ -67,6 +72,7 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->_createPermissions($userId);
         $this->_createLocales($userId);
         $this->_createSettings();
+        $this->_createEmailSystemTemplate($userId);
         $this->_createPublicFolders();
 
         cache()->clean();
@@ -372,7 +378,22 @@ class AvegaCmsInstallSeeder extends Seeder
                     'active'        => 1,
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
-                ]
+                ],
+                [
+                    'parent'        => $list['settings'],
+                    'is_core'       => 1,
+                    'is_plugin'     => 0,
+                    'is_system'     => 0,
+                    'slug'          => 'email_template',
+                    'name'          => 'Cms.modules.name.email_template',
+                    'version'       => $this->version,
+                    'description'   => 'Cms.modules.description.email_template',
+                    'extra'         => '',
+                    'in_sitemap'    => 0,
+                    'active'        => 1,
+                    'created_by_id' => $userId,
+                    'updated_by_id' => 0
+                ],
             ],
             'content'  => [
                 [
@@ -1156,6 +1177,212 @@ class AvegaCmsInstallSeeder extends Seeder
                 'context'       => 'Settings.context.auth.authSmsMessage'
             ],
 
+            // Email
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'email',
+                'key'           => 'fromEmail',
+                'value'         => '',
+                'default_value' => '',
+                'return_type'   => SettingsReturnTypes::String->value,
+                'label'         => 'Settings.label.email.fromEmail',
+                'context'       => 'Settings.context.email.fromEmail'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'email',
+                'key'           => 'fromName',
+                'value'         => '',
+                'default_value' => '',
+                'return_type'   => SettingsReturnTypes::String->value,
+                'label'         => 'Settings.label.email.fromName',
+                'context'       => 'Settings.context.email.fromName'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'email',
+                'key'           => 'replyEmail',
+                'value'         => '',
+                'default_value' => '',
+                'return_type'   => SettingsReturnTypes::String->value,
+                'label'         => 'Settings.label.email.replyEmail',
+                'context'       => 'Settings.context.email.replyEmail'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'email',
+                'key'           => 'replyName',
+                'value'         => '',
+                'default_value' => '',
+                'return_type'   => SettingsReturnTypes::String->value,
+                'label'         => 'Settings.label.email.replyName',
+                'context'       => 'Settings.context.email.replyName'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'email',
+                'key'           => 'returnEmail',
+                'value'         => '',
+                'default_value' => '',
+                'return_type'   => SettingsReturnTypes::String->value,
+                'label'         => 'Settings.label.email.returnEmail',
+                'context'       => 'Settings.context.email.returnEmail'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'email',
+                'key'           => 'userAgent',
+                'value'         => '*',
+                'default_value' => '*',
+                'return_type'   => SettingsReturnTypes::String->value,
+                'label'         => 'Settings.label.email.userAgent',
+                'context'       => 'Settings.context.email.userAgent'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'email',
+                'key'           => 'charset',
+                'value'         => 'UTF-8',
+                'default_value' => 'UTF-8',
+                'return_type'   => SettingsReturnTypes::String->value,
+                'label'         => 'Settings.label.email.charset',
+                'context'       => 'Settings.context.email.charset'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'email',
+                'key'           => 'protocol',
+                'value'         => 'mail',
+                'default_value' => 'mail',
+                'return_type'   => SettingsReturnTypes::String->value,
+                'label'         => 'Settings.label.email.protocol',
+                'context'       => 'Settings.context.email.protocol'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'email',
+                'key'           => 'priority',
+                'value'         => 1,
+                'default_value' => 3,
+                'return_type'   => SettingsReturnTypes::Integer->value,
+                'label'         => 'Settings.label.email.priority',
+                'context'       => 'Settings.context.email.priority'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'email',
+                'key'           => 'mailType',
+                'value'         => 'html',
+                'default_value' => 'html',
+                'return_type'   => SettingsReturnTypes::String->value,
+                'label'         => 'Settings.label.email.mailType',
+                'context'       => 'Settings.context.email.mailType'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'email',
+                'key'           => 'smtpHost',
+                'value'         => '',
+                'default_value' => '',
+                'return_type'   => SettingsReturnTypes::String->value,
+                'label'         => 'Settings.label.email.smtpHost',
+                'context'       => 'Settings.context.email.smtpHost'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'email',
+                'key'           => 'smtpUser',
+                'value'         => '',
+                'default_value' => '',
+                'return_type'   => SettingsReturnTypes::String->value,
+                'label'         => 'Settings.label.email.smtpUser',
+                'context'       => 'Settings.context.email.smtpUser'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'email',
+                'key'           => 'smtpPass',
+                'value'         => '',
+                'default_value' => '',
+                'return_type'   => SettingsReturnTypes::String->value,
+                'label'         => 'Settings.label.email.smtpPass',
+                'context'       => 'Settings.context.email.smtpPass'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'email',
+                'key'           => 'smtpPort',
+                'value'         => 465,
+                'default_value' => 465,
+                'return_type'   => SettingsReturnTypes::Integer->value,
+                'label'         => 'Settings.label.email.smtpPort',
+                'context'       => 'Settings.context.email.smtpPort'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'email',
+                'key'           => 'smtpTimeout',
+                'value'         => 5,
+                'default_value' => 5,
+                'return_type'   => SettingsReturnTypes::Integer->value,
+                'label'         => 'Settings.label.email.smtpTimeout',
+                'context'       => 'Settings.context.email.smtpTimeout'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'email',
+                'key'           => 'smtpKeepalive',
+                'value'         => 0,
+                'default_value' => 0,
+                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'label'         => 'Settings.label.email.smtpKeepalive',
+                'context'       => 'Settings.context.email.smtpKeepalive'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'email',
+                'key'           => 'smtpCrypto',
+                'value'         => 'ssl',
+                'default_value' => 'ssl',
+                'return_type'   => SettingsReturnTypes::String->value,
+                'label'         => 'Settings.label.email.smtpCrypto',
+                'context'       => 'Settings.context.email.smtpCrypto'
+            ],
+
             // Content
             [
                 'module_id'     => 0,
@@ -1188,6 +1415,112 @@ class AvegaCmsInstallSeeder extends Seeder
         foreach ($settingsList as $item) {
             $this->SM->insert($settingEntity->fill($item));
         }
+    }
+
+    /**
+     * @param  int  $userId
+     * @return void
+     * @throws ReflectionException
+     */
+    private function _createEmailSystemTemplate(int $userId): void
+    {
+        $templates = [
+            'ru' => [
+                [
+                    'label'     => 'Подтверждение email',
+                    'slug'      => 'confirm',
+                    'subject'   => '{siteName} подтверждение email',
+                    'content'   => 'Ваш код подтверждения email {code}',
+                    'variables' => '',
+                    'template'  => 'auth'
+                ],
+                [
+                    'label'     => 'Подтверждение кода авторизации',
+                    'slug'      => 'auth',
+                    'subject'   => 'Код авторизации',
+                    'content'   => 'Ваш код авторизации {code}',
+                    'variables' => '',
+                    'template'  => 'auth'
+                ],
+                [
+                    'label'     => 'Подтверждение кода восстановления доступов',
+                    'slug'      => 'recovery',
+                    'subject'   => 'Восстановление доступов',
+                    'content'   => 'Ваш код подтверждения восстановления доступов {code}',
+                    'variables' => '',
+                    'template'  => 'auth'
+                ]
+            ],
+            'en' => [
+                [
+                    'label'     => 'Email confirmation',
+                    'slug'      => 'confirm',
+                    'subject'   => '{siteName} confirmation of email',
+                    'content'   => 'Your confirmation email code {code}',
+                    'variables' => '',
+                    'template'  => 'auth'
+                ],
+                [
+                    'label'     => 'Authorization code confirmation',
+                    'slug'      => 'auth',
+                    'subject'   => 'Authorization code',
+                    'content'   => 'Your authorization code {code}',
+                    'variables' => '',
+                    'template'  => 'auth'
+                ],
+                [
+                    'label'     => 'Restoring access',
+                    'slug'      => 'recovery',
+                    'subject'   => 'Restoring access',
+                    'content'   => 'Your access recovery confirmation code {code}',
+                    'variables' => '',
+                    'template'  => 'auth'
+                ]
+            ],
+            'de' => [
+                [
+                    'label'     => 'E-Mail-Bestätigung',
+                    'slug'      => 'confirm',
+                    'subject'   => '{siteName} E-Mail-Bestätigung',
+                    'content'   => 'Ihr Bestätigungscode email {code}',
+                    'variables' => '',
+                    'template'  => 'auth'
+                ],
+                [
+                    'label'     => 'Bestätigung des Autorisierungscodes',
+                    'slug'      => 'auth',
+                    'subject'   => 'Autorisierungscode',
+                    'content'   => 'Ihr Autorisierungscode ist {code}',
+                    'variables' => '',
+                    'template'  => 'auth'
+                ],
+                [
+                    'label'     => 'Bestätigung des Zugriffs-Wiederherstellungscodes',
+                    'slug'      => 'recovery',
+                    'subject'   => 'Zugriff wiederherstellen',
+                    'content'   => 'Ihr Zugangswiederherstellungsbestätigungscode ist {code}',
+                    'variables' => '',
+                    'template'  => 'auth'
+                ]
+            ]
+        ];
+
+        $locales = $this->LLM->select(['id', 'slug'])
+            ->orderBy('id', 'ASC')
+            ->findAll();
+
+        $emailTemplate = [];
+
+        foreach ($locales as $locale) {
+            foreach ($templates[$locale->slug] as $template) {
+                $template['locale_id'] = $locale->id;
+                $template['is_system'] = 1;
+                $template['created_by_id'] = $userId;
+                $emailTemplate[] = (new EmailTemplateEntity($template));
+            }
+        }
+
+        $this->ETM->insertBatch($emailTemplate);
     }
 
     /**
