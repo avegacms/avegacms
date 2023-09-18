@@ -7,6 +7,8 @@ namespace AvegaCms\Controllers;
 use AvegaCms\Models\Frontend\ContentModel;
 use AvegaCms\Enums\MetaDataTypes;
 use CodeIgniter\HTTP\ResponseInterface;
+use AvegaCms\Utils\Cms;
+use ReflectionException;
 
 class Content extends AvegaCmsFrontendController
 {
@@ -20,11 +22,12 @@ class Content extends AvegaCmsFrontendController
 
     /**
      * @return ResponseInterface|string
+     * @throws ReflectionException
      */
     public function index(): ResponseInterface|string
     {
-        $settings = settings('core.env');
-        $contentSettings = settings('content');
+        $settings = Cms::settings('core.env');
+        $contentSettings = Cms::settings('content');
         $segments = $this->request->uri->getSegments();
         $filter = $this->request->getGet() ?? [];
 

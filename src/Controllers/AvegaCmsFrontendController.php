@@ -6,10 +6,11 @@ namespace AvegaCms\Controllers;
 
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\Pager\Pager;
-use RuntimeException;
-
 use AvegaCms\Entities\Seo\MetaEntity;
 use AvegaCms\Models\Frontend\MetaDataModel;
+use AvegaCms\Utils\Cms;
+use RuntimeException;
+use ReflectionException;
 
 class AvegaCmsFrontendController extends BaseController
 {
@@ -19,15 +20,20 @@ class AvegaCmsFrontendController extends BaseController
     protected ?Pager        $pager       = null;
 
     private readonly array $specialVars;
-
+    
     public function __construct()
     {
-        helper(['avegacms']);
         $this->specialVars = ['meta', 'breadcrumbs', 'pager'];
         $this->MDM = model(MetaDataModel::class);
     }
 
-
+    /**
+     * @param  array  $data
+     * @param  string  $view
+     * @param  array  $options
+     * @return string
+     * @throws ReflectionException
+     */
     public function render(array $data, string $view = '', array $options = []): string
     {
         if ( ! empty($arr = array_flip(array_intersect_key(array_flip($this->specialVars), $data)))) {
@@ -40,9 +46,9 @@ class AvegaCmsFrontendController extends BaseController
 
         $data['template'] = null;
 
-        if (settings('core.env.useViewData')) {
+        if (Cms::settings('core.env.useViewData')) {
             if ( ! file_exists($file = APPPATH . 'Views/' . ($view = 'template/' . $view) . '.php')) {
-                throw new RuntimeException("File {$file} not found");
+                throw new RuntimeException("File $file not found");
             }
             $data['template'] = view($view, $data, $options);
         }
@@ -52,6 +58,7 @@ class AvegaCmsFrontendController extends BaseController
 
     /**
      * @return ResponseInterface
+     * @throws ReflectionException
      */
     public function error404(): ResponseInterface
     {

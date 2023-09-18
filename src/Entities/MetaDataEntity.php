@@ -6,9 +6,10 @@ namespace AvegaCms\Entities;
 
 use AvegaCms\Models\Admin\MetaDataModel;
 use AvegaCms\Enums\MetaDataTypes;
-use AvegaCms\Utils\SeoUtils;
+use AvegaCms\Utils\{Cms, SeoUtils};
 use Config\Services;
 use AvegaCms\Entities\Seo\{BreadCrumbsEntity, MetaEntity, OpenGraphEntity};
+use ReflectionException;
 
 
 class MetaDataEntity extends AvegaCmsEntity
@@ -44,7 +45,6 @@ class MetaDataEntity extends AvegaCmsEntity
     public function __construct(?array $data = null)
     {
         parent::__construct($data);
-        helper(['avegacms']);
     }
 
     /**
@@ -67,13 +67,14 @@ class MetaDataEntity extends AvegaCmsEntity
     /**
      * @param  string  $url
      * @return $this
+     * @throws ReflectionException
      */
     public function setUrl(string $url): MetaDataEntity
     {
         $url = empty($url) ? mb_url_title(strtolower($this->rawData['title'])) : $url;
 
         $this->attributes['url'] = match ($this->rawData['meta_type']) {
-            MetaDataTypes::Main->value => settings('core.env.useMultiLocales') ? SeoUtils::Locales($this->rawData['locale_id'])['slug'] : '/',
+            MetaDataTypes::Main->value => Cms::settings('core.env.useMultiLocales') ? SeoUtils::Locales($this->rawData['locale_id'])['slug'] : '/',
             MetaDataTypes::Page->value => model(MetaDataModel::class)->getParentPageUrl($this->rawData['parent']) . $url,
             default                    => $url
         };
@@ -135,7 +136,7 @@ class MetaDataEntity extends AvegaCmsEntity
             ]
         ));
 
-        if ($meta['useMultiLocales'] = settings('core.env.useMultiLocales')) {
+        if ($meta['useMultiLocales'] = Cms::settings('core.env.useMultiLocales')) {
             foreach ($locales as $locale) {
                 $meta['alternate'][] = [
                     'hreflang' => ($this->locale_id === $locale['id']) ? 'x-default' : $locale['slug'],
@@ -158,7 +159,7 @@ class MetaDataEntity extends AvegaCmsEntity
     public function breadCrumbs(string $type, array $parentBreadCrumbs = []): array
     {
         $breadCrumbs = [];
-        
+
         if ($type !== MetaDataTypes::Main->value) {
             $breadCrumbs[] = [
                 'url'    => '',
@@ -179,7 +180,7 @@ class MetaDataEntity extends AvegaCmsEntity
 
         if ( ! empty($locale = SeoUtils::Locales($this->locale_id))) {
             $breadCrumbs[] = [
-                'url'    => base_url(settings('core.env.useMultiLocales') ? $locale['slug'] : ''),
+                'url'    => base_url(Cms::settings('core.env.useMultiLocales') ? $locale['slug'] : ''),
                 'title'  => esc($locale['home']),
                 'active' => false
             ];

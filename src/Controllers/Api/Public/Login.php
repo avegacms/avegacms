@@ -7,7 +7,9 @@ use AvegaCms\Libraries\Authorization\Authorization;
 use AvegaCms\Libraries\Authorization\Exceptions\AuthorizationException;
 use CodeIgniter\Events\Events;
 use CodeIgniter\HTTP\ResponseInterface;
+use AvegaCms\Utils\Cms;
 use Exception;
+use ReflectionException;
 
 
 class Login extends CmsResourceController
@@ -16,12 +18,12 @@ class Login extends CmsResourceController
     protected Authorization $Authorization;
 
     /**
-     * @throws AuthorizationException
+     * @throws AuthorizationException|ReflectionException
      */
     public function __construct()
     {
-        helper(['avegacms', 'date']);
-        $this->settings = settings('core');
+        helper(['date']);
+        $this->settings = Cms::settings('core');
         $this->Authorization = new Authorization($this->settings);
     }
 

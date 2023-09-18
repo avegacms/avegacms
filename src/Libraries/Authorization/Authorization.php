@@ -8,6 +8,7 @@ use AvegaCms\Enums\UserConditions;
 use AvegaCms\Libraries\Authorization\Exceptions\{AuthorizationException, AuthenticationException};
 use AvegaCms\Entities\{LoginEntity, UserEntity, UserTokensEntity};
 use AvegaCms\Models\Admin\{LoginModel, UserAuthenticationModel, UserRolesModel, UserTokensModel};
+use AvegaCms\Utils\Cms;
 use CodeIgniter\Validation\ValidationInterface;
 use CodeIgniter\Session\Session;
 use CodeIgniter\Validation\Validation;
@@ -35,7 +36,7 @@ class Authorization
      */
     public function __construct(array $settings)
     {
-        helper(['date', 'avegacms']);
+        helper(['date']);
 
         if (empty($settings)) {
             throw AuthorizationException::forNoData();
@@ -241,7 +242,7 @@ class Authorization
         }
 
         if ($this->settings['auth']['useSession']) {
-            initClientSession();
+            Cms::initClientSession();
             $this->_setClientSession($userSession);
         }
 
@@ -504,7 +505,7 @@ class Authorization
                     throw AuthenticationException::forNotAuthorized();
                 }
 
-                $userData = arrayToObject($this->session->get('avegacms.admin'));
+                $userData = Cms::arrayToObject($this->session->get('avegacms.admin'));
 
                 break;
             case 'jwt':
@@ -569,7 +570,7 @@ class Authorization
         $cmsUser = service('AvegaCmsUser');
 
         $cmsUser::set('user', $userData->user);
-        $cmsUser::set('permission', arrayToObject([
+        $cmsUser::set('permission', Cms::arrayToObject([
             'self'      => $permission->self,
             'moderated' => $permission->moderated,
             'settings'  => $permission->settings

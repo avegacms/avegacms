@@ -8,6 +8,8 @@ use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
 use Faker\Generator;
 use AvegaCms\Enums\UserStatuses;
+use AvegaCms\Utils\Cms;
+use ReflectionException;
 
 class UserModel extends AvegaCmsModel
 {
@@ -102,6 +104,11 @@ class UserModel extends AvegaCmsModel
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
+    /**
+     * @param  ConnectionInterface|null  $db
+     * @param  ValidationInterface|null  $validation
+     * @throws ReflectionException
+     */
     public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
     {
         parent::__construct($db, $validation);
@@ -134,13 +141,14 @@ class UserModel extends AvegaCmsModel
 
     /**
      * @return void
+     * @throws ReflectionException
      */
     protected function initUserValidationRules(): void
     {
         $this->validationRules['status'] = 'if_exist|in_list[' . implode(',', UserStatuses::getValues()) . ']';
 
-        $settings = service('settings')->get('core.auth.loginType');
-
+        $settings = Cms::settings('core.auth.loginType');
+        
         $loginType = explode(':', $settings);
 
         foreach ($loginType as $type) {

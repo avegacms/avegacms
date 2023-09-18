@@ -9,6 +9,7 @@ use Config\Services;
 use Exception;
 use AvegaCms\Libraries\Authorization\Authorization;
 use AvegaCms\Libraries\Authorization\Exceptions\AuthenticationException;
+use AvegaCms\Utils\Cms;
 
 class AuthorizationFilter implements FilterInterface
 {
@@ -30,7 +31,7 @@ class AuthorizationFilter implements FilterInterface
     public function before(RequestInterface $request, $arguments = null)
     {
         try {
-            if (($settings = service('settings')->get('core.auth')) === null) {
+            if (($settings = Cms::settings('core.auth')) === null) {
                 throw new Exception('Auth settings not found');
             }
             (new Authorization($settings))->checkUserAccess();
