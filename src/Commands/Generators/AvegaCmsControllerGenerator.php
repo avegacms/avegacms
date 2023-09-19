@@ -26,7 +26,7 @@ class AvegaCmsControllerGenerator extends BaseCommand
      *
      * @var string
      */
-    protected $name = 'makecms:controller';
+    protected $name = 'avegacms:controller';
 
     /**
      * The Command's Description
@@ -40,7 +40,7 @@ class AvegaCmsControllerGenerator extends BaseCommand
      *
      * @var string
      */
-    protected $usage = 'makecms:controller <name> [options]';
+    protected $usage = 'avegacms:controller <name> [options]';
 
     /**
      * The Command's Arguments
