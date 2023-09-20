@@ -23,7 +23,7 @@ class AvegaCmsModelGenerator extends BaseCommand
      *
      * @var string
      */
-    protected $name = 'makecms:model';
+    protected $name = 'avegacms:model';
 
     /**
      * The Command's Description
@@ -37,7 +37,7 @@ class AvegaCmsModelGenerator extends BaseCommand
      *
      * @var string
      */
-    protected $usage = 'makecms:model <name> [options]';
+    protected $usage = 'avegacms:model <name> [options]';
 
     /**
      * The Command's Arguments
