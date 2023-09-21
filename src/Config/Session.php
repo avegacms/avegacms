@@ -1,6 +1,6 @@
 <?php
 
-namespace Config;
+namespace AvegaCms\Config;
 
 use CodeIgniter\Config\BaseConfig;
 use CodeIgniter\Session\Handlers\BaseHandler;
