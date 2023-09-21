@@ -88,6 +88,8 @@ src/Config/View.php
 
 src/Views/template
 src/Views/template/*
+modules
+modules/*
 #-------------------------
 # Test Files
 #-------------------------
