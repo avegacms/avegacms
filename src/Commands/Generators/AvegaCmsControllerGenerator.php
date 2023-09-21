@@ -84,15 +84,15 @@ class AvegaCmsControllerGenerator extends BaseCommand
     protected function prepare(string $class): string
     {
         if (count($classPath = explode('\\', $class)) >= 3) {
-            if ($classPath[2] === 'Api' && ! in_array($classPath[3] ?? '', ['Public', 'Admin'], true)) {
-                CLI::error(lang('Generator.error.controller.folderNotFound', [$classPath[3]]), 'light_gray', 'red');
+            if (in_array('Api', $classPath, true) && empty(array_intersect($classPath, ['Public', 'Admin']))) {
+                CLI::error(lang('Generator.error.controller.folderNotFound'), 'light_gray', 'red');
                 CLI::newLine();
                 exit();
             }
         }
 
-        $type = strtolower($classPath[2] ?? 'controller');
-        $access = strtolower($classPath[3] ?? 'public');
+        $type = in_array('Api', $classPath, true) ? 'api' : 'controller';
+        $access = in_array('Admin', $classPath, true) ? 'admin' : 'public';
 
         $useStatement = AvegaCmsFrontendController::class;
         $extends = 'AvegaCmsFrontendController';
