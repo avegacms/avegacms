@@ -6,6 +6,7 @@ use AvegaCms\Config\AvegaCms;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\CLI\GeneratorTrait;
+use Config\Autoload;
 
 class AvegaCmsScaffoldGenerator extends BaseCommand
 {
@@ -76,6 +77,16 @@ class AvegaCmsScaffoldGenerator extends BaseCommand
         $options = [];
 
         if ($this->getOption('namespace')) {
+            /*$folders = explode('/', $this->getOption('namespace'));
+
+            if ($folders[0] === 'Modules') {
+                unset($folders[0]);
+                $file = ROOTPATH . 'modules' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $folders);
+                if ( ! file_exists($file) && mkdir($file, 0777, true)) {
+                    (new Autoload());
+                }
+            }*/
+
             $options['namespace'] = $this->getOption('namespace');
         }
 

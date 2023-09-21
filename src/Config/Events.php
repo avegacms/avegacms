@@ -1,6 +1,6 @@
 <?php
 
-namespace AvegaCms\Config;
+namespace Config;
 
 use CodeIgniter\Events\Events;
 use CodeIgniter\Exceptions\FrameworkException;
