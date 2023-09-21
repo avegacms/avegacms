@@ -8,9 +8,8 @@ use CodeIgniter\Config\DotEnv;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\GeneratorTrait;
 use CodeIgniter\Encryption\Encryption;
-use ReflectionException;
 
-class AvegaCmsAppStarter extends BaseCommand
+class AvegaCmsCreateEnv extends BaseCommand
 {
     use GeneratorTrait;
 
@@ -26,30 +25,21 @@ class AvegaCmsAppStarter extends BaseCommand
      *
      * @var string
      */
-    protected $name = 'avegacms:appstart';
+    protected $name = 'avegacms:env';
 
     /**
      * The Command's Description
      *
      * @var string
      */
-    protected $description = 'Installing AvegaCms';
+    protected $description = 'Create .env file';
 
     /**
      * The Command's Usage
      *
      * @var string
      */
-    protected $usage = 'avegacms:appstart';
-
-    /**
-     * The Command's Arguments
-     *
-     * @var array
-     */
-    protected $arguments = [
-        'name' => 'The controller class name.',
-    ];
+    protected $usage = 'avegacms:env';
 
     /**
      * @var array|string[]
@@ -63,7 +53,6 @@ class AvegaCmsAppStarter extends BaseCommand
     /**
      * @param  array  $params
      * @return void
-     * @throws ReflectionException
      */
     public function run(array $params): void
     {
@@ -73,15 +62,12 @@ class AvegaCmsAppStarter extends BaseCommand
             return;
         }
 
-        if ($this->createNewEnvironmentFile()) {
-            $this->call('php spark migrate --all');
-            $this->call('php spark db:seed AvegaCms\\Database\\Seeds\\AvegaCmsInstallSeeder');
-        }
+        $this->createNewEnvironmentFile();
     }
 
     private function createNewEnvironmentFile(): bool
     {
-        CLI::write('Создание Env файла:', 'yellow');
+        CLI::write('Creating .env file', 'green');
         CLI::newLine();
 
         $env['environment'] = self::$envTypes[CLI::promptByKey('Set environment:', self::$envTypes,
@@ -159,6 +145,9 @@ class AvegaCmsAppStarter extends BaseCommand
         }
 
         (new DotEnv(ROOTPATH))->load();
+
+        CLI::write('Env file was successfully created', 'green');
+        CLI::newLine();
 
         return true;
     }

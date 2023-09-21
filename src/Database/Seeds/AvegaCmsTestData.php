@@ -80,6 +80,10 @@ class AvegaCmsTestData extends Seeder
         $this->createPosts();
     }
 
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
     protected function createLocales(): void
     {
         if (CLI::prompt('Use multi locales?', ['y', 'n']) === 'y') {
