@@ -1,6 +1,6 @@
 <?php
 
-namespace Config;
+namespace AvegaCms\Config;
 
 use CodeIgniter\Cache\Handlers\DummyHandler;
 use CodeIgniter\Cache\Handlers\FileHandler;

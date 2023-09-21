@@ -1,6 +1,6 @@
 <?php
 
-namespace Config;
+namespace AvegaCms\Config;
 
 use AvegaCms\Libraries\Authorization\AvegaCmsUser;
 use CodeIgniter\Config\BaseService;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Config;
+namespace AvegaCms\Config;
 
 use CodeIgniter\Config\View as BaseView;
 use CodeIgniter\View\ViewDecoratorInterface;
