@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AvegaCms\Libraries\Uploader\Exceptions;
+namespace AvegaCms\Utils\Exceptions;
 
 use Exception;
 

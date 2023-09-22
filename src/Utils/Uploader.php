@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace AvegaCms\Libraries\Uploader;
+namespace AvegaCms\Utils;
 
 use Config\Mimes;
 use Config\Services;
 use CodeIgniter\Files\File;
-use AvegaCms\Libraries\Uploader\Exceptions\UploaderException;
+use AvegaCms\Utils\Exceptions\UploaderException;
 
 class Uploader
 {

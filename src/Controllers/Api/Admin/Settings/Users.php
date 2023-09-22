@@ -8,9 +8,8 @@ use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\{UserModel, UserRolesModel, RolesModel, UserTokensModel};
 use AvegaCms\Entities\{UserEntity, UserRolesEntity};
-use AvegaCms\Libraries\Uploader\Uploader;
-use AvegaCms\Libraries\Uploader\Exceptions\UploaderException;
-use AvegaCms\Utils\Cms;
+use AvegaCms\Utils\{Cms, Uploader};
+use AvegaCms\Utils\Exceptions\UploaderException;
 use ReflectionException;
 
 class Users extends AvegaCmsAdminAPI
