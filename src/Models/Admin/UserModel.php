@@ -85,7 +85,7 @@ class UserModel extends AvegaCmsModel
         'phone'    => ['rules' => 'if_exist|is_natural|exact_length[11]|regex_match[/^79\d{9}/]'],
         'email'    => ['rules' => 'if_exist|max_length[255]|valid_email'],
         'timezone' => ['rules' => 'if_exist|required|max_length[144]'],
-        'password' => ['rules' => 'if_exist|required|max_length[144]'],
+        'password' => ['rules' => 'if_exist|required|verifyPassword'],
         'path'     => ['rules' => 'if_exist|permit_empty|max_length[512]'],
         'extra'    => ['rules' => 'if_exist|permit_empty']
     ];
@@ -148,7 +148,7 @@ class UserModel extends AvegaCmsModel
         $this->validationRules['status'] = 'if_exist|in_list[' . implode(',', UserStatuses::getValues()) . ']';
 
         $settings = Cms::settings('core.auth.loginType');
-        
+
         $loginType = explode(':', $settings);
 
         foreach ($loginType as $type) {

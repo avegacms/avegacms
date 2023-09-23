@@ -4,10 +4,12 @@ namespace AvegaCms\Enums;
 
 enum UserConditions: string
 {
-    case None     = 'NONE';
-    case Auth     = 'AUTH';
-    case Recovery = 'RECOVERY';
-    case Password = 'PASSWORD';
+    case None       = 'NONE';
+    case Auth       = 'AUTH';
+    case CheckPhone = 'CHECK_PHONE';
+    case CheckEmail = 'CHECK_EMAIL';
+    case Recovery   = 'RECOVERY';
+    case Password   = 'PASSWORD';
 
     public static function getValues(): array
     {
