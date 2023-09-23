@@ -9,7 +9,7 @@
  * the LICENSE file that was distributed with this source code.
  */
 
-namespace CodeIgniter\Commands\Generators;
+namespace AvegaCms\Commands\Generators;
 
 use AvegaCms\Config\AvegaCms;
 use CodeIgniter\CLI\BaseCommand;
