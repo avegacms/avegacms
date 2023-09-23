@@ -22,7 +22,7 @@ use Config\Session as SessionConfig;
 /**
  * Generates a skeleton migration file.
  */
-class MigrationGenerator extends BaseCommand
+class AvegaCmsMigrationGenerator extends BaseCommand
 {
     use GeneratorTrait;
 
