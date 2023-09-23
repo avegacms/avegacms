@@ -53,13 +53,13 @@ class RolesModel extends AvegaCmsModel
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
-    protected $afterInsert    = [];
+    protected $afterInsert    = ['clearCache'];
     protected $beforeUpdate   = [];
-    protected $afterUpdate    = [];
+    protected $afterUpdate    = ['clearCache'];
     protected $beforeFind     = [];
     protected $afterFind      = [];
     protected $beforeDelete   = [];
-    protected $afterDelete    = [];
+    protected $afterDelete    = ['clearCache'];
 
     public function getRolesList()
     {
@@ -72,5 +72,10 @@ class RolesModel extends AvegaCmsModel
             }
             return array_column($roles, 'role', 'id');
         });
+    }
+
+    public function clearCache()
+    {
+        cache()->delete('UserRolesList');
     }
 }
