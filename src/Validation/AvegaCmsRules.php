@@ -76,7 +76,7 @@ class AvegaCmsRules
     public function verify_password($value, ?string &$error = null): bool
     {
         if ( ! preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{6,32}$/', $value)) {
-            $error = lang('Validation.uniqueDbKey.notUnique');
+            $error = lang('Validation.verifyPassword');
             return false;
         }
         return true;
