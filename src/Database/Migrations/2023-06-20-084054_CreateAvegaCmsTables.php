@@ -13,6 +13,7 @@ use AvegaCms\Enums\{
     NavigationTypes,
     MetaDataTypes
 };
+use AvegaCms\Utils\Migrator;
 
 class CreateAvegaCmsTables extends Migration
 {
@@ -41,11 +42,7 @@ class CreateAvegaCmsTables extends Migration
     {
         parent::__construct($forge);
 
-        $this->attributes = ($this->db->getPlatform() === 'MySQLi') ? [
-            'ENGINE'  => 'InnoDB',
-            'CHARSET' => 'utf8',
-            'COLLATE' => 'utf8_unicode_ci'
-        ] : [];
+        $this->attributes = ($this->db->getPlatform() === 'MySQLi') ? Migrator::$attributes : [];
     }
 
     public function up()
@@ -81,8 +78,8 @@ class CreateAvegaCmsTables extends Migration
             'last_ip'    => ['type' => 'varchar', 'constraint' => 45],
             'last_agent' => ['type' => 'varchar', 'constraint' => 512],
             'active_at'  => ['type' => 'datetime', 'null' => true],
-            ...$this->byId(),
-            ...$this->dateFields([])
+            ...Migrator::byId(),
+            ...Migrator::dateFields([])
         ]);
         $this->forge->addPrimaryKey('id');
         $this->createTable($this->tables['users']);
@@ -99,8 +96,8 @@ class CreateAvegaCmsTables extends Migration
             'priority'    => ['type' => 'tinyint', 'constraint' => 3, 'null' => 0, 'default' => 0],
             // Приритет роли, в случае, если будут одинаковые действия
             'active'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
-            ...$this->byId(),
-            ...$this->dateFields(['deleted_at'])
+            ...Migrator::byId(),
+            ...Migrator::dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
@@ -113,7 +110,7 @@ class CreateAvegaCmsTables extends Migration
             'role_id'       => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
             'user_id'       => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
             'created_by_id' => ['type' => 'int', 'constraint' => 11, 'null' => true, 'default' => 0],
-            ...$this->dateFields(['updated_at', 'deleted_at'])
+            ...Migrator::dateFields(['updated_at', 'deleted_at'])
         ]);
         $this->forge->addUniqueKey(['user_id', 'role_id']);
         $this->forge->addForeignKey('role_id', $this->tables['roles'], 'id', '', 'CASCADE');
@@ -131,7 +128,7 @@ class CreateAvegaCmsTables extends Migration
             'expires'       => ['type' => 'int', 'null' => true, 'default' => 0],
             'user_ip'       => ['type' => 'varchar', 'constraint' => 255],
             'user_agent'    => ['type' => 'varchar', 'constraint' => 512],
-            ...$this->dateFields(['deleted_at'])
+            ...Migrator::dateFields(['deleted_at'])
         ]);
         $this->forge->addForeignKey('user_id', $this->tables['users'], 'id', '', 'CASCADE');
         $this->createTable($this->tables['user_tokens']);
@@ -152,8 +149,8 @@ class CreateAvegaCmsTables extends Migration
             'extra'       => ['type' => 'text', 'null' => true],
             'in_sitemap'  => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             'active'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
-            ...$this->byId(),
-            ...$this->dateFields(['deleted_at'])
+            ...Migrator::byId(),
+            ...Migrator::dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addUniqueKey(['parent', 'is_core', 'slug']);
@@ -179,8 +176,8 @@ class CreateAvegaCmsTables extends Migration
             'label'         => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
             'context'       => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
             'sort'          => ['type' => 'tinyint', 'constraint' => 3, 'null' => 0, 'default' => 100],
-            ...$this->byId(),
-            ...$this->dateFields(['deleted_at'])
+            ...Migrator::byId(),
+            ...Migrator::dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addUniqueKey(['module_id', 'entity', 'slug', 'key']);
@@ -204,8 +201,8 @@ class CreateAvegaCmsTables extends Migration
             // Дополнительны данные
             'is_default'  => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             'active'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
-            ...$this->byId(),
-            ...$this->dateFields(['deleted_at'])
+            ...Migrator::byId(),
+            ...Migrator::dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
         $this->createTable($this->tables['locales']);
@@ -258,8 +255,8 @@ class CreateAvegaCmsTables extends Migration
                 'default'    => FileTypes::File->value
             ],
             // тип загруженного файла
-            ...$this->byId(),
-            ...$this->dateFields(['deleted_at'])
+            ...Migrator::byId(),
+            ...Migrator::dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addForeignKey('user_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
@@ -320,8 +317,8 @@ class CreateAvegaCmsTables extends Migration
             'in_sitemap' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // флаг добавления в карту сайта
             'publish_at' => ['type' => 'datetime', 'null' => true],
-            ...$this->byId(),
-            ...$this->dateFields(['deleted_at'])
+            ...Migrator::byId(),
+            ...Migrator::dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addUniqueKey(['locale_id', 'module_id', 'item_id', 'slug']);
@@ -347,8 +344,8 @@ class CreateAvegaCmsTables extends Migration
             'name'   => ['type' => 'varchar', 'constraint' => 128, 'null' => true],
             'slug'   => ['type' => 'varchar', 'constraint' => 64, 'unique' => true, 'null' => true],
             'active' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
-            ...$this->byId(),
-            ...$this->dateFields(['deleted_at'])
+            ...Migrator::byId(),
+            ...Migrator::dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
@@ -362,7 +359,7 @@ class CreateAvegaCmsTables extends Migration
             'tag_id'        => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
             'meta_id'       => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
             'created_by_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => 0, 'default' => 0],
-            ...$this->dateFields(['updated_at', 'deleted_at'])
+            ...Migrator::dateFields(['updated_at', 'deleted_at'])
         ]);
         $this->forge->addUniqueKey(['tag_id', 'meta_id']);
         $this->forge->addForeignKey('tag_id', $this->tables['tags'], 'id', '', 'CASCADE');
@@ -401,8 +398,8 @@ class CreateAvegaCmsTables extends Migration
             // действие требует модерации вышестоящих
             'settings'  => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             'extra'     => ['type' => 'text', 'null' => true], // Настройки для плагинов
-            ...$this->byId(),
-            ...$this->dateFields(['deleted_at'])
+            ...Migrator::byId(),
+            ...Migrator::dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addUniqueKey(['role_id', 'module_id', 'is_module', 'is_system', 'is_plugin', 'parent', 'slug']);
@@ -425,8 +422,8 @@ class CreateAvegaCmsTables extends Migration
             'icon'      => ['type' => 'varchar', 'constraint' => 512, 'null' => true, 'default' => ''],
             'sort'      => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true, 'default' => 0],
             'active'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
-            ...$this->byId(),
-            ...$this->dateFields(['deleted_at'])
+            ...Migrator::byId(),
+            ...Migrator::dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addUniqueKey(['parent', 'is_admin', 'locale_id', 'nav_type', 'slug']);
@@ -443,8 +440,8 @@ class CreateAvegaCmsTables extends Migration
             'variables' => ['type' => 'text', 'null' => true],
             'template'  => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
             'active'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 1],
-            ...$this->byId(),
-            ...$this->dateFields(['deleted_at'])
+            ...Migrator::byId(),
+            ...Migrator::dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addUniqueKey(['locale_id', 'is_system', 'slug']);
