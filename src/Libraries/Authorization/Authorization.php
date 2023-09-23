@@ -744,7 +744,7 @@ class Authorization
         $phone = 'exact_length[11]|regex_match[/^79\d{9}/]';
         $login = 'required|max_length[36]';
         $email = 'max_length[255]|valid_email';
-        $password = 'required|min_length[6]|max_length[255]|alpha_numeric_punct';
+        $password = 'required|min_length[6]|max_length[255]|alpha_numeric_punct|verify_password';
         $condition = 'required|in_list[auth,recovery,password]';
         $code = 'required|numeric|exact_length[' . $this->settings['auth']['verifyCodeLength'] . ']';
         $token = 'required|max_length[255]|alpha_numeric';
@@ -813,7 +813,7 @@ class Authorization
                 ],
                 'passconf' => [
                     'label' => lang('Authorization.fields.passconf'),
-                    'rules' => 'required|max_length[255]|matches[password]'
+                    'rules' => 'required|matches[password]'
                 ],
                 'hash'     => [
                     'label' => lang('Authorization.fields.hash'),
