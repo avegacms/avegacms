@@ -63,7 +63,7 @@ class RolesModel extends AvegaCmsModel
 
     public function getRolesList()
     {
-        return cache()->remember('UserRolesList', DAY * 30, function () {
+        return cache()->remember('RolesList', DAY * 30, function () {
             $roles = [];
             $this->builder()->select(['id', 'role'])->orderBy('role', 'ASC');
             $rolesData = $this->findAll();
@@ -76,6 +76,6 @@ class RolesModel extends AvegaCmsModel
 
     public function clearCache()
     {
-        cache()->delete('UserRolesList');
+        cache()->delete('RolesList');
     }
 }
