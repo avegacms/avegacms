@@ -19,9 +19,7 @@ class {class} extends {extends}
 {
     public function __construct()
     {
-        <?php if ($type !== 'api'): ?>
-        parent::__construct();
-        <?php endif;?>
+        <?php if ($type !== 'api'): ?>parent::__construct();<?php endif;?>
     }
 <?php
 if ($type === 'api'): ?>
