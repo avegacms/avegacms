@@ -135,8 +135,10 @@ class Authorization
             throw AuthorizationException::forUnknownUser();
         }
 
-        if ($user->expires < now($this->settings['env']['timezone'])) {
-            throw AuthorizationException::forCodeExpired();
+        if ( ! in_array($data['condition'], [UserConditions::CheckPhone->value, UserConditions::CheckEmail->value])) {
+            if ($user->expires < now($this->settings['env']['timezone'])) {
+                throw AuthorizationException::forCodeExpired();
+            }
         }
 
         if ($user->secret !== $this->_hashCode((int) $data['code'])) {
@@ -148,17 +150,22 @@ class Authorization
         }
 
         return match ($data['condition']) {
-            UserConditions::Auth->value     => [
+            UserConditions::CheckPhone->value,
+            UserConditions::CheckEmail->value => [
+                'status' => true,
+                'direct' => 'confirm',
+            ],
+            UserConditions::Auth->value       => [
                 'status'   => true,
                 'direct'   => 'set_user',
                 'userdata' => ['user_id' => $user->id]
             ],
-            UserConditions::Recovery->value => [
+            UserConditions::Recovery->value   => [
                 'status'   => true,
                 'direct'   => 'password',
                 'userdata' => ['user_id' => $user->id, 'hash' => $hash ?? '']
             ],
-            default                         => throw AuthorizationException::forWrongCode()
+            default                           => throw AuthorizationException::forWrongCode()
         };
     }
 
