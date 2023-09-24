@@ -92,28 +92,27 @@ class Cms
 
             return $settings;
         } else {
-            $id = $SM->getId($entity, $slug, $property);
-
-            if ($id > 0) {
+            if (($id = $SM->getId($entity, $slug, $property)) > 0) {
                 return $SM->update($id, (new SettingsEntity(['value' => $value])));
+            } else {
+                return $SM->insert(
+                    (new SettingsEntity(
+                        [
+                            'module_id'     => $config['module_id'] ?? 0,
+                            'is_core'       => $config['is_core'] ?? 0,
+                            'entity'        => $entity,
+                            'slug'          => $slug ?? '',
+                            'key'           => $property ?? '',
+                            'value'         => $value,
+                            'default_value' => $config['default_value'] ?? '',
+                            'return_type'   => $config['return_type'] ?? SettingsReturnTypes::String->value,
+                            'label'         => $config['label'] ?? '',
+                            'context'       => $config['context'] ?? '',
+                            'sort'          => $config['sort'] ?? 100
+                        ]
+                    ))
+                );
             }
-
-            return $SM->insert(
-                (new SettingsEntity(
-                    [
-                        'id'            => $id,
-                        'entity'        => $entity,
-                        'slug'          => $slug ?? '',
-                        'key'           => $property ?? '',
-                        'value'         => $value,
-                        'default_value' => $config['default_value'] ?? '',
-                        'return_type'   => $config['return_type'] ?? SettingsReturnTypes::String->value,
-                        'label'         => $config['label'] ?? '',
-                        'context'       => $config['context'] ?? '',
-                        'sort'          => $config['sort'] ?? 100
-                    ]
-                ))
-            );
         }
     }
 

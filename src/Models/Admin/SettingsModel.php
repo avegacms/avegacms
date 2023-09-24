@@ -50,7 +50,7 @@ class SettingsModel extends AvegaCmsModel
         'key'           => ['rules' => 'if_exist|required|alpha_numeric|max_length[36]'],
         'value'         => ['rules' => 'if_exist|permit_empty'],
         'default_value' => ['rules' => 'if_exist|permit_empty'],
-        'label'         => ['rules' => 'if_exist|required|string|max_length[255]'],
+        'label'         => ['rules' => 'if_exist|permit_empty|string|max_length[255]'],
         'context'       => ['rules' => 'if_exist|permit_empty|string|max_length[512]'],
         'sort'          => ['rules' => 'if_exist|is_natural']
     ];
