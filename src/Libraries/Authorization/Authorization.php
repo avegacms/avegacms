@@ -664,10 +664,12 @@ class Authorization
      */
     private function _setExpiresTime(string $condition): int
     {
-        return match ($condition) {
-                'auth'     => $this->settings['auth']['verifyCodeTime'],
+        return match (strtolower($condition)) {
+                'auth',
+                'check_phone',
+                'check_email' => $this->settings['auth']['verifyCodeTime'],
                 'recovery',
-                'password' => $this->settings['auth']['recoveryCodeTime'],
+                'password'    => $this->settings['auth']['recoveryCodeTime'],
             } * (now($this->settings['env']['timezone']) * MINUTE);
     }
 
