@@ -43,11 +43,11 @@ class Authorization
         }
 
         $this->settings = $settings;
-        $this->LM = model(LoginModel::class);
-        $this->UTM = model(UserTokensModel::class);
-        $this->URM = model(UserRolesModel::class);
+        $this->LM       = model(LoginModel::class);
+        $this->UTM      = model(UserTokensModel::class);
+        $this->URM      = model(UserRolesModel::class);
 
-        $this->session = Services::session();
+        $this->session    = Services::session();
         $this->validation = Services::validation();
     }
 
@@ -93,7 +93,7 @@ class Authorization
         $loginType = key($loginType);
 
         if ($this->settings['auth']['use2fa'] || $loginType === 'phone') {
-            $authResult['userdata']['code'] = $this->_setSecretCode($user->id, UserConditions::Auth->value);
+            $authResult['userdata']['code'] = $this->setSecretCode($user->id, UserConditions::Auth->value);
             if ($loginType === 'phone' || $this->settings['auth']['2faField'] === 'phone') {
                 $authResult['userdata']['phone'] = $user->phone;
             } elseif ($this->settings['auth']['2faField'] === 'email') {
@@ -144,7 +144,7 @@ class Authorization
         }
 
         if ($data['condition'] === UserConditions::Recovery->value) {
-            $hash = $this->_hashCode($this->_setSecretCode($user->id, UserConditions::Password->value));
+            $hash = $this->_hashCode($this->setSecretCode($user->id, UserConditions::Password->value));
         }
 
         return match ($data['condition']) {
@@ -206,7 +206,7 @@ class Authorization
         $request = Services::request();
 
         $userAgent = $request->getUserAgent()->getAgentString();
-        $userIp = $request->getIPAddress();
+        $userIp    = $request->getIPAddress();
 
         if ($this->settings['auth']['useJwt']) {
             if (empty($token = $this->_signatureTokenJWT($userSession['user']))) {
@@ -286,7 +286,7 @@ class Authorization
             throw AuthorizationException::forUnknownUser();
         }
 
-        $code = $this->_setSecretCode($user->id, UserConditions::Recovery->value);
+        $code = $this->setSecretCode($user->id, UserConditions::Recovery->value);
 
         $recoveryResult = [
             'status'   => true,
@@ -458,7 +458,7 @@ class Authorization
      */
     public function checkUserAccess(): void
     {
-        $request = Services::request();
+        $request  = Services::request();
         $userData = null;
 
         $UTM = model(UserTokensModel::class);
@@ -578,6 +578,30 @@ class Authorization
     }
 
     /**
+     * @param  int  $userId
+     * @param  string  $condition
+     * @return int
+     * @throws ReflectionException|Exception
+     */
+    public function setSecretCode(int $userId, string $condition): int
+    {
+        $code = $this->_getCode();
+
+        $this->LM->save(
+            (new LoginEntity(
+                [
+                    'id'        => $userId,
+                    'secret'    => $this->_hashCode($code),
+                    'expires'   => $this->_setExpiresTime($condition),
+                    'condition' => UserConditions::from($condition)->value
+                ]
+            ))
+        );
+
+        return $code;
+    }
+
+    /**
      * @param $map
      * @param  array  $segments
      * @param  int  $index
@@ -610,30 +634,6 @@ class Authorization
     protected function validate(array $rules, array $data): bool
     {
         return $this->validation->setRules($rules)->run($data);
-    }
-
-    /**
-     * @param  int  $userId
-     * @param  string  $condition
-     * @return int
-     * @throws ReflectionException|Exception
-     */
-    private function _setSecretCode(int $userId, string $condition): int
-    {
-        $code = $this->_getCode();
-
-        $this->LM->save(
-            (new LoginEntity(
-                [
-                    'id'        => $userId,
-                    'secret'    => $this->_hashCode($code),
-                    'expires'   => $this->_setExpiresTime($condition),
-                    'condition' => UserConditions::from($condition)->value
-                ]
-            ))
-        );
-
-        return $code;
     }
 
     /**
@@ -677,7 +677,7 @@ class Authorization
      */
     public function _signatureTokenJWT(array $userData): string
     {
-        $issuedAtTime = time();
+        $issuedAtTime    = time();
         $tokenExpiration = $issuedAtTime + ($this->settings['auth']['jwtLiveTime'] * MINUTE);
 
         return JWT::encode(
@@ -741,13 +741,13 @@ class Authorization
      */
     private function _validate(string $type): array
     {
-        $phone = 'exact_length[11]|regex_match[/^79\d{9}/]';
-        $login = 'required|max_length[36]';
-        $email = 'max_length[255]|valid_email';
-        $password = 'required|verify_password';
-        $condition = 'required|in_list[auth,recovery,password]';
-        $code = 'required|numeric|exact_length[' . $this->settings['auth']['verifyCodeLength'] . ']';
-        $token = 'required|max_length[255]|alpha_numeric';
+        $phone         = 'exact_length[11]|regex_match[/^79\d{9}/]';
+        $login         = 'required|max_length[36]';
+        $email         = 'max_length[255]|valid_email';
+        $password      = 'required|verify_password';
+        $condition     = 'required|in_list[auth,recovery,password]';
+        $code          = 'required|numeric|exact_length[' . $this->settings['auth']['verifyCodeLength'] . ']';
+        $token         = 'required|max_length[255]|alpha_numeric';
         $recoveryField = $this->settings['auth']['recoveryField'];
 
         return match ($type) {
