@@ -85,7 +85,7 @@ class UserModel extends AvegaCmsModel
         'phone'    => ['rules' => 'if_exist|is_natural|exact_length[11]|regex_match[/^79\d{9}/]'],
         'email'    => ['rules' => 'if_exist|max_length[255]|valid_email'],
         'timezone' => ['rules' => 'if_exist|required|max_length[144]'],
-        'password' => ['rules' => 'if_exist|required|verifyPassword'],
+        'password' => ['rules' => 'if_exist|required|verify_password'],
         'path'     => ['rules' => 'if_exist|permit_empty|max_length[512]'],
         'extra'    => ['rules' => 'if_exist|permit_empty']
     ];
