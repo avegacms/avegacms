@@ -11,8 +11,12 @@ enum UserConditions: string
     case Recovery   = 'RECOVERY';
     case Password   = 'PASSWORD';
 
-    public static function getValues(): array
+    /**
+     * @param  array  $exclude
+     * @return array
+     */
+    public static function getValues(array $exclude = []): array
     {
-        return array_column(UserConditions::cases(), 'value');
+        return array_diff(array_column(UserConditions::cases(), 'value'), $exclude);
     }
 }
