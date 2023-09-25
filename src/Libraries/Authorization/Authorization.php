@@ -152,8 +152,9 @@ class Authorization
         return match ($data['condition']) {
             UserConditions::CheckPhone->value,
             UserConditions::CheckEmail->value => [
-                'status' => true,
-                'direct' => 'confirm',
+                'status'   => true,
+                'direct'   => 'confirm',
+                'userdata' => ['user_id' => $user->id]
             ],
             UserConditions::Auth->value       => [
                 'status'   => true,
