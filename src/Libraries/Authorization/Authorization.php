@@ -27,8 +27,7 @@ class Authorization
     protected UserRolesModel $URM;
     protected Session        $session;
 
-    protected Validation          $validation;
-    protected ValidationInterface $validator;
+    protected Validation $validation;
 
     /**
      * @param  array  $settings
@@ -120,7 +119,7 @@ class Authorization
         }
 
         if ( ! $this->validate($this->_validate('check_code'), $data)) {
-            throw new AuthorizationException($this->validator->getErrors());
+            throw new AuthorizationException($this->validation->getErrors());
         }
 
         $type = $this->_checkType($data['pointer']);
@@ -289,7 +288,7 @@ class Authorization
         }
 
         if ( ! $this->validate($this->_validate('recovery'), $data)) {
-            throw new AuthorizationException($this->validator->getErrors());
+            throw new AuthorizationException($this->validation->getErrors());
         }
 
         $field = $this->settings['auth']['recoveryField'];
@@ -337,7 +336,7 @@ class Authorization
         }
 
         if ( ! $this->validate($this->_validate('password'), $data)) {
-            throw new AuthorizationException($this->validator->getErrors());
+            throw new AuthorizationException($this->validation->getErrors());
         }
 
         $conditions = [
@@ -417,7 +416,7 @@ class Authorization
         }
 
         if ( ! $this->validate($this->_validate('refresh_token'), $data)) {
-            throw new AuthorizationException($this->validator->getErrors());
+            throw new AuthorizationException($this->validation->getErrors());
         }
 
         if (empty($tokens = $this->UTM->getUserTokens($payload->data->userId)->findAll())) {
