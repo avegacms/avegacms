@@ -154,7 +154,11 @@ class Authorization
             UserConditions::CheckEmail->value => [
                 'status'   => true,
                 'direct'   => 'confirm',
-                'userdata' => ['user_id' => $user->id]
+                'userdata' => [
+                    'user_id' => $user->id,
+                    'email'   => $user->email,
+                    'phone'   => $user->phone
+                ]
             ],
             UserConditions::Auth->value       => [
                 'status'   => true,
