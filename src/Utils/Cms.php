@@ -6,7 +6,6 @@ use AvegaCms\Enums\SettingsReturnTypes;
 use AvegaCms\Models\Admin\SettingsModel;
 use AvegaCms\Entities\SettingsEntity;
 use Config\Services;
-use phpDocumentor\Reflection\DocBlock\Tags\Deprecated;
 use RuntimeException;
 use ReflectionException;
 
