@@ -11,6 +11,38 @@ use ReflectionException;
 
 class Cms
 {
+    private static object|null $access   = null;
+    private static object|null $userData = null;
+
+    /**
+     * @return object|null
+     */
+    public static function userData(): object|null
+    {
+        return self::$userData;
+    }
+
+    /**
+     * @return object|null
+     */
+    public static function userPermission(): object|null
+    {
+        return self::$access;
+    }
+
+    /**
+     * @param  string  $key
+     * @param  object|null  $value
+     * @return void
+     */
+    public static function setUser(string $key, ?object $value = null): void
+    {
+        match ($key) {
+            'user'       => self::$userData = $value ?? null,
+            'permission' => self::$access = $value ?? null
+        };
+    }
+
     /**
      * @param  array  $data
      * @return void
