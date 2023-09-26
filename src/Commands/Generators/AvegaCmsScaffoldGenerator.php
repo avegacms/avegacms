@@ -77,16 +77,6 @@ class AvegaCmsScaffoldGenerator extends BaseCommand
         $options = [];
 
         if ($this->getOption('namespace')) {
-            /*$folders = explode('/', $this->getOption('namespace'));
-
-            if ($folders[0] === 'Modules') {
-                unset($folders[0]);
-                $file = ROOTPATH . 'modules' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $folders);
-                if ( ! file_exists($file) && mkdir($file, 0777, true)) {
-                    (new Autoload());
-                }
-            }*/
-
             $options['namespace'] = $this->getOption('namespace');
         }
 
@@ -117,7 +107,7 @@ class AvegaCmsScaffoldGenerator extends BaseCommand
         // Call those commands!
         $this->call('avegacms:controller', array_merge([$class], $controllerOpts, $options));
         $this->call('avegacms:model', array_merge([$class], $modelOpts, $options));
-        $this->call('make:migration', array_merge([$class], $options));
+        $this->call('avegacms:migration', array_merge([$class], $options));
         $this->call('make:seeder', array_merge([$class], $options));
     }
 }
