@@ -49,11 +49,11 @@ class AvegaCmsInstallSeeder extends Seeder
     {
         parent::__construct($config, $db);
 
-        $this->MM = model(ModulesModel::class);
-        $this->LM = model(LoginModel::class);
-        $this->SM = model(SettingsModel::class);
-        $this->RM = model(RolesModel::class);
-        $this->PM = model(PermissionsModel::class);
+        $this->MM  = model(ModulesModel::class);
+        $this->LM  = model(LoginModel::class);
+        $this->SM  = model(SettingsModel::class);
+        $this->RM  = model(RolesModel::class);
+        $this->PM  = model(PermissionsModel::class);
         $this->URM = model(UserRolesModel::class);
         $this->LLM = model(LocalesModel::class);
         $this->ETM = model(EmailTemplateModel::class);
@@ -89,7 +89,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 [
                     'login'    => 'admin',
                     'email'    => 'admin@avegacms.ru',
-                    'password' => 123456,
+                    'password' => '123Qwe78',
                     'status'   => UserStatuses::Active->value
                 ]
             ))
@@ -465,7 +465,7 @@ class AvegaCmsInstallSeeder extends Seeder
             foreach ($modules as $slug => $list) {
                 foreach ($list as $item) {
                     if ($slug === $subModule->slug) {
-                        $item['parent'] = $subModule->id;
+                        $item['parent']  = $subModule->id;
                         $modulesEntity[] = (new ModulesEntity($item));
                     }
                 }
@@ -748,16 +748,16 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->PM->insertBatch($defPermissions);
 
         $modules = $this->MM->select(['id', 'parent', 'is_system', 'is_plugin', 'slug'])->findAll();
-        $roles = $this->RM->select(['id', 'role'])->findAll();
+        $roles   = $this->RM->select(['id', 'role'])->findAll();
 
         foreach ($modules as $module) {
             foreach ($roles as $role) {
                 foreach ($permissions as $permission) {
                     if ($permission['role_id'] === $role->id && $module->is_system === $permission['is_system'] && $module->is_plugin === $permission['is_plugin']) {
-                        $perm = $permission;
-                        $perm['parent'] = $module->parent;
+                        $perm              = $permission;
+                        $perm['parent']    = $module->parent;
                         $perm['module_id'] = $module->id;
-                        $perm['slug'] = $module->slug;
+                        $perm['slug']      = $module->slug;
 
                         $moduleRolePermission[] = (new PermissionsEntity($perm));
                     }
@@ -1513,10 +1513,10 @@ class AvegaCmsInstallSeeder extends Seeder
 
         foreach ($locales as $locale) {
             foreach ($templates[$locale->slug] as $template) {
-                $template['locale_id'] = $locale->id;
-                $template['is_system'] = 1;
+                $template['locale_id']     = $locale->id;
+                $template['is_system']     = 1;
                 $template['created_by_id'] = $userId;
-                $emailTemplate[] = (new EmailTemplateEntity($template));
+                $emailTemplate[]           = (new EmailTemplateEntity($template));
             }
         }
 
