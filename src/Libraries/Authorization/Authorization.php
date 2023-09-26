@@ -578,10 +578,8 @@ class Authorization
             throw AuthenticationException::forForbiddenAccess();
         }
 
-        $cmsUser = service('AvegaCmsUser');
-
-        $cmsUser::set('user', $userData->user);
-        $cmsUser::set('permission', Cms::arrayToObject([
+        Cms::setUser('user', $userData->user);
+        Cms::setUser('permission', Cms::arrayToObject([
             'self'      => $permission->self,
             'moderated' => $permission->moderated,
             'settings'  => $permission->settings

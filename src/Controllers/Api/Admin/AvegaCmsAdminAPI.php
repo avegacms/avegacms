@@ -3,7 +3,7 @@
 namespace AvegaCms\Controllers\Api\Admin;
 
 use AvegaCms\Controllers\Api\CmsResourceController;
-use AvegaCms\Libraries\Authorization\AvegaCmsUser;
+use AvegaCms\Utils\Cms;
 
 class AvegaCmsAdminAPI extends CmsResourceController
 {
@@ -13,7 +13,7 @@ class AvegaCmsAdminAPI extends CmsResourceController
     public function __construct()
     {
         helper(['date']);
-        $this->userData = AvegaCmsUser::data();
-        $this->userPermission = AvegaCmsUser::permission();
+        $this->userData       = Cms::userData();
+        $this->userPermission = Cms::userPermission();
     }
 }

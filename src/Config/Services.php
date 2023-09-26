@@ -2,7 +2,6 @@
 
 namespace Config;
 
-use AvegaCms\Libraries\Authorization\AvegaCmsUser;
 use CodeIgniter\Config\BaseService;
 
 /**
@@ -20,16 +19,5 @@ use CodeIgniter\Config\BaseService;
  */
 class Services extends BaseService
 {
-    /**
-     * @param $getShared
-     * @return AvegaCmsUser|object
-     */
-    public static function AvegaCmsUser($getShared = true)
-    {
-        if ($getShared) {
-            return static::getSharedInstance('AvegaCmsUser');
-        }
 
-        return new AvegaCmsUser();
-    }
 }
