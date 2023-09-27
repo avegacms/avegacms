@@ -42,31 +42,34 @@ class UserAuthenticationModel extends Model
     protected $afterDelete    = [];
 
     /**
+     * @param  string  $role
      * @param  int  $roleId
      * @return array
      */
-    public function getRoleAccessMap(int $roleId): array
+    public function getRoleAccessMap(string $role, int $roleId): array
     {
-        $this->builder()->select(
-            [
-                'parent',
-                'module_id',
-                'parent',
-                'is_system',
-                'is_plugin',
-                'slug',
-                'access',
-                'self',
-                'create',
-                'read',
-                'update',
-                'delete',
-                'moderated',
-                'settings',
-                'extra'
-            ]
-        )->where(['role_id' => $roleId]);
+        return cache()->remember('RAM_' . $role, DAY * 30, function () use ($roleId) {
+            $this->builder()->select(
+                [
+                    'parent',
+                    'module_id',
+                    'parent',
+                    'is_system',
+                    'is_plugin',
+                    'slug',
+                    'access',
+                    'self',
+                    'create',
+                    'read',
+                    'update',
+                    'delete',
+                    'moderated',
+                    'settings',
+                    'extra'
+                ]
+            )->where(['role_id' => $roleId]);
 
-        return Cms::getTree($this->asArray()->findAll(), 0);
+            return Cms::getTree($this->asArray()->findAll());
+        });
     }
 }
