@@ -566,23 +566,23 @@ class Authorization
         $method = $request->getMethod();
 
         $action = match ($method) {
-            'get'    => $permission->read,
-            'post'   => $permission->create,
+            'get'    => $permission['read'],
+            'post'   => $permission['create'],
             'put',
-            'patch'  => $permission->update,
-            'delete' => $permission->delete,
+            'patch'  => $permission['update'],
+            'delete' => $permission['delete'],
             default  => throw AuthenticationException::forForbiddenAccess()
         };
 
-        if ($action === false) {
+        if ((bool) $action === false) {
             throw AuthenticationException::forForbiddenAccess();
         }
 
         Cms::setUser('user', $userData->user);
         Cms::setUser('permission', Cms::arrayToObject([
-            'self'      => $permission->self,
-            'moderated' => $permission->moderated,
-            'settings'  => $permission->settings
+            'self'      => (bool) $permission['self'],
+            'moderated' => (bool) $permission['moderated'],
+            'settings'  => (bool) $permission['settings']
         ]));
     }
 
@@ -625,13 +625,14 @@ class Authorization
         }
 
         foreach ($map as $actions) {
-            if ($actions->slug === $segments[$index] && $actions->parent === $parent) {
-                if ($actions->access === false) {
+            if ($actions['slug'] === strtolower($segments[$index]) && (int) $actions['parent'] === $parent) {
+                if ((int) $actions['access'] === 0) {
                     throw AuthenticationException::forForbiddenAccess();
                 }
 
-                if (isset($segments[$index + 1])) {
-                    return $this->_findPermission($map, $segments, $index + 1, $actions->module_id);
+                if (isset($actions['list']) && isset($segments[$index + 1])) {
+                    return $this->_findPermission($actions['list'], $segments, $index + 1,
+                        $actions['module_id']) ?? $actions;
                 }
                 return $actions;
             }
