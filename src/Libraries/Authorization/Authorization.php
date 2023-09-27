@@ -552,12 +552,12 @@ class Authorization
             throw AuthenticationException::forUnknownPermission();
         }
 
-        if (is_null($map = cache($fileCacheName = 'RAM_' . $userData->user->role))) {
+        $map = cache()->remember('RAM_' . $userData->user->role, DAY * 30, function () use ($UAM, $userData) {
             if (($map = $UAM->getRoleAccessMap($userData->user->roleId)) === null) {
                 throw AuthenticationException::forAccessDenied();
             }
-            cache()->save($fileCacheName, $map, DAY * 30);
-        }
+            return $map;
+        });
 
         if (($permission = $this->_findPermission($map, $segments)) === null) {
             throw AuthenticationException::forForbiddenAccess();
@@ -625,13 +625,13 @@ class Authorization
         }
 
         foreach ($map as $actions) {
-            if ($actions['slug'] === $segments[$index] && $actions['parent'] == $parent) {
-                if ($actions['access'] == 0) {
+            if ($actions->slug === $segments[$index] && $actions->parent === $parent) {
+                if ($actions->access) {
                     throw AuthenticationException::forForbiddenAccess();
                 }
 
                 if (isset($segments[$index + 1])) {
-                    return $this->_findPermission($map, $segments, $index + 1, $actions['module_id']);
+                    return $this->_findPermission($map, $segments, $index + 1, $actions->module_id);
                 }
                 return $actions;
             }

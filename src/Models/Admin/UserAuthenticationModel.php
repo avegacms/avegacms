@@ -66,6 +66,6 @@ class UserAuthenticationModel extends Model
             ]
         )->where(['role_id' => $roleId]);
 
-        return $this->asArray()->findAll();
+        return $this->findAll();
     }
 }
