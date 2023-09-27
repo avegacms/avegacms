@@ -42,9 +42,9 @@ class UserAuthenticationModel extends Model
 
     /**
      * @param  int  $roleId
-     * @return $this
+     * @return array
      */
-    public function getRoleAccessMap(int $roleId): Model
+    public function getRoleAccessMap(int $roleId): array
     {
         $this->builder()->select(
             [
@@ -66,6 +66,6 @@ class UserAuthenticationModel extends Model
             ]
         )->where(['role_id' => $roleId]);
 
-        return $this;
+        return $this->asArray()->findAll();
     }
 }
