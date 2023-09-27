@@ -629,7 +629,7 @@ class Authorization
 
                 if (isset($actions['list']) && isset($segments[$index + 1])) {
                     return $this->_findPermission($actions['list'], $segments, $index + 1,
-                        $actions['module_id']) ?? $actions;
+                        (int) $actions['module_id']) ?? $actions;
                 }
                 return $actions;
             }
