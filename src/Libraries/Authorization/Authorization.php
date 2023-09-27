@@ -626,7 +626,7 @@ class Authorization
 
         foreach ($map as $actions) {
             if ($actions->slug === $segments[$index] && $actions->parent === $parent) {
-                if ($actions->access) {
+                if ($actions->access === false) {
                     throw AuthenticationException::forForbiddenAccess();
                 }
 
