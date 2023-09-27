@@ -162,27 +162,24 @@ class Cms
     }
 
     /**
-     * @param  array  $input
-     * @param  int  $parentId
+     * @param  array  $data
      * @return array
      */
-    public static function getTree(array $input, int $parentId = 0): array
+    public static function getTree(array $data): array
     {
-        $outputArray = [];
+        $tree = [];
 
-        foreach ($input as $item) {
-            if ($item['parent'] == $parentId) {
-                $children = self::getTree($input, $item['id']);
-
-                if ( ! empty($children)) {
-                    $item['list'] = $children;
+        foreach ($data as $key => &$item) {
+            if (isset($item['parent'])) {
+                if ( ! $item['parent']) {
+                    $tree[$key] = &$item;
+                } else {
+                    $data[$item['parent']]['list'][$key] = &$item;
                 }
-
-                $outputArray[] = $item;
             }
         }
 
-        return $outputArray;
+        return $tree;
     }
 
     /**
