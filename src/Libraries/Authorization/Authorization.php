@@ -553,7 +553,7 @@ class Authorization
         }
 
         if (is_null($map = cache($fileCacheName = 'RAM_' . $userData->user->role))) {
-            if (($map = $UAM->getRoleAccessMap($userData->user->roleId)->findAll()) === null) {
+            if (($map = $UAM->getRoleAccessMap($userData->user->roleId)) === null) {
                 throw AuthenticationException::forAccessDenied();
             }
             cache()->save($fileCacheName, $map, DAY * 30);
@@ -611,27 +611,27 @@ class Authorization
     }
 
     /**
-     * @param $map
+     * @param  array  $map
      * @param  array  $segments
      * @param  int  $index
      * @param  int  $parent
      * @return mixed
      * @throws AuthenticationException
      */
-    private function _findPermission($map, array $segments, int $index = 0, int $parent = 0): mixed
+    private function _findPermission(array $map, array $segments, int $index = 0, int $parent = 0): mixed
     {
         if ($index >= count($segments)) {
             return null;
         }
 
         foreach ($map as $actions) {
-            if ($actions->slug === $segments[$index] && $actions->parent === $parent) {
-                if ($actions->access === false) {
+            if ($actions->slug === $segments[$index] && $actions['parent'] === $parent) {
+                if ($actions['access']) {
                     throw AuthenticationException::forForbiddenAccess();
                 }
 
                 if (isset($segments[$index + 1])) {
-                    return $this->_findPermission($map, $segments, $index + 1, $actions->module_id);
+                    return $this->_findPermission($map, $segments, $index + 1, $actions['module_id']);
                 }
                 return $actions;
             }
