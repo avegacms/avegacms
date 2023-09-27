@@ -2,8 +2,9 @@
 
 namespace AvegaCms\Models\Admin;
 
-use CodeIgniter\Model;
+use AvegaCms\Utils\Cms;
 use AvegaCms\Entities\UserAuthenticationEntity;
+use CodeIgniter\Model;
 
 class UserAuthenticationModel extends Model
 {
@@ -66,6 +67,6 @@ class UserAuthenticationModel extends Model
             ]
         )->where(['role_id' => $roleId]);
 
-        return $this->findAll();
+        return Cms::getTree($this->asArray()->findAll(), 0);
     }
 }
