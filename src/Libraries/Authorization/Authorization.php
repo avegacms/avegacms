@@ -552,12 +552,9 @@ class Authorization
             throw AuthenticationException::forUnknownPermission();
         }
 
-        $map = cache()->remember('RAM_' . $userData->user->role, DAY * 30, function () use ($UAM, $userData) {
-            if (($map = $UAM->getRoleAccessMap($userData->user->roleId)) === null) {
-                throw AuthenticationException::forAccessDenied();
-            }
-            return $map;
-        });
+        if (empty($map = $UAM->getRoleAccessMap($userData->user->role, $userData->user->roleId))) {
+            throw AuthenticationException::forAccessDenied();
+        }
 
         if (($permission = $this->_findPermission($map, $segments)) === null) {
             throw AuthenticationException::forForbiddenAccess();
