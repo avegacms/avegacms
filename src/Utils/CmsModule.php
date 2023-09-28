@@ -104,6 +104,10 @@ class CmsModule
         $PM->insertBatch($permissions);
     }
 
+    /**
+     * @param  string  $name
+     * @return string
+     */
     public static function prepName(string $name): string
     {
         return lcfirst(str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $name))));
@@ -111,7 +115,7 @@ class CmsModule
 
     /**
      * @param  string  $key
-     * @return array|null
+     * @return array
      */
     public static function meta(string $key): array
     {

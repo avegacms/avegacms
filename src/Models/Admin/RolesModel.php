@@ -77,5 +77,6 @@ class RolesModel extends AvegaCmsModel
     public function clearCache()
     {
         cache()->delete('RolesList');
+        $this->getRolesList();
     }
 }

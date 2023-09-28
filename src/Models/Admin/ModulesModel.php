@@ -63,11 +63,11 @@ class ModulesModel extends Model
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
-    protected $afterInsert    = [];
+    protected $afterInsert    = ['clearCache'];
     protected $beforeUpdate   = [];
-    protected $afterUpdate    = [];
+    protected $afterUpdate    = ['clearCache'];
     protected $beforeFind     = [];
-    protected $afterFind      = [];
+    protected $afterFind      = ['clearCache'];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
@@ -165,6 +165,15 @@ class ModulesModel extends Model
 
             return $modules;
         });
+    }
+
+    /**
+     * @return void
+     */
+    public function clearCache(): void
+    {
+        cache()->delete('ModulesMetaData');
+        $this->getModulesMeta();
     }
 
     /**
