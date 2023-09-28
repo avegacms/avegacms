@@ -6,13 +6,14 @@ use AvegaCms\Config\AvegaCms;
 use AvegaCms\Entities\{ModulesEntity, PermissionsEntity};
 use AvegaCms\Models\Admin\{ModulesModel, PermissionsModel, RolesModel};
 use ReflectionException;
+use RuntimeException;
 
 class CmsModule
 {
     /**
      * @param  array  $moduleData
      * @return void
-     * @throws ReflectionException
+     * @throws ReflectionException|RuntimeException
      */
     public static function install(array $moduleData): void
     {
@@ -106,5 +107,37 @@ class CmsModule
     public static function prepName(string $name): string
     {
         return lcfirst(str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $name))));
+    }
+
+    /**
+     * @param  string  $key
+     * @return array|null
+     */
+    public static function meta(string $key): array
+    {
+        [$module, $subModule] = self::parseKey($key);
+        $meta = model(ModulesModel::class)->ModulesModel();
+
+        if (($meta = ! is_null($subModule) ? $meta[$module][$subModule] ?? null : ($meta[$module] ?? null)) === null) {
+            throw new RuntimeException('Module metadata not found');
+        }
+
+        return $meta;
+    }
+
+    /**
+     * @param  string  $key
+     * @return array
+     */
+    public static function parseKey(string $key): array
+    {
+        if (count($parts = explode('.', $key)) === 0) {
+            throw new RuntimeException('$key cannot be empty');
+        }
+
+        $parts[1] = $parts[1] ?? null;
+        $parts[2] = $parts[2] ?? null;
+
+        return $parts;
     }
 }

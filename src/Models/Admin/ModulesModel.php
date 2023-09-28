@@ -127,6 +127,47 @@ class ModulesModel extends Model
     }
 
     /**
+     * @return array
+     */
+    public function getModulesMeta(): array
+    {
+        return cache()->remember('ModulesMetaData', DAY * 30, function () {
+            $this->builder()->select(
+                [
+                    'id',
+                    'parent',
+                    'slug',
+                    'name',
+                    'active'
+                ]
+            )->where(
+                [
+                    'is_core'   => 0,
+                    'is_system' => 0,
+                    'is_plugin' => 0
+                ]
+            );
+
+            $all = $this->findAll();
+
+            $modules = [];
+
+            foreach ($all as $item) {
+                if ($item->parent === 0) {
+                    $modules[$item->slug] = $item->toArray();
+                    foreach ($all as $subItem) {
+                        if ($subItem->parent === $item->id) {
+                            $modules[$item->slug][$subItem->slug] = $subItem->toArray();
+                        }
+                    }
+                }
+            }
+
+            return $modules;
+        });
+    }
+
+    /**
      * @return Model
      */
     private function _getSelect(): Model
