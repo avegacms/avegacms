@@ -63,11 +63,11 @@ class ModulesModel extends Model
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
-    protected $afterInsert    = [];
+    protected $afterInsert    = ['clearCache'];
     protected $beforeUpdate   = [];
-    protected $afterUpdate    = [];
+    protected $afterUpdate    = ['clearCache'];
     protected $beforeFind     = [];
-    protected $afterFind      = [];
+    protected $afterFind      = ['clearCache'];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
@@ -124,6 +124,56 @@ class ModulesModel extends Model
             ->orderBy('name', 'ASC');
 
         return array_column($this->findAll(), 'name', 'id');
+    }
+
+    /**
+     * @return array
+     */
+    public function getModulesMeta(): array
+    {
+        return cache()->remember('ModulesMetaData', DAY * 30, function () {
+            $this->builder()->select(
+                [
+                    'id',
+                    'parent',
+                    'slug',
+                    'name',
+                    'active'
+                ]
+            )->where(
+                [
+                    'is_core'   => 0,
+                    'is_system' => 0,
+                    'is_plugin' => 0
+                ]
+            );
+
+            $all = $this->findAll();
+
+            $modules = [];
+
+            foreach ($all as $item) {
+                if ($item->parent === 0) {
+                    $modules[$item->slug] = $item->toArray();
+                    foreach ($all as $subItem) {
+                        if ($subItem->parent === $item->id) {
+                            $modules[$item->slug][$subItem->slug] = $subItem->toArray();
+                        }
+                    }
+                }
+            }
+
+            return $modules;
+        });
+    }
+
+    /**
+     * @return void
+     */
+    public function clearCache(): void
+    {
+        cache()->delete('ModulesMetaData');
+        $this->getModulesMeta();
     }
 
     /**
