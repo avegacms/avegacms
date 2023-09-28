@@ -45,7 +45,10 @@ class CreateAvegaCmsTables extends Migration
         $this->attributes = ($this->db->getPlatform() === 'MySQLi') ? Migrator::$attributes : [];
     }
 
-    public function up()
+    /**
+     * @return void
+     */
+    public function up(): void
     {
         /**
          * Таблица пользователей
@@ -100,7 +103,7 @@ class CreateAvegaCmsTables extends Migration
             ...Migrator::dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
-        $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
+        $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', onDelete: 'SET DEFAULT');
         $this->createTable($this->tables['roles']);
 
         /**
@@ -113,8 +116,8 @@ class CreateAvegaCmsTables extends Migration
             ...Migrator::dateFields(['updated_at', 'deleted_at'])
         ]);
         $this->forge->addUniqueKey(['user_id', 'role_id']);
-        $this->forge->addForeignKey('role_id', $this->tables['roles'], 'id', '', 'CASCADE');
-        $this->forge->addForeignKey('user_id', $this->tables['users'], 'id', '', 'CASCADE');
+        $this->forge->addForeignKey('role_id', $this->tables['roles'], 'id', onDelete: 'CASCADE');
+        $this->forge->addForeignKey('user_id', $this->tables['users'], 'id', onDelete: 'CASCADE');
         $this->createTable($this->tables['user_roles']);
 
         /**
@@ -130,7 +133,7 @@ class CreateAvegaCmsTables extends Migration
             'user_agent'    => ['type' => 'varchar', 'constraint' => 512],
             ...Migrator::dateFields(['deleted_at'])
         ]);
-        $this->forge->addForeignKey('user_id', $this->tables['users'], 'id', '', 'CASCADE');
+        $this->forge->addForeignKey('user_id', $this->tables['users'], 'id', onDelete: 'CASCADE');
         $this->createTable($this->tables['user_tokens']);
 
         /**
@@ -259,9 +262,9 @@ class CreateAvegaCmsTables extends Migration
             ...Migrator::dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
-        $this->forge->addForeignKey('user_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
-        $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
-        $this->forge->addForeignKey('updated_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
+        $this->forge->addForeignKey('user_id', $this->tables['users'], 'id', onDelete: 'SET DEFAULT');
+        $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', onDelete: 'SET DEFAULT');
+        $this->forge->addForeignKey('updated_by_id', $this->tables['users'], 'id', onDelete: 'SET DEFAULT');
         $this->createTable($this->tables['files']);
 
         /**
@@ -348,8 +351,8 @@ class CreateAvegaCmsTables extends Migration
             ...Migrator::dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
-        $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
-        $this->forge->addForeignKey('updated_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
+        $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', onDelete: 'SET DEFAULT');
+        $this->forge->addForeignKey('updated_by_id', $this->tables['users'], 'id', onDelete: 'SET DEFAULT');
         $this->createTable($this->tables['tags']);
 
         /**
@@ -362,9 +365,9 @@ class CreateAvegaCmsTables extends Migration
             ...Migrator::dateFields(['updated_at', 'deleted_at'])
         ]);
         $this->forge->addUniqueKey(['tag_id', 'meta_id']);
-        $this->forge->addForeignKey('tag_id', $this->tables['tags'], 'id', '', 'CASCADE');
-        $this->forge->addForeignKey('meta_id', $this->tables['metadata'], 'id', '', 'CASCADE');
-        $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', '', 'SET DEFAULT');
+        $this->forge->addForeignKey('tag_id', $this->tables['tags'], 'id', onDelete: 'CASCADE');
+        $this->forge->addForeignKey('meta_id', $this->tables['metadata'], 'id', onDelete: 'CASCADE');
+        $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', onDelete: 'SET DEFAULT');
         $this->createTable($this->tables['tags_links']);
 
         $this->forge->addField([
@@ -445,11 +448,14 @@ class CreateAvegaCmsTables extends Migration
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addUniqueKey(['locale_id', 'is_system', 'slug']);
-        $this->forge->addForeignKey('locale_id', $this->tables['locales'], 'id', '', 'CASCADE');
+        $this->forge->addForeignKey('locale_id', $this->tables['locales'], 'id', onDelete: 'CASCADE');
         $this->createTable($this->tables['email_templates']);
     }
 
-    public function down()
+    /**
+     * @return void
+     */
+    public function down(): void
     {
         $this->db->disableForeignKeyChecks();
 
@@ -460,37 +466,12 @@ class CreateAvegaCmsTables extends Migration
         $this->db->enableForeignKeyChecks();
     }
 
+    /**
+     * @param  string  $tableName
+     * @return void
+     */
     private function createTable(string $tableName): void
     {
         $this->forge->createTable($tableName, false, $this->attributes);
     }
-
-    private function dateFields(array $exclude): array
-    {
-        $dateList = [
-
-            'created_at' => ['type' => 'datetime', 'null' => true],
-            'updated_at' => ['type' => 'datetime', 'null' => true],
-            'deleted_at' => ['type' => 'datetime', 'null' => true]
-        ];
-
-        if ( ! empty($exclude)) {
-            for ($i = 0; $i < count($exclude); $i++) {
-                if (isset($dateList[$exclude[$i]])) {
-                    unset($dateList[$exclude[$i]]);
-                }
-            }
-        }
-
-        return $dateList;
-    }
-
-    private function byId(): array
-    {
-        return [
-            'created_by_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => 0, 'default' => 0],
-            'updated_by_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => 0, 'default' => 0]
-        ];
-    }
-
 }
