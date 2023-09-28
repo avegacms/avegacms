@@ -58,7 +58,7 @@ class MetaDataEntity extends AvegaCmsEntity
             $slug = mb_url_title(strtolower($this->rawData['title']));
         }
 
-        $this->attributes['slug'] = mb_substr($slug, 0, 63);
+        $this->attributes['slug'] = strtolower(mb_substr($slug, 0, 63));
 
         return $this;
     }
@@ -76,7 +76,7 @@ class MetaDataEntity extends AvegaCmsEntity
         $this->attributes['url'] = match ($this->rawData['meta_type']) {
             MetaDataTypes::Main->value => Cms::settings('core.env.useMultiLocales') ? SeoUtils::Locales($this->rawData['locale_id'])['slug'] : '/',
             MetaDataTypes::Page->value => model(MetaDataModel::class)->getParentPageUrl($this->rawData['parent']) . $url,
-            default                    => $url
+            default                    => strtolower($url)
         };
 
         return $this;
@@ -90,15 +90,15 @@ class MetaDataEntity extends AvegaCmsEntity
     {
         $meta = json_decode($meta, true);
 
-        $meta['title'] = empty($meta['title']) ? $this->attributes['title'] : $meta['title'];
-        $meta['keywords'] = ! empty($meta['keywords']) ? $meta['keywords'] : '';
+        $meta['title']       = empty($meta['title']) ? $this->attributes['title'] : $meta['title'];
+        $meta['keywords']    = ! empty($meta['keywords']) ? $meta['keywords'] : '';
         $meta['description'] = ! empty($meta['description']) ? $meta['description'] : '';
 
         $meta['breadcrumb'] = ! empty($meta['breadcrumb']) ? $meta['breadcrumb'] : '';
 
         $meta['og:title'] = empty($meta['og:title']) ? $this->attributes['title'] : $meta['og:title'];
-        $meta['og:type'] = empty($meta['og:type']) ? 'website' : $meta['og:type'];
-        $meta['og:url'] = empty($meta['og:url']) ? $this->attributes['url'] : $meta['og:url'];
+        $meta['og:type']  = empty($meta['og:type']) ? 'website' : $meta['og:type'];
+        $meta['og:url']   = empty($meta['og:url']) ? $this->attributes['url'] : $meta['og:url'];
 
         $meta['og:image'] = ! empty($meta['og:image']) ? $meta['og:image'] : '';
 
@@ -117,10 +117,10 @@ class MetaDataEntity extends AvegaCmsEntity
         unset($page['breadcrumb']);
 
         $locales = SeoUtils::Locales();
-        $data = SeoUtils::LocaleData($this->locale_id);
+        $data    = SeoUtils::LocaleData($this->locale_id);
 
-        $meta['title'] = esc($page['title']);
-        $meta['keywords'] = esc($page['keywords']);
+        $meta['title']       = esc($page['title']);
+        $meta['keywords']    = esc($page['keywords']);
         $meta['description'] = esc($page['description']);
 
         $meta['lang'] = $locales[$this->locale_id]['locale'];
@@ -146,7 +146,7 @@ class MetaDataEntity extends AvegaCmsEntity
         }
 
         $meta['canonical'] = base_url(Services::request()->uri->getRoutePath());
-        $meta['robots'] = ($this->in_sitemap === 1) ? 'index, follow' : 'noindex, nofollow';
+        $meta['robots']    = ($this->in_sitemap === 1) ? 'index, follow' : 'noindex, nofollow';
 
         return (new MetaEntity($meta));
     }
