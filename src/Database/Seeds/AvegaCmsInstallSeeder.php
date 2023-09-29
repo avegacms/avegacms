@@ -65,13 +65,15 @@ class AvegaCmsInstallSeeder extends Seeder
      */
     public function run(): void
     {
+        cache()->clean();
+
+        $this->_createSettings();
         $userId = $this->_createUser();
         $this->_createRoles($userId);
         $this->_createUserRoles($userId);
         $this->_installCmsModules($userId);
         $this->_createPermissions($userId);
         $this->_createLocales($userId);
-        $this->_createSettings();
         $this->_createEmailSystemTemplate($userId);
         $this->_createPublicFolders();
 
@@ -246,6 +248,7 @@ class AvegaCmsInstallSeeder extends Seeder
         }
 
         $this->MM->insertBatch($modulesEntity);
+
         unset($modulesEntity);
 
         $subModules = $this->MM->select(['id', 'slug'])->whereIn('slug', ['settings', 'content'])->findAll();
@@ -1409,12 +1412,12 @@ class AvegaCmsInstallSeeder extends Seeder
                 'context'       => 'Settings.context.posts.showAuthorPost'
             ],
         ];
-
-        $settingEntity = new SettingsEntity();
+        $list         = [];
 
         foreach ($settingsList as $item) {
-            $this->SM->insert($settingEntity->fill($item));
+            $list[] = (new SettingsEntity($item));
         }
+        $this->SM->insertBatch($list);
     }
 
     /**

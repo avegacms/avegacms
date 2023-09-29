@@ -25,7 +25,6 @@ class ModulesEntity extends Entity
         'updated_by_id' => 'integer',
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime',
-
-        'num' => 'integer'
+        'num'           => 'integer'
     ];
 }
