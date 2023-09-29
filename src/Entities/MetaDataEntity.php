@@ -90,25 +90,26 @@ class MetaDataEntity extends AvegaCmsEntity
     {
         $meta = json_decode($meta, true);
 
-        $meta['title']       = empty($meta['title']) ? $this->rawData['title'] : $meta['title'];
-        $meta['keywords']    = ! empty($meta['keywords']) ? $meta['keywords'] : '';
-        $meta['description'] = ! empty($meta['description']) ? $meta['description'] : '';
+        $data['title']       = $meta['title'] ?? $this->rawData['title'];
+        $data['keywords']    = $meta['keywords'] ?? '';
+        $data['description'] = $meta['description'] ?? '';
 
-        $meta['breadcrumb'] = ! empty($meta['breadcrumb']) ? $meta['breadcrumb'] : '';
+        $data['breadcrumb'] = $meta['breadcrumb'] ?? '';
 
-        $meta['og:title'] = empty($meta['og:title']) ? $this->rawData['title'] : $meta['og:title'];
-        $meta['og:type']  = empty($meta['og:type']) ? 'website' : $meta['og:type'];
-        $meta['og:url']   = empty($meta['og:url']) ? $this->attributes['url'] : $meta['og:url'];
+        $data['og:title'] = $meta['og:title'] ?? $this->rawData['title'];
+        $data['og:type']  = $meta['og:type'] ?? 'website';
+        $data['og:url']   = $meta['og:url'] ?? $this->attributes['url'];
 
-        $meta['og:image'] = ! empty($meta['og:image']) ? $meta['og:image'] : '';
+        $data['og:image'] = $meta['og:image'] ?? '';
 
-        $this->attributes['meta'] = json_encode($meta);
+        $this->attributes['meta'] = json_encode($data);
 
         return $this;
     }
 
     /**
      * @return MetaEntity
+     * @throws ReflectionException
      */
     public function metaRender(): MetaEntity
     {
