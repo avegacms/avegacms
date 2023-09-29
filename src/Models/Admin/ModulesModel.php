@@ -138,6 +138,7 @@ class ModulesModel extends Model
                     'parent',
                     'slug',
                     'name',
+                    'in_sitemap',
                     'active'
                 ]
             )->where(

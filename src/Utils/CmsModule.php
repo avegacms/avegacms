@@ -3,8 +3,9 @@
 namespace AvegaCms\Utils;
 
 use AvegaCms\Config\AvegaCms;
-use AvegaCms\Entities\{ModulesEntity, PermissionsEntity};
-use AvegaCms\Models\Admin\{ModulesModel, PermissionsModel, RolesModel};
+use AvegaCms\Enums\{MetaDataTypes, MetaStatuses};
+use AvegaCms\Entities\{MetaDataEntity, ContentEntity, ModulesEntity, PermissionsEntity};
+use AvegaCms\Models\Admin\{MetaDataModel, ContentModel, ModulesModel, PermissionsModel, RolesModel};
 use ReflectionException;
 use RuntimeException;
 
@@ -143,5 +144,38 @@ class CmsModule
         $parts[2] = $parts[2] ?? null;
 
         return $parts;
+    }
+
+    /**
+     * @param  string  $key
+     * @param  string|null  $title
+     * @param  string|null  $url
+     * @return void
+     * @throws ReflectionException
+     */
+    public static function createModulePage(string $key, ?string $title = null, ?string $url = null): void
+    {
+        $meta = self::meta($key);
+
+        $metaId = model(MetaDataModel::class)->insert(
+            (new MetaDataEntity(
+                [
+                    'parent'        => $meta['parent'],
+                    'locale_id'     => 1, // TODO сделать настраиваемой
+                    'module_id'     => $meta['module_id'],
+                    'slug'          => '',
+                    'creator_id'    => 1,
+                    'item_id'       => 0,
+                    'title'         => $title ?? $meta['name'],
+                    'url'           => $url ?? $meta['url'],
+                    'status'        => MetaStatuses::Publish->value,
+                    'meta_type'     => MetaDataTypes::Module->value,
+                    'in_sitemap'    => $meta['in_sitemap'],
+                    'created_by_id' => 1
+                ]
+            ))
+        );
+
+        model(ContentModel::class)->insert((new ContentEntity(['id' => $metaId])));
     }
 }
