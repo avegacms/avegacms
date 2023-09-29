@@ -63,11 +63,11 @@ class ModulesModel extends Model
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
-    protected $afterInsert    = ['clearCache'];
+    protected $afterInsert    = [];
     protected $beforeUpdate   = [];
-    protected $afterUpdate    = ['clearCache'];
+    protected $afterUpdate    = [];
     protected $beforeFind     = [];
-    protected $afterFind      = ['clearCache'];
+    protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
@@ -131,7 +131,7 @@ class ModulesModel extends Model
      */
     public function getModulesMeta(): array
     {
-        return cache()->remember('ModulesMetaData', DAY * 30, function () {
+        $modules = cache()->remember('ModulesMetaData', DAY * 30, function () {
             $this->builder()->select(
                 [
                     'id',
@@ -152,12 +152,14 @@ class ModulesModel extends Model
 
             $modules = [];
 
-            foreach ($all as $item) {
-                if ($item->parent === 0) {
-                    $modules[$item->slug] = $item->toArray();
-                    foreach ($all as $subItem) {
-                        if ($subItem->parent === $item->id) {
-                            $modules[$item->slug][$subItem->slug] = $subItem->toArray();
+            if ($all !== null) {
+                foreach ($all as $item) {
+                    if ($item->parent === 0) {
+                        $modules[$item->slug] = $item->toArray();
+                        foreach ($all as $subItem) {
+                            if ($subItem->parent === $item->id) {
+                                $modules[$item->slug][$subItem->slug] = $subItem->toArray();
+                            }
                         }
                     }
                 }
@@ -165,6 +167,12 @@ class ModulesModel extends Model
 
             return $modules;
         });
+
+        if (empty($modules)) {
+            cache()->delete('ModulesMetaData');
+        }
+
+        return $modules;
     }
 
     /**
