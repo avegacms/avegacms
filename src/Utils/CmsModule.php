@@ -168,6 +168,7 @@ class CmsModule
                     'item_id'       => 0,
                     'title'         => $title ?? $meta['name'],
                     'url'           => $url ?? $meta['url'],
+                    'meta'          => '',
                     'status'        => MetaStatuses::Publish->value,
                     'meta_type'     => MetaDataTypes::Module->value,
                     'in_sitemap'    => $meta['in_sitemap'],
