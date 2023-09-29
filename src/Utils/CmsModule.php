@@ -162,7 +162,7 @@ class CmsModule
                 [
                     'parent'        => $meta['parent'],
                     'locale_id'     => 1, // TODO сделать настраиваемой
-                    'module_id'     => $meta['module_id'],
+                    'module_id'     => $meta['id'],
                     'slug'          => '',
                     'creator_id'    => 1,
                     'item_id'       => 0,
