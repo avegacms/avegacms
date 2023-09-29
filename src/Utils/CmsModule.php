@@ -120,7 +120,7 @@ class CmsModule
     public static function meta(string $key): array
     {
         [$module, $subModule] = self::parseKey($key);
-        $meta = model(ModulesModel::class)->ModulesModel();
+        $meta = model(ModulesModel::class)->getModulesMeta();
 
         if (($meta = ! is_null($subModule) ? $meta[$module][$subModule] ?? null : ($meta[$module] ?? null)) === null) {
             throw new RuntimeException('Module metadata not found');
