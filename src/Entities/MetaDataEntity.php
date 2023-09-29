@@ -90,13 +90,13 @@ class MetaDataEntity extends AvegaCmsEntity
     {
         $meta = json_decode($meta, true);
 
-        $meta['title']       = empty($meta['title']) ? $this->attributes['title'] : $meta['title'];
+        $meta['title']       = empty($meta['title']) ? $this->rawData['title'] : $meta['title'];
         $meta['keywords']    = ! empty($meta['keywords']) ? $meta['keywords'] : '';
         $meta['description'] = ! empty($meta['description']) ? $meta['description'] : '';
 
         $meta['breadcrumb'] = ! empty($meta['breadcrumb']) ? $meta['breadcrumb'] : '';
 
-        $meta['og:title'] = empty($meta['og:title']) ? $this->attributes['title'] : $meta['og:title'];
+        $meta['og:title'] = empty($meta['og:title']) ? $this->rawData['title'] : $meta['og:title'];
         $meta['og:type']  = empty($meta['og:type']) ? 'website' : $meta['og:type'];
         $meta['og:url']   = empty($meta['og:url']) ? $this->attributes['url'] : $meta['og:url'];
 
