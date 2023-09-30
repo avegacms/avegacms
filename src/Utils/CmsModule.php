@@ -146,14 +146,15 @@ class CmsModule
         return $parts;
     }
 
+
     /**
      * @param  string  $key
      * @param  string|null  $title
      * @param  string|null  $url
-     * @return void
+     * @return mixed
      * @throws ReflectionException
      */
-    public static function createModulePage(string $key, ?string $title = null, ?string $url = null): void
+    public static function createModulePage(string $key, ?string $title = null, ?string $url = null): mixed
     {
         $meta = self::meta($key);
 
@@ -177,6 +178,10 @@ class CmsModule
             ))
         );
 
-        model(ContentModel::class)->insert((new ContentEntity(['id' => $metaId])));
+        if ($metaId) {
+            model(ContentModel::class)->insert((new ContentEntity(['id' => $metaId])));
+        }
+
+        return $metaId;
     }
 }
