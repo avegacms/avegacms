@@ -150,6 +150,42 @@ class MetaDataModel extends AvegaCmsModel
     }
 
     /**
+     * @param  int  $moduleId
+     * @param  array  $filter
+     * @return array|object|null
+     */
+    public function getModuleMetaData(int $moduleId, array $filter = []): array|object|null
+    {
+        $this->builder()->select(
+            [
+                'id',
+                'parent',
+                'locale_id',
+                'in_sitemap',
+                'title',
+                'meta',
+                'extra_data',
+                'meta_type',
+                'publish_at'
+            ]
+        );
+
+        $this->builder()
+            ->groupStart()
+            ->where(
+                [
+                    'module_id' => $moduleId,
+                    'meta_type' => MetaDataTypes::Module->value,
+                    ...$filter
+                ]
+            )->groupEnd();
+
+        $this->checkStatus();
+
+        return $this->first();
+    }
+
+    /**
      * @param  int  $id
      * @return array
      */
