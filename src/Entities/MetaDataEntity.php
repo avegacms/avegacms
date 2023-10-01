@@ -137,7 +137,8 @@ class MetaDataEntity extends AvegaCmsEntity
         $meta['title']       = esc($page['title']);
         $meta['keywords']    = esc($page['keywords']);
         $meta['description'] = esc($page['description']);
-
+        
+        $meta['slug'] = $this->slug;
         $meta['lang'] = $locales[$this->locale_id]['locale'];
 
         $meta['openGraph'] = (new OpenGraphEntity(
