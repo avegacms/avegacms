@@ -86,6 +86,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.parent',
                 'metadata.locale_id',
                 'metadata.in_sitemap',
+                'metadata.use_url_pattern',
                 'metadata.title',
                 'metadata.meta',
                 'metadata.extra_data',
@@ -124,9 +125,11 @@ class MetaDataModel extends AvegaCmsModel
         $this->builder()->select(
             [
                 'metadata.id',
+                'metadata.parent',
                 'metadata.locale_id',
                 'metadata.title',
                 'metadata.url',
+                'metadata.use_url_pattern',
                 'metadata.meta'
             ]
         )->whereIn('metadata.slug', $segments)
@@ -162,6 +165,7 @@ class MetaDataModel extends AvegaCmsModel
                 'parent',
                 'locale_id',
                 'in_sitemap',
+                'use_url_pattern',
                 'title',
                 'meta',
                 'extra_data',
@@ -194,8 +198,12 @@ class MetaDataModel extends AvegaCmsModel
         $this->builder()->select(
             [
                 'metadata.id',
+                'metadata.parent',
+                'metadata.locale_id',
                 'metadata.title',
-                'metadata.url'
+                'metadata.slug',
+                'metadata.url',
+                'metadata.use_url_pattern',
             ]
         )->where(
             [
@@ -218,8 +226,12 @@ class MetaDataModel extends AvegaCmsModel
     {
         $this->builder()->select(
             [
+                'metadata.id',
+                'metadata.parent',
+                'metadata.locale_id',
                 'metadata.title',
                 'metadata.url',
+                'metadata.use_url_pattern',
                 'c.anons',
                 'c.extra',
                 'u.login AS author',

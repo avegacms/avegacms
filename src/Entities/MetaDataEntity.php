@@ -10,36 +10,48 @@ use AvegaCms\Utils\{Cms, SeoUtils};
 use Config\Services;
 use AvegaCms\Entities\Seo\{BreadCrumbsEntity, MetaEntity, OpenGraphEntity};
 use ReflectionException;
+use CodeIgniter\I18n\Time;
 
-
+/**
+ * @property int|null $id
+ * @property int|null $parent
+ * @property array|bool|Time|float|int|object|string|null $meta
+ * @property int|null $locale_id
+ * @property int|null $in_sitemap
+ * @property int|null $use_url_pattern
+ * @property string|null $title
+ * @property string|null $url
+ * @property string|null $slug
+ */
 class MetaDataEntity extends AvegaCmsEntity
 {
     protected $datamap = [];
     protected $dates   = ['created_at', 'updated_at', 'publish_at'];
     protected $casts   = [
-        'id'            => 'integer',
-        'post_id'       => 'integer',
-        'rubric_id'     => 'integer',
-        'parent'        => 'integer',
-        'locale_id'     => 'integer',
-        'module_id'     => 'integer',
-        'slug'          => 'string',
-        'creator_id'    => 'integer',
-        'item_id'       => 'integer',
-        'title'         => 'string',
-        'sort'          => 'integer',
-        'url'           => 'string',
-        'meta'          => 'json-array',
-        'extra_data'    => 'json-array',
-        'status'        => 'string',
-        'meta_type'     => 'string',
-        'in_sitemap'    => 'integer',
-        'rubrics'       => 'array',
-        'created_by_id' => 'integer',
-        'updated_by_id' => 'integer',
-        'publish_at'    => 'datetime',
-        'created_at'    => 'datetime',
-        'updated_at'    => 'datetime',
+        'id'              => 'integer',
+        'post_id'         => 'integer',
+        'rubric_id'       => 'integer',
+        'parent'          => 'integer',
+        'locale_id'       => 'integer',
+        'module_id'       => 'integer',
+        'slug'            => 'string',
+        'creator_id'      => 'integer',
+        'item_id'         => 'integer',
+        'title'           => 'string',
+        'sort'            => 'integer',
+        'url'             => 'string',
+        'meta'            => 'json-array',
+        'extra_data'      => 'json-array',
+        'status'          => 'string',
+        'meta_type'       => 'string',
+        'in_sitemap'      => 'integer',
+        'use_url_pattern' => 'integer',
+        'rubrics'         => 'array',
+        'created_by_id'   => 'integer',
+        'updated_by_id'   => 'integer',
+        'publish_at'      => 'datetime',
+        'created_at'      => 'datetime',
+        'updated_at'      => 'datetime',
     ];
 
     public function __construct(?array $data = null)
@@ -127,12 +139,19 @@ class MetaDataEntity extends AvegaCmsEntity
         $meta['lang'] = $locales[$this->locale_id]['locale'];
 
         $meta['openGraph'] = (new OpenGraphEntity(
-            [
+            data: [
                 'locale'   => $meta['lang'],
                 'siteName' => esc($data['app_name']),
                 'title'    => esc($page['og:title']),
                 'type'     => esc($page['og:type']),
-                'url'      => esc($page['og:url']),
+                'url'      => $this->_urlPattern(
+                    $this->url,
+                    $this->use_url_pattern,
+                    $this->id,
+                    $this->slug,
+                    $this->locale_id,
+                    $this->parent
+                ),
                 'image'    => empty($page['og:image']) ? $data['og:image'] : base_url('uploads/content/' . $page['og:image'])
             ]
         ));
@@ -156,6 +175,7 @@ class MetaDataEntity extends AvegaCmsEntity
      * @param  string  $type
      * @param  array  $parentBreadCrumbs
      * @return BreadCrumbsEntity[]
+     * @throws ReflectionException
      */
     public function breadCrumbs(string $type, array $parentBreadCrumbs = []): array
     {
@@ -172,7 +192,14 @@ class MetaDataEntity extends AvegaCmsEntity
         if ( ! empty($parentBreadCrumbs)) {
             foreach ($parentBreadCrumbs as $crumb) {
                 $breadCrumbs[] = [
-                    'url'    => base_url($crumb->url),
+                    'url'    => $this->_urlPattern(
+                        $crumb->url,
+                        $crumb->use_url_pattern,
+                        $crumb->id,
+                        $crumb->slug,
+                        $crumb->locale_id,
+                        $crumb->parent
+                    ),
                     'title'  => esc(! empty($crumb->meta->breadcrumb) ? $crumb->meta->breadcrumb : $crumb->title),
                     'active' => false
                 ];
@@ -200,5 +227,31 @@ class MetaDataEntity extends AvegaCmsEntity
         return array_map(function ($k) {
             return intval($k);
         }, unserialize($this->attributes['rubrics']));
+    }
+
+    /**
+     * @param  string  $url
+     * @param  int  $usePattern
+     * @param  int  $id
+     * @param  string  $slug
+     * @param  int  $locale_id
+     * @param  int  $parent
+     * @return string
+     */
+    private function _urlPattern(
+        string $url,
+        int $usePattern,
+        int $id,
+        string $slug,
+        int $locale_id,
+        int $parent
+    ): string {
+        return base_url(
+            strtolower(
+                $usePattern ?
+                    strtr($url, ['{id}', '{slug}', '{locale_id}', '{parent}'], [$id, $slug, $locale_id, $parent]) :
+                    $url
+            )
+        );
     }
 }

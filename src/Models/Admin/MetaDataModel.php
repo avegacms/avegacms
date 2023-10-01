@@ -33,6 +33,7 @@ class MetaDataModel extends AvegaCmsModel
         'status',
         'meta_type',
         'in_sitemap',
+        'use_url_pattern',
         'created_by_id',
         'updated_by_id',
         'publish_at',
@@ -53,7 +54,7 @@ class MetaDataModel extends AvegaCmsModel
         'parent'           => ['rules' => 'if_exist|is_natural'],
         'locale_id'        => ['rules' => 'if_exist|required|is_natural_no_zero'],
         'module_id'        => ['rules' => 'if_exist|is_natural'],
-        'slug'             => ['rules' => 'if_exist|required|permit_empty|string|max_length[64]|unique_db_key[metadata.locale_id+module_id+item_id+slug,id,{id}]'],
+        'slug'             => ['rules' => 'if_exist|required|permit_empty|string|max_length[64]|unique_db_key[metadata.locale_id+module_id+item_id+use_url_pattern+slug,id,{id}]'],
         'creator_id'       => ['rules' => 'if_exist|is_natural_no_zero'],
         'item_id'          => ['rules' => 'if_exist|is_natural'],
         'title'            => ['rules' => 'if_exist|required|string|max_length[1024]'],
@@ -68,6 +69,7 @@ class MetaDataModel extends AvegaCmsModel
         'meta.og:url'      => ['rules' => 'if_exist|permit_empty|string|max_length[2048]'],
         'meta.og:image'    => ['rules' => 'if_exist|permit_empty|string|max_length[512]'],
         'in_sitemap'       => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
+        'use_url_pattern'  => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'extra_data'       => ['rules' => 'if_exist|permit_empty|string'],
         'publish_at'       => ['rules' => 'if_exist|valid_date[Y-m-d H:i:s]'],
         'rubrics.*'        => ['rules' => 'if_exist|required|is_natural_no_zero'],
@@ -152,6 +154,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.status',
                 'metadata.meta_type',
                 'metadata.in_sitemap',
+                'metadata.use_url_pattern',
                 'metadata.publish_at',
                 'pm.title AS parent_title',
                 'l.locale_name',
@@ -181,6 +184,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.status',
                 'metadata.meta_type',
                 'metadata.in_sitemap',
+                'metadata.use_url_pattern',
                 'metadata.publish_at',
                 'l.locale_name',
                 'u.login AS author'
@@ -205,6 +209,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.status',
                 'metadata.meta_type',
                 'metadata.in_sitemap',
+                'metadata.use_url_pattern',
                 'metadata.publish_at',
                 'pm.title AS rubric',
                 'l.locale_name',
@@ -245,6 +250,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.status',
                 'metadata.meta_type',
                 'metadata.in_sitemap',
+                'metadata.use_url_pattern',
                 'c.anons',
                 'c.content',
                 'c.extra'
@@ -321,9 +327,9 @@ class MetaDataModel extends AvegaCmsModel
      */
     public function fake(Generator &$faker): array
     {
-        $title = $faker->sentence();
+        $title  = $faker->sentence();
         $status = MetaStatuses::getValues();
-        $slug = $faker->slug(rand(1, 6));
+        $slug   = $faker->slug(rand(1, 6));
 
         return [
 
