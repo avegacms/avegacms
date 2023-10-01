@@ -161,19 +161,20 @@ class CmsModule
         $metaId = model(MetaDataModel::class)->insert(
             (new MetaDataEntity(
                 [
-                    'parent'        => $meta['parent'],
-                    'locale_id'     => 1, // TODO сделать настраиваемой
-                    'module_id'     => $meta['id'],
-                    'slug'          => $meta['slug'],
-                    'creator_id'    => 1,
-                    'item_id'       => 0,
-                    'title'         => $title ?? $meta['name'],
-                    'url'           => $url ?? $meta['url'],
-                    'meta'          => '',
-                    'status'        => MetaStatuses::Publish->value,
-                    'meta_type'     => MetaDataTypes::Module->value,
-                    'in_sitemap'    => $meta['in_sitemap'],
-                    'created_by_id' => 1
+                    'parent'          => $meta['parent'],
+                    'locale_id'       => 1, // TODO сделать настраиваемой
+                    'module_id'       => $meta['id'],
+                    'slug'            => $meta['slug'],
+                    'creator_id'      => 1,
+                    'item_id'         => 0,
+                    'title'           => $title ?? $meta['name'],
+                    'url'             => $url ?? $meta['url'],
+                    'meta'            => '',
+                    'status'          => MetaStatuses::Publish->value,
+                    'meta_type'       => MetaDataTypes::Module->value,
+                    'in_sitemap'      => $meta['in_sitemap'],
+                    'use_url_pattern' => 0,
+                    'created_by_id'   => 1
                 ]
             ))
         );
