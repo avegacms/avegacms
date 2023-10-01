@@ -137,9 +137,17 @@ class MetaDataEntity extends AvegaCmsEntity
         $meta['title']       = esc($page['title']);
         $meta['keywords']    = esc($page['keywords']);
         $meta['description'] = esc($page['description']);
-        
+
         $meta['slug'] = $this->slug;
         $meta['lang'] = $locales[$this->locale_id]['locale'];
+        $meta['url']  = $this->_urlPattern(
+            $this->url,
+            $this->use_url_pattern,
+            $this->id,
+            $this->slug,
+            $this->locale_id,
+            $this->parent
+        );
 
         $meta['openGraph'] = (new OpenGraphEntity(
             data: [
@@ -147,14 +155,7 @@ class MetaDataEntity extends AvegaCmsEntity
                 'siteName' => esc($data['app_name']),
                 'title'    => esc($page['og:title']),
                 'type'     => esc($page['og:type']),
-                'url'      => $this->_urlPattern(
-                    $this->url,
-                    $this->use_url_pattern,
-                    $this->id,
-                    $this->slug,
-                    $this->locale_id,
-                    $this->parent
-                ),
+                'url'      => $meta['url'],
                 'image'    => empty($page['og:image']) ? $data['og:image'] : base_url('uploads/content/' . $page['og:image'])
             ]
         ));

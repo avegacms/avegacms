@@ -128,6 +128,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.parent',
                 'metadata.locale_id',
                 'metadata.title',
+                'metadata.slug',
                 'metadata.url',
                 'metadata.use_url_pattern',
                 'metadata.meta'
@@ -153,6 +154,53 @@ class MetaDataModel extends AvegaCmsModel
     }
 
     /**
+     * @param  int  $id
+     * @return array
+     */
+    public function getMetaMap(int $id): array
+    {
+        $level = 7;
+        $this->builder()->from('metadata AS md_' . $level)->where(['md_' . $level . '.id' => $id]);
+        for ($i = $level; $i > 0; $i--) {
+            $this->builder()->select(['md_' . $i . '.id AS id' . $i]);
+            if (($p = $i - 1)) {
+                $this->builder()->join('metadata AS md_' . $p, 'md_' . $p . '.id = md_' . $i . '.parent', 'left');
+            }
+        }
+
+        $list = array_filter($this->asArray()->first());
+
+        unset($list['id' . $level]);
+
+        if ( ! empty($list)) {
+            return [];
+        }
+        
+        $this->builder()->select(
+            [
+                'metadata.id',
+                'metadata.parent',
+                'metadata.locale_id',
+                'metadata.title',
+                'metadata.slug',
+                'metadata.url',
+                'metadata.use_url_pattern',
+                'metadata.meta'
+            ]
+        )->whereIn('metadata.id', $list)
+            ->whereNotIn('metadata.meta_type',
+                [
+                    MetaDataTypes::Page404->value,
+                    MetaDataTypes::Undefined->value
+                ]
+            )->orderBy('metadata.parent', 'DESC');
+
+        $this->checkStatus();
+
+        return $this->findAll();
+    }
+
+    /**
      * @param  int  $moduleId
      * @param  array  $filter
      * @return array|object|null
@@ -161,18 +209,18 @@ class MetaDataModel extends AvegaCmsModel
     {
         $this->builder()->select(
             [
-                'id',
-                'parent',
-                'locale_id',
-                'in_sitemap',
-                'use_url_pattern',
-                'title',
-                'slug',
-                'url',
-                'meta',
-                'extra_data',
-                'meta_type',
-                'publish_at'
+                'metadata.id',
+                'metadata.parent',
+                'metadata.locale_id',
+                'metadata.in_sitemap',
+                'metadata.use_url_pattern',
+                'metadata.title',
+                'metadata.slug',
+                'metadata.url',
+                'metadata.meta',
+                'metadata.extra_data',
+                'metadata.meta_type',
+                'metadata.publish_at'
             ]
         );
 
@@ -180,8 +228,8 @@ class MetaDataModel extends AvegaCmsModel
             ->groupStart()
             ->where(
                 [
-                    'module_id' => $moduleId,
-                    'meta_type' => MetaDataTypes::Module->value,
+                    'metadata.module_id' => $moduleId,
+                    'metadata.meta_type' => MetaDataTypes::Module->value,
                     ...$filter
                 ]
             )->groupEnd();
@@ -263,15 +311,14 @@ class MetaDataModel extends AvegaCmsModel
     {
         $this->builder()
             ->groupStart()
+            ->where(['metadata.status' => MetaStatuses::Publish->value])
+            ->orGroupStart()
             ->where(
-                [
-                    'metadata.status' => MetaStatuses::Publish->value
-                ]
-            )->orWhere(
                 [
                     'metadata.status'        => MetaStatuses::Future->value,
                     'metadata.publish_at <=' => date('Y-m-d H:i:s')
-                ])
+                ]
+            )->groupEnd()
             ->groupEnd();
 
         return $this;
