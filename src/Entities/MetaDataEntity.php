@@ -22,6 +22,8 @@ use CodeIgniter\I18n\Time;
  * @property string|null $title
  * @property string|null $url
  * @property string|null $slug
+ * @property array $breadCrumbs
+ * @property MetaEntity $metaRender
  */
 class MetaDataEntity extends AvegaCmsEntity
 {
@@ -249,7 +251,11 @@ class MetaDataEntity extends AvegaCmsEntity
         return base_url(
             strtolower(
                 $usePattern ?
-                    strtr($url, ['{id}', '{slug}', '{locale_id}', '{parent}'], [$id, $slug, $locale_id, $parent]) :
+                    str_ireplace(
+                        ['{id}', '{slug}', '{locale_id}', '{parent}'],
+                        [$id, $slug, $locale_id, $parent],
+                        $url
+                    ) :
                     $url
             )
         );
