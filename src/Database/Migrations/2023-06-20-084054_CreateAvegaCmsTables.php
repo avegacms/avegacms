@@ -283,48 +283,56 @@ class CreateAvegaCmsTables extends Migration
          * Таблица для хранения SEO-данных страниц приложения
          */
         $this->forge->addField([
-            'id'         => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'auto_increment' => true],
-            'parent'     => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
+            'id'              => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'auto_increment' => true],
+            'parent'          => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
             // id - родительской записи
-            'locale_id'  => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => 0],
+            'locale_id'       => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => 0],
             // принадлежность к локалии
-            'module_id'  => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true, 'default' => 0],
+            'module_id'       => [
+                'type'    => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true,
+                'default' => 0
+            ],
             // принадлежность к модулю
-            'slug'       => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
+            'slug'            => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
             // принадлежность к элементу модуля
-            'creator_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
+            'creator_id'      => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
             // id - пользователя создавшего запись
-            'item_id'    => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
+            'item_id'         => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
             // id - элемента записи
-            'title'      => ['type' => 'varchar', 'constraint' => 1024, 'null' => true],
+            'title'           => ['type' => 'varchar', 'constraint' => 1024, 'null' => true],
             // Название страницы
-            'sort'       => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true, 'default' => 0],
+            'sort'            => [
+                'type'    => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true,
+                'default' => 0
+            ],
             // порядковый номер записи
-            'url'        => ['type' => 'varchar', 'constraint' => 2048, 'null' => true],
+            'url'             => ['type' => 'varchar', 'constraint' => 2048, 'null' => true],
             // URL-адрес без указания base_url
-            'meta'       => ['type' => 'text', 'null' => true],
+            'meta'            => ['type' => 'text', 'null' => true],
             // объект, содержащий информацию о метаданных
-            'extra_data' => ['type' => 'text', 'null' => true],
+            'extra_data'      => ['type' => 'text', 'null' => true],
             // объект, содержащий информацию о доп. данных
-            'status'     => [
+            'status'          => [
                 'type'       => 'enum',
                 'constraint' => MetaStatuses::getValues(),
                 'default'    => MetaStatuses::Publish->value
             ],
-            'meta_type'  => [
+            // статус страницы
+            'meta_type'       => [
                 'type'       => 'enum',
                 'constraint' => MetaDataTypes::getValues(),
                 'default'    => MetaDataTypes::Undefined->value
             ],
-            // статус страницы
-            'in_sitemap' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // флаг добавления в карту сайта
-            'publish_at' => ['type' => 'datetime', 'null' => true],
+            'in_sitemap'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            // флаг использования шаблона url
+            'use_url_pattern' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'publish_at'      => ['type' => 'datetime', 'null' => true],
             ...Migrator::byId(),
             ...Migrator::dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
-        $this->forge->addUniqueKey(['locale_id', 'module_id', 'item_id', 'slug']);
+        $this->forge->addUniqueKey(['locale_id', 'module_id', 'item_id', 'use_url_pattern', 'slug']);
         $this->createTable($this->tables['metadata']);
 
         /**

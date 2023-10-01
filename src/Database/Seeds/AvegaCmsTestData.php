@@ -56,12 +56,12 @@ class AvegaCmsTestData extends Seeder
 
         helper(['date', 'array']);
 
-        $this->MM = model(ModulesModel::class);
-        $this->LM = model(LoginModel::class);
-        $this->UM = model(UserModel::class);
-        $this->CM = model(ContentModel::class);
-        $this->SM = model(SettingsModel::class);
-        $this->RM = model(RolesModel::class);
+        $this->MM  = model(ModulesModel::class);
+        $this->LM  = model(LoginModel::class);
+        $this->UM  = model(UserModel::class);
+        $this->CM  = model(ContentModel::class);
+        $this->SM  = model(SettingsModel::class);
+        $this->RM  = model(RolesModel::class);
         $this->MDM = model(MetaDataModel::class);
         $this->URM = model(UserRolesModel::class);
         $this->LLM = model(LocalesModel::class);
@@ -107,14 +107,14 @@ class AvegaCmsTestData extends Seeder
             )
             )
         ) {
-            $UE = new UserEntity();
-            $URE = new UserRolesEntity();
+            $UE    = new UserEntity();
+            $URE   = new UserRolesEntity();
             $roles = $this->RM->where(['id !=' => 1])->findColumn('id');
 
             $fakeUsers = (new Fabricator($this->UM, null))->make($num);
 
             $count = count($fakeUsers);
-            $i = 1;
+            $i     = 1;
 
             foreach ($fakeUsers as $item) {
                 CLI::showProgress($i++, $count);
@@ -191,7 +191,7 @@ class AvegaCmsTestData extends Seeder
             ['required', 'is_natural_no_zero']
         )) {
             $useMultiLocales = Cms::settings('core.env.useMultiLocales');
-            $locales = $this->LLM->where([
+            $locales         = $this->LLM->where([
                 'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
             ])->findColumn('id');
 
@@ -291,15 +291,16 @@ class AvegaCmsTestData extends Seeder
     ): int {
         $meta = (new Fabricator($this->MDM, null))->makeArray();
 
-        $meta['meta_type'] = $type;
-        $meta['locale_id'] = $locale;
-        $meta['creator_id'] = $creator;
-        $meta['module_id'] = $module;
-        $meta['parent'] = $parent;
-        $meta['item_id'] = $item_id;
+        $meta['meta_type']       = $type;
+        $meta['locale_id']       = $locale;
+        $meta['creator_id']      = $creator;
+        $meta['module_id']       = $module;
+        $meta['parent']          = $parent;
+        $meta['item_id']         = $item_id;
+        $meta['use_url_pattern'] = 0;
 
         if ($type === MetaDataTypes::Main->value) {
-            $meta['url'] = '';
+            $meta['url']  = '';
             $meta['slug'] = 'main';
         }
 
@@ -316,11 +317,11 @@ class AvegaCmsTestData extends Seeder
         }
 
         if ($metaId = $this->MDM->insert((new MetaDataEntity($meta)))) {
-            $content = (new Fabricator($this->CM, null))->makeArray();
+            $content       = (new Fabricator($this->CM, null))->makeArray();
             $content['id'] = $metaId;
             $this->CM->insert((new ContentEntity($content)));
         }
-
+        
         return $metaId;
     }
 
