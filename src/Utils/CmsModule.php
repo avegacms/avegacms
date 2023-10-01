@@ -161,7 +161,7 @@ class CmsModule
         $metaId = model(MetaDataModel::class)->insert(
             (new MetaDataEntity(
                 [
-                    'parent'          => $meta['parent'],
+                    'parent'          => ($meta['parent'] != 0) ? $meta['parent'] : 1,
                     'locale_id'       => 1, // TODO сделать настраиваемой
                     'module_id'       => $meta['id'],
                     'slug'            => $meta['slug'],
