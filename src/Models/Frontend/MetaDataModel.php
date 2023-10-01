@@ -172,10 +172,10 @@ class MetaDataModel extends AvegaCmsModel
 
         unset($list['id' . $level]);
 
-        if ( ! empty($list)) {
+        if (empty($list)) {
             return [];
         }
-        
+
         $this->builder()->select(
             [
                 'metadata.id',
