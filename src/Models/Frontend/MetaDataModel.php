@@ -167,6 +167,8 @@ class MetaDataModel extends AvegaCmsModel
                 'in_sitemap',
                 'use_url_pattern',
                 'title',
+                'slug',
+                'url',
                 'meta',
                 'extra_data',
                 'meta_type',
