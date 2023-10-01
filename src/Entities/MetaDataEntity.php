@@ -140,7 +140,7 @@ class MetaDataEntity extends AvegaCmsEntity
 
         $meta['slug'] = $this->slug;
         $meta['lang'] = $locales[$this->locale_id]['locale'];
-        $meta['url']  = $this->_urlPattern(
+        $meta['url']  = $this->urlPattern(
             $this->url,
             $this->use_url_pattern,
             $this->id,
@@ -196,7 +196,7 @@ class MetaDataEntity extends AvegaCmsEntity
         if ( ! empty($parentBreadCrumbs)) {
             foreach ($parentBreadCrumbs as $crumb) {
                 $breadCrumbs[] = [
-                    'url'    => $this->_urlPattern(
+                    'url'    => $this->urlPattern(
                         $crumb->url,
                         $crumb->use_url_pattern,
                         $crumb->id,
@@ -242,7 +242,7 @@ class MetaDataEntity extends AvegaCmsEntity
      * @param  int  $parent
      * @return string
      */
-    private function _urlPattern(
+    public function urlPattern(
         string $url,
         int $usePattern,
         int $id,
