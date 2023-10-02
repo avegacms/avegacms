@@ -78,7 +78,7 @@ class Content extends AvegaCmsFrontendController
                 return $this->error404();
         }
 
-        $data['content'] = $this->CM->find($meta->id);
+        $data['content'] = $this->CM->getContent($meta->id);
 
         return $this->render($data, $template);
     }
