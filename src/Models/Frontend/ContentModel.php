@@ -48,4 +48,23 @@ class ContentModel extends AvegaCmsModel
     protected array  $filterEnumValues  = [];
     protected int    $limit             = 20;
     protected int    $maxLimit          = 100;
+
+    /**
+     * @param  int  $id
+     * @return array|object|null
+     */
+    public function getContent(int $id): array|object|null
+    {
+        $this->builder()->select(
+            [
+                'metadata.id',
+                'metadata.title AS caption',
+                'content.anons',
+                'content.content',
+                'content.extra'
+            ]
+        )->join('metadata', 'metadata.id = content.id');
+
+        return $this->find($id);
+    }
 }
