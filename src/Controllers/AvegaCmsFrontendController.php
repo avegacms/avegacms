@@ -52,6 +52,8 @@ class AvegaCmsFrontendController extends BaseController
                 throw new RuntimeException("File $file not found");
             }
             $data['template'] = view($view, $data, $options);
+        } else {
+            unset($data['template']);
         }
 
         return view('template/foundation', $data, $options);
