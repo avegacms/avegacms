@@ -28,13 +28,13 @@ class AvegaCmsFrontendController extends BaseController
     }
 
     /**
-     * @param  array  $data
+     * @param  array  $pageData
      * @param  string  $view
      * @param  array  $options
-     * @return string
+     * @return ResponseInterface
      * @throws ReflectionException
      */
-    public function render(array $pageData, string $view = '', array $options = []): string
+    public function render(array $pageData, string $view = '', array $options = []): ResponseInterface
     {
         if ( ! empty($arr = array_flip(array_intersect_key(array_flip($this->specialVars), $pageData)))) {
             throw new RuntimeException('Attempt to overwrite system variables: ' . implode(',', $arr));
@@ -58,7 +58,7 @@ class AvegaCmsFrontendController extends BaseController
 
         unset($pageData);
 
-        return view('template/foundation', $data, $options);
+        return $this->response->setStatusCode(200)->setBody(view('template/foundation', $data, $options));
     }
 
     /**
