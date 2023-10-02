@@ -103,15 +103,14 @@ class CreateAvegaCmsTables extends Migration
             ...Migrator::dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
-        $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', onDelete: 'SET DEFAULT');
         $this->createTable($this->tables['roles']);
 
         /**
          * Таблица связки ролей и пользователей
          */
         $this->forge->addField([
-            'role_id'       => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
-            'user_id'       => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
+            'role_id'       => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true],
+            'user_id'       => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true],
             'created_by_id' => ['type' => 'int', 'constraint' => 11, 'null' => true, 'default' => 0],
             ...Migrator::dateFields(['updated_at', 'deleted_at'])
         ]);
