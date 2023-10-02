@@ -140,7 +140,7 @@ class MetaDataEntity extends AvegaCmsEntity
 
         $meta['slug'] = $this->slug;
         $meta['lang'] = $locales[$this->locale_id]['locale'];
-        $meta['url']  = $this->urlPattern(
+        $meta['url']  = Cms::urlPattern(
             $this->url,
             $this->use_url_pattern,
             $this->id,
@@ -196,7 +196,7 @@ class MetaDataEntity extends AvegaCmsEntity
         if ( ! empty($parentBreadCrumbs)) {
             foreach ($parentBreadCrumbs as $crumb) {
                 $breadCrumbs[] = [
-                    'url'    => $this->urlPattern(
+                    'url'    => Cms::urlPattern(
                         $crumb->url,
                         $crumb->use_url_pattern,
                         $crumb->id,
@@ -231,35 +231,5 @@ class MetaDataEntity extends AvegaCmsEntity
         return array_map(function ($k) {
             return intval($k);
         }, unserialize($this->attributes['rubrics']));
-    }
-
-    /**
-     * @param  string  $url
-     * @param  int  $usePattern
-     * @param  int  $id
-     * @param  string  $slug
-     * @param  int  $locale_id
-     * @param  int  $parent
-     * @return string
-     */
-    public function urlPattern(
-        string $url,
-        int $usePattern,
-        int $id,
-        string $slug,
-        int $locale_id,
-        int $parent
-    ): string {
-        return base_url(
-            strtolower(
-                $usePattern ?
-                    str_ireplace(
-                        ['{id}', '{slug}', '{locale_id}', '{parent}'],
-                        [$id, $slug, $locale_id, $parent],
-                        $url
-                    ) :
-                    $url
-            )
-        );
     }
 }
