@@ -21,10 +21,10 @@ class Content extends AvegaCmsFrontendController
     }
 
     /**
-     * @return ResponseInterface|string
+     * @return ResponseInterface
      * @throws ReflectionException
      */
-    public function index(): ResponseInterface|string
+    public function index(): ResponseInterface
     {
         $settings        = Cms::settings('core.env');
         $contentSettings = Cms::settings('content');
