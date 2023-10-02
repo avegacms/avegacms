@@ -148,6 +148,36 @@ class Cms
     }
 
     /**
+     * @param  string  $url
+     * @param  int  $usePattern
+     * @param  int  $id
+     * @param  string  $slug
+     * @param  int  $locale_id
+     * @param  int  $parent
+     * @return string
+     */
+    public function urlPattern(
+        string $url,
+        int $usePattern,
+        int $id,
+        string $slug,
+        int $locale_id,
+        int $parent
+    ): string {
+        return base_url(
+            strtolower(
+                $usePattern ?
+                    str_ireplace(
+                        ['{id}', '{slug}', '{locale_id}', '{parent}'],
+                        [$id, $slug, $locale_id, $parent],
+                        $url
+                    ) :
+                    $url
+            )
+        );
+    }
+
+    /**
      * @param  array  $array
      * @return object
      */
