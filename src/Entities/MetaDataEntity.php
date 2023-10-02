@@ -195,18 +195,20 @@ class MetaDataEntity extends AvegaCmsEntity
 
         if ( ! empty($parentBreadCrumbs)) {
             foreach ($parentBreadCrumbs as $crumb) {
-                $breadCrumbs[] = [
-                    'url'    => Cms::urlPattern(
-                        $crumb->url,
-                        $crumb->use_url_pattern,
-                        $crumb->id,
-                        $crumb->slug,
-                        $crumb->locale_id,
-                        $crumb->parent
-                    ),
-                    'title'  => esc(! empty($crumb->meta->breadcrumb) ? $crumb->meta->breadcrumb : $crumb->title),
-                    'active' => false
-                ];
+                if ($crumb->meta_type !== MetaDataTypes::Main->value) {
+                    $breadCrumbs[] = [
+                        'url'    => Cms::urlPattern(
+                            $crumb->url,
+                            $crumb->use_url_pattern,
+                            $crumb->id,
+                            $crumb->slug,
+                            $crumb->locale_id,
+                            $crumb->parent
+                        ),
+                        'title'  => esc(! empty($crumb->meta->breadcrumb) ? $crumb->meta->breadcrumb : $crumb->title),
+                        'active' => false
+                    ];
+                }
             }
         }
 

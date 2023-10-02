@@ -91,7 +91,7 @@ class AvegaCmsFrontendController extends BaseController
             default  => null
         };
 
-        if ($meta === null || ($meta->meta_type !== MetaDataTypes::Main->value && empty($parentMeta = $this->MDM->getMetaMap($meta->id)))) {
+        if ($meta === null || $meta->meta_type === MetaDataTypes::Main->value || empty($parentMeta = $this->MDM->getMetaMap($meta->id))) {
             return $this->error404();
         }
 

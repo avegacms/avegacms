@@ -134,7 +134,7 @@ class MetaDataModel extends AvegaCmsModel
 
         unset($list['id' . $level]);
 
-        if (empty($list = array_diff($list, [1]))) {
+        if (empty($list)) {
             return [];
         }
 
@@ -147,12 +147,12 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.slug',
                 'metadata.url',
                 'metadata.use_url_pattern',
-                'metadata.meta'
+                'metadata.meta',
+                'metadata.meta_type'
             ]
         )->whereIn('metadata.id', $list)
             ->whereNotIn('metadata.meta_type',
                 [
-                    MetaDataTypes::Main->value,
                     MetaDataTypes::Page404->value,
                     MetaDataTypes::Undefined->value
                 ]
