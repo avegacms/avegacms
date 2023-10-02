@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace AvegaCms\Controllers;
 
+use Config\Services;
 use AvegaCms\Enums\{EntityTypes, MetaDataTypes};
 use AvegaCms\Utils\{Cms, CmsModule};
-use AvegaCms\Entities\Seo\MetaEntity;
+use AvegaCms\Entities\Seo\{DataEntity, MetaEntity};
 use AvegaCms\Entities\ContentEntity;
 use AvegaCms\Models\Frontend\{ContentModel, MetaDataModel};
 use CodeIgniter\HTTP\ResponseInterface;
@@ -21,6 +22,7 @@ class AvegaCmsFrontendController extends BaseController
     protected array          $moduleParams = [];
     protected array          $breadCrumbs  = [];
     protected MetaDataModel  $MDM;
+    protected ?DataEntity    $dataEntity   = null;
     protected ?MetaEntity    $meta         = null;
     protected ?ContentEntity $content      = null;
     protected ?Pager         $pager        = null;
@@ -37,10 +39,10 @@ class AvegaCmsFrontendController extends BaseController
      * @param  array  $pageData
      * @param  string  $view
      * @param  array  $options
-     * @return ResponseInterface
+     * @return ResponseInterface|string
      * @throws ReflectionException
      */
-    public function render(array $pageData, string $view = '', array $options = []): ResponseInterface
+    public function render(array $pageData, string $view = '', array $options = []): ResponseInterface|string
     {
         if ( ! empty($arr = array_flip(array_intersect_key(array_flip($this->specialVars), $pageData)))) {
             throw new RuntimeException('Attempt to overwrite system variables: ' . implode(',', $arr));
@@ -65,40 +67,66 @@ class AvegaCmsFrontendController extends BaseController
 
         unset($pageData);
 
-        return $this->response->setBody(view('template/foundation', $data, $options));
+        return view('template/foundation', $data, $options);
     }
 
     /**
-     * @param  array  $params
-     * @return object
+     * @return ResponseInterface|void
      * @throws ReflectionException
      */
-    protected function initRender(array $params): object
+    protected function initRender()
     {
-        $module         = [];
+        $module         = $params = [];
         $this->metaType = strtoupper($this->metaType);
-        
+
+        $segments = Services::request()->uri->getSegments();
+
         if ($this->metaType === EntityTypes::Module->value) {
             if (($module = CmsModule::meta($this->moduleKey)) === null) {
                 return $this->error404();
             }
+
+            if ( ! empty($patternSegment = explode('/', $module['url_pattern']))) {
+                $params = array_filter(array_combine($patternSegment, $segments), function ($k, $v) {
+                    return $k !== $v;
+                }, ARRAY_FILTER_USE_BOTH);
+
+                if ( ! empty($params)) {
+                    foreach ($params as $key => $value) {
+                        $newKey = str_replace(['{', '}'], '', $key);
+                        unset($params[$key]);
+                        $params[$newKey] = $value;
+                    }
+
+                    if (isset($params['id']) && is_numeric($params['id']) && $params['id'] > 0) {
+                        $id = $params['id'];
+                        unset($params);
+                        $params['id'] = $id;
+                    }
+                }
+            } else {
+                $params['slug'] = $module['slug'];
+            }
+        } else {
+            $params['locale']  = session()->get('avegacms.client.locale.id');
+            $params['segment'] = empty($segments) ? '' : array_reverse($segments)[0];
         }
 
-        $meta = match ($this->metaType) {
+        $this->dataEntity = match ($this->metaType) {
             EntityTypes::Content->value => $this->MDM->getContentMetaData($params['locale'], $params['segment']),
             EntityTypes::Module->value  => $this->MDM->getModuleMetaData($module['id'], $params),
             default                     => null
         };
 
-        if ($meta === null || $meta->meta_type === MetaDataTypes::Main->value || empty($parentMeta = $this->MDM->getMetaMap($meta->id))) {
+        if ($this->dataEntity === null
+            || $this->dataEntity->meta_type === MetaDataTypes::Main->value
+            || empty($parentMeta = $this->MDM->getMetaMap($this->dataEntity->id))) {
             return $this->error404();
         }
 
-        $this->meta        = $meta->metaRender();
-        $this->breadCrumbs = $meta->breadCrumbs($meta->meta_type, $parentMeta);
-        $this->content     = model(ContentModel::class)->getContent($meta->id);
-
-        return $meta;
+        $this->meta        = $this->dataEntity->metaRender();
+        $this->breadCrumbs = $this->dataEntity->breadCrumbs($this->dataEntity->meta_type, $parentMeta);
+        $this->content     = model(ContentModel::class)->getContent($this->dataEntity->id);
     }
 
     /**
