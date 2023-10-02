@@ -150,6 +150,7 @@ class CreateAvegaCmsTables extends Migration
             'version'     => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
             'description' => ['type' => 'text', 'null' => true],
             'extra'       => ['type' => 'text', 'null' => true],
+            'url_pattern' => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
             'in_sitemap'  => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             'active'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             ...Migrator::byId(),

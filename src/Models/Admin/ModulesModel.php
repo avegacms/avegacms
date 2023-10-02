@@ -24,6 +24,7 @@ class ModulesModel extends Model
         'version',
         'description',
         'extra',
+        'url_pattern',
         'in_sitemap',
         'active',
         'created_by_id',
@@ -51,6 +52,7 @@ class ModulesModel extends Model
         'version'       => ['rules' => 'if_exist|permit_empty|max_length[64]'],
         'description'   => ['rules' => 'if_exist|permit_empty|max_length[2048]'],
         'extra'         => ['rules' => 'if_exist|permit_empty'],
+        'url_pattern'   => ['rules' => 'if_exist|permit_empty|max_length[255]'],
         'in_sitemap'    => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'active'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'created_by_id' => ['rules' => 'if_exist|is_natural'],
@@ -138,6 +140,7 @@ class ModulesModel extends Model
                     'parent',
                     'slug',
                     'name',
+                    'url_pattern',
                     'in_sitemap',
                     'active'
                 ]
@@ -200,6 +203,7 @@ class ModulesModel extends Model
             'version',
             'description',
             'extra',
+            'url_pattern',
             'in_sitemap',
             'active',
         ]);

@@ -4,34 +4,32 @@ declare(strict_types=1);
 
 namespace AvegaCms\Controllers;
 
-use AvegaCms\Enums\MetaDataTypes;
-use AvegaCms\Utils\CmsModule;
-use CodeIgniter\HTTP\ResponseInterface;
-use CodeIgniter\Pager\Pager;
+use AvegaCms\Enums\{EntityTypes, MetaDataTypes};
+use AvegaCms\Utils\{Cms, CmsModule};
 use AvegaCms\Entities\Seo\MetaEntity;
 use AvegaCms\Entities\ContentEntity;
 use AvegaCms\Models\Frontend\{ContentModel, MetaDataModel};
-use AvegaCms\Utils\Cms;
+use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\Pager\Pager;
 use RuntimeException;
 use ReflectionException;
 
 class AvegaCmsFrontendController extends BaseController
 {
-    protected string         $metaType    = 'page';
-    protected ?string        $moduleKey   = null;
-    protected ContentModel   $CM;
+    protected string         $metaType     = 'module';
+    protected ?string        $moduleKey    = null;
+    protected array          $moduleParams = [];
+    protected array          $breadCrumbs  = [];
     protected MetaDataModel  $MDM;
-    protected ?MetaEntity    $meta        = null;
-    protected ?ContentEntity $content     = null;
-    protected array          $breadCrumbs = [];
-    protected ?Pager         $pager       = null;
+    protected ?MetaEntity    $meta         = null;
+    protected ?ContentEntity $content      = null;
+    protected ?Pager         $pager        = null;
 
     private readonly array $specialVars;
 
     public function __construct()
     {
         $this->specialVars = ['meta', 'breadcrumbs', 'pager'];
-        $this->CM          = model(ContentModel::class);
         $this->MDM         = model(MetaDataModel::class);
     }
 
@@ -77,18 +75,19 @@ class AvegaCmsFrontendController extends BaseController
      */
     protected function initRender(array $params): object
     {
-        $module = [];
-
-        if ($this->metaType == 'module') {
+        $module         = [];
+        $this->metaType = strtoupper($this->metaType);
+        
+        if ($this->metaType === EntityTypes::Module->value) {
             if (($module = CmsModule::meta($this->moduleKey)) === null) {
                 return $this->error404();
             }
         }
 
         $meta = match ($this->metaType) {
-            'page'   => $this->MDM->getContentMetaData($params['locale'], $params['segment']),
-            'module' => $this->MDM->getModuleMetaData($module['id'], $params),
-            default  => null
+            EntityTypes::Content->value => $this->MDM->getContentMetaData($params['locale'], $params['segment']),
+            EntityTypes::Module->value  => $this->MDM->getModuleMetaData($module['id'], $params),
+            default                     => null
         };
 
         if ($meta === null || $meta->meta_type === MetaDataTypes::Main->value || empty($parentMeta = $this->MDM->getMetaMap($meta->id))) {
@@ -97,7 +96,7 @@ class AvegaCmsFrontendController extends BaseController
 
         $this->meta        = $meta->metaRender();
         $this->breadCrumbs = $meta->breadCrumbs($meta->meta_type, $parentMeta);
-        $this->content     = $this->CM->getContent($meta->id);
+        $this->content     = model(ContentModel::class)->getContent($meta->id);
 
         return $meta;
     }
