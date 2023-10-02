@@ -26,37 +26,23 @@ class Content extends AvegaCmsFrontendController
      */
     public function index(): ResponseInterface
     {
-        $settings        = Cms::settings('core.env');
         $contentSettings = Cms::settings('content');
         $segments        = $this->request->uri->getSegments();
         $filter          = $this->request->getGet() ?? [];
+        $locale          = session()->get('avegacms.client.locale.id');
 
-        if ($settings['useMultiLocales']) {
+        if (Cms::settings('core.env.useMultiLocales')) {
             unset($segments[0]); // Удаляем языковой сегмент
         }
 
-        $locale = session()->get('avegacms.client.locale.id');
-
         $segment = empty($segments) ? '' : array_reverse($segments)[0];
 
-        if (($meta = $this->MDM->getContentMetaData($locale, $segment)) === null) {
-            return $this->error404();
-        }
-        $parentMeta = [];
-        // Проверяем цепочку записей
-        if ($meta->meta_type !== MetaDataTypes::Main->value) {
-            array_pop($segments);
-            if ( ! empty($segments) && empty($parentMeta = $this->MDM->getMetaMap($meta->id))) {
-                return $this->error404();
-            }
-        }
-
-        $this->meta        = $meta->metaRender();
-        $this->breadCrumbs = $meta->breadCrumbs($meta->meta_type, $parentMeta);
-
+        $meta = $this->initRender(['locale' => $locale, 'segment' => $segment]);
+        
         $template = 'content/';
+        $data     = [];
 
-        switch ($meta->meta_type) {
+        switch ($meta->type) {
             case MetaDataTypes::Main->value:
                 $template .= 'main';
                 break;
@@ -77,8 +63,6 @@ class Content extends AvegaCmsFrontendController
             default:
                 return $this->error404();
         }
-
-        $data['content'] = $this->CM->getContent($meta->id);
 
         return $this->render($data, $template);
     }

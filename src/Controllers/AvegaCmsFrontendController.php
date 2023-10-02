@@ -4,26 +4,34 @@ declare(strict_types=1);
 
 namespace AvegaCms\Controllers;
 
+use AvegaCms\Enums\MetaDataTypes;
+use AvegaCms\Utils\CmsModule;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\Pager\Pager;
 use AvegaCms\Entities\Seo\MetaEntity;
-use AvegaCms\Models\Frontend\MetaDataModel;
+use AvegaCms\Entities\ContentEntity;
+use AvegaCms\Models\Frontend\{ContentModel, MetaDataModel};
 use AvegaCms\Utils\Cms;
 use RuntimeException;
 use ReflectionException;
 
 class AvegaCmsFrontendController extends BaseController
 {
-    protected MetaDataModel $MDM;
-    protected ?MetaEntity   $meta        = null;
-    protected array         $breadCrumbs = [];
-    protected ?Pager        $pager       = null;
+    protected string         $metaType    = 'page';
+    protected ?string        $moduleKey   = null;
+    protected ContentModel   $CM;
+    protected MetaDataModel  $MDM;
+    protected ?MetaEntity    $meta        = null;
+    protected ?ContentEntity $content     = null;
+    protected array          $breadCrumbs = [];
+    protected ?Pager         $pager       = null;
 
     private readonly array $specialVars;
 
     public function __construct()
     {
         $this->specialVars = ['meta', 'breadcrumbs', 'pager'];
+        $this->CM          = model(ContentModel::class);
         $this->MDM         = model(MetaDataModel::class);
     }
 
@@ -40,7 +48,8 @@ class AvegaCmsFrontendController extends BaseController
             throw new RuntimeException('Attempt to overwrite system variables: ' . implode(',', $arr));
         }
 
-        $data['page']        = $pageData;
+        $data['data']        = $pageData;
+        $data['content']     = $this->content;
         $data['meta']        = $this->meta;
         $data['breadcrumbs'] = $this->breadCrumbs;
         $data['pager']       = $this->pager;
@@ -58,7 +67,39 @@ class AvegaCmsFrontendController extends BaseController
 
         unset($pageData);
 
-        return $this->response->setStatusCode(200)->setBody(view('template/foundation', $data, $options));
+        return $this->response->setBody(view('template/foundation', $data, $options));
+    }
+
+    /**
+     * @param  array  $params
+     * @return object
+     * @throws ReflectionException
+     */
+    protected function initRender(array $params): object
+    {
+        $module = $parentMeta = [];
+
+        if ($this->metaType == 'module') {
+            if (($module = CmsModule::meta($this->moduleKey)) === null) {
+                return $this->error404();
+            }
+        }
+
+        $meta = match ($this->metaType) {
+            'page'   => $this->MDM->getContentMetaData($params['locale'], $params['segment']),
+            'module' => $this->MDM->getModuleMetaData($module['id'], $params),
+            default  => null
+        };
+
+        if ($meta === null || ($meta->meta_type !== MetaDataTypes::Main->value && empty($parentMeta = $this->MDM->getMetaMap($meta->id)))) {
+            return $this->error404();
+        }
+
+        $this->meta        = $meta->metaRender();
+        $this->breadCrumbs = $meta->breadCrumbs($meta->meta_type, $parentMeta);
+        $this->content     = $this->CM->getContent($meta->id);
+
+        return (object) ['id' => $meta->id, 'type' => $meta->meta_type];
     }
 
     /**
