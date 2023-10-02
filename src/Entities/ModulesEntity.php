@@ -19,6 +19,7 @@ class ModulesEntity extends Entity
         'version'       => 'string',
         'description'   => 'string',
         'extra'         => 'json-array',
+        'url_pattern'   => 'string',
         'in_sitemap'    => 'integer',
         'active'        => 'integer',
         'created_by_id' => 'integer',
