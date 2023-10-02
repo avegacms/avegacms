@@ -77,7 +77,7 @@ class AvegaCmsFrontendController extends BaseController
      */
     protected function initRender(array $params): object
     {
-        $module = $parentMeta = [];
+        $module = [];
 
         if ($this->metaType == 'module') {
             if (($module = CmsModule::meta($this->moduleKey)) === null) {
@@ -99,7 +99,7 @@ class AvegaCmsFrontendController extends BaseController
         $this->breadCrumbs = $meta->breadCrumbs($meta->meta_type, $parentMeta);
         $this->content     = $this->CM->getContent($meta->id);
 
-        return (object) ['id' => $meta->id, 'type' => $meta->meta_type];
+        return $meta;
     }
 
     /**

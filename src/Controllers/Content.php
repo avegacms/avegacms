@@ -38,11 +38,11 @@ class Content extends AvegaCmsFrontendController
         $segment = empty($segments) ? '' : array_reverse($segments)[0];
 
         $meta = $this->initRender(['locale' => $locale, 'segment' => $segment]);
-        
+
         $template = 'content/';
         $data     = [];
 
-        switch ($meta->type) {
+        switch ($meta->meta_type) {
             case MetaDataTypes::Main->value:
                 $template .= 'main';
                 break;
