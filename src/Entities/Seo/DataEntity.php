@@ -12,6 +12,7 @@ use CodeIgniter\Entity\Entity;
  * @property string $use_url_pattern
  * @property string $title
  * @property string $slug
+ * @property string $url
  * @property array $meta
  * @property array $extra_data
  * @property string $meta_type
@@ -27,6 +28,7 @@ class DataEntity extends Entity
         'use_url_pattern' => 'string',
         'title'           => 'string',
         'slug'            => 'string',
+        'url'             => 'string',
         'meta'            => 'json-array',
         'extra_data'      => 'json-array',
         'meta_type'       => 'string',
