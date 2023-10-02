@@ -34,13 +34,13 @@ class AvegaCmsFrontendController extends BaseController
      * @return string
      * @throws ReflectionException
      */
-    public function render(array $data, string $view = '', array $options = []): string
+    public function render(array $pageData, string $view = '', array $options = []): string
     {
-        if ( ! empty($arr = array_flip(array_intersect_key(array_flip($this->specialVars), $data)))) {
+        if ( ! empty($arr = array_flip(array_intersect_key(array_flip($this->specialVars), $pageData)))) {
             throw new RuntimeException('Attempt to overwrite system variables: ' . implode(',', $arr));
         }
 
-        $data['page']        = $data;
+        $data['page']        = $pageData;
         $data['meta']        = $this->meta;
         $data['breadcrumbs'] = $this->breadCrumbs;
         $data['pager']       = $this->pager;
@@ -55,6 +55,8 @@ class AvegaCmsFrontendController extends BaseController
         } else {
             unset($data['template']);
         }
+
+        unset($pageData);
 
         return view('template/foundation', $data, $options);
     }
