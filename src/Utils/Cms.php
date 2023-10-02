@@ -156,7 +156,7 @@ class Cms
      * @param  int  $parent
      * @return string
      */
-    public function urlPattern(
+    public static function urlPattern(
         string $url,
         int $usePattern,
         int $id,
