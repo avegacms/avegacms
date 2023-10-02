@@ -114,45 +114,7 @@ class MetaDataModel extends AvegaCmsModel
 
         return $this->first();
     }
-
-    /**
-     * @param  int  $locale
-     * @param  array  $segments
-     * @return array
-     */
-    public function getContentMetaMap(int $locale, array $segments): array
-    {
-        $this->builder()->select(
-            [
-                'metadata.id',
-                'metadata.parent',
-                'metadata.locale_id',
-                'metadata.title',
-                'metadata.slug',
-                'metadata.url',
-                'metadata.use_url_pattern',
-                'metadata.meta'
-            ]
-        )->whereIn('metadata.slug', $segments)
-            ->whereIn('metadata.meta_type',
-                [
-                    MetaDataTypes::Main->value,
-                    MetaDataTypes::Page->value,
-                    MetaDataTypes::Rubric->value,
-                    MetaDataTypes::Post->value
-                ]
-            )->where(
-                [
-                    'metadata.module_id' => 0,
-                    'metadata.locale_id' => $locale
-                ]
-            )->orderBy('metadata.parent', 'DESC');
-
-        $this->checkStatus();
-
-        return $this->findAll();
-    }
-
+    
     /**
      * @param  int  $id
      * @return array
@@ -190,6 +152,7 @@ class MetaDataModel extends AvegaCmsModel
         )->whereIn('metadata.id', $list)
             ->whereNotIn('metadata.meta_type',
                 [
+                    MetaDataTypes::Main->value,
                     MetaDataTypes::Page404->value,
                     MetaDataTypes::Undefined->value
                 ]
