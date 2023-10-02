@@ -114,7 +114,7 @@ class MetaDataModel extends AvegaCmsModel
 
         return $this->first();
     }
-    
+
     /**
      * @param  int  $id
      * @return array
@@ -134,7 +134,7 @@ class MetaDataModel extends AvegaCmsModel
 
         unset($list['id' . $level]);
 
-        if (empty($list)) {
+        if (empty($list = array_diff($list, [1]))) {
             return [];
         }
 
