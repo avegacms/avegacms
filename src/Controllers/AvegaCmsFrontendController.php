@@ -20,11 +20,11 @@ class AvegaCmsFrontendController extends BaseController
     protected ?Pager        $pager       = null;
 
     private readonly array $specialVars;
-    
+
     public function __construct()
     {
         $this->specialVars = ['meta', 'breadcrumbs', 'pager'];
-        $this->MDM = model(MetaDataModel::class);
+        $this->MDM         = model(MetaDataModel::class);
     }
 
     /**
@@ -40,9 +40,10 @@ class AvegaCmsFrontendController extends BaseController
             throw new RuntimeException('Attempt to overwrite system variables: ' . implode(',', $arr));
         }
 
-        $data['meta'] = $this->meta;
+        $data['page']        = $data;
+        $data['meta']        = $this->meta;
         $data['breadcrumbs'] = $this->breadCrumbs;
-        $data['pager'] = $this->pager;
+        $data['pager']       = $this->pager;
 
         $data['template'] = null;
 
@@ -64,7 +65,7 @@ class AvegaCmsFrontendController extends BaseController
     {
         $meta = $this->MDM->getContentMetaData(session('avegacms.client.locale.id'), 'page-not-found');
 
-        $this->meta = $meta->metaRender();
+        $this->meta        = $meta->metaRender();
         $this->breadCrumbs = $meta->breadCrumbs($meta->meta_type);
 
         return $this->response->setStatusCode(404)->setBody($this->render([], 'content/404'));
