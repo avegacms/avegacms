@@ -35,7 +35,7 @@ class AvegaCmsFrontendController extends BaseController
     {
         $this->specialVars = ['meta', 'breadcrumbs', 'pager'];
         $this->MDM         = model(MetaDataModel::class);
-        $this->initRender();
+        $this->dataEntity  = $this->initRender();
     }
 
     /**
@@ -74,10 +74,10 @@ class AvegaCmsFrontendController extends BaseController
     }
 
     /**
-     * @return ResponseInterface|void
+     * @return ResponseInterface|DataEntity
      * @throws ReflectionException
      */
-    protected function initRender()
+    protected function initRender(): ResponseInterface|DataEntity
     {
         $module         = $params = [];
         $this->metaType = strtoupper($this->metaType);
@@ -115,21 +115,23 @@ class AvegaCmsFrontendController extends BaseController
             $params['segment'] = empty($segments) ? '' : array_reverse($segments)[0];
         }
 
-        $this->dataEntity = match ($this->metaType) {
+        $dataEntity = match ($this->metaType) {
             EntityTypes::Content->value => $this->MDM->getContentMetaData($params['locale'], $params['segment']),
             EntityTypes::Module->value  => $this->MDM->getModuleMetaData($module['id'], $params),
             default                     => null
         };
 
-        if ($this->dataEntity === null
-            || $this->dataEntity->meta_type === MetaDataTypes::Main->value
-            || empty($parentMeta = $this->MDM->getMetaMap($this->dataEntity->id))) {
+        if ($dataEntity === null
+            || $dataEntity->meta_type === MetaDataTypes::Main->value
+            || empty($parentMeta = $this->MDM->getMetaMap($dataEntity->id))) {
             return $this->error404();
         }
 
-        $this->meta        = $this->dataEntity->metaRender();
-        $this->breadCrumbs = $this->dataEntity->breadCrumbs($this->dataEntity->meta_type, $parentMeta);
-        $this->content     = model(ContentModel::class)->getContent($this->dataEntity->id);
+        $this->meta        = $dataEntity->metaRender();
+        $this->breadCrumbs = $dataEntity->breadCrumbs($dataEntity->meta_type, $parentMeta);
+        $this->content     = model(ContentModel::class)->getContent($dataEntity->id);
+
+        return $dataEntity;
     }
 
     /**
