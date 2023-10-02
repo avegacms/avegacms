@@ -17,22 +17,25 @@ use ReflectionException;
 
 class AvegaCmsFrontendController extends BaseController
 {
-    protected string         $metaType     = 'module';
-    protected ?string        $moduleKey    = null;
-    protected array          $moduleParams = [];
-    protected array          $breadCrumbs  = [];
+    protected string         $metaType    = 'module';
+    protected ?string        $moduleKey   = null;
+    protected array          $breadCrumbs = [];
     protected MetaDataModel  $MDM;
-    protected ?DataEntity    $dataEntity   = null;
-    protected ?MetaEntity    $meta         = null;
-    protected ?ContentEntity $content      = null;
-    protected ?Pager         $pager        = null;
+    protected ?DataEntity    $dataEntity  = null;
+    protected ?MetaEntity    $meta        = null;
+    protected ?ContentEntity $content     = null;
+    protected ?Pager         $pager       = null;
 
     private readonly array $specialVars;
 
+    /**
+     * @throws ReflectionException
+     */
     public function __construct()
     {
         $this->specialVars = ['meta', 'breadcrumbs', 'pager'];
         $this->MDM         = model(MetaDataModel::class);
+        $this->initRender();
     }
 
     /**
