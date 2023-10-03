@@ -7,7 +7,7 @@ namespace AvegaCms\Controllers;
 use Config\Services;
 use AvegaCms\Enums\{EntityTypes, MetaDataTypes};
 use AvegaCms\Utils\{Cms, CmsModule};
-use AvegaCms\Entities\Seo\{DataEntity, MetaEntity};
+use AvegaCms\Entities\Seo\MetaEntity;
 use AvegaCms\Entities\{ContentEntity, MetaDataEntity};
 use AvegaCms\Models\Frontend\{ContentModel, MetaDataModel};
 use CodeIgniter\HTTP\ResponseInterface;

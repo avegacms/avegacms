@@ -10,7 +10,6 @@ use AvegaCms\Utils\{Cms, SeoUtils};
 use Config\Services;
 use AvegaCms\Entities\Seo\{BreadCrumbsEntity, MetaEntity, OpenGraphEntity};
 use ReflectionException;
-use CodeIgniter\I18n\Time;
 
 /**
  * @property int|null $id
