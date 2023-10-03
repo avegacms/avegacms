@@ -122,6 +122,21 @@ class MetaDataEntity extends AvegaCmsEntity
     }
 
     /**
+     * @return string
+     */
+    public function getUrl(): string
+    {
+        return Cms::urlPattern(
+            $this->url,
+            $this->use_url_pattern,
+            $this->id,
+            $this->slug,
+            $this->locale_id,
+            $this->parent
+        );
+    }
+
+    /**
      * @return MetaEntity
      * @throws ReflectionException
      */
