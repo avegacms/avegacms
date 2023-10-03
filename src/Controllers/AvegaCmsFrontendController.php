@@ -85,14 +85,16 @@ class AvegaCmsFrontendController extends BaseController
         $segments = Services::request()->uri->getSegments();
 
         if ($this->metaType === EntityTypes::Module->value) {
-            if (($module = CmsModule::meta($this->moduleKey)) === null) {
+            if (($module = CmsModule::meta($this->moduleKey)) === null || empty($segments)) {
                 return $this->error404();
             }
 
             if ( ! empty($patternSegment = explode('/', $module['url_pattern']))) {
-                $params = array_filter(array_combine($patternSegment, $segments), function ($k, $v) {
-                    return $k !== $v;
-                }, ARRAY_FILTER_USE_BOTH);
+                foreach ($patternSegment as $k => $val) {
+                    if (isset($segments[$k]) && $segments[$k] !== $val) {
+                        $params[$val] = $segments[$k];
+                    }
+                }
 
                 if ( ! empty($params)) {
                     foreach ($params as $key => $value) {
