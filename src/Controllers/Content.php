@@ -6,7 +6,6 @@ namespace AvegaCms\Controllers;
 
 use AvegaCms\Enums\MetaDataTypes;
 use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Utils\Cms;
 use ReflectionException;
 
 class Content extends AvegaCmsFrontendController
