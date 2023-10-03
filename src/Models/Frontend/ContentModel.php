@@ -58,7 +58,7 @@ class ContentModel extends AvegaCmsModel
         $this->builder()->select(
             [
                 'metadata.id',
-                'metadata.title AS caption',
+                'metadata.title',
                 'content.anons',
                 'content.content',
                 'content.extra'
