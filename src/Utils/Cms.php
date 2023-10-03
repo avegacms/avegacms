@@ -165,14 +165,16 @@ class Cms
         int|string $parent
     ): string {
         return
-            strtolower(
-                $usePattern == 1 ?
-                    str_ireplace(
-                        ['{id}', '{slug}', '{locale_id}', '{parent}'],
-                        [$id, $slug, $locale_id, $parent],
+            base_url(
+                strtolower(
+                    $usePattern == 1 ?
+                        str_ireplace(
+                            ['{id}', '{slug}', '{locale_id}', '{parent}'],
+                            [$id, $slug, $locale_id, $parent],
+                            $url
+                        ) :
                         $url
-                    ) :
-                    $url
+                )
             );
     }
 
