@@ -21,6 +21,7 @@ use ReflectionException;
  * @property string|null $title
  * @property string|null $url
  * @property string|null $slug
+ * @property string|null $meta_type
  * @property array $breadCrumbs
  * @property MetaEntity $metaRender
  */
