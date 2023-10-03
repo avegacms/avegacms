@@ -10,12 +10,11 @@ use AvegaCms\Utils\{Cms, SeoUtils};
 use Config\Services;
 use AvegaCms\Entities\Seo\{BreadCrumbsEntity, MetaEntity, OpenGraphEntity};
 use ReflectionException;
-use CodeIgniter\I18n\Time;
 
 /**
  * @property int|null $id
  * @property int|null $parent
- * @property array|bool|Time|float|int|object|string|null $meta
+ * @property array|object|null $meta
  * @property int|null $locale_id
  * @property int|null $in_sitemap
  * @property int|null $use_url_pattern

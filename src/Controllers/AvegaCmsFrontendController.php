@@ -7,8 +7,8 @@ namespace AvegaCms\Controllers;
 use Config\Services;
 use AvegaCms\Enums\{EntityTypes, MetaDataTypes};
 use AvegaCms\Utils\{Cms, CmsModule};
-use AvegaCms\Entities\Seo\{DataEntity, MetaEntity};
-use AvegaCms\Entities\ContentEntity;
+use AvegaCms\Entities\Seo\MetaEntity;
+use AvegaCms\Entities\{ContentEntity, MetaDataEntity};
 use AvegaCms\Models\Frontend\{ContentModel, MetaDataModel};
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\Pager\Pager;
@@ -17,14 +17,14 @@ use ReflectionException;
 
 class AvegaCmsFrontendController extends BaseController
 {
-    protected string         $metaType    = 'module';
-    protected ?string        $moduleKey   = null;
-    protected array          $breadCrumbs = [];
-    protected MetaDataModel  $MDM;
-    protected ?DataEntity    $dataEntity  = null;
-    protected ?MetaEntity    $meta        = null;
-    protected ?ContentEntity $content     = null;
-    protected ?Pager         $pager       = null;
+    protected string          $metaType    = 'module';
+    protected ?string         $moduleKey   = null;
+    protected array           $breadCrumbs = [];
+    protected MetaDataModel   $MDM;
+    protected ?MetaDataEntity $dataEntity  = null;
+    protected ?MetaEntity     $meta        = null;
+    protected ?ContentEntity  $content     = null;
+    protected ?Pager          $pager       = null;
 
     private readonly array $specialVars;
 
@@ -74,10 +74,10 @@ class AvegaCmsFrontendController extends BaseController
     }
 
     /**
-     * @return ResponseInterface|DataEntity
+     * @return ResponseInterface|MetaDataEntity
      * @throws ReflectionException
      */
-    protected function initRender(): ResponseInterface|DataEntity
+    protected function initRender(): ResponseInterface|MetaDataEntity
     {
         $module         = $params = [];
         $this->metaType = strtoupper($this->metaType);
