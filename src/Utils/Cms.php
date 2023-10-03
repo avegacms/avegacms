@@ -164,7 +164,7 @@ class Cms
         int|string $locale_id,
         int|string $parent
     ): string {
-        return base_url(
+        return
             strtolower(
                 $usePattern == 1 ?
                     str_ireplace(
@@ -173,8 +173,7 @@ class Cms
                         $url
                     ) :
                     $url
-            )
-        );
+            );
     }
 
     /**
