@@ -70,7 +70,7 @@ class AvegaCmsFrontendController extends BaseController
 
         unset($pageData);
 
-        return view('template/foundation', $data, $options);
+        return $this->response->setStatusCode(200)->setBody(view('template/foundation', $data, $options));
     }
 
     /**
@@ -122,7 +122,7 @@ class AvegaCmsFrontendController extends BaseController
         };
 
         if ($dataEntity === null
-            || $dataEntity->meta_type === MetaDataTypes::Main->value
+            || $dataEntity->meta_type !== MetaDataTypes::Main->value
             || empty($parentMeta = $this->MDM->getMetaMap($dataEntity->id))) {
             return $this->error404();
         }
@@ -145,6 +145,6 @@ class AvegaCmsFrontendController extends BaseController
         $this->meta        = $meta->metaRender();
         $this->breadCrumbs = $meta->breadCrumbs($meta->meta_type);
 
-        return $this->response->setStatusCode(404)->setBody($this->render([], 'content/404'));
+        return $this->response->setStatusCode(404)->setBody((string) $this->render([], 'content/404'));
     }
 }
