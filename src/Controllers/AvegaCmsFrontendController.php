@@ -74,10 +74,10 @@ class AvegaCmsFrontendController extends BaseController
     }
 
     /**
-     * @return ResponseInterface|MetaDataEntity
+     * @return ResponseInterface|MetaDataEntity|null
      * @throws ReflectionException
      */
-    protected function initRender(): ResponseInterface|MetaDataEntity
+    protected function initRender(): ResponseInterface|MetaDataEntity|null
     {
         $module         = $params = $parentMeta = [];
         $this->metaType = strtoupper($this->metaType);
