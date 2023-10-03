@@ -44,10 +44,16 @@ abstract class BaseController extends Controller
     // protected $session;
 
     /**
-     * Constructor.
+     * @param  RequestInterface  $request
+     * @param  ResponseInterface  $response
+     * @param  LoggerInterface  $logger
+     * @return void
      */
-    public function initController(RequestInterface $request, ResponseInterface $response, LoggerInterface $logger)
-    {
+    public function initController(
+        RequestInterface $request,
+        ResponseInterface $response,
+        LoggerInterface $logger
+    ): void {
         // Do Not Edit This Line
         parent::initController($request, $response, $logger);
 

@@ -42,10 +42,10 @@ class AvegaCmsFrontendController extends BaseController
      * @param  array  $pageData
      * @param  string  $view
      * @param  array  $options
-     * @return ResponseInterface|string
+     * @return ResponseInterface
      * @throws ReflectionException
      */
-    public function render(array $pageData, string $view = '', array $options = []): ResponseInterface|string
+    public function render(array $pageData, string $view = '', array $options = []): ResponseInterface
     {
         if ( ! empty($arr = array_flip(array_intersect_key(array_flip($this->specialVars), $pageData)))) {
             throw new RuntimeException('Attempt to overwrite system variables: ' . implode(',', $arr));
@@ -70,7 +70,7 @@ class AvegaCmsFrontendController extends BaseController
 
         unset($pageData);
 
-        return view('template/foundation', $data, $options);
+        return $this->response->setBody(view('template/foundation', $data, $options));
     }
 
     /**
@@ -79,7 +79,7 @@ class AvegaCmsFrontendController extends BaseController
      */
     protected function initRender(): ResponseInterface|MetaDataEntity
     {
-        $module         = $params = [];
+        $module         = $params = $parentMeta = [];
         $this->metaType = strtoupper($this->metaType);
 
         $segments = Services::request()->uri->getSegments();
@@ -122,8 +122,8 @@ class AvegaCmsFrontendController extends BaseController
         };
 
         if ($dataEntity === null
-            || $dataEntity->meta_type === MetaDataTypes::Main->value
-            || empty($parentMeta = $this->MDM->getMetaMap($dataEntity->id))) {
+            || $dataEntity->meta_type !== MetaDataTypes::Main->value
+            && empty($parentMeta = $this->MDM->getMetaMap($dataEntity->id))) {
             return $this->error404();
         }
 
@@ -140,10 +140,9 @@ class AvegaCmsFrontendController extends BaseController
      */
     public function error404(): ResponseInterface
     {
-        $meta = $this->MDM->getContentMetaData(session('avegacms.client.locale.id'), 'page-not-found');
-
-        $this->meta        = $meta->metaRender();
-        $this->breadCrumbs = $meta->breadCrumbs($meta->meta_type);
+        $dataEntity        = $this->MDM->getContentMetaData(session('avegacms.client.locale.id'), 'page-not-found');
+        $this->meta        = $dataEntity->metaRender();
+        $this->breadCrumbs = $dataEntity->breadCrumbs($dataEntity->meta_type);
 
         return $this->response->setStatusCode(404)->setBody($this->render([], 'content/404'));
     }
