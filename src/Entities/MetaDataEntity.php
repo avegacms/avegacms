@@ -155,14 +155,7 @@ class MetaDataEntity extends AvegaCmsEntity
 
         $meta['slug'] = $this->slug;
         $meta['lang'] = $locales[$this->locale_id]['locale'];
-        $meta['url']  = Cms::urlPattern(
-            $this->url,
-            $this->use_url_pattern,
-            $this->id,
-            $this->slug,
-            $this->locale_id,
-            $this->parent
-        );
+        $meta['url']  = $this->url;
 
         $meta['openGraph'] = (new OpenGraphEntity(
             data: [
