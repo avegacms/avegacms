@@ -47,7 +47,7 @@ class AvegaCmsFrontendController extends BaseController
         $parentMeta = [];
 
         if ($this->dataEntity === null || $this->dataEntity->meta_type !== MetaDataTypes::Main->value
-            && empty($parentMeta = $this->MDM->getMetaMap($dataEntity->id))) {
+            && empty($parentMeta = $this->MDM->getMetaMap($this->dataEntity->id))) {
             return $this->error404();
         }
 
@@ -137,8 +137,8 @@ class AvegaCmsFrontendController extends BaseController
     public function error404(): ResponseInterface
     {
         $dataEntity        = $this->MDM->getContentMetaData(session('avegacms.client.locale.id'), 'page-not-found');
-        $this->meta        = $dataEntity->metaRender();
-        $this->breadCrumbs = $dataEntity->breadCrumbs($dataEntity->meta_type);
+        $this->meta        = $this->dataEntity->metaRender();
+        $this->breadCrumbs = $this->dataEntity->breadCrumbs($this->dataEntity->meta_type);
 
         return $this->render([], 'content/404')->setStatusCode(404);
     }
