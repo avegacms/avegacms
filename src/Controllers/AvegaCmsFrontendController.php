@@ -74,7 +74,7 @@ class AvegaCmsFrontendController extends BaseController
 
         unset($pageData);
 
-        return response()->setBody(view('template/foundation', $data, $options))->send();
+        return response()->setBody(view('template/foundation', $data, $options));
     }
 
 
