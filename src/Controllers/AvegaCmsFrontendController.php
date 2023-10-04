@@ -122,13 +122,13 @@ class AvegaCmsFrontendController extends BaseController
         }
 
         $this->dataEntity = match ($this->metaType) {
-            EntityTypes::Content->value =>
-                $this->MDM->getContentMetaData($params['locale'], $params['segment']) ??
-                $this->MDM->getContentMetaData(session('avegacms.client.locale.id'), 'page-not-found'),
-            EntityTypes::Module->value  => $this->MDM->getModuleMetaData($module['id'], $params),
-            default                     => $this->MDM->getContentMetaData(session('avegacms.client.locale.id'),
-                'page-not-found')
+            EntityTypes::Content->value => $this->MDM->getContentMetaData($params['locale'], $params['segment']),
+            EntityTypes::Module->value  => $this->MDM->getModuleMetaData($module['id'], $params)
         };
+
+        if ($this->dataEntity === null) {
+            $this->dataEntity = $this->MDM->getContentMetaData(session('avegacms.client.locale.id'), 'page-not-found');
+        }
 
         return null;
     }
@@ -142,6 +142,8 @@ class AvegaCmsFrontendController extends BaseController
         $this->meta        = $this->dataEntity->metaRender();
         $this->breadCrumbs = $this->dataEntity->breadCrumbs($this->dataEntity->meta_type);
 
-        return $this->render([], 'content/404')->setStatusCode(404);
+        response()->setStatusCode(404);
+
+        return $this->render([], 'content/404');
     }
 }
