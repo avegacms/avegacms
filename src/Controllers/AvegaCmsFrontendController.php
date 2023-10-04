@@ -26,16 +26,13 @@ class AvegaCmsFrontendController extends BaseController
     protected ?ContentEntity  $content     = null;
     protected ?Pager          $pager       = null;
 
-    private readonly array $specialVars;
-
     /**
      * @throws ReflectionException
      */
     public function __construct()
     {
-        $this->specialVars = ['meta', 'breadcrumbs', 'pager'];
-        $this->MDM         = model(MetaDataModel::class);
-        $this->dataEntity  = $this->initRender();
+        $this->MDM = model(MetaDataModel::class);
+        $this->initRender();
     }
 
     /**
@@ -47,9 +44,16 @@ class AvegaCmsFrontendController extends BaseController
      */
     public function render(array $pageData, string $view = '', array $options = []): ResponseInterface
     {
-        if ( ! empty($arr = array_flip(array_intersect_key(array_flip($this->specialVars), $pageData)))) {
-            throw new RuntimeException('Attempt to overwrite system variables: ' . implode(',', $arr));
+        $parentMeta = [];
+
+        if ($this->dataEntity === null || $this->dataEntity->meta_type !== MetaDataTypes::Main->value
+            && empty($parentMeta = $this->MDM->getMetaMap($dataEntity->id))) {
+            return $this->error404();
         }
+
+        $this->meta        = $this->dataEntity->metaRender();
+        $this->breadCrumbs = $this->dataEntity->breadCrumbs($this->dataEntity->meta_type, $parentMeta);
+        $this->content     = model(ContentModel::class)->getContent($this->dataEntity->id);
 
         $data['data']        = $pageData;
         $data['content']     = $this->content;
@@ -70,19 +74,19 @@ class AvegaCmsFrontendController extends BaseController
 
         unset($pageData);
 
-        return $this->response->setBody(view('template/foundation', $data, $options));
+        return response()->setBody(view('template/foundation', $data, $options))->send();
     }
 
+
     /**
-     * @return ResponseInterface|MetaDataEntity|null
+     * @return ResponseInterface|null
      * @throws ReflectionException
      */
-    protected function initRender(): ResponseInterface|MetaDataEntity|null
+    protected function initRender(): ?ResponseInterface
     {
-        $module         = $params = $parentMeta = [];
+        $module         = $params = [];
         $this->metaType = strtoupper($this->metaType);
-
-        $segments = Services::request()->uri->getSegments();
+        $segments       = Services::request()->uri->getSegments();
 
         if ($this->metaType === EntityTypes::Module->value) {
             if (($module = CmsModule::meta($this->moduleKey)) === null || empty($segments)) {
@@ -117,23 +121,13 @@ class AvegaCmsFrontendController extends BaseController
             $params['segment'] = empty($segments) ? '' : array_reverse($segments)[0];
         }
 
-        $dataEntity = match ($this->metaType) {
+        $this->dataEntity = match ($this->metaType) {
             EntityTypes::Content->value => $this->MDM->getContentMetaData($params['locale'], $params['segment']),
             EntityTypes::Module->value  => $this->MDM->getModuleMetaData($module['id'], $params),
-            default                     => null
+            default                     => $this->error404()
         };
 
-        if ($dataEntity === null
-            || $dataEntity->meta_type !== MetaDataTypes::Main->value
-            && empty($parentMeta = $this->MDM->getMetaMap($dataEntity->id))) {
-            return $this->error404();
-        }
-
-        $this->meta        = $dataEntity->metaRender();
-        $this->breadCrumbs = $dataEntity->breadCrumbs($dataEntity->meta_type, $parentMeta);
-        $this->content     = model(ContentModel::class)->getContent($dataEntity->id);
-
-        return $dataEntity;
+        return null;
     }
 
     /**
@@ -146,6 +140,6 @@ class AvegaCmsFrontendController extends BaseController
         $this->meta        = $dataEntity->metaRender();
         $this->breadCrumbs = $dataEntity->breadCrumbs($dataEntity->meta_type);
 
-        return $this->response->setStatusCode(404)->setBody($this->render([], 'content/404'));
+        return $this->render([], 'content/404')->setStatusCode(404);
     }
 }
