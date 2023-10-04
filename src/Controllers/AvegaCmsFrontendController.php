@@ -12,6 +12,7 @@ use AvegaCms\Entities\{ContentEntity, MetaDataEntity};
 use AvegaCms\Models\Frontend\{ContentModel, MetaDataModel};
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\Pager\Pager;
+use JetBrains\PhpStorm\NoReturn;
 use RuntimeException;
 use ReflectionException;
 
@@ -48,7 +49,7 @@ class AvegaCmsFrontendController extends BaseController
 
         if ($this->dataEntity === null || $this->dataEntity->meta_type !== MetaDataTypes::Main->value
             && empty($parentMeta = $this->MDM->getMetaMap($this->dataEntity->id))) {
-            return $this->error404();
+            $this->error404();
         }
 
         $this->meta        = $this->dataEntity->metaRender();
@@ -90,7 +91,7 @@ class AvegaCmsFrontendController extends BaseController
 
         if ($this->metaType === EntityTypes::Module->value) {
             if (($module = CmsModule::meta($this->moduleKey)) === null || empty($segments)) {
-                return $this->error404();
+                $this->error404();
             }
 
             if ( ! empty($patternSegment = explode('/', $module['url_pattern']))) {
@@ -128,22 +129,24 @@ class AvegaCmsFrontendController extends BaseController
 
         if ($this->dataEntity === null) {
             $this->dataEntity = $this->MDM->getContentMetaData(session('avegacms.client.locale.id'), 'page-not-found');
+            $this->error404();
         }
 
         return null;
     }
 
     /**
-     * @return ResponseInterface
+     * @return void
      * @throws ReflectionException
      */
-    public function error404(): ResponseInterface
+    #[NoReturn]
+    public function error404(): void
     {
         $this->meta        = $this->dataEntity->metaRender();
         $this->breadCrumbs = $this->dataEntity->breadCrumbs($this->dataEntity->meta_type);
 
         response()->setStatusCode(404);
-
-        return $this->render([], 'content/404');
+        $this->render([], 'content/404')->send();
+        exit();
     }
 }

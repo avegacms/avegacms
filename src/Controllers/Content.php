@@ -46,7 +46,7 @@ class Content extends AvegaCmsFrontendController
                 $template .= 'post';
                 break;
             default:
-                return $this->error404();
+                $this->error404();
         }
 
         return $this->render($data, $template);
