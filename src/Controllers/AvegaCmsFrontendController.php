@@ -128,6 +128,7 @@ class AvegaCmsFrontendController extends BaseController
 
         if ($this->dataEntity === null) {
             $this->dataEntity = $this->MDM->getContentMetaData(session('avegacms.client.locale.id'), 'page-not-found');
+            return $this->error404();
         }
 
         return null;
@@ -143,7 +144,7 @@ class AvegaCmsFrontendController extends BaseController
         $this->breadCrumbs = $this->dataEntity->breadCrumbs($this->dataEntity->meta_type);
 
         response()->setStatusCode(404);
-
-        return $this->render([], 'content/404');
+        $this->render([], 'content/404')->send();
+        exit();
     }
 }
