@@ -38,7 +38,7 @@ class CmsModule
             'description'   => $name . '.module.title.main',
             'extra'         => '',
             'url_pattern'   => $moduleData['urlPatterns'][$slug] ?? $slug,
-            'in_sitemap'    => 0,
+            'in_sitemap'    => $moduleData['in_sitemap'] ?? 0,
             'active'        => 1,
             'created_by_id' => 1,
             'updated_by_id' => 0
@@ -61,7 +61,7 @@ class CmsModule
                     'description'   => $name . '.module.title.' . $subName,
                     'extra'         => '',
                     'url_pattern'   => $moduleData['urlPatterns'][$group] ?? '',
-                    'in_sitemap'    => 0,
+                    'in_sitemap'    => $moduleData['in_sitemap'] ?? 0,
                     'active'        => 1,
                     'created_by_id' => 1,
                     'updated_by_id' => 0
@@ -153,17 +153,22 @@ class CmsModule
      * @param  string  $key
      * @param  string|null  $title
      * @param  string|null  $url
+     * @param  int|null  $parent
      * @return mixed
      * @throws ReflectionException
      */
-    public static function createModulePage(string $key, ?string $title = null, ?string $url = null): mixed
-    {
+    public static function createModulePage(
+        string $key,
+        ?string $title = null,
+        ?string $url = null,
+        ?int $parent = null
+    ): mixed {
         $meta = self::meta($key);
 
         $metaId = model(MetaDataModel::class)->insert(
             (new MetaDataEntity(
                 [
-                    'parent'          => ($meta['parent'] != 0) ? $meta['parent'] : 1,
+                    'parent'          => $parent ?? (($meta['parent'] != 0) ? $meta['parent'] : 1),
                     'locale_id'       => 1, // TODO сделать настраиваемой
                     'module_id'       => $meta['id'],
                     'slug'            => $meta['slug'],
