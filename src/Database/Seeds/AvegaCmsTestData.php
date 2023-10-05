@@ -239,7 +239,7 @@ class AvegaCmsTestData extends Seeder
 
             foreach ($locales as $locale) {
                 $rubricsId = array_column(
-                    $this->MDM->select(['id', 'url'])
+                    $this->MDM->select(['id', 'parent', 'locale_id', 'slug', 'use_url_pattern', 'url'])
                         ->where(
                             [
                                 'locale_id' => $locale,
@@ -275,7 +275,7 @@ class AvegaCmsTestData extends Seeder
      * @param  int  $parent
      * @param  int  $item_id
      * @param  string|null  $status
-     * @param  string  $url
+     * @param  string|null  $url
      * @return int
      * @throws ReflectionException
      */
