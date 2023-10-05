@@ -367,8 +367,16 @@ class MetaDataModel extends AvegaCmsModel
      */
     public function getParentPageUrl(int $parentId): string
     {
-        $this->builder()->select(['url'])
-            ->whereIn('meta_type', [MetaDataTypes::Main->value, MetaDataTypes::Page->value]);
+        $this->builder()->select(
+            [
+                'metadata.id',
+                'metadata.use_url_pattern',
+                'metadata.url',
+                'metadata.slug',
+                'metadata.locale_id',
+                'metadata.parent'
+            ]
+        )->whereIn('metadata.meta_type', [MetaDataTypes::Main->value, MetaDataTypes::Page->value]);
 
         if (($url = $this->find($parentId)) === null) {
             return '';

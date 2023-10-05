@@ -196,7 +196,7 @@ class AvegaCmsTestData extends Seeder
             ])->findColumn('id');
 
             $mainPages = array_column(
-                $this->MDM->select(['id', 'locale_id', 'url'])
+                $this->MDM->select(['id', 'parent', 'locale_id', 'slug', 'use_url_pattern', 'url'])
                     ->where(['meta_type' => MetaDataTypes::Main->value])->findAll(),
                 null,
                 'locale_id'
@@ -321,7 +321,7 @@ class AvegaCmsTestData extends Seeder
             $content['id'] = $metaId;
             $this->CM->insert((new ContentEntity($content)));
         }
-        
+
         return $metaId;
     }
 
