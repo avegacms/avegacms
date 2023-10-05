@@ -105,6 +105,8 @@ class CmsModule
         }
 
         $PM->insertBatch($permissions);
+
+        cache()->delete('ModulesMetaData');
     }
 
     /**
