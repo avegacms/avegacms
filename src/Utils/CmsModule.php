@@ -156,6 +156,7 @@ class CmsModule
      * @param  string|null  $title
      * @param  string|null  $url
      * @param  int|null  $parent
+     * @param  string|null  $slug
      * @return mixed
      * @throws ReflectionException
      */
@@ -163,7 +164,8 @@ class CmsModule
         string $key,
         ?string $title = null,
         ?string $url = null,
-        ?int $parent = null
+        ?int $parent = null,
+        ?string $slug = null
     ): mixed {
         $meta = self::meta($key);
 
@@ -173,7 +175,7 @@ class CmsModule
                     'parent'          => $parent ?? (($meta['parent'] != 0) ? $meta['parent'] : 1),
                     'locale_id'       => 1, // TODO сделать настраиваемой
                     'module_id'       => $meta['id'],
-                    'slug'            => $meta['slug'],
+                    'slug'            => $slug ?? $meta['slug'],
                     'creator_id'      => 1,
                     'item_id'         => 0,
                     'title'           => $title ?? $meta['name'],
