@@ -45,7 +45,7 @@ class Cms
                     'url'             => $url ?? '',
                     'meta'            => '',
                     'status'          => MetaStatuses::Publish->value,
-                    'meta_type'       => MetaDataTypes::Module->value,
+                    'meta_type'       => MetaDataTypes::Page->value,
                     'in_sitemap'      => $inSitemap ?? 1,
                     'use_url_pattern' => 0,
                     'created_by_id'   => 1
