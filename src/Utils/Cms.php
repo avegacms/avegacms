@@ -2,9 +2,9 @@
 
 namespace AvegaCms\Utils;
 
-use AvegaCms\Enums\SettingsReturnTypes;
-use AvegaCms\Models\Admin\SettingsModel;
-use AvegaCms\Entities\SettingsEntity;
+use AvegaCms\Entities\{ContentEntity, MetaDataEntity, SettingsEntity};
+use AvegaCms\Enums\{MetaDataTypes, MetaStatuses, SettingsReturnTypes};
+use AvegaCms\Models\Admin\{ContentModel, MetaDataModel, SettingsModel};
 use Config\Services;
 use RuntimeException;
 use ReflectionException;
@@ -13,6 +13,52 @@ class Cms
 {
     private static object|null $access   = null;
     private static object|null $userData = null;
+
+    /**
+     * @param  string  $title
+     * @param  string|null  $url
+     * @param  string|null  $slug
+     * @param  int|null  $parent
+     * @param  int|null  $localeId
+     * @param  int|null  $inSitemap
+     * @return mixed
+     * @throws ReflectionException
+     */
+    public static function createPage(
+        string $title,
+        ?string $url,
+        ?string $slug = null,
+        ?int $parent = null,
+        ?int $localeId = null,
+        ?int $inSitemap = null
+    ): mixed {
+        $metaId = model(MetaDataModel::class)->insert(
+            (new MetaDataEntity(
+                [
+                    'parent'          => $parent ?? 1,
+                    'locale_id'       => $localeId ?? 1,
+                    'module_id'       => 0,
+                    'slug'            => $slug ?? '',
+                    'creator_id'      => 1,
+                    'item_id'         => 0,
+                    'title'           => $title,
+                    'url'             => $url ?? '',
+                    'meta'            => '',
+                    'status'          => MetaStatuses::Publish->value,
+                    'meta_type'       => MetaDataTypes::Module->value,
+                    'in_sitemap'      => $inSitemap ?? 1,
+                    'use_url_pattern' => 0,
+                    'created_by_id'   => 1
+                ]
+            ))
+        );
+
+        if ($metaId) {
+            model(ContentModel::class)->insert((new ContentEntity(['id' => $metaId])));
+        }
+
+        return $metaId;
+    }
 
     /**
      * @return object|null
