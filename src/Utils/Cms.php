@@ -130,7 +130,7 @@ class Cms
 
         $SM = model(SettingsModel::class);
 
-        if (empty($value)) {
+        if ($value === null) {
             $settings = cache()->remember($prefix . $entity, DAY * 30, function () use ($entity, $SM) {
                 if (empty($settings = $SM->getSettings($entity))) {
                     throw new RuntimeException('Unable to find a Settings array in DB.');
