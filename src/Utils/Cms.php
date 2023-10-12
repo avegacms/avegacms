@@ -117,12 +117,12 @@ class Cms
 
     /**
      * @param  string  $key
-     * @param  string|null  $value
+     * @param  string|array|int|bool|null  $value
      * @param  array|null  $config
      * @return mixed
      * @throws RuntimeException|ReflectionException
      */
-    public static function settings(string $key, ?string $value = null, ?array $config = []): mixed
+    public static function settings(string $key, string|array|int|bool|null $value = null, ?array $config = []): mixed
     {
         [$entity, $slug, $property] = self::parseKey($key);
 
