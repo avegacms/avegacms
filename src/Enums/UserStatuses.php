@@ -6,6 +6,7 @@ enum UserStatuses: string
 {
     case Registration = 'REGISTRATION';
     case Active       = 'ACTIVE';
+    case Moderated    = 'MODERATED';
     case Banned       = 'BANNED';
     case Deleted      = 'DELETED';
     case NotDefined   = 'NOT_DEFINED';
