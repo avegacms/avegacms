@@ -1,7 +1,7 @@
 <@php
 
 <?php
-if ($strict): ?>
+if ($nostrict): ?>
 declare(strict_types=1);
 <?php
 endif; ?>
