@@ -3,6 +3,7 @@
 namespace AvegaCms\Entities;
 
 use CodeIgniter\Entity\Entity;
+use AvegaCms\Utils\Auth;
 
 class LoginEntity extends Entity
 {
@@ -28,13 +29,20 @@ class LoginEntity extends Entity
         'deleted_at'    => 'datetime'
     ];
 
-    public function setPassword(string $pass)
+    /**
+     * @param  string  $pass
+     * @return $this
+     */
+    public function setPassword(string $pass): LoginEntity
     {
-        $this->attributes['password'] = password_hash($pass, PASSWORD_BCRYPT);
+        $this->attributes['password'] = Auth::setPassword($pass);
 
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getAvatar(): string
     {
         return ( ! empty($this->attributes['avatar'])) ? base_url('/uploads/users/' . $this->attributes['avatar']) : 'no_photo';

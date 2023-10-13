@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @var object $exception
+ * @var string $message
+ */
+
 use CodeIgniter\CLI\CLI;
 
 // The main Exception
@@ -35,9 +40,9 @@ if (defined('SHOW_DEBUG_BACKTRACE') && SHOW_DEBUG_BACKTRACE) {
         $function = '';
 
         if (isset($error['class'])) {
-            $type = ($error['type'] === '->') ? '()' . $error['type'] : $error['type'];
+            $type     = ($error['type'] === '->') ? '()' . $error['type'] : $error['type'];
             $function .= $padClass . $error['class'] . $type . $error['function'];
-        } elseif (! isset($error['class']) && isset($error['function'])) {
+        } elseif ( ! isset($error['class']) && isset($error['function'])) {
             $function .= $padClass . $error['function'];
         }
 
