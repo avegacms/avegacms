@@ -58,7 +58,7 @@ class AvegaCmsControllerGenerator extends BaseCommand
      */
     protected $options = [
         '--namespace' => 'Set root namespace. Default: "APP_NAMESPACE".',
-        '--strict'    => 'Set declare(strict_types=1) (e.g. strict mode is enabled by default)',
+        '--nostrict'  => 'Set declare(strict_types=1) (e.g. strict mode is enabled by default)',
         '--suffix'    => 'Append the component title to the class name (e.g. User => UserController).',
         '--force'     => 'Force overwrite existing file.',
     ];
