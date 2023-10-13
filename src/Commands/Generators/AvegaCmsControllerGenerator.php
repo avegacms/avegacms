@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AvegaCms\Commands\Generators;
 
 use CodeIgniter\CLI\BaseCommand;
@@ -58,19 +60,19 @@ class AvegaCmsControllerGenerator extends BaseCommand
      */
     protected $options = [
         '--namespace' => 'Set root namespace. Default: "APP_NAMESPACE".',
-        '--strict'    => 'Set declare(strict_types=1) (e.g. strict mode is enabled by default)',
         '--suffix'    => 'Append the component title to the class name (e.g. User => UserController).',
         '--force'     => 'Force overwrite existing file.',
     ];
 
     /**
-     * Actually execute a command.
+     * @param  array  $params
+     * @return void
      */
-    public function run(array $params)
+    public function run(array $params): void
     {
         $this->component = 'Controller';
         $this->directory = 'Controllers';
-        $this->template = 'avegacmscontroller.tpl.php';
+        $this->template  = 'avegacmscontroller.tpl.php';
 
         $this->classNameLang = 'CLI.generator.className.controller';
 
@@ -91,11 +93,11 @@ class AvegaCmsControllerGenerator extends BaseCommand
             }
         }
 
-        $type = in_array('Api', $classPath, true) ? 'api' : 'controller';
+        $type   = in_array('Api', $classPath, true) ? 'api' : 'controller';
         $access = in_array('Admin', $classPath, true) ? 'admin' : 'public';
 
         $useStatement = AvegaCmsFrontendController::class;
-        $extends = 'AvegaCmsFrontendController';
+        $extends      = 'AvegaCmsFrontendController';
 
         if ($type === 'controller' && $access === 'admin') {
             CLI::error(lang('CLI.commandNotFound', [$access]), 'light_gray', 'red');
@@ -104,10 +106,10 @@ class AvegaCmsControllerGenerator extends BaseCommand
         } elseif ($type === 'api') {
             if ($access === 'admin') {
                 $useStatement = AvegaCmsAdminAPI::class;
-                $extends = 'AvegaCmsAdminAPI';
+                $extends      = 'AvegaCmsAdminAPI';
             } else {
                 $useStatement = CmsResourceController::class;
-                $extends = 'CmsResourceController';
+                $extends      = 'CmsResourceController';
             }
         }
 
@@ -115,7 +117,7 @@ class AvegaCmsControllerGenerator extends BaseCommand
             $class,
             ['{useStatement}', '{extends}'],
             [$useStatement, $extends],
-            ['type' => $type, 'access' => $access, 'strict' => $this->getOption('strict')]
+            ['type' => $type, 'access' => $access]
         );
     }
 }
