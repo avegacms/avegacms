@@ -2,14 +2,16 @@
 
 namespace AvegaCms\Database\Seeds;
 
-use AvegaCms\Enums\SettingsReturnTypes;
-use CodeIgniter\Database\BaseConnection;
-use CodeIgniter\Database\Seeder;
+use CodeIgniter\Test\Fabricator;
+use AvegaCms\Enums\{SettingsReturnTypes, MetaDataTypes, MetaStatuses, UserStatuses};
+use AvegaCms\Utils\Cms;
+use CodeIgniter\Database\{BaseConnection, Seeder};
 use Config\Database;
 use CodeIgniter\CLI\CLI;
 use AvegaCms\Config\AvegaCms;
-use AvegaCms\Enums\UserStatuses;
 use AvegaCms\Models\Admin\{ModulesModel,
+    MetaDataModel,
+    ContentModel,
     SettingsModel,
     LoginModel,
     RolesModel,
@@ -18,7 +20,9 @@ use AvegaCms\Models\Admin\{ModulesModel,
     LocalesModel,
     EmailTemplateModel
 };
-use AvegaCms\Entities\{ModulesEntity,
+use AvegaCms\Entities\{ContentEntity,
+    MetaDataEntity,
+    ModulesEntity,
     LoginEntity,
     RolesEntity,
     SettingsEntity,
@@ -34,6 +38,7 @@ class AvegaCmsInstallSeeder extends Seeder
 {
     protected string         $version = AvegaCms::AVEGACMS_VERSION;
     protected ModulesModel   $MM;
+    protected ContentModel   $CM;
     protected LoginModel     $LM;
     protected SettingsModel  $SM;
     protected RolesModel     $RM;
@@ -44,6 +49,9 @@ class AvegaCmsInstallSeeder extends Seeder
     protected LocalesModel $LLM;
 
     protected EmailTemplateModel $ETM;
+    protected MetaDataModel      $MDM;
+
+    protected int $numPages = 0;
 
     public function __construct(Database $config, ?BaseConnection $db = null)
     {
@@ -54,9 +62,11 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->SM  = model(SettingsModel::class);
         $this->RM  = model(RolesModel::class);
         $this->PM  = model(PermissionsModel::class);
+        $this->CM  = model(ContentModel::class);
         $this->URM = model(UserRolesModel::class);
         $this->LLM = model(LocalesModel::class);
         $this->ETM = model(EmailTemplateModel::class);
+        $this->MDM = model(MetaDataModel::class);
     }
 
     /**
@@ -75,6 +85,8 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->_createPermissions($userId);
         $this->_createLocales($userId);
         $this->_createEmailSystemTemplate($userId);
+        $this->_setLocales();
+        $this->_createPages();
         $this->_createPublicFolders();
 
         cache()->clean();
@@ -1528,6 +1540,66 @@ class AvegaCmsInstallSeeder extends Seeder
 
     /**
      * @return void
+     * @throws ReflectionException
+     */
+    private function _setLocales(): void
+    {
+        if (CLI::prompt('Use multi locales?', ['y', 'n']) === 'y') {
+            Cms::settings('core.env.useMultiLocales', 1);
+        }
+        CLI::newLine();
+    }
+
+    /**
+     * @return void
+     * @throws Exception|ReflectionException
+     */
+    private function _createPages(): void
+    {
+        if (CLI::prompt('Create new pages?', ['y', 'n']) === 'y' && ($num = CLI::prompt(
+                'How many pages do you want to create?',
+                null,
+                ['required', 'is_natural_no_zero']
+            )) && ($nesting = CLI::prompt(
+                'What is the maximum nesting of pages?',
+                null,
+                ['required', 'is_natural_no_zero']
+            ))
+        ) {
+            $useMultiLocales = Cms::settings('core.env.useMultiLocales');
+
+            $locales = $this->LLM->where([
+                'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
+            ])->findColumn('id');
+
+            $this->numPages = $num;
+
+            foreach ($locales as $locale) {
+                // Создание главной страницы
+                $mainId = $this->_createMetaData(
+                    type: MetaDataTypes::Main->value,
+                    locale: $locale,
+                    status: MetaStatuses::Publish->value
+                );
+
+                // Создание 404 страницы
+                $this->_createMetaData(
+                    type: MetaDataTypes::Page404->value,
+                    locale: $locale,
+                    parent: $mainId,
+                    status: MetaStatuses::Publish->value
+                );
+                $this->_createSubPages($num, $nesting, $locale, $mainId);
+            }
+
+            $this->MDM->update(['meta_type' => MetaDataTypes::Main->value], ['in_sitemap' => 1]);
+
+            CLI::newLine();
+        }
+    }
+
+    /**
+     * @return void
      */
     private function _createPublicFolders(): void
     {
@@ -1546,5 +1618,141 @@ class AvegaCmsInstallSeeder extends Seeder
                 CLI::write('Can\'t create directory: ' . $directory);
             }
         }
+    }
+
+    /**
+     * @param  string  $type
+     * @param  int  $locale
+     * @param  int  $creator
+     * @param  int  $module
+     * @param  int  $parent
+     * @param  int  $item_id
+     * @param  string|null  $status
+     * @param  string|null  $url
+     * @return int
+     * @throws ReflectionException
+     */
+    private function _createMetaData(
+        string $type,
+        int $locale = 1,
+        int $creator = 1,
+        int $module = 0,
+        int $parent = 0,
+        int $item_id = 0,
+        ?string $status = null,
+        ?string $url = null
+    ): int {
+        $meta = (new Fabricator($this->MDM, null))->makeArray();
+
+        $meta['meta_type']       = $type;
+        $meta['locale_id']       = $locale;
+        $meta['creator_id']      = $creator;
+        $meta['module_id']       = $module;
+        $meta['parent']          = $parent;
+        $meta['item_id']         = $item_id;
+        $meta['use_url_pattern'] = 0;
+
+        if ($type === MetaDataTypes::Main->value) {
+            $meta['url']  = '';
+            $meta['slug'] = 'main';
+        }
+
+        if (in_array($type, [MetaDataTypes::Rubric->value, MetaDataTypes::Post->value])) {
+            $meta['url'] = $url . '/' . $meta['slug'];
+        }
+
+        if ($type === MetaDataTypes::Page404->value) {
+            $meta['url'] = $meta['slug'] = 'page-not-found';
+        }
+
+        if ( ! is_null($status)) {
+            $meta['status'] = $status;
+        }
+
+        if ($metaId = $this->MDM->insert((new MetaDataEntity($meta)))) {
+            $content       = (new Fabricator($this->CM, null))->makeArray();
+            $content['id'] = $metaId;
+            $this->CM->insert((new ContentEntity($content)));
+        }
+
+        return $metaId;
+    }
+
+    /**
+     * @param  int  $num
+     * @param  int  $nesting
+     * @param  int  $locale
+     * @param  int  $parent
+     * @return void
+     * @throws Exception|ReflectionException
+     */
+    private function _createSubPages(int $num, int $nesting, int $locale, int $parent): void
+    {
+        if ($num > 0) {
+            if ($this->numPages === $num) {
+                $subId = $this->_createMetaData(
+                    type: MetaDataTypes::Page->value,
+                    locale: $locale,
+                    parent: $parent,
+                );
+
+                $num--;
+
+                $this->_createSubPages(
+                    $num,
+                    $nesting,
+                    $locale,
+                    ($nesting > 1) ? $subId : $parent
+                );
+            } else {
+                if ($nesting > 1) {
+                    $parentId = $this->_getParentPageId($locale, rand(0, $nesting));
+                    if ($parentId !== null) {
+                        $subId = $this->_createMetaData(
+                            type: MetaDataTypes::Page->value,
+                            locale: $locale,
+                            parent: $parentId
+                        );
+                    } else {
+                        $subId = $this->_createMetaData(
+                            type: MetaDataTypes::Page->value,
+                            locale: $locale,
+                            parent: $parent
+                        );
+                    }
+                    $num--;
+                    $this->_createSubPages($num, $nesting, $locale, $subId);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param  int  $locale
+     * @param  int  $level
+     * @return int|null
+     */
+    private function _getParentPageId(int $locale, int $level): int|null
+    {
+        $object = $this->MDM->select(['id', 'parent'])
+            ->where(['locale_id' => $locale, 'module_id' => 0, 'item_id' => 0])
+            ->whereIn('meta_type', [MetaDataTypes::Page->value, MetaDataTypes::Main->value])
+            ->findAll();
+
+        $list = [];
+
+        foreach ($object as $item) {
+            $list[] = $item->toArray();
+        }
+
+        $list = Cms::getTree($list);
+
+        if ($level === 0) {
+            return $list[0]['id'] ?? null;
+        }
+
+        $parent = dot_array_search(str_repeat('*.list', $level - 1), $list);
+
+        return ! is_null($parent) ? ($parent[array_rand($parent)]['id'] ?? null) : null;
     }
 }
