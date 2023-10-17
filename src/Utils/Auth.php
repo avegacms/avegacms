@@ -10,6 +10,6 @@ class Auth
      */
     public static function setPassword(string $pass): string
     {
-        return password_hash($pass, PASSWORD_DEFAULT);
+        return password_hash($pass, PASSWORD_BCRYPT);
     }
 }
