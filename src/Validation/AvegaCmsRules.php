@@ -73,10 +73,29 @@ class AvegaCmsRules
         return true;
     }
 
+    /**
+     * @param $value
+     * @param  string|null  $error
+     * @return bool
+     */
     public function verify_password($value, ?string &$error = null): bool
     {
         if ( ! preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z\/!.@#$%]{6,254}$/', $value)) {
             $error = lang('Validation.verifyPassword');
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param $value
+     * @param  string|null  $error
+     * @return bool
+     */
+    public function mob_phone($value, ?string &$error = null): bool
+    {
+        if ( ! preg_match('/^79\d{9}/', $value)) {
+            $error = lang('Validation.verifyMobPhone');
             return false;
         }
         return true;

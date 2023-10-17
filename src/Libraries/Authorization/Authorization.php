@@ -750,7 +750,7 @@ class Authorization
      */
     private function _validate(string $type): array
     {
-        $phone         = 'exact_length[11]|regex_match[/^79\d{9}/]';
+        $phone         = 'mob_phone';
         $login         = 'required|max_length[36]';
         $email         = 'max_length[255]|valid_email';
         $password      = 'required|verify_password';
