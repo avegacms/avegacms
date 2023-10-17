@@ -94,7 +94,7 @@ class AvegaCmsRules
      */
     public function mob_phone($value, ?string &$error = null): bool
     {
-        if ( ! preg_match('/^79\d{9}/', $value)) {
+        if ( ! preg_match('/^(79)\d{9}/', $value)) {
             $error = lang('Validation.verifyMobPhone');
             return false;
         }
