@@ -13,6 +13,6 @@ enum FileProviders: string
      */
     public static function getValues(): array
     {
-        return array_column(FileTypes::cases(), 'value');
+        return array_column(FileProviders::cases(), 'value');
     }
 }
