@@ -2,12 +2,11 @@
 
 namespace AvegaCms\Enums;
 
-enum FileTypes: string
+enum FileProviders: string
 {
-    case Image     = 'IMAGE';
-    case File      = 'FILE';
-    case Link      = 'LINK';
-    case VideoLink = 'VIDEO_LINK';
+    case Local = 'LOCAL';
+    case Cdn   = 'CDN';
+    case Cloud = 'CLOUD';
 
     /**
      * @return array

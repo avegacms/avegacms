@@ -9,6 +9,7 @@ use AvegaCms\Enums\{
     UserConditions,
     SettingsReturnTypes,
     FileTypes,
+    FileProviders,
     MetaStatuses,
     NavigationTypes,
     MetaDataTypes
@@ -244,7 +245,11 @@ class CreateAvegaCmsTables extends Migration
             // URL-адрес файла
             'preview_url'       => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
             // URL-адрес превью файла (если это изображение)
-            'provider'          => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
+            'provider'          => [
+                'type'       => 'enum',
+                'constraint' => FileProviders::getValues(),
+                'default'    => FileProviders::Local->value
+            ],
             // поставщик хранения файла (например, local или cloudinary);
             'provider_metadata' => ['type' => 'text', 'null' => true],
             // дополнительные метаданные от провайдера хранения
@@ -262,9 +267,6 @@ class CreateAvegaCmsTables extends Migration
             ...Migrator::dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
-        $this->forge->addForeignKey('user_id', $this->tables['users'], 'id', onDelete: 'SET DEFAULT');
-        $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', onDelete: 'SET DEFAULT');
-        $this->forge->addForeignKey('updated_by_id', $this->tables['users'], 'id', onDelete: 'SET DEFAULT');
         $this->createTable($this->tables['files']);
 
         /**
