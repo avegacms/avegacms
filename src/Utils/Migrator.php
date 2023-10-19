@@ -17,7 +17,7 @@ class Migrator
      * @param  array  $exclude
      * @return array[]
      */
-    public static function dateFields(array $exclude): array
+    public static function dateFields(array $exclude = []): array
     {
         $dateList = [
 
