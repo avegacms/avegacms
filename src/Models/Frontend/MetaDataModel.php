@@ -145,6 +145,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.id',
                 'metadata.parent',
                 'metadata.locale_id',
+                'metadata.module_id',
                 'metadata.title',
                 'metadata.slug',
                 'metadata.url',
@@ -177,6 +178,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.id',
                 'metadata.parent',
                 'metadata.locale_id',
+                'metadata.module_id',
                 'metadata.in_sitemap',
                 'metadata.use_url_pattern',
                 'metadata.title',
@@ -220,13 +222,8 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.url',
                 'metadata.use_url_pattern',
             ]
-        )->where(
-            [
-                'metadata.parent'    => $id,
-                'metadata.meta_type' => MetaDataTypes::Page->value,
-                'metadata.module_id' => 0
-            ]
-        )->orderBy('metadata.sort', 'ASC');
+        )->where(['metadata.parent' => $id])
+            ->orderBy('metadata.sort', 'ASC');
 
         $this->checkStatus();
 
