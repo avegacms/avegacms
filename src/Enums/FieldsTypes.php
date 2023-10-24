@@ -18,6 +18,7 @@ enum FieldsTypes: string
     case Range    = 'range';
     case Reset    = 'reset';
     case Search   = 'search';
+    case Select   = 'select';
     case Submit   = 'submit';
     case Tel      = 'tel';
     case Text     = 'text';
