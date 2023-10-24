@@ -139,6 +139,10 @@ trait CmsResponseTrait
         $data = null;
         if ( ! is_null($payload)) {
             $data['data'] = $payload;
+            if (in_array('pagination', array_keys($data['data']))) {
+                $meta['pagination'] = $data['data']['pagination'];
+                unset($data['data']['pagination']);
+            }
         }
 
         if ( ! is_null($meta)) {
@@ -147,7 +151,7 @@ trait CmsResponseTrait
         unset($payload, $meta);
         return $this->respond($data, 200, $message);
     }
-    
+
     /**
      * @param  int|string|null  $data
      * @param  string  $message
@@ -368,7 +372,7 @@ trait CmsResponseTrait
         }
 
         $format = Services::format();
-        $mime = 'application/' . $this->format;
+        $mime   = 'application/' . $this->format;
 
         // Determine correct response type through content negotiation if not explicitly declared
         if (
