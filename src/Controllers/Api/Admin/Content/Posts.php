@@ -21,7 +21,7 @@ class Posts extends AvegaCmsAdminAPI
     public function __construct()
     {
         parent::__construct();
-        $this->CM = model(ContentModel::class);
+        $this->CM  = model(ContentModel::class);
         $this->MDM = model(MetaDataModel::class);
     }
 
@@ -30,11 +30,7 @@ class Posts extends AvegaCmsAdminAPI
      */
     public function index(): ResponseInterface
     {
-        $meta = $this->MDM->selectPosts()
-            ->filter($this->request->getGet() ?? [])
-            ->apiPagination();
-
-        return $this->cmsRespond($meta['list'], $meta['pagination']);
+        return $this->cmsRespond($this->MDM->selectPosts()->filter($this->request->getGet() ?? [])->apiPagination());
     }
 
     /**
@@ -62,8 +58,8 @@ class Posts extends AvegaCmsAdminAPI
             return $this->failValidationErrors(lang('Api.errors.noData'));
         }
 
-        $data['module_id'] = $data['parent'] = $data['item_id'] = 0;
-        $data['meta_type'] = MetaDataTypes::Post->value;
+        $data['module_id']  = $data['parent'] = $data['item_id'] = 0;
+        $data['meta_type']  = MetaDataTypes::Post->value;
         $data['creator_id'] = $data['created_by_id'] = $this->userData->userId;
 
         $content = [
@@ -115,12 +111,12 @@ class Posts extends AvegaCmsAdminAPI
             return $this->failNotFound();
         }
 
-        $data['module_id'] = $data['parent'] = $data['item_id'] = 0;
+        $data['module_id']     = $data['parent'] = $data['item_id'] = 0;
         $data['updated_by_id'] = $this->userData->userId;
 
-        $content['anons'] = $data['anons'];
+        $content['anons']   = $data['anons'];
         $content['content'] = $data['content'];
-        $content['extra'] = $data['extra'];
+        $content['extra']   = $data['extra'];
 
         unset($data['creator_id'], $data['anons'], $data['content'], $data['extra'], $data['rubrics']);
 
