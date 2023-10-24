@@ -19,8 +19,8 @@ class Roles extends AvegaCmsAdminAPI
     public function __construct()
     {
         parent::__construct();
-        $this->RM = model(RolesModel::class);
-        $this->PM = model(PermissionsModel::class);
+        $this->RM  = model(RolesModel::class);
+        $this->PM  = model(PermissionsModel::class);
         $this->URM = model(UserRolesModel::class);
     }
 
@@ -29,9 +29,7 @@ class Roles extends AvegaCmsAdminAPI
      */
     public function index(): ResponseInterface
     {
-        $locales = $this->RM->filter($this->request->getGet() ?? [])->apiPagination();
-
-        return $this->cmsRespond($locales['list'], $locales['pagination']);
+        return $this->cmsRespond($this->RM->filter($this->request->getGet() ?? [])->apiPagination());
     }
 
     /**
@@ -51,11 +49,11 @@ class Roles extends AvegaCmsAdminAPI
         }
 
         $defaultPermissions = $this->PM->getDefaultPermissions();
-        $rolePermissions = [];
+        $rolePermissions    = [];
         foreach ($defaultPermissions as $permission) {
-            $permission['role_id'] = $id;
+            $permission['role_id']       = $id;
             $permission['created_by_id'] = $this->userData->userId;
-            $rolePermissions[] = (new PermissionsEntity($permission));
+            $rolePermissions[]           = (new PermissionsEntity($permission));
         }
 
         if ( ! $this->PM->insertBatch($rolePermissions)) {

@@ -21,7 +21,7 @@ class Pages extends AvegaCmsAdminAPI
     public function __construct()
     {
         parent::__construct();
-        $this->CM = model(ContentModel::class);
+        $this->CM  = model(ContentModel::class);
         $this->MDM = model(MetaDataModel::class);
     }
 
@@ -30,11 +30,7 @@ class Pages extends AvegaCmsAdminAPI
      */
     public function index(): ResponseInterface
     {
-        $meta = $this->MDM->selectPages()
-            ->filter($this->request->getGet() ?? [])
-            ->apiPagination();
-
-        return $this->cmsRespond($meta['list'], $meta['pagination']);
+        return $this->cmsRespond($this->MDM->selectPages()->filter($this->request->getGet() ?? [])->apiPagination());
     }
 
     /**
@@ -61,7 +57,7 @@ class Pages extends AvegaCmsAdminAPI
             return $this->failValidationErrors(lang('Api.errors.noData'));
         }
 
-        $data['module_id'] = $data['item_id'] = 0;
+        $data['module_id']  = $data['item_id'] = 0;
         $data['creator_id'] = $data['created_by_id'] = $this->userData->userId;
 
         $content = [
@@ -113,7 +109,7 @@ class Pages extends AvegaCmsAdminAPI
             return $this->failNotFound();
         }
 
-        $data['module_id'] = $data['item_id'] = 0;
+        $data['module_id']     = $data['item_id'] = 0;
         $data['updated_by_id'] = $this->userData->userId;
 
         $content = [

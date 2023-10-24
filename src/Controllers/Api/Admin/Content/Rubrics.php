@@ -20,7 +20,7 @@ class Rubrics extends AvegaCmsAdminAPI
     public function __construct()
     {
         parent::__construct();
-        $this->CM = model(ContentModel::class);
+        $this->CM  = model(ContentModel::class);
         $this->MDM = model(MetaDataModel::class);
     }
 
@@ -29,11 +29,10 @@ class Rubrics extends AvegaCmsAdminAPI
      */
     public function index(): ResponseInterface
     {
-        $meta = $this->MDM->selectRubrics()
+        return $this->cmsRespond($this->MDM->selectRubrics()
             ->filter($this->request->getGet() ?? [])
-            ->apiPagination();
-
-        return $this->cmsRespond($meta['list'], $meta['pagination']);
+            ->apiPagination()
+        );
     }
 
     /**
@@ -60,7 +59,7 @@ class Rubrics extends AvegaCmsAdminAPI
             return $this->failValidationErrors(lang('Api.errors.noData'));
         }
 
-        $data['parent'] = SeoUtils::mainPages($data['locale_id']);
+        $data['parent']     = SeoUtils::mainPages($data['locale_id']);
         $data['creator_id'] = $data['created_by_id'] = $this->userData->userId;
 
         $content = [
@@ -112,12 +111,12 @@ class Rubrics extends AvegaCmsAdminAPI
             return $this->failNotFound();
         }
 
-        $data['parent'] = SeoUtils::mainPages($data['locale_id']);
+        $data['parent']        = SeoUtils::mainPages($data['locale_id']);
         $data['updated_by_id'] = $this->userData->userId;
 
-        $content['anons'] = $data['anons'];
+        $content['anons']   = $data['anons'];
         $content['content'] = $data['content'];
-        $content['extra'] = $data['extra'];
+        $content['extra']   = $data['extra'];
 
         unset($data['creator_id'], $data['anons'], $data['content'], $data['extra']);
 

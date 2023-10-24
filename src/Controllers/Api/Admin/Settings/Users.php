@@ -32,8 +32,8 @@ class Users extends AvegaCmsAdminAPI
     public function __construct()
     {
         parent::__construct();
-        $this->UM = model(UserModel::class);
-        $this->RM = model(RolesModel::class);
+        $this->UM  = model(UserModel::class);
+        $this->RM  = model(RolesModel::class);
         $this->URM = model(UserRolesModel::class);
     }
 
@@ -42,9 +42,7 @@ class Users extends AvegaCmsAdminAPI
      */
     public function index(): ResponseInterface
     {
-        $users = $this->URM->getUsers()->filter($this->request->getGet() ?? [])->apiPagination();
-
-        return $this->cmsRespond($users['list'], $users['pagination']);
+        return $this->cmsRespond($this->URM->getUsers()->filter($this->request->getGet() ?? [])->apiPagination());
     }
 
     /**

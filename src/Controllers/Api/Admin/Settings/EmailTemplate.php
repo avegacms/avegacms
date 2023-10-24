@@ -24,9 +24,7 @@ class EmailTemplate extends AvegaCmsAdminAPI
      */
     public function index(): ResponseInterface
     {
-        $templates = $this->ETM->getTemplates()->filter($this->request->getGet() ?? [])->apiPagination();
-
-        return $this->cmsRespond($templates['list'], $templates['pagination']);
+        return $this->cmsRespond($this->ETM->getTemplates()->filter($this->request->getGet() ?? [])->apiPagination());
     }
 
     /**

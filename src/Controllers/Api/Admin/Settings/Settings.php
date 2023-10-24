@@ -27,9 +27,7 @@ class Settings extends AvegaCmsAdminAPI
      */
     public function index(): ResponseInterface
     {
-        $settings = $this->SM->selectSettings()->filter($this->request->getGet() ?? [])->apiPagination();
-
-        return $this->cmsRespond($settings['list'], $settings['pagination']);
+        return $this->cmsRespond($this->SM->selectSettings()->filter($this->request->getGet() ?? [])->apiPagination());
     }
 
     /**
@@ -99,7 +97,7 @@ class Settings extends AvegaCmsAdminAPI
                 return $this->failNotFound();
             }
 
-            $data['entity'] = $settings->entity;
+            $data['entity']        = $settings->entity;
             $data['updated_by_id'] = $this->userData->userId;
 
             if ($this->SM->save($data) === false) {
