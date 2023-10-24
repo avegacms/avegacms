@@ -143,6 +143,10 @@ trait CmsResponseTrait
                 $meta['pagination'] = $data['data']['pagination'];
                 unset($data['data']['pagination']);
             }
+
+            if (in_array('list', array_keys($data['data']))) {
+                $data['data'] = $data['data']['list'];
+            }
         }
 
         if ( ! is_null($meta)) {
