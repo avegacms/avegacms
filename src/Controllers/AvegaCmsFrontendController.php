@@ -18,14 +18,15 @@ use ReflectionException;
 
 class AvegaCmsFrontendController extends BaseController
 {
-    protected string          $metaType    = 'module';
-    protected ?string         $moduleKey   = null;
-    protected array           $breadCrumbs = [];
+    protected string          $metaType        = 'module';
+    protected bool            $useTemplateMeta = false;
+    protected ?string         $moduleKey       = null;
+    protected array           $breadCrumbs     = [];
     protected MetaDataModel   $MDM;
-    protected ?MetaDataEntity $dataEntity  = null;
-    protected ?MetaEntity     $meta        = null;
-    protected ?ContentEntity  $content     = null;
-    protected ?Pager          $pager       = null;
+    protected ?MetaDataEntity $dataEntity      = null;
+    protected ?MetaEntity     $meta            = null;
+    protected ?ContentEntity  $content         = null;
+    protected ?Pager          $pager           = null;
 
     /**
      * @throws ReflectionException
@@ -94,30 +95,32 @@ class AvegaCmsFrontendController extends BaseController
                 $this->error404();
             }
 
-            if ( ! empty($patternSegment = explode('/', $module['url_pattern']))) {
-                foreach ($patternSegment as $k => $val) {
-                    if (isset($segments[$k]) && $segments[$k] !== $val) {
-                        $params[$val] = $segments[$k];
-                    }
-                }
-
-                if ( ! empty($params)) {
-                    foreach ($params as $key => $value) {
-                        $newKey = str_replace(['{', '}'], '', $key);
-                        unset($params[$key]);
-                        $params[$newKey] = $value;
+            if ( ! $this->useTemplateMeta) {
+                if ( ! empty($patternSegment = explode('/', $module['url_pattern']))) {
+                    foreach ($patternSegment as $k => $val) {
+                        if (isset($segments[$k]) && $segments[$k] !== $val) {
+                            $params[$val] = $segments[$k];
+                        }
                     }
 
-                    if (isset($params['id']) && is_numeric($params['id']) && $params['id'] > 0) {
-                        $id = $params['id'];
-                        unset($params);
-                        $params['id'] = $id;
+                    if ( ! empty($params)) {
+                        foreach ($params as $key => $value) {
+                            $newKey = str_replace(['{', '}'], '', $key);
+                            unset($params[$key]);
+                            $params[$newKey] = $value;
+                        }
+
+                        if (isset($params['id']) && is_numeric($params['id']) && $params['id'] > 0) {
+                            $id = $params['id'];
+                            unset($params);
+                            $params['id'] = $id;
+                        }
+                    } else {
+                        $params['slug'] = empty($segments) ? '' : array_reverse($segments)[0];
                     }
                 } else {
-                    $params['slug'] = empty($segments) ? '' : array_reverse($segments)[0];
+                    $params['slug'] = $module['slug'];
                 }
-            } else {
-                $params['slug'] = $module['slug'];
             }
         } else {
             $params['locale']  = session()->get('avegacms.client.locale.id');
