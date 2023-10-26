@@ -24,6 +24,7 @@ use ReflectionException;
  * @property string|null $meta_type
  * @property array $breadCrumbs
  * @property array|null $dictionary
+ * @property int|null $parentCrumbId
  * @property MetaEntity $metaRender
  */
 class MetaDataEntity extends AvegaCmsEntity
@@ -57,7 +58,18 @@ class MetaDataEntity extends AvegaCmsEntity
         'updated_at'      => 'datetime',
     ];
 
+    /**
+     * Специальный массив-словарь для замены масок на пользовательские значения метаданных
+     *
+     * @var array|null
+     */
     public ?array $dictionary = null;
+
+    /**
+     * Параметр для указания кастомного ID родительской записи, от которой будет формироваться breadcrumbs
+     * @var int|null
+     */
+    public ?int $parentCrumbId = null;
 
     public function __construct(?array $data = null)
     {
