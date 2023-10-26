@@ -19,12 +19,13 @@ use ReflectionException;
 class AvegaCmsFrontendController extends BaseController
 {
     protected string          $metaType        = 'module';
-    protected bool            $useTemplateMeta = false;
+    protected bool            $useTemplateMeta = false; // Флаг использования кастомных метаданных
     protected ?string         $moduleKey       = null;
     protected array           $breadCrumbs     = [];
     protected MetaDataModel   $MDM;
     protected ?MetaDataEntity $dataEntity      = null;
     protected ?MetaEntity     $meta            = null;
+    protected ?array          $customerContent = null; // Массив пользовательского контента
     protected ?ContentEntity  $content         = null;
     protected ?Pager          $pager           = null;
 
@@ -56,15 +57,14 @@ class AvegaCmsFrontendController extends BaseController
 
         $this->meta        = $this->dataEntity->metaRender();
         $this->breadCrumbs = $this->dataEntity->breadCrumbs($this->dataEntity->meta_type, $parentMeta);
-        $this->content     = model(ContentModel::class)->getContent($this->dataEntity->id);
+        $this->content     = ($this->customerContent === null) ? model(ContentModel::class)->getContent($this->dataEntity->id) : (new ContentEntity($this->customerContent));
 
         $data['data']        = $pageData;
         $data['content']     = $this->content;
         $data['meta']        = $this->meta;
         $data['breadcrumbs'] = $this->breadCrumbs;
         $data['pager']       = $this->pager;
-
-        $data['template'] = null;
+        $data['template']    = null;
 
         if (Cms::settings('core.env.useViewData')) {
             if ( ! file_exists($file = APPPATH . 'Views/' . ($view = 'template/' . $view) . '.php')) {
