@@ -57,7 +57,7 @@ class MetaDataEntity extends AvegaCmsEntity
         'updated_at'      => 'datetime',
     ];
 
-    protected ?array $dictionary = null;
+    public ?array $dictionary = null;
 
     public function __construct(?array $data = null)
     {
@@ -146,6 +146,12 @@ class MetaDataEntity extends AvegaCmsEntity
     public function metaRender(): MetaEntity
     {
         $page = $this->meta;
+
+        if ($this->dictionary !== null) {
+            $page['title']       = strtr($page['title'], $this->dictionary);
+            $page['keywords']    = strtr($page['keywords'], $this->dictionary);
+            $page['description'] = strtr($page['description'], $this->dictionary);
+        }
 
         unset($page['breadcrumb']);
 
