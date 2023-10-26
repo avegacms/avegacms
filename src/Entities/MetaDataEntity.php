@@ -24,6 +24,7 @@ use ReflectionException;
  * @property string|null $meta_type
  * @property array $breadCrumbs
  * @property array|null $dictionary
+ * @property int|null $parentCrumbId
  * @property MetaEntity $metaRender
  */
 class MetaDataEntity extends AvegaCmsEntity
@@ -57,7 +58,18 @@ class MetaDataEntity extends AvegaCmsEntity
         'updated_at'      => 'datetime',
     ];
 
-    protected ?array $dictionary = null;
+    /**
+     * Специальный массив-словарь для замены масок на пользовательские значения метаданных
+     *
+     * @var array|null
+     */
+    public ?array $dictionary = null;
+
+    /**
+     * Параметр для указания кастомного ID родительской записи, от которой будет формироваться breadcrumbs
+     * @var int|null
+     */
+    public ?int $parentCrumbId = null;
 
     public function __construct(?array $data = null)
     {
@@ -147,7 +159,11 @@ class MetaDataEntity extends AvegaCmsEntity
     {
         $page = $this->meta;
 
-        unset($page['breadcrumb']);
+        if ($this->dictionary !== null) {
+            $page['title']       = $page['og:title'] = strtr($page['title'], $this->dictionary);
+            $page['keywords']    = strtr($page['keywords'], $this->dictionary);
+            $page['description'] = strtr($page['description'], $this->dictionary);
+        }
 
         $locales = SeoUtils::Locales();
         $data    = SeoUtils::LocaleData($this->locale_id);
@@ -199,7 +215,10 @@ class MetaDataEntity extends AvegaCmsEntity
         if ($type !== MetaDataTypes::Main->value) {
             $breadCrumbs[] = [
                 'url'    => '',
-                'title'  => esc(! empty($this->meta->breadcrumb) ? $this->meta->breadcrumb : $this->title),
+                'title'  => strtr(
+                    esc(! empty($this->meta['breadcrumb']) ? $this->meta['breadcrumb'] : $this->title),
+                    $this->dictionary ?? []
+                ),
                 'active' => true
             ];
         }
