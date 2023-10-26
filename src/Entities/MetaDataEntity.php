@@ -148,12 +148,10 @@ class MetaDataEntity extends AvegaCmsEntity
         $page = $this->meta;
 
         if ($this->dictionary !== null) {
-            $page['title']       = strtr($page['title'], $this->dictionary);
+            $page['title']       = $page['og:title'] = strtr($page['title'], $this->dictionary);
             $page['keywords']    = strtr($page['keywords'], $this->dictionary);
             $page['description'] = strtr($page['description'], $this->dictionary);
         }
-
-        unset($page['breadcrumb']);
 
         $locales = SeoUtils::Locales();
         $data    = SeoUtils::LocaleData($this->locale_id);
@@ -205,7 +203,10 @@ class MetaDataEntity extends AvegaCmsEntity
         if ($type !== MetaDataTypes::Main->value) {
             $breadCrumbs[] = [
                 'url'    => '',
-                'title'  => esc(! empty($this->meta->breadcrumb) ? $this->meta->breadcrumb : $this->title),
+                'title'  => strtr(
+                    esc(! empty($this->meta['breadcrumb']) ? $this->meta['breadcrumb'] : $this->title),
+                    $this->dictionary ?? []
+                ),
                 'active' => true
             ];
         }
