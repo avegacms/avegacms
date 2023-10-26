@@ -23,6 +23,7 @@ use ReflectionException;
  * @property string|null $slug
  * @property string|null $meta_type
  * @property array $breadCrumbs
+ * @property array|null $dictionary
  * @property MetaEntity $metaRender
  */
 class MetaDataEntity extends AvegaCmsEntity
@@ -55,6 +56,8 @@ class MetaDataEntity extends AvegaCmsEntity
         'created_at'      => 'datetime',
         'updated_at'      => 'datetime',
     ];
+
+    protected ?array $dictionary = null;
 
     public function __construct(?array $data = null)
     {
