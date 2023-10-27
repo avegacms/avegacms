@@ -89,7 +89,7 @@
     <p>
         <?php if (ENVIRONMENT !== 'production') : ?>
             <?= nl2br(esc($message)) ?><?php else : ?>
-            <?= lang('Errors.sorryCannotFind') ?><?php endif ?>
+            <?= lang('Errors.sorryCannotFind') ?><?php endif; ?>
     </p>
 </div>
 </body>
