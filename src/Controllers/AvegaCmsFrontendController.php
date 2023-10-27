@@ -57,7 +57,10 @@ class AvegaCmsFrontendController extends BaseController
 
         $this->meta        = $this->dataEntity->metaRender();
         $this->breadCrumbs = $this->dataEntity->breadCrumbs($this->dataEntity->meta_type, $parentMeta);
-        $this->content     = ($this->customerContent === null) ? model(ContentModel::class)->getContent($this->dataEntity->id) : (new ContentEntity($this->customerContent));
+
+        if ($this->content === null) {
+            $this->content = ($this->customerContent === null) ? model(ContentModel::class)->getContent($this->dataEntity->id) : (new ContentEntity($this->customerContent));
+        }
 
         $data['data']        = $pageData;
         $data['content']     = $this->content;
