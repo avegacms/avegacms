@@ -1,12 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AvegaCms\Entities;
 
 use CodeIgniter\Entity\Entity;
 
+/**
+ * @property int|null $id
+ * @property int|null $parent
+ * @property string|null $slug
+ * @property string|null $locale
+ * @property string|null $localeName
+ * @property string|null $home
+ * @property string|null $extra
+ * @property int|null $isDefault
+ * @property int|null $active
+ */
 class LocalesEntity extends Entity
 {
-    protected $datamap = [];
+    protected $datamap = [
+        'localeName' => 'locale_name',
+        'isDefault'  => 'is_default'
+    ];
     protected $dates   = ['created_at', 'updated_at'];
     protected $casts   = [
         'id'            => 'integer',

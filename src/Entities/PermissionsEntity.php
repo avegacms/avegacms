@@ -4,30 +4,37 @@ namespace AvegaCms\Entities;
 
 use CodeIgniter\Entity\Entity;
 
+/**
+ * @property int|null $id
+ * @property int|null $roleId
+ * @property int|null $parent
+ * @property int|null $moduleId
+ * @property int|null $isModule
+ * @property int|null $isSystem
+ * @property int|null $isPlugin
+ * @property string|null $slug
+ * @property int|null $access
+ * @property int|null $self
+ * @property int|null $create
+ * @property int|null $read
+ * @property int|null $update
+ * @property int|null $delete
+ * @property int|null $moderated
+ * @property int|null $settings
+ * @property string|null $extra
+ * @property int|null $createdById
+ * @property int|null $updatedById
+ */
 class PermissionsEntity extends Entity
 {
     protected $datamap = [
-        'id'            => null,
-        'role_id'       => null,
-        'parent'        => null,
-        'module_id'     => null,
-        'is_module'     => null,
-        'is_system'     => null,
-        'is_plugin'     => null,
-        'slug'          => null,
-        'access'        => null,
-        'self'          => null,
-        'create'        => null,
-        'read'          => null,
-        'update'        => null,
-        'delete'        => null,
-        'moderated'     => null,
-        'settings'      => null,
-        'extra'         => null,
-        'created_by_id' => null,
-        'updated_by_id' => null,
-        'created_at'    => null,
-        'updated_at'    => null
+        'roleId'      => 'role_id',
+        'moduleId'    => 'module_id',
+        'isModule'    => 'is_module',
+        'isSystem'    => 'is_system',
+        'isPlugin'    => 'is_plugin',
+        'createdById' => 'created_by_id',
+        'updatedById' => 'updated_by_id'
     ];
     protected $dates   = ['created_at', 'updated_at'];
     protected $casts   = [
