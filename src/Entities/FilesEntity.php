@@ -4,31 +4,36 @@ namespace AvegaCms\Entities;
 
 use CodeIgniter\Entity\Entity;
 
+/**
+ * @property int|null $id
+ * @property int|null $userId
+ * @property string|null $name
+ * @property string|null $alternativeText
+ * @property string|null $caption
+ * @property int|null $width
+ * @property int|null $height
+ * @property string|null $formats
+ * @property string|null $hash
+ * @property string|null $ext
+ * @property float|null $size
+ * @property string|null $url
+ * @property string|null $previewUrl
+ * @property string|null $provider
+ * @property string|null $providerMetaData
+ * @property string|null $folderPath
+ * @property int|null $isPersonal
+ * @property string|null $fileType
+ */
 class FilesEntity extends Entity
 {
     protected $datamap = [
-        'id'                => null,
-        'user_id'           => null,
-        'name'              => null,
-        'alternative_text'  => null,
-        'caption'           => null,
-        'width'             => null,
-        'height'            => null,
-        'formats'           => null,
-        'hash'              => null,
-        'ext'               => null,
-        'size'              => null,
-        'url'               => null,
-        'preview_url'       => null,
-        'provider'          => null,
-        'provider_metadata' => null,
-        'folder_path'       => null,
-        'is_personal'       => null,
-        'file_type'         => null,
-        'created_by_id'     => null,
-        'updated_by_id'     => null,
-        'created_at'        => null,
-        'updated_at'        => null
+        'userId'           => 'user_id',
+        'alternativeText'  => 'alternative_text',
+        'previewUrl'       => 'preview_url',
+        'providerMetaData' => 'provider_metadata',
+        'folderPath'       => 'folder_path',
+        'isPersonal'       => 'is_personal',
+        'fileType'         => 'file_type'
     ];
     protected $dates   = ['created_at', 'updated_at'];
     protected $casts   = [

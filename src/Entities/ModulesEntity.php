@@ -4,9 +4,34 @@ namespace AvegaCms\Entities;
 
 use CodeIgniter\Entity\Entity;
 
+/**
+ * @property int|null $id
+ * @property int|null $parent
+ * @property int|null $isCore
+ * @property int|null $isPlugin
+ * @property int|null $isSystem
+ * @property string|null $slug
+ * @property string|null $name
+ * @property string|null $version
+ * @property string|null $description
+ * @property string|null $extra
+ * @property string|null $urlPattern
+ * @property int|null $inSitemap
+ * @property int|null $active
+ * @property int|null $createdById
+ * @property int|null $updatedById
+ */
 class ModulesEntity extends Entity
 {
-    protected $datamap = [];
+    protected $datamap = [
+        'isCore'      => 'is_core',
+        'isPlugin'    => 'is_plugin',
+        'isSystem'    => 'is_system',
+        'urlPattern'  => 'url_pattern',
+        'inSitemap'   => 'in_sitemap',
+        'createdById' => 'created_by_id',
+        'updatedById' => 'updated_by_id'
+    ];
     protected $dates   = ['created_at', 'updated_at'];
     protected $casts   = [
         'id'            => 'integer',

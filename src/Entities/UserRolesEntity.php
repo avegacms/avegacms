@@ -4,9 +4,17 @@ namespace AvegaCms\Entities;
 
 use CodeIgniter\Entity\Entity;
 
+/**
+ * @property int|null $roleId
+ * @property int|null $userId
+ * @property int|null $createdById
+ */
 class UserRolesEntity extends Entity
 {
-    protected $datamap = [];
+    protected $datamap = [
+        'roleId' => 'role_id',
+        'userId' => 'user_id'
+    ];
     protected $dates   = ['created_at'];
     protected $casts   = [
         'role_id'       => 'integer',

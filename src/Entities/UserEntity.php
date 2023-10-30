@@ -5,15 +5,40 @@ namespace AvegaCms\Entities;
 use AvegaCms\Utils\Auth;
 use CodeIgniter\Entity\Entity;
 
+/**
+ * @property int|null $id
+ * @property string|null $login
+ * @property string|null $avatar
+ * @property int|null $phone
+ * @property string|null $email
+ * @property string|null $timezone
+ * @property string|null $password
+ * @property string|null $secret
+ * @property string|null $path
+ * @property string|null $extra
+ * @property string|null $status
+ * @property string|null $condition
+ * @property string|null $lastIp
+ * @property string|null $lastAgent
+ * @property mixed|null $activeAt
+ * @property int|null $createdById
+ * @property int|null $updatedById
+ */
 class UserEntity extends Entity
 {
-    protected $datamap = [];
+    protected $datamap = [
+        'lastIp'      => 'last_ip',
+        'lastAgent'   => 'last_agent',
+        'activeAt'    => 'active_at',
+        'createdById' => 'created_by_id',
+        'updatedById' => 'updated_by_id'
+    ];
     protected $dates   = ['active_at', 'created_at', 'updated_at', 'deleted_at'];
     protected $casts   = [
         'id'            => 'integer',
         'login'         => 'string',
         'avatar'        => 'string',
-        'phone'         => 'string',
+        'phone'         => 'integer',
         'email'         => 'string',
         'timezone'      => 'string',
         'password'      => 'string',
