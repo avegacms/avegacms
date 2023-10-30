@@ -31,7 +31,7 @@ class AvegaCmsModel extends Model
     {
         if ( ! empty($fields = array_filter($fields, fn($value) => $value !== '' && $value !== null))) {
             $this->filterCastsFields[$this->searchFieldAlias] = 'string';
-            $this->filterCastsFields[$this->sortFieldAlias] = 'string';
+            $this->filterCastsFields[$this->sortFieldAlias]   = 'string';
 
             if ( ! empty($this->searchFields)) {
                 $this->_preparingSetsFields('search', $fields);
@@ -93,14 +93,15 @@ class AvegaCmsModel extends Model
                 }
             }
 
-            $this->limit = (int) (is_int($fields['limit'] ?? '') && $fields['limit'] > 0 ? $fields['limit'] : $this->limit);
+            $this->limit = (int) (filter_var($fields['limit'] ?? false,
+                FILTER_VALIDATE_INT) && $fields['limit'] > 0 ? $fields['limit'] : $this->limit);
 
             if ( ! isset($fields['page'])) {
                 $fields['page'] = Services::request()->getGet('page');
             }
 
-            $this->page = (int) (is_int($fields['page'] ?? '') && $fields['page'] > 0 ? $fields['page'] : $this->page);
-
+            $this->page = (int) (filter_var($fields['page'] ?? false,
+                FILTER_VALIDATE_INT) && $fields['page'] > 0 ? $fields['page'] : $this->limit);
             if ($this->limit > $this->maxLimit) {
                 $this->limit = $this->maxLimit;
             }
@@ -172,7 +173,7 @@ class AvegaCmsModel extends Model
                                 $sortFlag = '';
                                 foreach (array_keys($this->filterSortSings) as $sign) {
                                     if (str_starts_with($sortField, $sign)) {
-                                        $sortFlag = $this->filterSortSings[$sign];
+                                        $sortFlag  = $this->filterSortSings[$sign];
                                         $sortField = str_ireplace($sign, '', $sortField);
                                         break;
                                     }
@@ -203,7 +204,7 @@ class AvegaCmsModel extends Model
                             foreach ($this->filterWhereSings as $sign) {
                                 if (str_starts_with($k, $sign)) {
                                     $this->fieldMapFlag = $sign;
-                                    $k = str_ireplace($sign, '', $k);
+                                    $k                  = str_ireplace($sign, '', $k);
                                     break;
                                 }
                             }
