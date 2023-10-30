@@ -101,7 +101,8 @@ class AvegaCmsModel extends Model
             }
 
             $this->page = (int) (filter_var($fields['page'] ?? false,
-                FILTER_VALIDATE_INT) && $fields['page'] > 0 ? $fields['page'] : $this->limit);
+                FILTER_VALIDATE_INT) && $fields['page'] > 0 ? $fields['page'] : $this->page);
+            
             if ($this->limit > $this->maxLimit) {
                 $this->limit = $this->maxLimit;
             }
