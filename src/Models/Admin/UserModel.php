@@ -145,7 +145,7 @@ class UserModel extends AvegaCmsModel
      */
     protected function initUserValidationRules(): void
     {
-        $this->validationRules['status'] = 'if_exist|in_list[' . implode(',', UserStatuses::getValues()) . ']';
+        $this->validationRules['status'] = 'if_exist|in_list[' . implode(',', UserStatuses::get('value')) . ']';
 
         $settings = Cms::settings('core.auth.loginType');
 
@@ -169,7 +169,7 @@ class UserModel extends AvegaCmsModel
      */
     public function fake(Generator &$faker): array
     {
-        $statuses = UserStatuses::getValues();
+        $statuses = UserStatuses::get('value');
 
         return [
             'login'         => $faker->word() . '_' . $faker->word(),

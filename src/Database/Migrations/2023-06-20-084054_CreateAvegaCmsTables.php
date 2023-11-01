@@ -71,12 +71,12 @@ class CreateAvegaCmsTables extends Migration
             // Доп. поля
             'status'     => [
                 'type'       => 'enum',
-                'constraint' => UserStatuses::getValues(),
+                'constraint' => UserStatuses::get('value'),
                 'default'    => UserStatuses::NotDefined->value
             ],
             'condition'  => [
                 'type'       => 'enum',
-                'constraint' => UserConditions::getValues(),
+                'constraint' => UserConditions::get('value'),
                 'default'    => UserConditions::None->value
             ],
             'last_ip'    => ['type' => 'varchar', 'constraint' => 45],
@@ -174,7 +174,7 @@ class CreateAvegaCmsTables extends Migration
             'default_value' => ['type' => 'text', 'null' => true],
             'return_type'   => [
                 'type'       => 'enum',
-                'constraint' => SettingsReturnTypes::getValues(),
+                'constraint' => SettingsReturnTypes::get('value'),
                 'default'    => SettingsReturnTypes::String->value
             ],
             'label'         => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
@@ -247,7 +247,7 @@ class CreateAvegaCmsTables extends Migration
             // URL-адрес превью файла (если это изображение)
             'provider'          => [
                 'type'       => 'enum',
-                'constraint' => FileProviders::getValues(),
+                'constraint' => FileProviders::get('value'),
                 'default'    => FileProviders::Local->value
             ],
             // поставщик хранения файла (например, local или cloudinary);
@@ -259,7 +259,7 @@ class CreateAvegaCmsTables extends Migration
             // личный файл или будет доступен только пользователю загрузившего его
             'file_type'         => [
                 'type'       => 'enum',
-                'constraint' => FileTypes::getValues(),
+                'constraint' => FileTypes::get('value'),
                 'default'    => FileTypes::File->value
             ],
             // тип загруженного файла
@@ -316,17 +316,19 @@ class CreateAvegaCmsTables extends Migration
             // объект, содержащий информацию о доп. данных
             'status'          => [
                 'type'       => 'enum',
-                'constraint' => MetaStatuses::getValues(),
+                'constraint' => MetaStatuses::get('value'),
                 'default'    => MetaStatuses::Publish->value
             ],
             // статус страницы
             'meta_type'       => [
                 'type'       => 'enum',
-                'constraint' => MetaDataTypes::getValues(),
+                'constraint' => MetaDataTypes::get('value'),
                 'default'    => MetaDataTypes::Undefined->value
             ],
             // флаг добавления в карту сайта
             'in_sitemap'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            // Метаданные для карты сайта
+            'meta_sitemap'    => ['type' => 'text', 'null' => true],
             // флаг использования шаблона url
             'use_url_pattern' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             'publish_at'      => ['type' => 'datetime', 'null' => true],
@@ -426,7 +428,7 @@ class CreateAvegaCmsTables extends Migration
             'locale_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => 0],
             'nav_type'  => [
                 'type'       => 'enum',
-                'constraint' => NavigationTypes::getValues(),
+                'constraint' => NavigationTypes::get('value'),
                 'default'    => NavigationTypes::Link->value
             ],
             'meta'      => ['type' => 'text', 'null' => true],

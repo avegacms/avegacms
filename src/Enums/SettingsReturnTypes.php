@@ -14,8 +14,13 @@ enum SettingsReturnTypes: string
     case Timestamp = 'TIMESTAMP';
     case Json      = 'JSON';
 
-    public static function getValues(): array
+    /**
+     * @param  string|null  $key
+     * @return array
+     */
+    public static function get(?string $key = null): array
     {
-        return array_column(SettingsReturnTypes::cases(), 'value');
+        return in_array($key, ['name', 'value', true]) ?
+            array_column(SettingsReturnTypes::cases(), $key) : SettingsReturnTypes::cases();
     }
 }

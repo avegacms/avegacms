@@ -8,8 +8,13 @@ enum EntityTypes: string
     case Content = 'CONTENT';
     case Module  = 'MODULE';
 
-    public static function getValues(): array
+    /**
+     * @param  string|null  $key
+     * @return array
+     */
+    public static function get(?string $key = null): array
     {
-        return array_column(EntityTypes::cases(), 'value');
+        return in_array($key, ['name', 'value', true]) ?
+            array_column(EntityTypes::cases(), $key) : EntityTypes::cases();
     }
 }

@@ -97,7 +97,7 @@ class SettingsModel extends AvegaCmsModel
         parent::__construct($db, $validation);
 
         $this->validationRules['return_type'] = 'if_exist|in_list[' . implode(',',
-                SettingsReturnTypes::getValues()) . ']';
+                SettingsReturnTypes::get('value')) . ']';
     }
 
     /**

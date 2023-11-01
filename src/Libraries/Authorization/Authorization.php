@@ -754,7 +754,7 @@ class Authorization
         $login         = 'required|max_length[36]';
         $email         = 'max_length[255]|valid_email';
         $password      = 'required|verify_password';
-        $condition     = 'required|in_list[' . implode(',', UserConditions::getValues()) . ']';
+        $condition     = 'required|in_list[' . implode(',', UserConditions::get('value')) . ']';
         $code          = 'required|numeric|exact_length[' . $this->settings['auth']['verifyCodeLength'] . ']';
         $token         = 'required|max_length[255]|alpha_numeric';
         $recoveryField = $this->settings['auth']['recoveryField'];

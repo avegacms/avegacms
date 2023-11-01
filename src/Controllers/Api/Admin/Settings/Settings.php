@@ -38,7 +38,7 @@ class Settings extends AvegaCmsAdminAPI
         return $this->cmsRespond(
             [
                 'modules' => [0 => 'AvegaCms Core', ...model(ModulesModel::class)->getModulesList()],
-                'return'  => SettingsReturnTypes::getValues()
+                'return'  => SettingsReturnTypes::get('value')
             ]
         );
     }

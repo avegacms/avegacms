@@ -40,7 +40,7 @@ class Posts extends AvegaCmsAdminAPI
     {
         return $this->cmsRespond(
             [
-                'statuses'  => MetaStatuses::getValues(),
+                'statuses'  => MetaStatuses::get('value'),
                 'defStatus' => MetaStatuses::Draft->value,
                 'locales'   => array_column(SeoUtils::Locales(), 'locale_name', 'id'),
                 'rubrics'   => SeoUtils::rubricsList(key: 'id', value: 'title')

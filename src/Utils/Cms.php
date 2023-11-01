@@ -104,8 +104,8 @@ class Cms
                         'user'    => $data['client']['user'] ?? [],
                         'confirm' => [
 
-                            'use_cookie' => false,
-                            'gdpr'       => false
+                            'useCookie' => false,
+                            'gdpr'      => false
                         ]
                     ],
                     'modules' => [],
@@ -139,9 +139,9 @@ class Cms
                 $processArray = function (&$settings) use (&$processArray) {
                     foreach ($settings as $key => &$item) {
                         if (is_array($item)) {
-                            if (isset($item['return_type'])) {
-                                $rt = $item['return_type'];
-                                unset($item['return_type']);
+                            if (isset($item['returnType'])) {
+                                $rt = $item['returnType'];
+                                unset($item['returnType']);
                                 $settings[$key] = self::castAs($item['value'], $rt);
                             } else {
                                 $processArray($item);
@@ -207,7 +207,7 @@ class Cms
         int|string $usePattern,
         int|string $id,
         string $slug,
-        int|string $locale_id,
+        int|string $localeId,
         int|string $parent
     ): string {
         return
@@ -216,7 +216,7 @@ class Cms
                     $usePattern == 1 ?
                         str_ireplace(
                             ['{id}', '{slug}', '{locale_id}', '{parent}'],
-                            [$id, $slug, $locale_id, $parent],
+                            [$id, $slug, $localeId, $parent],
                             $url
                         ) :
                         $url
