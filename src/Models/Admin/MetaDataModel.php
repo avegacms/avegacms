@@ -7,7 +7,7 @@ use AvegaCms\Entities\MetaDataEntity;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
 use Faker\Generator;
-use AvegaCms\Enums\{MetaStatuses, MetaDataTypes};
+use AvegaCms\Enums\{MetaStatuses, MetaDataTypes, MetaChangefreq};
 
 class MetaDataModel extends AvegaCmsModel
 {
@@ -33,6 +33,7 @@ class MetaDataModel extends AvegaCmsModel
         'status',
         'meta_type',
         'in_sitemap',
+        'meta_sitemap',
         'use_url_pattern',
         'created_by_id',
         'updated_by_id',
@@ -50,31 +51,32 @@ class MetaDataModel extends AvegaCmsModel
 
     // Validation
     protected $validationRules      = [
-        'id'               => ['rules' => 'if_exist|is_natural'],
-        'parent'           => ['rules' => 'if_exist|is_natural'],
-        'locale_id'        => ['rules' => 'if_exist|required|is_natural_no_zero'],
-        'module_id'        => ['rules' => 'if_exist|is_natural'],
-        'slug'             => ['rules' => 'if_exist|required|permit_empty|string|max_length[64]|unique_db_key[metadata.locale_id+module_id+item_id+use_url_pattern+slug,id,{id}]'],
-        'creator_id'       => ['rules' => 'if_exist|is_natural_no_zero'],
-        'item_id'          => ['rules' => 'if_exist|is_natural'],
-        'title'            => ['rules' => 'if_exist|required|string|max_length[1024]'],
-        'sort'             => ['rules' => 'if_exist|is_natural_no_zero'],
-        'url'              => ['rules' => 'if_exist|required|string|max_length[2048]'],
-        'meta.title'       => ['rules' => 'if_exist|permit_empty|string|max_length[255]'],
-        'meta.keywords'    => ['rules' => 'if_exist|permit_empty|string|max_length[255]'],
-        'meta.description' => ['rules' => 'if_exist|permit_empty|string|max_length[255]'],
-        'meta.breadcrumb'  => ['rules' => 'if_exist|permit_empty|string|max_length[255]'],
-        'meta.og:title'    => ['rules' => 'if_exist|permit_empty|string|max_length[255]'],
-        'meta.og:type'     => ['rules' => 'if_exist|permit_empty|string|max_length[255]'],
-        'meta.og:url'      => ['rules' => 'if_exist|permit_empty|string|max_length[2048]'],
-        'meta.og:image'    => ['rules' => 'if_exist|permit_empty|string|max_length[512]'],
-        'in_sitemap'       => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
-        'use_url_pattern'  => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
-        'extra_data'       => ['rules' => 'if_exist|permit_empty|string'],
-        'publish_at'       => ['rules' => 'if_exist|valid_date[Y-m-d H:i:s]'],
-        'rubrics.*'        => ['rules' => 'if_exist|required|is_natural_no_zero'],
-        'created_by_id'    => ['rules' => 'if_exist|is_natural'],
-        'updated_by_id'    => ['rules' => 'if_exist|is_natural']
+        'id'                    => ['rules' => 'if_exist|is_natural'],
+        'parent'                => ['rules' => 'if_exist|is_natural'],
+        'locale_id'             => ['rules' => 'if_exist|required|is_natural_no_zero'],
+        'module_id'             => ['rules' => 'if_exist|is_natural'],
+        'slug'                  => ['rules' => 'if_exist|required|permit_empty|string|max_length[64]|unique_db_key[metadata.locale_id+module_id+item_id+use_url_pattern+slug,id,{id}]'],
+        'creator_id'            => ['rules' => 'if_exist|is_natural_no_zero'],
+        'item_id'               => ['rules' => 'if_exist|is_natural'],
+        'title'                 => ['rules' => 'if_exist|required|string|max_length[1024]'],
+        'sort'                  => ['rules' => 'if_exist|is_natural_no_zero'],
+        'url'                   => ['rules' => 'if_exist|required|string|max_length[2048]'],
+        'meta.title'            => ['rules' => 'if_exist|permit_empty|string|max_length[255]'],
+        'meta.keywords'         => ['rules' => 'if_exist|permit_empty|string|max_length[255]'],
+        'meta.description'      => ['rules' => 'if_exist|permit_empty|string|max_length[255]'],
+        'meta.breadcrumb'       => ['rules' => 'if_exist|permit_empty|string|max_length[255]'],
+        'meta.og:title'         => ['rules' => 'if_exist|permit_empty|string|max_length[255]'],
+        'meta.og:type'          => ['rules' => 'if_exist|permit_empty|string|max_length[255]'],
+        'meta.og:url'           => ['rules' => 'if_exist|permit_empty|string|max_length[2048]'],
+        'meta.og:image'         => ['rules' => 'if_exist|permit_empty|string|max_length[512]'],
+        'in_sitemap'            => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
+        'meta_sitemap.priority' => ['rules' => 'if_exist|is_natural_no_zero|less_than_equal_to[100]'],
+        'use_url_pattern'       => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
+        'extra_data'            => ['rules' => 'if_exist|permit_empty|string'],
+        'publish_at'            => ['rules' => 'if_exist|valid_date[Y-m-d H:i:s]'],
+        'rubrics.*'             => ['rules' => 'if_exist|required|is_natural_no_zero'],
+        'created_by_id'         => ['rules' => 'if_exist|is_natural'],
+        'updated_by_id'         => ['rules' => 'if_exist|is_natural']
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
@@ -130,11 +132,15 @@ class MetaDataModel extends AvegaCmsModel
         parent::__construct($db, $validation);
 
         $this->validationRules['status'] = 'if_exist|required|in_list[' . implode(',',
-                MetaStatuses::getValues()
+                MetaStatuses::get('value')
             ) . ']';
 
         $this->validationRules['meta_type'] = 'if_exist|required|in_list[' . implode(',',
-                MetaDataTypes::getValues()
+                MetaDataTypes::get('value')
+            ) . ']';
+
+        $this->validationRules['meta_sitemap.changefreq'] = 'if_exist|required|in_list[' . implode(',',
+                MetaChangefreq::get('value')
             ) . ']';
     }
 
@@ -328,7 +334,7 @@ class MetaDataModel extends AvegaCmsModel
     public function fake(Generator &$faker): array
     {
         $title  = $faker->sentence();
-        $status = MetaStatuses::getValues();
+        $status = MetaStatuses::get('value');
         $slug   = $faker->slug(rand(1, 6));
 
         return [

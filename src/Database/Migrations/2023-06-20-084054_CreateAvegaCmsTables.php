@@ -259,7 +259,7 @@ class CreateAvegaCmsTables extends Migration
             // личный файл или будет доступен только пользователю загрузившего его
             'file_type'         => [
                 'type'       => 'enum',
-                'constraint' => FileTypes::getValues(),
+                'constraint' => FileTypes::get('value'),
                 'default'    => FileTypes::File->value
             ],
             // тип загруженного файла
@@ -316,17 +316,19 @@ class CreateAvegaCmsTables extends Migration
             // объект, содержащий информацию о доп. данных
             'status'          => [
                 'type'       => 'enum',
-                'constraint' => MetaStatuses::getValues(),
+                'constraint' => MetaStatuses::get('value'),
                 'default'    => MetaStatuses::Publish->value
             ],
             // статус страницы
             'meta_type'       => [
                 'type'       => 'enum',
-                'constraint' => MetaDataTypes::getValues(),
+                'constraint' => MetaDataTypes::get('value'),
                 'default'    => MetaDataTypes::Undefined->value
             ],
             // флаг добавления в карту сайта
             'in_sitemap'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            // Метаданные для карты сайта
+            'meta_sitemap'    => ['type' => 'text', 'null' => true],
             // флаг использования шаблона url
             'use_url_pattern' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             'publish_at'      => ['type' => 'datetime', 'null' => true],

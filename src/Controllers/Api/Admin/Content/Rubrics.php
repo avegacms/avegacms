@@ -42,7 +42,7 @@ class Rubrics extends AvegaCmsAdminAPI
     {
         return $this->cmsRespond(
             [
-                'statuses'  => MetaStatuses::getValues(),
+                'statuses'  => MetaStatuses::get('value'),
                 'defStatus' => MetaStatuses::Draft->value,
                 'locales'   => array_column(SeoUtils::Locales(), 'locale_name', 'id')
             ]

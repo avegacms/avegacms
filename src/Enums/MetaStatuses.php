@@ -9,9 +9,14 @@ enum MetaStatuses: string
     case Moderated = 'MODERATED';
     case Draft     = 'DRAFT';
     case Trash     = 'TRASH';
-
-    public static function getValues(): array
+    
+    /**
+     * @param  string|null  $key
+     * @return array
+     */
+    public static function get(?string $key = null): array
     {
-        return array_column(MetaStatuses::cases(), 'value');
+        return in_array($key, ['name', 'value', true]) ?
+            array_column(MetaStatuses::cases(), $key) : MetaStatuses::cases();
     }
 }
