@@ -79,7 +79,7 @@ class NavigationsModel extends AvegaCmsModel
         parent::__construct($db, $validation);
 
         $this->validationRules['nav_type'] = 'if_exist|required|in_list[' . implode(',',
-                NavigationTypes::getValues()) . ']';
+                NavigationTypes::get('value')) . ']';
     }
 
     /**

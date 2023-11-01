@@ -11,8 +11,13 @@ enum UserStatuses: string
     case Deleted      = 'DELETED';
     case NotDefined   = 'NOT_DEFINED';
 
-    public static function getValues(): array
+    /**
+     * @param  string|null  $key
+     * @return array
+     */
+    public static function get(?string $key = null): array
     {
-        return array_column(UserStatuses::cases(), 'value');
+        return in_array($key, ['name', 'value', true]) ?
+            array_column(UserStatuses::cases(), $key) : UserStatuses::cases();
     }
 }

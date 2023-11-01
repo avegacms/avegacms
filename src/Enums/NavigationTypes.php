@@ -8,9 +8,14 @@ enum NavigationTypes: string
     case Link    = 'LINK';
     case Button  = 'BUTTON';
     case Divider = 'DIVIDER';
-
-    public static function getValues(): array
+    
+    /**
+     * @param  string|null  $key
+     * @return array
+     */
+    public static function get(?string $key = null): array
     {
-        return array_column(NavigationTypes::cases(), 'value');
+        return in_array($key, ['name', 'value', true]) ?
+            array_column(NavigationTypes::cases(), $key) : NavigationTypes::cases();
     }
 }

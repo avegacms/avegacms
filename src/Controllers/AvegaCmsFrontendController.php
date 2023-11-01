@@ -49,14 +49,14 @@ class AvegaCmsFrontendController extends BaseController
     {
         $parentMeta = [];
 
-        if ($this->dataEntity === null || $this->dataEntity->meta_type !== MetaDataTypes::Main->value
+        if ($this->dataEntity === null || $this->dataEntity->metaType !== MetaDataTypes::Main->value
             && empty($parentMeta = $this->MDM->getMetaMap($this->dataEntity->parentCrumbId ?? $this->dataEntity->id,
                 $this->dataEntity->parentCrumbId))) {
             $this->error404();
         }
 
         $this->meta        = $this->dataEntity->metaRender();
-        $this->breadCrumbs = $this->dataEntity->breadCrumbs($this->dataEntity->meta_type, $parentMeta);
+        $this->breadCrumbs = $this->dataEntity->breadCrumbs($this->dataEntity->metaType, $parentMeta);
 
         if ($this->content === null) {
             $this->content = ($this->customerContent === null) ? model(ContentModel::class)->getContent($this->dataEntity->id) : (new ContentEntity($this->customerContent));
@@ -100,7 +100,7 @@ class AvegaCmsFrontendController extends BaseController
             }
 
             if ( ! $this->useTemplateMeta) {
-                if ( ! empty($patternSegment = explode('/', $module['url_pattern']))) {
+                if ( ! empty($patternSegment = explode('/', $module['urlPattern']))) {
                     foreach ($patternSegment as $k => $val) {
                         if (isset($segments[$k]) && $segments[$k] !== $val) {
                             $params[$val] = $segments[$k];

@@ -32,7 +32,7 @@ class Navigations extends AvegaCmsAdminAPI
         return $this->cmsRespond(
             [
                 'locales'  => array_column(SeoUtils::Locales(), 'locale_name', 'id'),
-                'navTypes' => NavigationTypes::getValues()
+                'navTypes' => NavigationTypes::get('value')
             ]
         );
     }
@@ -47,8 +47,8 @@ class Navigations extends AvegaCmsAdminAPI
             return $this->failValidationErrors(lang('Api.errors.noData'));
         }
 
-        $data['is_admin'] = 0;
-        $data['icon'] = '';
+        $data['is_admin']      = 0;
+        $data['icon']          = '';
         $data['created_by_id'] = $this->userData->userId;
 
         if ( ! $id = $this->NM->insert((new NavigationsEntity($data)))) {

@@ -5,23 +5,25 @@ declare(strict_types=1);
 namespace AvegaCms\Entities;
 
 use AvegaCms\Models\Admin\MetaDataModel;
-use AvegaCms\Enums\MetaDataTypes;
+use AvegaCms\Enums\{MetaDataTypes, MetaChangefreq};
 use AvegaCms\Utils\{Cms, SeoUtils};
 use Config\Services;
-use AvegaCms\Entities\Seo\{BreadCrumbsEntity, MetaEntity, OpenGraphEntity};
+use AvegaCms\Entities\Seo\{BreadCrumbsEntity, MetaEntity, OpenGraphEntity, SiteMapEntity};
 use ReflectionException;
 
 /**
  * @property int|null $id
  * @property int|null $parent
+ * @property int|null $rubricId
+ * @property int|null $moduleId
  * @property array|object|null $meta
- * @property int|null $locale_id
- * @property int|null $in_sitemap
- * @property int|null $use_url_pattern
+ * @property int|null $localeId
+ * @property int|null $inSitemap
+ * @property int|null $useUrlPattern
  * @property string|null $title
  * @property string|null $url
  * @property string|null $slug
- * @property string|null $meta_type
+ * @property string|null $metaType
  * @property array $breadCrumbs
  * @property array|null $dictionary
  * @property int|null $parentCrumbId
@@ -29,7 +31,22 @@ use ReflectionException;
  */
 class MetaDataEntity extends AvegaCmsEntity
 {
-    protected $datamap = [];
+    protected $datamap = [
+        'postId'        => 'post_id',
+        'rubricId'      => 'rubric_id',
+        'localeId'      => 'locale_id',
+        'moduleId'      => 'module_id',
+        'creatorId'     => 'creator_id',
+        'itemId'        => 'item_id',
+        'extraData'     => 'extra_data',
+        'metaType'      => 'meta_type',
+        'inSitemap'     => 'in_sitemap',
+        'metaSitemap'   => 'meta_sitemap',
+        'useUrlPattern' => 'use_url_pattern',
+        'createdById'   => 'created_by_id',
+        'updatedById'   => 'updated_by_id',
+        'publishAt'     => 'publish_at'
+    ];
     protected $dates   = ['created_at', 'updated_at', 'publish_at'];
     protected $casts   = [
         'id'              => 'integer',
@@ -49,6 +66,7 @@ class MetaDataEntity extends AvegaCmsEntity
         'status'          => 'string',
         'meta_type'       => 'string',
         'in_sitemap'      => 'integer',
+        'meta_sitemap'    => 'json-array',
         'use_url_pattern' => 'integer',
         'rubrics'         => 'array',
         'created_by_id'   => 'integer',
@@ -92,7 +110,6 @@ class MetaDataEntity extends AvegaCmsEntity
         return $this;
     }
 
-
     /**
      * @param  string  $url
      * @return $this
@@ -133,6 +150,25 @@ class MetaDataEntity extends AvegaCmsEntity
 
         $this->attributes['meta'] = json_encode($data);
 
+        unset($data);
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setMetaSitemap(): MetaDataEntity
+    {
+        $meta = json_decode($this->attributes['meta_sitemap'], true);
+
+        $meta['priority']   = $meta['priority'] ?? 50;
+        $meta['changefreq'] = $meta['changefreq'] ?? MetaChangefreq::Monthly->value;
+
+        $this->attributes['meta_sitemap'] = json_encode($meta);
+
+        unset($meta);
+
         return $this;
     }
 
@@ -166,14 +202,14 @@ class MetaDataEntity extends AvegaCmsEntity
         }
 
         $locales = SeoUtils::Locales();
-        $data    = SeoUtils::LocaleData($this->locale_id);
+        $data    = SeoUtils::LocaleData($this->localeId);
 
         $meta['title']       = esc($page['title']);
         $meta['keywords']    = esc($page['keywords']);
         $meta['description'] = esc($page['description']);
 
         $meta['slug'] = $this->slug;
-        $meta['lang'] = $locales[$this->locale_id]['locale'];
+        $meta['lang'] = $locales[$this->localeId]['locale'];
         $meta['url']  = $this->url;
 
         $meta['openGraph'] = (new OpenGraphEntity(
@@ -197,9 +233,17 @@ class MetaDataEntity extends AvegaCmsEntity
         }
 
         $meta['canonical'] = base_url(Services::request()->uri->getRoutePath());
-        $meta['robots']    = ($this->in_sitemap === 1) ? 'index, follow' : 'noindex, nofollow';
+        $meta['robots']    = ($this->inSitemap === 1) ? 'index, follow' : 'noindex, nofollow';
 
         return (new MetaEntity($meta));
+    }
+
+    /**
+     * @return SiteMapEntity
+     */
+    public function siteMapData(): SiteMapEntity
+    {
+        return (new SiteMapEntity(json_decode($this->attributes['meta_sitemap'], true)));
     }
 
     /**
