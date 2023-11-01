@@ -38,7 +38,7 @@ class CmsModule
             'description'   => $name . '.module.title.main',
             'extra'         => '',
             'url_pattern'   => $moduleData['urlPatterns'][$slug] ?? $slug,
-            'in_sitemap'    => $moduleData['in_sitemap'] ?? 0,
+            'in_sitemap'    => $moduleData['inSitemap'] ?? 0,
             'active'        => 1,
             'created_by_id' => 1,
             'updated_by_id' => 0
@@ -61,7 +61,7 @@ class CmsModule
                     'description'   => $name . '.module.title.' . $subName,
                     'extra'         => '',
                     'url_pattern'   => $moduleData['urlPatterns'][$group] ?? '',
-                    'in_sitemap'    => $moduleData['in_sitemap'] ?? 0,
+                    'in_sitemap'    => $moduleData['inSitemap'] ?? 0,
                     'active'        => 1,
                     'created_by_id' => 1,
                     'updated_by_id' => 0
@@ -183,7 +183,7 @@ class CmsModule
                     'meta'            => '',
                     'status'          => MetaStatuses::Publish->value,
                     'meta_type'       => MetaDataTypes::Module->value,
-                    'in_sitemap'      => $meta['in_sitemap'] ?? 0,
+                    'in_sitemap'      => $meta['inSitemap'] ?? 0,
                     'use_url_pattern' => 0,
                     'created_by_id'   => 1
                 ]
