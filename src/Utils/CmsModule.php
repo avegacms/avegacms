@@ -183,7 +183,7 @@ class CmsModule
                     'meta'            => '',
                     'status'          => MetaStatuses::Publish->value,
                     'meta_type'       => MetaDataTypes::Module->value,
-                    'in_sitemap'      => $meta['in_sitemap'],
+                    'in_sitemap'      => $meta['in_sitemap'] ?? 0,
                     'use_url_pattern' => 0,
                     'created_by_id'   => 1
                 ]
