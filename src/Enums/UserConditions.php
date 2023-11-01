@@ -4,12 +4,13 @@ namespace AvegaCms\Enums;
 
 enum UserConditions: string
 {
-    case None       = 'NONE';
-    case Auth       = 'AUTH';
-    case CheckPhone = 'CHECK_PHONE';
-    case CheckEmail = 'CHECK_EMAIL';
-    case Recovery   = 'RECOVERY';
-    case Password   = 'PASSWORD';
+    case None         = 'NONE';
+    case Registration = 'REGISTRATION';
+    case Auth         = 'AUTH';
+    case CheckPhone   = 'CHECK_PHONE';
+    case CheckEmail   = 'CHECK_EMAIL';
+    case Recovery     = 'RECOVERY';
+    case Password     = 'PASSWORD';
 
     /**
      * @param  array  $exclude
