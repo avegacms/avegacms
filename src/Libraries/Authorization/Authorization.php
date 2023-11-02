@@ -9,7 +9,6 @@ use AvegaCms\Libraries\Authorization\Exceptions\{AuthorizationException, Authent
 use AvegaCms\Entities\{LoginEntity, UserEntity, UserTokensEntity};
 use AvegaCms\Models\Admin\{LoginModel, UserAuthenticationModel, UserRolesModel, UserTokensModel};
 use AvegaCms\Utils\Cms;
-use CodeIgniter\Validation\ValidationInterface;
 use CodeIgniter\Session\Session;
 use CodeIgniter\Validation\Validation;
 use Config\Services;
@@ -66,9 +65,9 @@ class Authorization
             throw AuthorizationException::forUnknownAuthType($this->settings['auth']['loginType']);
         }
 
-        $loginType = $this->_checkType($data[$this->settings['auth']['loginType']]);
+        $loginType = $this->_checkType($this->settings['auth']['loginType'], $data);
 
-        if ( ! $this->validate($this->_validate('auth_by_' . $this->settings['auth']['loginType']), $data)) {
+        if ( ! $this->validate($this->_validate('auth_by_' . array_keys($loginType)[0]), $data)) {
             throw new AuthorizationException($this->validation->getErrors());
         }
 
@@ -706,21 +705,18 @@ class Authorization
 
     /**
      * @param  string  $field
-     * @return string[]
+     * @param  array  $data
+     * @return array
      * @throws AuthorizationException
      */
-    private function _checkType(string $field): array
+    private function _checkType(string $field, array $data): array
     {
-        if (preg_match('/^79\d{9}$/', $field)) {
-            return ['phone' => $field];
-        }
+        $fields = explode(':', $field);
 
-        if (filter_var($field, FILTER_VALIDATE_EMAIL)) {
-            return ['email' => $field];
-        }
-
-        if (preg_match('/^[a-zA-Z0-9_-]+$/', $field)) {
-            return ['login' => $field];
+        foreach ($data as $key => $item) {
+            if (in_array($key, $fields, true)) {
+                return [$key => $item];
+            }
         }
 
         throw AuthorizationException::forUnknownLoginField($field);
