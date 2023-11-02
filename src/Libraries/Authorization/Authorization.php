@@ -269,7 +269,7 @@ class Authorization
             ]))
         );
 
-        return ['data' => $userSession];
+        return $userSession;
     }
 
     /**
