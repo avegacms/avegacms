@@ -65,7 +65,7 @@ class Authorization
             throw AuthorizationException::forUnknownAuthType($this->settings['auth']['loginType']);
         }
 
-        $loginType = $this->_checkType($this->settings['auth']['loginType'], $data);
+        $loginType = $this->_checkType($data);
 
         if ( ! $this->validate($this->_validate('auth_by_' . array_keys($loginType)[0]), $data)) {
             throw new AuthorizationException($this->validation->getErrors());
@@ -121,7 +121,7 @@ class Authorization
             throw new AuthorizationException($this->validation->getErrors());
         }
 
-        $type = $this->_checkType($data['pointer'], $data);
+        $type = $this->_checkType($data);
 
         $conditions = [
             'expires >' => 0,
@@ -704,14 +704,13 @@ class Authorization
     }
 
     /**
-     * @param  string  $field
      * @param  array  $data
      * @return array
      * @throws AuthorizationException
      */
-    private function _checkType(string $field, array $data): array
+    private function _checkType(array $data): array
     {
-        $fields = explode(':', $field);
+        $fields = explode(':', $this->settings['auth']['loginType']);
 
         foreach ($data as $key => $item) {
             if (in_array($key, $fields, true)) {
@@ -719,7 +718,7 @@ class Authorization
             }
         }
 
-        throw AuthorizationException::forUnknownLoginField($field);
+        throw AuthorizationException::forUnknownLoginField(implode(':', $fields));
     }
 
     /**
