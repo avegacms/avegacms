@@ -2,6 +2,7 @@
 
 namespace AvegaCms\Models\Admin;
 
+use AvegaCms\Enums\UserStatuses;
 use AvegaCms\Models\AvegaCmsModel;
 use CodeIgniter\Model;
 use AvegaCms\Entities\UserRolesEntity;
@@ -109,14 +110,13 @@ class UserRolesModel extends AvegaCmsModel
         $this->builder()->select(['user_roles.role_id', 'user_roles.user_id', 'r.role'])
             ->join('users AS u', 'u.id = user_roles.user_id')
             ->join('roles AS r', 'r.id = user_roles.role_id')
-            ->orderBy('r.priority', 'ASC')
+            ->whereIn('u.status', [UserStatuses::Active->value, UserStatuses::Registration->value])
             ->where(
                 [
                     'user_roles.user_id' => $userId,
-                    'u.status'           => 'active',
                     'r.active'           => 1
                 ]
-            );
+            )->orderBy('r.priority', 'ASC');
 
         if ( ! empty($role)) {
             $this->builder()->where(['r.role' => $role]);
