@@ -23,7 +23,7 @@ class Login extends CmsResourceController
     public function __construct()
     {
         helper(['date']);
-        $this->settings = Cms::settings('core');
+        $this->settings      = Cms::settings('core');
         $this->Authorization = new Authorization($this->settings);
     }
 
@@ -73,7 +73,7 @@ class Login extends CmsResourceController
             return match ($e->getCode()) {
                 403     => $this->failForbidden($e->getMessage()),
                 401     => $this->failUnauthorized($e->getMessage()),
-                default => $this->failValidationErrors(empty($e->getMessages()) ? $e->getMessage() : $e->getMessages())
+                default => $this->failValidationErrors(get_class($e) === 'AuthorizationException' ? $e->getMessages() : $e->getMessage())
             };
         }
     }
@@ -94,7 +94,7 @@ class Login extends CmsResourceController
         switch ($auth['direct']) {
             case 'set_user':
                 Events::trigger('setAuthUserData', $auth['userdata']['user_id']);
-                $user = $this->Authorization->setUser($auth['userdata']['user_id']);
+                $user   = $this->Authorization->setUser($auth['userdata']['user_id']);
                 $result = ['data' => ['status' => 'authorized', 'userdata' => $user]];
                 break;
             case 'send_code':
@@ -119,13 +119,13 @@ class Login extends CmsResourceController
 
                 if ($auth['userdata']['condition'] === 'recovery') {
                     unset($auth['userdata']['condition'], $auth['userdata']['user_id']/*, $auth['userdata']['code']*/);
-                    $result['data']['userdata'] = $auth['userdata'];
+                    $result['data']['userdata']         = $auth['userdata'];
                     $result['data']['userdata']['code'] = $auth['userdata']['code']; // TODO удалить
                 }
 
                 break;
             case 'password':
-                $result['data']['status'] = 'password';
+                $result['data']['status']           = 'password';
                 $result['data']['userdata']['hash'] = $auth['userdata']['hash'];
                 break;
             default:
