@@ -139,9 +139,9 @@ class Cms
                 $processArray = function (&$settings) use (&$processArray) {
                     foreach ($settings as $key => &$item) {
                         if (is_array($item)) {
-                            if (isset($item['returnType'])) {
-                                $rt = $item['returnType'];
-                                unset($item['returnType']);
+                            if (isset($item['return_type'])) {
+                                $rt = $item['return_type'];
+                                unset($item['return_type']);
                                 $settings[$key] = self::castAs($item['value'], $rt);
                             } else {
                                 $processArray($item);
