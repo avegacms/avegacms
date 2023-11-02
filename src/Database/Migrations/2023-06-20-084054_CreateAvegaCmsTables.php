@@ -56,7 +56,7 @@ class CreateAvegaCmsTables extends Migration
          */
         $this->forge->addField([
             'id'         => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
-            'login'      => ['type' => 'varchar', 'constraint' => 36, 'unique' => true, 'null' => true],
+            'login'      => ['type' => 'varchar', 'constraint' => 36, 'null' => true],
             'avatar'     => ['type' => 'varchar', 'constraint' => 255, 'null' => true, 'default' => ''],
             'phone'      => ['type' => 'decimal', 'constraint' => 11, 'null' => true],
             'email'      => ['type' => 'varchar', 'constraint' => 255, 'unique' => true, 'null' => true],

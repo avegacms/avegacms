@@ -121,7 +121,7 @@ class Authorization
             throw new AuthorizationException($this->validation->getErrors());
         }
 
-        $type = $this->_checkType($data['pointer']);
+        $type = $this->_checkType($data['pointer'], $data);
 
         $conditions = [
             'expires >' => 0,

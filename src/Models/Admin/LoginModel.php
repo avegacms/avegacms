@@ -62,8 +62,11 @@ class LoginModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-
-    public function getUser(array $fields)
+    /**
+     * @param  array  $fields
+     * @return array|null|LoginEntity
+     */
+    public function getUser(array $fields): array|null|LoginEntity
     {
         $this->builder()->select(
             [
