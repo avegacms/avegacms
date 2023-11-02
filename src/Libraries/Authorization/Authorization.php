@@ -185,7 +185,7 @@ class Authorization
             throw AuthorizationException::forUnknownUser();
         }
 
-        unset($user->password, $user->secret, $user->expires, $user->reset);
+        unset($user->password, $user->secret, $user->expires);
 
         if (($role = $this->URM->getUserRoles($user->id, $userRole)->first()) === null) {
             throw AuthorizationException::forUnknownRole($userRole);
@@ -199,16 +199,17 @@ class Authorization
             'redirect'     => '',
             'user'         => [
 
-                'userId'   => $user->id,
-                'timezone' => $user->timezone,
-                'login'    => $user->login,
-                'status'   => $user->status,
-                'avatar'   => $user->avatar,
-                'phone'    => $user->phone,
-                'email'    => $user->email,
-                'extra'    => $user->extra,
-                'roleId'   => $role->role_id,
-                'role'     => $role->role,
+                'userId'    => $user->id,
+                'timezone'  => $user->timezone,
+                'login'     => $user->login,
+                'status'    => $user->status,
+                'condition' => $user->condition,
+                'avatar'    => $user->avatar,
+                'phone'     => $user->phone,
+                'email'     => $user->email,
+                'extra'     => $user->extra,
+                'roleId'    => $role->roleId,
+                'role'      => $role->role,
                 ...$userData
             ]
         ];
