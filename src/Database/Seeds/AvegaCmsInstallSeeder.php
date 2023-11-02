@@ -36,22 +36,18 @@ use Exception;
 
 class AvegaCmsInstallSeeder extends Seeder
 {
-    protected string         $version = AvegaCms::AVEGACMS_VERSION;
-    protected ModulesModel   $MM;
-    protected ContentModel   $CM;
-    protected LoginModel     $LM;
-    protected SettingsModel  $SM;
-    protected RolesModel     $RM;
-    protected UserRolesModel $URM;
-
-    protected PermissionsModel $PM;
-
-    protected LocalesModel $LLM;
-
+    protected string             $version  = AvegaCms::AVEGACMS_VERSION;
+    protected ModulesModel       $MM;
+    protected ContentModel       $CM;
+    protected LoginModel         $LM;
+    protected SettingsModel      $SM;
+    protected RolesModel         $RM;
+    protected UserRolesModel     $URM;
+    protected PermissionsModel   $PM;
+    protected LocalesModel       $LLM;
     protected EmailTemplateModel $ETM;
     protected MetaDataModel      $MDM;
-
-    protected int $numPages = 0;
+    protected int                $numPages = 0;
 
     public function __construct(Database $config, ?BaseConnection $db = null)
     {
@@ -944,6 +940,18 @@ class AvegaCmsInstallSeeder extends Seeder
                 'return_type'   => SettingsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.auth.useSession',
                 'context'       => 'Settings.context.auth.useSession'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'auth',
+                'key'           => 'allowPreRegistration',
+                'value'         => 0,
+                'default_value' => 0,
+                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'label'         => 'Settings.label.auth.allowPreRegistration',
+                'context'       => 'Settings.context.auth.allowPreRegistration'
             ],
             [
                 'module_id'     => 0,
