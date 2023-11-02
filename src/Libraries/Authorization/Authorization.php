@@ -796,21 +796,21 @@ class Authorization
                 ],
                 'login'     => [
                     'label'  => lang('Authorization.fields.login'),
-                    'rules'  => 'required_without[phone,email]|max_length[36]|is_not_unique[users.login]',
+                    'rules'  => 'if_exist|required_without[phone,email]|max_length[36]|is_not_unique[users.login]',
                     'errors' => [
                         'is_not_unique' => lang('Authorization.errors.isNotUnique')
                     ]
                 ],
                 'email'     => [
                     'label'  => lang('Authorization.fields.email'),
-                    'rules'  => 'required_without[phone,login]|' . $email . '|is_not_unique[users.email]',
+                    'rules'  => 'if_exist|required_without[phone,login]|' . $email . '|is_not_unique[users.email]',
                     'errors' => [
                         'is_not_unique' => lang('Authorization.errors.isNotUnique')
                     ]
                 ],
                 'phone'     => [
                     'label'  => lang('Authorization.fields.phone'),
-                    'rules'  => 'required_without[email,login]|' . $phone . '|is_not_unique[users.phone]',
+                    'rules'  => 'if_exist|required_without[email,login]|' . $phone . '|is_not_unique[users.phone]',
                     'errors' => [
                         'is_not_unique' => lang('Authorization.errors.isNotUnique')
                     ]
