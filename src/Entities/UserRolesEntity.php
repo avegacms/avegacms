@@ -8,12 +8,21 @@ use CodeIgniter\Entity\Entity;
  * @property int|null $roleId
  * @property int|null $userId
  * @property int|null $createdById
+ *
+ * @property int|null $id
+ * @property string|null $login
+ * @property string|null $avatar
+ * @property int|null $phone
+ * @property string|null $email
+ * @property string|null $timezone
+ * @property string|null $status
  */
 class UserRolesEntity extends Entity
 {
     protected $datamap = [
-        'roleId' => 'role_id',
-        'userId' => 'user_id'
+        'roleId'      => 'role_id',
+        'userId'      => 'user_id',
+        'createdById' => 'created_by_id'
     ];
     protected $dates   = ['created_at'];
     protected $casts   = [
@@ -30,7 +39,7 @@ class UserRolesEntity extends Entity
         'timezone' => 'string',
         'status'   => 'string'
     ];
-    
+
     public function getAvatar(): string
     {
         return ( ! empty($this->attributes['avatar'])) ? base_url('/uploads/users/' . $this->attributes['avatar']) : 'no_photo';

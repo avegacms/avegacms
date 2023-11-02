@@ -5,9 +5,31 @@ namespace AvegaCms\Entities;
 use CodeIgniter\Entity\Entity;
 use AvegaCms\Utils\Auth;
 
+/**
+ * @property int|null $id
+ * @property string|null $login
+ * @property string|null $avatar
+ * @property int|null $phone
+ * @property string|null $email
+ * @property string|null $timezone
+ * @property string|null $secret
+ * @property string|null $password
+ * @property string|null $path
+ * @property array|null $extra
+ * @property string|null $status
+ * @property string|null $condition
+ * @property int|null $expires
+ * @property int|null $createdById
+ * @property int|null $updatedById
+ * @property mixed|null $active_at
+ */
 class LoginEntity extends Entity
 {
-    protected $datamap = [];
+    protected $datamap = [
+        'createdById' => 'created_by_id',
+        'updatedById' => 'updated_by_id',
+        'activeAt'    => 'active_at'
+    ];
     protected $dates   = ['active_at', 'created_at', 'updated_at', 'deleted_at'];
     protected $casts   = [
         'id'            => 'integer',
@@ -21,6 +43,7 @@ class LoginEntity extends Entity
         'path'          => 'string',
         'extra'         => 'json-array',
         'status'        => 'string',
+        'expires'       => 'integer',
         'condition'     => 'string',
         'created_by_id' => 'integer',
         'updated_by_id' => 'integer',
