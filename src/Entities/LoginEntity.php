@@ -21,6 +21,7 @@ class LoginEntity extends Entity
         'path'          => 'string',
         'extra'         => 'json-array',
         'status'        => 'string',
+        'condition'     => 'string',
         'created_by_id' => 'integer',
         'updated_by_id' => 'integer',
         'active_at'     => 'datetime',

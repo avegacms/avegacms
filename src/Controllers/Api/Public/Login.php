@@ -3,6 +3,7 @@
 namespace AvegaCms\Controllers\Api\Public;
 
 use AvegaCms\Controllers\Api\CmsResourceController;
+use AvegaCms\Enums\UserConditions;
 use AvegaCms\Libraries\Authorization\Authorization;
 use AvegaCms\Libraries\Authorization\Exceptions\AuthorizationException;
 use CodeIgniter\Events\Events;
@@ -85,7 +86,7 @@ class Login extends CmsResourceController
      */
     private function _authProcess(array $auth): array
     {
-        $result = ['data' => ['status' => 'unauthorized']];
+        $result = ['status' => 'unauthorized'];
 
         if ($auth['status'] === false) {
             throw AuthorizationException::forFailForbidden();
@@ -95,38 +96,45 @@ class Login extends CmsResourceController
             case 'set_user':
                 Events::trigger('setAuthUserData', $auth['userdata']['user_id']);
                 $user   = $this->Authorization->setUser($auth['userdata']['user_id']);
-                $result = ['data' => ['status' => 'authorized', 'userdata' => $user]];
+                $result = ['status' => 'authorized', 'userdata' => $user];
                 break;
             case 'send_code':
                 if ( ! empty($auth['userdata']['phone'] ?? '')) {
                     // Отправляем смс с кодом пользователю
-                    Events::trigger($auth['userdata']['condition'] === 'auth' ? 'sendAuthSms' : 'sendRecoverySms', [
-                        'user_id' => $auth['userdata']['user_id'],
-                        'phone'   => $auth['userdata']['phone'],
-                        'code'    => $auth['userdata']['code']
-                    ]);
+                    Events::trigger($auth['condition'] === UserConditions::Auth->value ? 'sendAuthSms' : 'sendRecoverySms',
+                        [
+                            'user_id' => $auth['userdata']['user_id'],
+                            'phone'   => $auth['userdata']['phone'],
+                            'code'    => $auth['userdata']['code']
+                        ]);
                 } elseif ( ! empty($auth['userdata']['email'] ?? '')) {
                     // Отправляем email с кодом пользователю
-                    Events::trigger($auth['userdata']['condition'] === 'auth' ? 'sendAuthEmail' : 'sendRecoveryEmail', [
-                        'user_id' => $auth['userdata']['user_id'],
-                        'email'   => $auth['userdata']['email'],
-                        'code'    => $auth['userdata']['code']
-                    ]);
+                    Events::trigger($auth['condition'] === UserConditions::Auth->value ? 'sendAuthEmail' : 'sendRecoveryEmail',
+                        [
+                            'user_id' => $auth['userdata']['user_id'],
+                            'email'   => $auth['userdata']['email'],
+                            'code'    => $auth['userdata']['code']
+                        ]);
                 } else {
                     throw AuthorizationException::forNoData();
                 }
-                $result['data']['status'] = 'send_code';
 
-                if ($auth['userdata']['condition'] === 'recovery') {
+                $result['status'] = 'send_code';
+
+                if (ENVIRONMENT !== 'production') {
+                    $result['code'] = $auth['userdata']['code'];
+                }
+
+                if ($auth['condition'] === UserConditions::Recovery->value) {
                     unset($auth['userdata']['condition'], $auth['userdata']['user_id']/*, $auth['userdata']['code']*/);
-                    $result['data']['userdata']         = $auth['userdata'];
-                    $result['data']['userdata']['code'] = $auth['userdata']['code']; // TODO удалить
+                    $result['userdata']         = $auth['userdata'];
+                    $result['userdata']['code'] = $auth['userdata']['code']; // TODO удалить
                 }
 
                 break;
             case 'password':
-                $result['data']['status']           = 'password';
-                $result['data']['userdata']['hash'] = $auth['userdata']['hash'];
+                $result['status']           = 'password';
+                $result['userdata']['hash'] = $auth['userdata']['hash'];
                 break;
             default:
                 throw AuthorizationException::forNoData();

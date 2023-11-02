@@ -750,8 +750,6 @@ class Authorization
         $login         = 'required|max_length[36]';
         $email         = 'max_length[255]|valid_email';
         $password      = 'required|verify_password';
-        $condition     = 'required|in_list[' . implode(',', UserConditions::get('value')) . ']';
-        $code          = 'required|numeric|exact_length[' . $this->settings['auth']['verifyCodeLength'] . ']';
         $token         = 'required|max_length[255]|alpha_numeric';
         $recoveryField = $this->settings['auth']['recoveryField'];
 
@@ -794,15 +792,32 @@ class Authorization
             'check_code'    => [
                 'condition' => [
                     'label' => lang('Authorization.fields.condition'),
-                    'rules' => $condition,
+                    'rules' => 'required|in_list[' . implode(',', UserConditions::get('value')) . ']',
                 ],
-                'pointer'   => [
-                    'label' => lang('Authorization.fields.pointer'),
-                    'rules' => 'required|max_length[255]'
+                'login'     => [
+                    'label'  => lang('Authorization.fields.login'),
+                    'rules'  => 'required_without[phone,email]|max_length[36]|is_not_unique[users.login]',
+                    'errors' => [
+                        'is_not_unique' => lang('Authorization.errors.isNotUnique')
+                    ]
+                ],
+                'email'     => [
+                    'label'  => lang('Authorization.fields.email'),
+                    'rules'  => 'required_without[phone,login]|' . $email . '|is_not_unique[users.email]',
+                    'errors' => [
+                        'is_not_unique' => lang('Authorization.errors.isNotUnique')
+                    ]
+                ],
+                'phone'     => [
+                    'label'  => lang('Authorization.fields.phone'),
+                    'rules'  => 'required_without[email,login]|' . $phone . '|is_not_unique[users.phone]',
+                    'errors' => [
+                        'is_not_unique' => lang('Authorization.errors.isNotUnique')
+                    ]
                 ],
                 'code'      => [
                     'label' => lang('Authorization.fields.code'),
-                    'rules' => $code
+                    'rules' => 'required|numeric|exact_length[' . $this->settings['auth']['verifyCodeLength'] . ']'
                 ]
             ],
             'recovery'      => [
