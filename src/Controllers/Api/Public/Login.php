@@ -73,7 +73,7 @@ class Login extends CmsResourceController
             return match ($e->getCode()) {
                 403     => $this->failForbidden($e->getMessage()),
                 401     => $this->failUnauthorized($e->getMessage()),
-                default => $this->failValidationErrors(get_class($e) === 'AuthorizationException' ? $e->getMessages() : $e->getMessage())
+                default => $this->failValidationErrors(class_basename($e) === 'AuthorizationException' ? $e->getMessages() : $e->getMessage())
             };
         }
     }

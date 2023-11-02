@@ -35,7 +35,7 @@ class LoginEntity extends Entity
      */
     public function setPassword(string $pass): LoginEntity
     {
-        $this->attributes['password'] = Auth::setPassword($pass);
+        $this->attributes['password'] = ! empty($pass) ? Auth::setPassword($pass) : '';
 
         return $this;
     }
