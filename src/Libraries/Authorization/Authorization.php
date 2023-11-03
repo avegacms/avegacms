@@ -150,23 +150,22 @@ class Authorization
         return match ($data['condition']) {
             UserConditions::CheckPhone->value,
             UserConditions::CheckEmail->value => [
-                'status'   => true,
-                'direct'   => 'confirm',
-                'userdata' => [
-                    'user_id' => $user->id,
-                    'email'   => $user->email,
-                    'phone'   => $user->phone
-                ]
+                'status'  => true,
+                'direct'  => 'confirm',
+                'user_id' => $user->id,
+                'email'   => $user->email,
+                'phone'   => $user->phone
             ],
             UserConditions::Auth->value       => [
-                'status'   => true,
-                'direct'   => 'set_user',
-                'userdata' => ['user_id' => $user->id]
+                'status'  => true,
+                'direct'  => 'set_user',
+                'user_id' => $user->id
             ],
             UserConditions::Recovery->value   => [
-                'status'   => true,
-                'direct'   => 'password',
-                'userdata' => ['user_id' => $user->id, 'hash' => $hash ?? '']
+                'status'  => true,
+                'direct'  => 'password',
+                'user_id' => $user->id,
+                'hash'    => $hash ?? ''
             ],
             default                           => throw AuthorizationException::forWrongCode()
         };
