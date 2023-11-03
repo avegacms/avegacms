@@ -284,7 +284,7 @@ class Authorization
             throw AuthorizationException::forFailForbidden();
         }
 
-        if (empty($data)) {
+        if (empty($data) && $this->settings['auth']['recoveryField'] != array_keys($data)[0]) {
             throw AuthorizationException::forNoData();
         }
 
@@ -292,9 +292,7 @@ class Authorization
             throw new AuthorizationException($this->validation->getErrors());
         }
 
-        $field = $this->settings['auth']['recoveryField'];
-
-        if (($user = $this->LM->getUser([$field => $data['recovery_field']])) === null) {
+        if (($user = $this->LM->getUser($data)) === null) {
             throw AuthorizationException::forUnknownUser();
         }
 
@@ -311,7 +309,7 @@ class Authorization
             ],
         ];
 
-        match ($field) {
+        match ($this->settings['auth']['recoveryField']) {
             'phone' => ($recoveryResult['userdata']['phone'] = $user->phone),
             'email',
             'login' => ($recoveryResult['userdata']['email'] = $user->email),
@@ -822,9 +820,19 @@ class Authorization
                 ]
             ],
             'recovery'      => [
-                'recovery_field' => [
-                    'label' => lang('Authorization.fields.' . $recoveryField),
-                    'rules' => 'required|' . (($recoveryField == 'login') ? $login : $email)
+                'email' => [
+                    'label'  => lang('Authorization.fields.email'),
+                    'rules'  => 'if_exist|required_without[login]|' . $email . '|is_not_unique[users.email]',
+                    'errors' => [
+                        'is_not_unique' => lang('Authorization.errors.isNotUnique')
+                    ]
+                ],
+                'login' => [
+                    'label'  => lang('Authorization.fields.login'),
+                    'rules'  => 'if_exist|required_without[email]|max_length[36]|is_not_unique[users.login]',
+                    'errors' => [
+                        'is_not_unique' => lang('Authorization.errors.isNotUnique')
+                    ]
                 ]
             ],
             'password'      => [
