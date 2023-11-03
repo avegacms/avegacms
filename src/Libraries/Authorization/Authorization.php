@@ -284,7 +284,7 @@ class Authorization
             throw AuthorizationException::forFailForbidden();
         }
 
-        if (empty($data) && $this->settings['auth']['recoveryField'] != array_keys($data)[0]) {
+        if (empty($data) || $this->settings['auth']['recoveryField'] != array_keys($data)[0]) {
             throw AuthorizationException::forNoData();
         }
 
