@@ -98,21 +98,20 @@ trait CmsResponseTrait
     /**
      * Used for generic failures that no custom methods exist for.
      *
-     * @param $messages
+     * @param  array|string  $messages
      * @param  int  $status  HTTP status code
      * @param  string|null  $code  Custom, API-specific, error code
      * @param  string  $customMessage
      * @return ResponseInterface
      */
     protected function fail(
-        $messages,
+        array|string $messages,
         int $status = 400,
         ?string $code = null,
         string $customMessage = ''
     ): ResponseInterface {
         $response = [
-            'status' => $status,
-            'error'  => [
+            'error' => [
                 'code'    => $code ?? $status,
                 'message' => ( ! is_array($messages)) ? [$messages] : $messages
             ]
