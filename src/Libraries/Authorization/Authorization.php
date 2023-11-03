@@ -84,18 +84,18 @@ class Authorization
         $authResult = [
             'status'    => true,
             'direct'    => 'set_user',
-            'userdata'  => ['user_id' => $user->id],
+            'user_id'   => $user->id,
             'condition' => UserConditions::Auth->value
         ];
 
         $loginType = key($loginType);
 
         if ($this->settings['auth']['use2fa'] || $loginType === 'phone') {
-            $authResult['userdata']['code'] = $this->setSecretCode($user->id, UserConditions::Auth->value);
+            $authResult['code'] = $this->setSecretCode($user->id, UserConditions::Auth->value);
             if ($loginType === 'phone' || $this->settings['auth']['2faField'] === 'phone') {
-                $authResult['userdata']['phone'] = $user->phone;
+                $authResult['phone'] = $user->phone;
             } elseif ($this->settings['auth']['2faField'] === 'email') {
-                $authResult['userdata']['email'] = $user->email;
+                $authResult['email'] = $user->email;
             } else {
                 throw AuthorizationException::forFailSendAuthCode();
             }
