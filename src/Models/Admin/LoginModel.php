@@ -25,6 +25,7 @@ class LoginModel extends Model
         'secret',
         'path',
         'expires',
+        'profile',
         'extra',
         'status',
         'condition',
@@ -80,6 +81,7 @@ class LoginModel extends Model
                 'secret',
                 'path',
                 'expires',
+                'profile',
                 'extra',
                 'status',
                 'condition'

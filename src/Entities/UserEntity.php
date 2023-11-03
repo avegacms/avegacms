@@ -15,6 +15,7 @@ use CodeIgniter\Entity\Entity;
  * @property string|null $password
  * @property string|null $secret
  * @property string|null $path
+ * @property string|null $profile
  * @property string|null $extra
  * @property string|null $status
  * @property string|null $condition
@@ -44,6 +45,7 @@ class UserEntity extends Entity
         'password'      => 'string',
         'secret'        => 'string',
         'path'          => 'string',
+        'profile'       => 'json-array',
         'extra'         => 'json-array',
         'status'        => 'string',
         'condition'     => 'string',
