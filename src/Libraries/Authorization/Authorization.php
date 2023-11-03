@@ -207,6 +207,7 @@ class Authorization
                 'avatar'    => $user->avatar,
                 'phone'     => $user->phone,
                 'email'     => $user->email,
+                'profile'   => $user->profile,
                 'extra'     => $user->extra,
                 'roleId'    => $role->roleId,
                 'role'      => $role->role,

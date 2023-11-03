@@ -30,6 +30,7 @@ class UserModel extends AvegaCmsModel
         'secret',
         'path',
         'expires',
+        'profile',
         'extra',
         'status',
         'condition',
@@ -87,6 +88,7 @@ class UserModel extends AvegaCmsModel
         'timezone' => ['rules' => 'if_exist|required|max_length[144]'],
         'password' => ['rules' => 'if_exist|required|verify_password'],
         'path'     => ['rules' => 'if_exist|permit_empty|max_length[512]'],
+        'profile'  => ['rules' => 'if_exist|permit_empty'],
         'extra'    => ['rules' => 'if_exist|permit_empty']
     ];
     protected $validationMessages   = [];
@@ -131,6 +133,7 @@ class UserModel extends AvegaCmsModel
                 'timezone',
                 'password',
                 'path',
+                'profile',
                 'extra',
                 'status'
             ]

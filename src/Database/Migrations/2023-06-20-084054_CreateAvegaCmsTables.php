@@ -63,10 +63,9 @@ class CreateAvegaCmsTables extends Migration
             'timezone'   => ['type' => 'varchar', 'constraint' => 144, 'default' => 'Europe/Moscow'],
             'password'   => ['type' => 'varchar', 'constraint' => 255],
             'secret'     => ['type' => 'varchar', 'constraint' => 255],
-            'path'       => ['type' => 'varchar', 'constraint' => 512],
-            // Будет храниться хэш
-            'expires'    => ['type' => 'int', 'null' => true, 'default' => 0],
-            // Срок действия хэша
+            'path'       => ['type' => 'varchar', 'constraint' => 512], // Будет храниться хэш
+            'expires'    => ['type' => 'int', 'null' => true, 'default' => 0], // Срок действия хэша
+            'profile'    => ['type' => 'text', 'null' => true],
             'extra'      => ['type' => 'text', 'null' => true],
             // Доп. поля
             'status'     => [
