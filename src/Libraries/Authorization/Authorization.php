@@ -374,11 +374,9 @@ class Authorization
         }
 
         return [
-            'status'   => true,
-            'direct'   => 'updated',
-            'userdata' => [
-                'user_id' => $user->id
-            ]
+            'status'  => true,
+            'direct'  => 'updated',
+            'user_id' => $user->id
         ];
     }
 
