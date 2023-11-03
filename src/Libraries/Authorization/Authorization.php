@@ -299,20 +299,18 @@ class Authorization
         $code = $this->setSecretCode($user->id, UserConditions::Recovery->value);
 
         $recoveryResult = [
-            'status'   => true,
-            'direct'   => 'send_code',
-            'userdata' => [
-                'user_id'   => $user->id,
-                'code'      => $code,
-                'condition' => UserConditions::Recovery->value,
-                'hash'      => $this->_hashCode($code)
-            ],
+            'status'    => true,
+            'direct'    => 'send_code',
+            'user_id'   => $user->id,
+            'condition' => UserConditions::Recovery->value,
+            'code'      => $code,
+            'hash'      => $this->_hashCode($code)
         ];
 
         match ($this->settings['auth']['recoveryField']) {
-            'phone' => ($recoveryResult['userdata']['phone'] = $user->phone),
+            'phone' => ($recoveryResult['phone'] = $user->phone),
             'email',
-            'login' => ($recoveryResult['userdata']['email'] = $user->email),
+            'login' => ($recoveryResult['email'] = $user->email),
             default => throw AuthorizationException::forFailSendAuthCode()
         };
 
