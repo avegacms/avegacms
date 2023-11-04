@@ -96,8 +96,10 @@ class CreateAvegaCmsTables extends Migration
             'description' => ['type' => 'text', 'null' => true],
             'color'       => ['type' => 'varchar', 'constraint' => 16, 'null' => true],
             'path'        => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
+            // Приоритет роли, в случае, если будут одинаковые действия
             'priority'    => ['type' => 'tinyint', 'constraint' => 3, 'null' => 0, 'default' => 0],
-            // Приритет роли, в случае, если будут одинаковые действия
+            // Роль имеет свой отдельный доступ
+            'self_auth'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             'active'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             ...Migrator::byId(),
             ...Migrator::dateFields(['deleted_at'])

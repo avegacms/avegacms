@@ -7,7 +7,7 @@ namespace AvegaCms\Libraries\Authorization;
 use AvegaCms\Enums\UserConditions;
 use AvegaCms\Libraries\Authorization\Exceptions\{AuthorizationException, AuthenticationException};
 use AvegaCms\Entities\{LoginEntity, UserEntity, UserTokensEntity};
-use AvegaCms\Models\Admin\{LoginModel, UserAuthenticationModel, UserRolesModel, UserTokensModel};
+use AvegaCms\Models\Admin\{LoginModel, RolesModel, UserAuthenticationModel, UserRolesModel, UserTokensModel};
 use AvegaCms\Utils\Cms;
 use CodeIgniter\Session\Session;
 use CodeIgniter\Validation\Validation;
@@ -21,6 +21,7 @@ class Authorization
 {
     protected array           $settings = [];
     protected LoginModel      $LM;
+    protected RolesModel      $RM;
     protected UserTokensModel $UTM;
 
     protected UserRolesModel $URM;
@@ -40,11 +41,11 @@ class Authorization
             throw AuthorizationException::forNoData();
         }
 
-        $this->settings = $settings;
-        $this->LM       = model(LoginModel::class);
-        $this->UTM      = model(UserTokensModel::class);
-        $this->URM      = model(UserRolesModel::class);
-
+        $this->settings   = $settings;
+        $this->LM         = model(LoginModel::class);
+        $this->RM         = model(RolesModel::class);
+        $this->UTM        = model(UserTokensModel::class);
+        $this->URM        = model(UserRolesModel::class);
         $this->session    = Services::session();
         $this->validation = Services::validation();
     }
@@ -556,16 +557,16 @@ class Authorization
 
         $method = $request->getMethod();
 
-        $action = match ($method) {
+        $action = (bool) match ($method) {
             'get'    => $permission['read'],
             'post'   => $permission['create'],
             'put',
             'patch'  => $permission['update'],
             'delete' => $permission['delete'],
-            default  => throw AuthenticationException::forForbiddenAccess()
+            default  => false
         };
 
-        if ((bool) $action === false) {
+        if ($action === false) {
             throw AuthenticationException::forForbiddenAccess();
         }
 
@@ -726,9 +727,20 @@ class Authorization
         if ($this->session->has('avegacms') === false) {
             throw AuthorizationException::forUserSessionNotExist();
         }
-        $session = $this->session->get('avegacms');
 
-        $session['admin'] = $userdata;
+        $roles = $this->RM->getActiveRoles();
+
+        if ( ! isset($roles[$userdata['user']['role']])) {
+            throw AuthorizationException::forUnknownRole();
+        }
+
+        $session = $this->session->get('avegacms');
+        
+        if ($roles[$userdata['user']['role']]['selfAuth']) {
+            $session['client']['user'] = $userdata;
+        } else {
+            $session['admin'] = $userdata;
+        }
 
         $this->session->set('avegacms', $session);
     }
@@ -740,12 +752,11 @@ class Authorization
      */
     private function _validate(string $type): array
     {
-        $phone         = 'mob_phone';
-        $login         = 'required|max_length[36]';
-        $email         = 'max_length[255]|valid_email';
-        $password      = 'required|verify_password';
-        $token         = 'required|max_length[255]|alpha_numeric';
-        $recoveryField = $this->settings['auth']['recoveryField'];
+        $phone    = 'mob_phone';
+        $login    = 'required|max_length[36]';
+        $email    = 'max_length[255]|valid_email';
+        $password = 'required|verify_password';
+        $token    = 'required|max_length[255]|alpha_numeric';
 
         return match ($type) {
             'auth_by_login' => [

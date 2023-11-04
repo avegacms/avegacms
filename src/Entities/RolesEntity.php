@@ -11,13 +11,15 @@ use CodeIgniter\Entity\Entity;
  * @property string|null $color
  * @property string|null $path
  * @property int|null $priority
- * @property int|null $active
+ * @property int|bool|null $selfAuth
+ * @property int|bool|null $active
  * @property int|null $createdById
  * @property int|null $updatedById
  */
 class RolesEntity extends Entity
 {
     protected $datamap = [
+        'selfAuth'    => 'self_auth',
         'createdById' => 'created_by_id',
         'updatedById' => 'updated_by_id'
     ];
@@ -29,7 +31,8 @@ class RolesEntity extends Entity
         'color'         => 'string',
         'path'          => 'string',
         'priority'      => 'integer',
-        'active'        => 'integer',
+        'self_auth'     => 'int-bool',
+        'active'        => 'int-bool',
         'created_by_id' => 'integer',
         'updated_by_id' => 'integer',
         'created_at'    => 'datetime',
