@@ -95,21 +95,22 @@ class Cms
      */
     public static function initClientSession(array $data = []): void
     {
-        if ( ! Services::session()->has('avegacms')) {
-            Services::session()->set('avegacms',
+        $session = Services::session();
+        if ( ! $session->has('avegacms')) {
+            $session->set('avegacms',
                 [
                     'client'  => [
 
-                        'locale'  => $data['client']['locale'] ?? [],
-                        'user'    => $data['client']['user'] ?? [],
+                        'locale'  => $data['client']['locale'] ?? null,
+                        'user'    => $data['client']['user'] ?? null,
                         'confirm' => [
 
-                            'useCookie' => false,
-                            'gdpr'      => false
+                            'useCookie' => null,
+                            'gdpr'      => null
                         ]
                     ],
-                    'modules' => [],
-                    'admin'   => []
+                    'modules' => null,
+                    'admin'   => null
                 ]
             );
         }
