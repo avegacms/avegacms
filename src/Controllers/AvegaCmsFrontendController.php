@@ -68,13 +68,15 @@ class AvegaCmsFrontendController extends BaseController
         $data['breadcrumbs'] = $this->breadCrumbs;
         $data['pager']       = $this->pager;
         $data['template']    = null;
+        $data['admin']       = null;
+        $data['client']      = null;
 
         if (($session = session()->get('avegacms')) !== null) {
-            if ($session['avegacms']['admin']['user'] ?? false) {
-                $data['profileAdmin'] = (new UserProfileEntity($session['avegacms']['admin']['user']));
+            if ($session['admin']['user']['user'] ?? false) {
+                $data['admin'] = (new UserProfileEntity($session['admin']['user']['user']));
             }
-            if ($session['avegacms']['client']['user'] ?? false) {
-                $data['profileClient'] = (new UserProfileEntity($session['avegacms']['client']['user']));
+            if ($session['admin']['user']['user'] ?? false) {
+                $data['client'] = (new UserProfileEntity($session['client']['user']['user']));
             }
         }
 
