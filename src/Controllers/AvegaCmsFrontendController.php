@@ -8,7 +8,7 @@ use Config\Services;
 use AvegaCms\Enums\{EntityTypes, MetaDataTypes};
 use AvegaCms\Utils\{Cms, CmsModule};
 use AvegaCms\Entities\Seo\MetaEntity;
-use AvegaCms\Entities\{ContentEntity, MetaDataEntity};
+use AvegaCms\Entities\{ContentEntity, MetaDataEntity, UserProfileEntity};
 use AvegaCms\Models\Frontend\{ContentModel, MetaDataModel};
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\Pager\Pager;
@@ -69,6 +69,16 @@ class AvegaCmsFrontendController extends BaseController
         $data['pager']       = $this->pager;
         $data['template']    = null;
 
+        if (($session = session()->get('avegacms')) !== null) {
+            if ($session['avegacms']['admin']['user'] ?? false) {
+                $data['profileAdmin'] = (new UserProfileEntity($session['avegacms']['admin']['user']));
+            }
+            if ($session['avegacms']['client']['user'] ?? false) {
+                $data['profileClient'] = (new UserProfileEntity($session['avegacms']['client']['user']));
+            }
+        }
+
+
         if (Cms::settings('core.env.useViewData')) {
             if ( ! file_exists($file = APPPATH . 'Views/' . ($view = 'template/' . $view) . '.php')) {
                 throw new RuntimeException("File $file not found");
@@ -78,7 +88,7 @@ class AvegaCmsFrontendController extends BaseController
             unset($data['template']);
         }
 
-        unset($pageData);
+        unset($pageData, $session);
 
         return response()->setBody(view('template/foundation', $data, $options));
     }
@@ -152,7 +162,7 @@ class AvegaCmsFrontendController extends BaseController
     public function error404(): void
     {
         $this->meta        = $this->dataEntity->metaRender();
-        $this->breadCrumbs = $this->dataEntity->breadCrumbs($this->dataEntity->meta_type);
+        $this->breadCrumbs = $this->dataEntity->breadCrumbs($this->dataEntity->metaType);
 
         response()->setStatusCode(404);
         $this->render([], 'content/404')->send();
