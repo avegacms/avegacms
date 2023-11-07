@@ -339,7 +339,7 @@ class Authorization
         $conditions = [
             'expires >' => 0,
             'secret'    => $data['hash'],
-            'condition' => 'recovery'
+            'condition' => UserConditions::Password->value
         ];
 
         if (($user = $this->LM->getUser($conditions)) === null) {
@@ -376,7 +376,7 @@ class Authorization
 
         return [
             'status'  => true,
-            'direct'  => 'updated',
+            'direct'  => 'set_user',
             'user_id' => $user->id
         ];
     }
@@ -735,7 +735,7 @@ class Authorization
         }
 
         $session = $this->session->get('avegacms');
-        
+
         if ($roles[$userdata['user']['role']]['selfAuth']) {
             $session['client']['user'] = $userdata;
         } else {
