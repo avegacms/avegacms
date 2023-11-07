@@ -75,7 +75,7 @@ class AvegaCmsFrontendController extends BaseController
             if ($session['admin']['user']['user'] ?? false) {
                 $data['admin'] = (new UserProfileEntity($session['admin']['user']['user']));
             }
-            if ($session['admin']['user']['user'] ?? false) {
+            if ($session['client']['user']['user'] ?? false) {
                 $data['client'] = (new UserProfileEntity($session['client']['user']['user']));
             }
         }
