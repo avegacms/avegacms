@@ -38,7 +38,7 @@ class UserEntity extends Entity
     protected $casts   = [
         'id'            => 'integer',
         'login'         => 'string',
-        'avatar'        => 'string',
+        'avatar'        => '?string',
         'phone'         => 'integer',
         'email'         => 'string',
         'timezone'      => 'string',
@@ -71,10 +71,10 @@ class UserEntity extends Entity
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getAvatar(): string
+    public function getAvatar(): string|null
     {
-        return ( ! empty($this->attributes['avatar'])) ? base_url('/uploads/users/' . $this->attributes['avatar']) : 'no_photo';
+        return ( ! empty($this->attributes['avatar'])) ? base_url('/uploads/users/' . $this->attributes['avatar']) : null;
     }
 }
