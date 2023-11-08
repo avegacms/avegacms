@@ -455,7 +455,9 @@ class Authorization
      */
     public function logout(): void
     {
-        $this->session->push('avegacms.admin', []);
+        $session                   = session()->get('avegacms');
+        $session['client']['user'] = null;
+        session()->set('avegacms', $session);
     }
 
     /**
