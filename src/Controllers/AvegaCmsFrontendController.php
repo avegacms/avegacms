@@ -107,7 +107,7 @@ class AvegaCmsFrontendController extends BaseController
         $segments       = Services::request()->uri->getSegments();
 
         if ($this->metaType === EntityTypes::Module->value) {
-            if (($module = CmsModule::meta($this->moduleKey)) === null || empty($segments)) {
+            if ($this->moduleKey === null || ($module = CmsModule::meta($this->moduleKey)) === null || empty($segments)) {
                 $this->error404();
             }
 
@@ -149,7 +149,6 @@ class AvegaCmsFrontendController extends BaseController
         };
 
         if ($this->dataEntity === null) {
-            $this->dataEntity = $this->MDM->getContentMetaData(session('avegacms.client.locale.id'), 'page-not-found');
             $this->error404();
         }
 
@@ -163,6 +162,10 @@ class AvegaCmsFrontendController extends BaseController
     #[NoReturn]
     public function error404(): void
     {
+        $this->dataEntity  = $this->MDM->getContentMetaData(
+            session('avegacms.client.locale.id') ?? 1,
+            'page-not-found'
+        );
         $this->meta        = $this->dataEntity->metaRender();
         $this->breadCrumbs = $this->dataEntity->breadCrumbs($this->dataEntity->metaType);
 
