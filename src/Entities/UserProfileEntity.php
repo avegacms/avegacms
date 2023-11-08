@@ -28,7 +28,7 @@ class UserProfileEntity extends Entity
         'login'     => 'string',
         'status'    => 'string',
         'condition' => 'string',
-        'avatar'    => 'string',
+        'avatar'    => '?string',
         'phone'     => 'integer',
         'email'     => 'string',
         'profile'   => 'json-array',
@@ -36,4 +36,12 @@ class UserProfileEntity extends Entity
         'roleId'    => 'integer',
         'role'      => 'string'
     ];
+
+    /**
+     * @return string|null
+     */
+    public function getAvatar(): string|null
+    {
+        return ( ! empty($this->attributes['avatar'])) ? base_url('/uploads/users/' . $this->attributes['avatar']) : null;
+    }
 }
