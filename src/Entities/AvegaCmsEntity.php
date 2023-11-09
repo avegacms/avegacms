@@ -39,4 +39,67 @@ class AvegaCmsEntity extends Entity
 
         return $this;
     }
+
+    /**
+     * Общий метод, который вернет все общедоступные и защищенные значения этого объекта в виде массива.
+     * Доступ ко всем значениям осуществляется через магический метод __get(), поэтому к ним будут применены любые
+     * приведения и т.д.
+     *
+     * @param  bool  $onlyChanged
+     * @param  bool  $cast
+     * @param  bool  $recursive
+     * @return array
+     * @throws Exception
+     */
+    public function toArray(bool $onlyChanged = false, bool $cast = true, bool $recursive = false): array
+    {
+        $this->_cast = $cast;
+
+        $keys = array_filter(array_keys($this->attributes), static fn($key) => ! str_starts_with($key, '_'));
+
+        if (is_array($this->datamap)) {
+            $keys = array_unique(
+                [...array_diff($keys, $this->datamap), ...array_keys($this->datamap)]
+            );
+        }
+
+        $return = [];
+        
+        foreach ($keys as $key) {
+            if (($onlyChanged && ! $this->hasChanged($key)) || ! $this->checkExistItem($key)) {
+                continue;
+            }
+
+            $return[$key] = $this->__get($key);
+
+            if ($recursive) {
+                if ($return[$key] instanceof self) {
+                    $return[$key] = $return[$key]->toArray($onlyChanged, $cast, $recursive);
+                } elseif (is_callable([$return[$key], 'toArray'])) {
+                    $return[$key] = $return[$key]->toArray();
+                }
+            }
+        }
+
+        $this->_cast = true;
+
+        return $return;
+    }
+
+    /**
+     * Проверяем наличие переданного аттрибута или его метода
+     *
+     * @param  string  $key
+     * @return bool
+     */
+    public function checkExistItem(string $key): bool
+    {
+        $dbColumn = $this->mapProperty($key);
+
+        // Convert to CamelCase for the method
+        $method = 'get' . str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $dbColumn)));
+
+        return (method_exists($this, '_' . $method) || method_exists($this, $method) || array_key_exists($dbColumn,
+                $this->attributes));
+    }
 }
