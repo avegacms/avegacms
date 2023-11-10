@@ -29,7 +29,7 @@ class UserProfileEntity extends Entity
         'status'    => 'string',
         'condition' => 'string',
         'avatar'    => '?string',
-        'phone'     => 'integer',
+        'phone'     => 'string',
         'email'     => 'string',
         'profile'   => 'json-array',
         'extra'     => 'json-array',
