@@ -115,7 +115,7 @@ class SettingsModel extends AvegaCmsModel
                 'settings.key',
                 'settings.label AS lang_label',
                 'IFNULL(m.slug, "AvegaCms Core") AS module_slug',
-                'IFNULL(m.name, "AvegaCms Core") AS module_name',
+                'IFNULL(m.name, "AvegaCms Core") AS module_name'
             ]
         )->join('modules AS m', 'm.id = settings.module_id', 'left');
 
@@ -149,7 +149,7 @@ class SettingsModel extends AvegaCmsModel
                         'return_type' => $item->return_type
                     ];
                 } else {
-                    $settings[$item['slug']] = [
+                    $settings[$item->slug] = [
                         'value'       => $item->value,
                         'return_type' => $item->return_type
                     ];
