@@ -7,6 +7,7 @@ use CodeIgniter\Entity\Entity;
 /**
  * @property int|null $id
  * @property int|null $parent
+ * @property int|null $metaId
  * @property int|null $isCore
  * @property int|null $isPlugin
  * @property int|null $isSystem
@@ -24,6 +25,7 @@ use CodeIgniter\Entity\Entity;
 class ModulesEntity extends Entity
 {
     protected $datamap = [
+        'metaId'      => 'meta_id',
         'isCore'      => 'is_core',
         'isPlugin'    => 'is_plugin',
         'isSystem'    => 'is_system',
@@ -35,6 +37,7 @@ class ModulesEntity extends Entity
     protected $dates   = ['created_at', 'updated_at'];
     protected $casts   = [
         'id'            => 'integer',
+        'meta_id'       => '?integer',
         'parent'        => 'integer',
         'is_core'       => 'integer',
         'is_plugin'     => 'integer',
