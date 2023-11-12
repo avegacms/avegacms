@@ -149,14 +149,14 @@ class ModulesModel extends Model
                     'modules.active',
                     'metadata.id AS meta_id'
                 ]
-            )->join('metadata', 'metadata.module_id = modules.id', 'left')->where(
-                [
-                    'modules.is_core'   => 0,
-                    'modules.is_system' => 0,
-                    'modules.is_plugin' => 0,
-                    'metadata.parent'   => 1
-                ]
-            );
+            )->join('metadata', 'metadata.module_id = modules.id AND metadata.parent = 1', 'left')
+                ->where(
+                    [
+                        'modules.is_core'   => 0,
+                        'modules.is_system' => 0,
+                        'modules.is_plugin' => 0
+                    ]
+                );
 
             $all = $this->findAll();
 
