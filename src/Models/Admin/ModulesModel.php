@@ -108,7 +108,11 @@ class ModulesModel extends Model
         return $this->find($id);
     }
 
-    public function parentsId(int $id = 0)
+    /**
+     * @param  int  $id
+     * @return $this
+     */
+    public function parentsId(int $id = 0): ModulesModel
     {
         $this->builder()->where(['id' => $id])->orWhere(['parent' => $id]);
 
@@ -136,19 +140,21 @@ class ModulesModel extends Model
         $modules = cache()->remember('ModulesMetaData', DAY * 30, function () {
             $this->builder()->select(
                 [
-                    'id',
-                    'parent',
-                    'slug',
-                    'name',
-                    'url_pattern',
-                    'in_sitemap',
-                    'active'
+                    'modules.id',
+                    'modules.parent',
+                    'modules.slug',
+                    'modules.name',
+                    'modules.url_pattern',
+                    'modules.in_sitemap',
+                    'modules.active',
+                    'metadata.id AS meta_id'
                 ]
-            )->where(
+            )->join('metadata', 'metadata.module_id = modules.id', 'left')->where(
                 [
-                    'is_core'   => 0,
-                    'is_system' => 0,
-                    'is_plugin' => 0
+                    'modules.is_core'   => 0,
+                    'modules.is_system' => 0,
+                    'modules.is_plugin' => 0,
+                    'metadata.parent'   => 1
                 ]
             );
 
