@@ -59,14 +59,17 @@ class AvegaCmsEntity extends Entity
 
         if (is_array($this->datamap)) {
             $keys = array_unique(
-                [...array_diff($keys, $this->datamap), ...array_keys($this->datamap)]
+                [
+                    ...array_diff($keys, $this->datamap),
+                    ...array_values(array_intersect_key(array_flip($this->datamap), array_flip($keys)))
+                ]
             );
         }
 
         $return = [];
-        
+
         foreach ($keys as $key) {
-            if (($onlyChanged && ! $this->hasChanged($key)) || ! $this->checkExistItem($key)) {
+            if (($onlyChanged && ! $this->hasChanged($key))) {
                 continue;
             }
 
@@ -84,22 +87,5 @@ class AvegaCmsEntity extends Entity
         $this->_cast = true;
 
         return $return;
-    }
-
-    /**
-     * Проверяем наличие переданного аттрибута или его метода
-     *
-     * @param  string  $key
-     * @return bool
-     */
-    public function checkExistItem(string $key): bool
-    {
-        $dbColumn = $this->mapProperty($key);
-
-        // Convert to CamelCase for the method
-        $method = 'get' . str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $dbColumn)));
-
-        return (method_exists($this, '_' . $method) || method_exists($this, $method) || array_key_exists($dbColumn,
-                $this->attributes));
     }
 }
