@@ -169,6 +169,11 @@ class ModulesModel extends Model
                         foreach ($all as $subItem) {
                             if ($subItem->parent === $item->id) {
                                 $modules[$item->slug][$subItem->slug] = $subItem->toArray();
+                                foreach ($all as $subSubItem) {
+                                    if ($subSubItem->parent === $subItem->id) {
+                                        $modules[$item->slug][$subItem->slug][$subSubItem->slug] = $subSubItem->toArray();
+                                    }
+                                }
                             }
                         }
                     }
