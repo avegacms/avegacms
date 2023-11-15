@@ -27,6 +27,8 @@ class CmsModule
         $name = ucwords($moduleData['slug']);
         $slug = strtolower($moduleData['slug']);
 
+        $moduleData['subModules'] = $moduleData['subModules'] ?? [];
+
         $module = [
             'parent'        => $moduleData['parent'] ?? 0,
             'is_core'       => 0,
