@@ -19,6 +19,7 @@ class ModulesModel extends Model
         'is_core',
         'is_plugin',
         'is_system',
+        'key',
         'slug',
         'name',
         'version',
@@ -47,7 +48,8 @@ class ModulesModel extends Model
         'parent'        => ['rules' => 'if_exist|is_natural'],
         'is_plugin'     => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'is_system'     => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
-        'slug'          => ['rules' => 'if_exist|permit_empty|alpha_dash|max_length[64]|unique_db_key[modules.parent+is_core+slug,id,{id}]'],
+        'key'           => ['rules' => 'if_exist|permit_empty|alpha_dash|max_length[144]|unique_db_key[modules.parent+is_core+slug,id,{id}]'],
+        'slug'          => ['rules' => 'if_exist|permit_empty|alpha_dash|max_length[64]'],
         'name'          => ['rules' => 'if_exist|permit_empty|max_length[255]'],
         'version'       => ['rules' => 'if_exist|permit_empty|max_length[64]'],
         'description'   => ['rules' => 'if_exist|permit_empty|max_length[2048]'],
@@ -84,6 +86,7 @@ class ModulesModel extends Model
             'modules.parent',
             'modules.is_plugin',
             'modules.is_system',
+            'modules.key',
             'modules.slug',
             'modules.name',
             'modules.version',
@@ -142,6 +145,7 @@ class ModulesModel extends Model
                 [
                     'modules.id',
                     'modules.parent',
+                    'modules.key',
                     'modules.slug',
                     'modules.name',
                     'modules.url_pattern',
@@ -157,30 +161,8 @@ class ModulesModel extends Model
                         'modules.is_plugin' => 0
                     ]
                 );
-
-            $all = $this->findAll();
-
-            $modules = [];
-
-            if ($all !== null) {
-                foreach ($all as $item) {
-                    if ($item->parent === 0) {
-                        $modules[$item->slug] = $item->toArray();
-                        foreach ($all as $subItem) {
-                            if ($subItem->parent === $item->id) {
-                                $modules[$item->slug][$subItem->slug] = $subItem->toArray();
-                                foreach ($all as $subSubItem) {
-                                    if ($subSubItem->parent === $subItem->id) {
-                                        $modules[$item->slug][$subItem->slug][$subSubItem->slug] = $subSubItem->toArray();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return $modules;
+            
+            return array_column($this->asArray()->findAll(), null, 'key');
         });
 
         if (empty($modules)) {
@@ -209,6 +191,7 @@ class ModulesModel extends Model
             'parent',
             'is_plugin',
             'is_system',
+            'key',
             'slug',
             'name',
             'version',
