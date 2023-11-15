@@ -162,7 +162,7 @@ trait CmsResponseTrait
      */
     protected function cmsRespondCreated(int|string|null $data = null, string $message = ''): ResponseInterface
     {
-        return $this->respond(['id' => $data], $this->codes['created'], $message);
+        return $this->respond(['data' => ['id' => $data]], $this->codes['created'], $message);
     }
 
     /**
