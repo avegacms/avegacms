@@ -162,7 +162,15 @@ class ModulesModel extends Model
                     ]
                 );
 
-            return array_column($this->asArray()->findAll(), null, 'key');
+            $modules = [];
+
+            if (($all = $this->findAll()) !== null) {
+                foreach ($all as $item) {
+                    $modules[$item->key] = $item->toArray();
+                }
+            }
+            
+            return $modules;
         });
 
         if (empty($modules)) {
