@@ -11,6 +11,7 @@ use CodeIgniter\Entity\Entity;
  * @property int|null $isCore
  * @property int|null $isPlugin
  * @property int|null $isSystem
+ * @property string|null $key
  * @property string|null $slug
  * @property string|null $name
  * @property string|null $version
@@ -42,6 +43,7 @@ class ModulesEntity extends Entity
         'is_core'       => 'integer',
         'is_plugin'     => 'integer',
         'is_system'     => 'integer',
+        'key'           => 'string',
         'slug'          => 'string',
         'name'          => 'string',
         'version'       => 'string',
