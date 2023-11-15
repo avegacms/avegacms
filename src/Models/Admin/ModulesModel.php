@@ -48,7 +48,7 @@ class ModulesModel extends Model
         'parent'        => ['rules' => 'if_exist|is_natural'],
         'is_plugin'     => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'is_system'     => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
-        'key'           => ['rules' => 'if_exist|permit_empty|alpha_dash|max_length[144]|unique_db_key[modules.parent+is_core+slug,id,{id}]'],
+        'key'           => ['rules' => 'if_exist|max_length[144]|unique_db_key[modules.parent+is_core+key,id,{id}]'],
         'slug'          => ['rules' => 'if_exist|permit_empty|alpha_dash|max_length[64]'],
         'name'          => ['rules' => 'if_exist|permit_empty|max_length[255]'],
         'version'       => ['rules' => 'if_exist|permit_empty|max_length[64]'],
@@ -161,7 +161,7 @@ class ModulesModel extends Model
                         'modules.is_plugin' => 0
                     ]
                 );
-            
+
             return array_column($this->asArray()->findAll(), null, 'key');
         });
 
