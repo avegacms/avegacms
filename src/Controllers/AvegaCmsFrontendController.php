@@ -111,7 +111,7 @@ class AvegaCmsFrontendController extends BaseController
             }
 
             if ( ! $this->useTemplateMeta) {
-                if ( ! empty($patternSegment = explode('/', $module['urlPattern']))) {
+                if ( ! empty($module['urlPattern']) && $patternSegment = explode('/', $module['urlPattern'])) {
                     foreach ($patternSegment as $k => $val) {
                         if (isset($segments[$k]) && $segments[$k] !== $val) {
                             $params[$val] = $segments[$k];
