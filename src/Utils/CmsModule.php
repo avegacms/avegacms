@@ -28,15 +28,15 @@ class CmsModule
         $slug = strtolower($moduleData['moduleSlug']);
 
         $module = [
-            'parent'        => 0,
+            'parent'        => $moduleData['parent'] ?? 0,
             'is_core'       => 0,
             'is_plugin'     => 0,
             'is_system'     => 0,
-            'key'           => $slug,
+            'key'           => $moduleData['key'] ?? $slug,
             'slug'          => $slug,
-            'name'          => $name . '.module.title.main',
+            'name'          => $moduleData['name'] ?? $name . '.module.title.main',
             'version'       => $version,
-            'description'   => $name . '.module.title.main',
+            'description'   => $moduleData['description'] ?? $name . '.module.title.main',
             'extra'         => '',
             'url_pattern'   => $moduleData['urlPatterns'][$slug] ?? $slug,
             'in_sitemap'    => $moduleData['inSitemap'] ?? 0,
@@ -47,7 +47,7 @@ class CmsModule
 
         $parentId = $MM->insert((new ModulesEntity($module)));
 
-        if ( ! empty($moduleData['subModules'])) {
+        if ( ! empty($moduleData['subModules'] ?? [])) {
             $subModules = [];
             foreach ($moduleData['subModules'] as $group) {
                 $subName      = self::prepName($group);
