@@ -24,8 +24,8 @@ class CmsModule
         $RM = model(RolesModel::class);
         $PM = model(PermissionsModel::class);
 
-        $name = ucwords($moduleData['moduleSlug']);
-        $slug = strtolower($moduleData['moduleSlug']);
+        $name = ucwords($moduleData['slug']);
+        $slug = strtolower($moduleData['slug']);
 
         $module = [
             'parent'        => $moduleData['parent'] ?? 0,
@@ -38,7 +38,11 @@ class CmsModule
             'version'       => $version,
             'description'   => $moduleData['description'] ?? $name . '.module.title.main',
             'extra'         => '',
-            'url_pattern'   => $moduleData['urlPatterns'][$slug] ?? $slug,
+            'url_pattern'   => isset($moduleData['urlPatterns']) ?
+                (is_array($moduleData['urlPatterns']) ?
+                    ($moduleData['urlPatterns'][$slug] ?? '') :
+                    $moduleData['urlPatterns']) :
+                $slug,
             'in_sitemap'    => $moduleData['inSitemap'] ?? 0,
             'active'        => 1,
             'created_by_id' => 1,
