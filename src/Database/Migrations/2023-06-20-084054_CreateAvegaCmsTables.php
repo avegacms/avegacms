@@ -4,6 +4,7 @@ namespace AvegaCms\Database\Migrations;
 
 use CodeIgniter\Database\Forge;
 use CodeIgniter\Database\Migration;
+use CodeIgniter\Database\RawSql;
 use AvegaCms\Enums\{
     UserStatuses,
     UserConditions,
@@ -275,11 +276,12 @@ class CreateAvegaCmsTables extends Migration
          * Таблица для хранения пользовательских сессий
          */
         $this->forge->addField([
-            'id'         => ['type' => 'int', 'constraint' => 11, 'null' => true],
-            'ip_address' => ['type' => 'varchar', 'constraint' => 45, 'null' => true],
-            'timestamp'  => ['type' => 'timestamp', 'null' => true],
-            'data'       => ['type' => 'blob', 'constraint' => 32, 'null' => true, 'default' => '']
+            'id'         => ['type' => 'varchar', 'constraint' => 128, 'null' => false],
+            'ip_address' => ['type' => 'varchar', 'constraint' => 45, 'null' => false],
+            'timestamp'  => ['type' => 'timestamp', 'null' => true, 'default' => new RawSql('CURRENT_TIMESTAMP')],
+            'data'       => ['type' => 'blob', 'null' => false]
         ]);
+        $this->forge->addPrimaryKey('id');
         $this->forge->addKey('timestamp');
         $this->createTable($this->tables['sessions']);
 
