@@ -377,7 +377,7 @@ class MetaDataModel extends AvegaCmsModel
             [
                 'metadata.id',
                 'metadata.use_url_pattern',
-                'metadata.url',
+                'metadata.url AS rawUrl',
                 'metadata.slug',
                 'metadata.locale_id',
                 'metadata.parent'
@@ -388,9 +388,7 @@ class MetaDataModel extends AvegaCmsModel
             return '';
         }
 
-        $url = $url->url;
-
-        return ($url === '/') ? '' : $url . '/';
+        return ($url->metaType === MetaDataTypes::Main->value) ? '' : $url->rawUrl;
     }
 
     public function clearCache(array $data)
