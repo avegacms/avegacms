@@ -388,7 +388,11 @@ class MetaDataModel extends AvegaCmsModel
             return '';
         }
 
-        return ($url->metaType === MetaDataTypes::Main->value) ? '' : $url->rawUrl;
+        return match ($url->metaType) {
+            MetaDataTypes::Main->value,
+            MetaDataTypes::Page404->value => '',
+            default                       => ($url->rawUrl === '/') ? '' : $url->rawUrl . '/',
+        };
     }
 
     public function clearCache(array $data)
