@@ -2,6 +2,7 @@
 
 use CodeIgniter\Router\RouteCollection;
 
+use AvegaCms\Controllers\Content;
 use AvegaCms\Controllers\Api\Public\Login;
 use AvegaCms\Controllers\Api\Admin\Content\{Pages, Rubrics, Posts};
 use AvegaCms\Controllers\Api\Admin\Settings\{Locales,
@@ -127,4 +128,4 @@ $routes->group('api', function (RouteCollection $routes) {
         });
 });
 
-$routes->get('(.*)', 'Content::index', ['priority' => 10000]);
+$routes->get('(.*)', [Content::class, 'index'], ['priority' => 10000]);
