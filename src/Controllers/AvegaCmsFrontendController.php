@@ -78,8 +78,9 @@ class AvegaCmsFrontendController extends BaseController
                 $data['admin'] = (new UserProfileEntity($session['admin']['user']['user']));
             }
             if ($client = ($session['client']['user']['user'] ?? false)) {
-                $role           = model(RolesModel::class)->getActiveRoles()[$client['role']] ?? false;
-                $data['client'] = (isset($role['roleEntity']) && class_exists($role['roleEntity'])) ? (new $role['roleEntity']($client)) : (new UserProfileEntity($client));
+                $roleEntity     = model(RolesModel::class)->getActiveRoles()[$client['role']]['roleEntity'] ?? false;
+                $data['client'] = ($roleEntity && class_exists($roleEntity)) ? (new $roleEntity($client)) : (new UserProfileEntity($client));
+                unset($roleEntity, $client);
             }
         }
 
