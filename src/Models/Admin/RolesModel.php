@@ -20,6 +20,7 @@ class RolesModel extends AvegaCmsModel
         'color',
         'path',
         'self_auth',
+        'role_entity',
         'active',
         'priority',
         'created_by_id',
@@ -39,11 +40,12 @@ class RolesModel extends AvegaCmsModel
     protected $validationRules      = [
         'id'            => ['rules' => 'if_exist|is_natural_no_zero'],
         'role'          => ['rules' => 'if_exist|required|alpha_dash|max_length[36]|is_unique[roles.role,id,{id}]'],
-        'description'   => ['rules' => 'if_exist|permit_empty'],
+        'description'   => ['rules' => 'if_exist|permit_empty|max_length[512]'],
         'color'         => ['rules' => 'if_exist|required|max_length[7]'],
         'path'          => ['rules' => 'if_exist|permit_empty|max_length[512]'],
         'priority'      => ['rules' => 'if_exist|is_natural|max_length[3]'],
         'self_auth'     => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
+        'role_entity'   => ['rules' => 'if_exist|permit_empty|max_length[512]'],
         'active'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'created_by_id' => ['rules' => 'if_exist|is_natural'],
         'updated_by_id' => ['rules' => 'if_exist|is_natural']
@@ -86,7 +88,7 @@ class RolesModel extends AvegaCmsModel
     {
         return cache()->remember('ActiveRoles', DAY * 30, function () {
             $roles = [];
-            $this->builder()->select(['id', 'role', 'path', 'self_auth'])->where(['active' => 1]);
+            $this->builder()->select(['id', 'role', 'path', 'self_auth', 'role_entity'])->where(['active' => 1]);
             $rolesData = $this->findAll();
             foreach ($rolesData as $role) {
                 $roles[] = $role->toArray();
