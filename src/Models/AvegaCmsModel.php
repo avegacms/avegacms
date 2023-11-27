@@ -29,7 +29,7 @@ class AvegaCmsModel extends Model
      */
     public function filter(?array $fields = []): AvegaCmsModel
     {
-        if ( ! empty($fields = array_filter($fields, fn($value) => $value !== '' && $value !== null))) {
+        if ( ! empty($fields = array_filter($fields, fn ($value) => $value !== '' && $value !== null))) {
             $this->filterCastsFields[$this->searchFieldAlias] = 'string';
             $this->filterCastsFields[$this->sortFieldAlias]   = 'string';
 
@@ -102,7 +102,7 @@ class AvegaCmsModel extends Model
 
             $this->page = (int) (filter_var($fields['page'] ?? false,
                 FILTER_VALIDATE_INT) && $fields['page'] > 0 ? $fields['page'] : $this->page);
-            
+
             if ($this->limit > $this->maxLimit) {
                 $this->limit = $this->maxLimit;
             }
@@ -215,7 +215,7 @@ class AvegaCmsModel extends Model
                         }
 
                         if ($k == $key && ! is_null(
-                                $value = $this->castAs($value, $this->filterCastsFields[$key] ?? '')
+                                $value = $this->castAs($value, $this->filterCastsFields[$key] ?? '', $key)
                             )) {
                             $this->filterFieldsMap[$type][$key] = [
                                 'field' => $field,
@@ -248,10 +248,7 @@ class AvegaCmsModel extends Model
             'strtotime'     => strtotime($value),
             'bool',
             'boolean'       => (bool) $value,
-            'enum'          => in_array(
-                $value = strtolower($value),
-                $this->filterEnumValues[$fieldName] ?? []
-            ) ? $value : null,
+            'enum'          => in_array($value, $this->filterEnumValues[$fieldName] ?? []) ? $value : null,
             'array'         => (array) (
             (
             (is_string($value) && (str_starts_with($value, 'a:') || str_starts_with($value, 's:'))) ?
