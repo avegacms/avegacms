@@ -94,13 +94,15 @@ class CreateAvegaCmsTables extends Migration
         $this->forge->addField([
             'id'          => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
             'role'        => ['type' => 'varchar', 'constraint' => 36, 'unique' => true, 'null' => true],
-            'description' => ['type' => 'text', 'null' => true],
+            'description' => ['type' => 'text', 'constraint' => 512, 'null' => true],
             'color'       => ['type' => 'varchar', 'constraint' => 16, 'null' => true],
             'path'        => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
             // Приоритет роли, в случае, если будут одинаковые действия
             'priority'    => ['type' => 'tinyint', 'constraint' => 3, 'null' => 0, 'default' => 0],
             // Роль имеет свой отдельный доступ
             'self_auth'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            // Сущность для профиля роли
+            'role_entity' => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
             'active'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             ...Migrator::byId(),
             ...Migrator::dateFields(['deleted_at'])

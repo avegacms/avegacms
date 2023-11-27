@@ -12,6 +12,7 @@ use CodeIgniter\Entity\Entity;
  * @property string|null $path
  * @property int|null $priority
  * @property int|bool|null $selfAuth
+ * @property string|bool|null $roleEntity
  * @property int|bool|null $active
  * @property int|null $createdById
  * @property int|null $updatedById
@@ -20,6 +21,7 @@ class RolesEntity extends Entity
 {
     protected $datamap = [
         'selfAuth'    => 'self_auth',
+        'roleEntity'  => 'role_entity',
         'createdById' => 'created_by_id',
         'updatedById' => 'updated_by_id'
     ];
@@ -32,6 +34,7 @@ class RolesEntity extends Entity
         'path'          => 'string',
         'priority'      => 'integer',
         'self_auth'     => 'int-bool',
+        'role_entity'   => 'string',
         'active'        => 'int-bool',
         'created_by_id' => 'integer',
         'updated_by_id' => 'integer',

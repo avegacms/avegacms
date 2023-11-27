@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace AvegaCms\Controllers;
 
@@ -9,6 +9,7 @@ use AvegaCms\Enums\{EntityTypes, MetaDataTypes};
 use AvegaCms\Utils\{Cms, CmsModule};
 use AvegaCms\Entities\Seo\MetaEntity;
 use AvegaCms\Entities\{ContentEntity, MetaDataEntity, UserProfileEntity};
+use AvegaCms\Models\Admin\RolesModel;
 use AvegaCms\Models\Frontend\{ContentModel, MetaDataModel};
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\Pager\Pager;
@@ -71,15 +72,16 @@ class AvegaCmsFrontendController extends BaseController
         $data['admin']       = null;
         $data['client']      = null;
 
+        // Загружаем профиль авторизованных пользователей
         if (($session = session()->get('avegacms')) !== null) {
             if ($session['admin']['user']['user'] ?? false) {
                 $data['admin'] = (new UserProfileEntity($session['admin']['user']['user']));
             }
-            if ($session['client']['user']['user'] ?? false) {
-                $data['client'] = (new UserProfileEntity($session['client']['user']['user']));
+            if ($client = ($session['client']['user']['user'] ?? false)) {
+                $role           = model(RolesModel::class)->getActiveRoles()[$client['role']] ?? false;
+                $data['client'] = (isset($role['roleEntity']) && class_exists($role['roleEntity'])) ? (new $role['roleEntity']($client)) : (new UserProfileEntity($client));
             }
         }
-
 
         if (Cms::settings('core.env.useViewData')) {
             if ( ! file_exists($file = APPPATH . 'Views/' . ($view = 'template/' . $view) . '.php')) {
