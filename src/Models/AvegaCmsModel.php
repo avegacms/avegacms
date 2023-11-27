@@ -237,7 +237,7 @@ class AvegaCmsModel extends Model
      * @param  string  $fieldName
      * @return mixed
      */
-    protected function castAs($value, string $attribute, string $fieldName = ''): mixed
+    protected function castAs($value, string $attribute, string $fieldName): mixed
     {
         return match ($attribute) {
             'int',
@@ -257,9 +257,13 @@ class AvegaCmsModel extends Model
             )
             ),
             'int|array',
-            'integer|array' => is_int($value) ? $this->castAs($value, 'int') : $this->castAs($value, 'array'),
+            'integer|array' => is_int($value) ?
+                $this->castAs($value, 'int', $fieldName) :
+                $this->castAs($value, 'array', $fieldName),
             'double|array',
-            'float|array'   => is_float($value) ? $this->castAs($value, 'float') : $this->castAs($value, 'array'),
+            'float|array'   => is_float($value) ?
+                $this->castAs($value, 'float', $fieldName) :
+                $this->castAs($value, 'array', $fieldName),
             default         => null
         };
     }
