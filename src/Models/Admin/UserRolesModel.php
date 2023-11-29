@@ -31,9 +31,9 @@ class UserRolesModel extends AvegaCmsModel
         'role'   => 'r.role',
     ];
     public array  $searchFields      = [
-        'login' => 'u.login',
-        'phone' => 'u.phone',
-        'email' => 'u.email'
+        'login',
+        'phone',
+        'email'
     ];
     public array  $sortableFields    = [];
     public array  $filterCastsFields = [

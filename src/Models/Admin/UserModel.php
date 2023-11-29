@@ -53,9 +53,9 @@ class UserModel extends AvegaCmsModel
         'status' => 'status',
     ];
     public array  $searchFields      = [
-        'login' => 'login',
-        'phone' => 'phone',
-        'email' => 'email'
+        'login',
+        'phone',
+        'email'
     ];
     public array  $sortableFields    = [];
     public array  $filterCastsFields = [

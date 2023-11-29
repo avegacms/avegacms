@@ -100,16 +100,17 @@ class MetaDataModel extends AvegaCmsModel
         'module_id'  => 'metadata.module_id',
         'item_id'    => 'metadata.item_id',
         'login'      => 'u.login',
+        'title'      => 'metadata.title',
         'type'       => 'metadata.meta_type',
         'status'     => 'metadata.status',
         'publish_at' => 'metadata.publish_at'
     ];
     public array  $searchFields      = [
-        'login' => 'u.login',
-        'title' => 'metadata.title'
+        'login',
+        'title'
     ];
     public array  $sortableFields    = [
-        'publish_at' => 'metadata.publish_at'
+        'publish_at'
     ];
     public array  $filterCastsFields = [
         'id'         => 'int|array',

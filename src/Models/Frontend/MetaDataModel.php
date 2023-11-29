@@ -49,14 +49,15 @@ class MetaDataModel extends AvegaCmsModel
         'parent'    => 'metadata.parent',
         'locale'    => 'metadata.locale_id',
         'title'     => 'metadata.title',
+        'sort'      => 'metadata.sort',
         'published' => 'metadata.publish_at'
     ];
     protected array  $searchFields      = [
-        'title' => 'metadata.title',
+        'title'
     ];
     protected array  $sortableFields    = [
-        'sort'      => 'metadata.sort',
-        'published' => 'metadata.publish_at'
+        'sort',
+        'published'
     ];
     protected array  $filterCastsFields = [
         'module_id'  => 'integer',

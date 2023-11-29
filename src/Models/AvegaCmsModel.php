@@ -8,12 +8,23 @@ use Config\Services;
 class AvegaCmsModel extends Model
 {
     //AvegaCms model settings
+    /**
+     * @var array $filterFields
+     *
+     * Указывается массив полей, которые будут участвовать в работе фильтра.
+     * Массив формируется следующим образом, где массива ключ - это значение переменной в поисковой строке,
+     * а значение это имя поля в таблице (если используется JOIN, то имя можно указать через точку users.email)
+     *
+     * Пример:
+     * 'email' => 'users.email'
+     */
     protected array  $filterFields      = [];
     protected array  $searchFields      = [];
     protected array  $sortableFields    = [];
     protected array  $filterCastsFields = [];
     protected string $searchFieldAlias  = 'q';
     protected string $sortFieldAlias    = 's';
+    protected string $sortDefaultFields = '';
     protected array  $filterEnumValues  = [];
     protected int    $limit             = 20;
     protected int    $maxLimit          = 100;
@@ -160,10 +171,16 @@ class AvegaCmsModel extends Model
             return;
         }
 
+        // Убираем все поля, которые не будут использоваться фильтре
         $excludeFieldsWhere = [
             ...array_keys($this->searchFields),
             ...[$this->searchFieldAlias, $this->sortFieldAlias, 'usePagination', 'limit', 'page']
         ];
+
+        // Если есть сортировка по умолчанию, то применяем её, если не была передана другая
+        if ($type === 'sort' && ! empty($this->sortDefaultFields) && empty($fields[$this->sortFieldAlias] ?? '')) {
+            $fields[$this->sortFieldAlias] = $this->sortDefaultFields;
+        }
 
         foreach ($data as $key => $field) {
             foreach ($fields as $k => $value) {
@@ -181,7 +198,7 @@ class AvegaCmsModel extends Model
                                 }
 
                                 if ( ! empty($this->sortableFields)) {
-                                    if (in_array($sortField, array_keys($this->sortableFields))) {
+                                    if (in_array($sortField, array_keys($this->filterFields))) {
                                         $this->filterFieldsMap[$type][$sortField] = [
                                             'field' => $this->filterFields[$sortField],
                                             'value' => $sortFlag
