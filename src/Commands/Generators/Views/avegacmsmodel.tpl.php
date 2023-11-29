@@ -41,13 +41,14 @@ class {class} extends AvegaCmsModel
     protected $afterDelete    = [];
     
     // AvegaCms filter settings
-    protected array $filterFields      = [];
-    protected array $searchFields      = [];
-    protected array $sortableFields    = [];
-    protected array $filterCastsFields = [];
-    protected string $searchFieldAlias = 'q';
-    protected string $sortFieldAlias   = 's';
-    protected array $filterEnumValues  = [];
-    protected int $limit               = 20;
-    protected int $maxLimit            = 100;
+    protected array $filterFields       = [];
+    protected array $searchFields       = [];
+    protected array $sortableFields     = [];
+    protected array $filterCastsFields  = [];
+    protected string $searchFieldAlias  = 'q';
+    protected string $sortFieldAlias    = 's';
+    protected string $sortDefaultFields = '';
+    protected array $filterEnumValues   = [];
+    protected int $limit                = 20;
+    protected int $maxLimit             = 100;
 }
