@@ -73,12 +73,12 @@ class EmailTemplateModel extends AvegaCmsModel
         'template' => 'template'
     ];
     protected array  $searchFields      = [
-        'label'    => 'label',
-        'slug'     => 'slug',
-        'template' => 'template'
+        'label',
+        'slug',
+        'template'
     ];
     protected array  $sortableFields    = [
-        'locale' => 'locale_id'
+        'locale'
     ];
     protected array  $filterCastsFields = [
         'slug'     => 'string',
