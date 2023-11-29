@@ -40,7 +40,9 @@ class AvegaCmsModel extends Model
      */
     public function filter(?array $fields = []): AvegaCmsModel
     {
-        if ( ! empty($fields = array_filter($fields, fn ($value) => $value !== '' && $value !== null))) {
+        if ( ! empty($fields = array_filter($fields, fn ($value) => $value !== '' && $value !== null)) ||
+            ! empty($this->sortDefaultFields)
+        ) {
             $this->filterCastsFields[$this->searchFieldAlias] = 'string';
             $this->filterCastsFields[$this->sortFieldAlias]   = 'string';
 
@@ -48,7 +50,7 @@ class AvegaCmsModel extends Model
                 $this->_preparingSetsFields('search', $fields);
             }
 
-            if ( ! empty($this->filterFields)) {
+            if ( ! empty($this->filterFields) || ! empty($this->sortDefaultFields)) {
                 $this->_preparingSetsFields('where', $fields);
                 $this->_preparingSetsFields('sort', $fields);
             }
