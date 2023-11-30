@@ -42,8 +42,7 @@ class Uploader
 
         $file->move($filepath, $file->getName());
 
-        $file = new File($filepath . '/' . $file->getName());
-
+        $file     = new File($filepath . '/' . $file->getName());
         $isImage  = mb_strpos(Mimes::guessTypeFromExtension($extension = $file->getExtension()) ?? '', 'image') === 0;
         $fileName = $file->getFilename();
 
@@ -52,6 +51,7 @@ class Uploader
             'fileUrl'   => 'uploads/' . $filePath . '/' . $fileName,
             'pathName'  => $file->getPathname(),
             'size'      => (float) $file->getSizeByUnit('kb'),
+            'hash'      => hash_file('md5', FCPATH . 'uploads/' . $filePath . '/' . $fileName),
             'isImage'   => $isImage,
             'fileType'  => $isImage ? 'IMAGE' : 'FILE',
             'extension' => $extension,
