@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace AvegaCms\Utils;
 
@@ -18,7 +18,7 @@ class Uploader
      */
     public static function file(string $field, string $filePath, array $settings): array
     {
-        $request = Services::request();
+        $request   = Services::request();
         $validator = Services::validation();
 
         self::checkFilePath($filePath);
@@ -44,7 +44,7 @@ class Uploader
 
         $file = new File($filepath . '/' . $file->getName());
 
-        $isImage = mb_strpos(Mimes::guessTypeFromExtension($extension = $file->getExtension()) ?? '', 'image') === 0;
+        $isImage  = mb_strpos(Mimes::guessTypeFromExtension($extension = $file->getExtension()) ?? '', 'image') === 0;
         $fileName = $file->getFilename();
 
         return [
@@ -53,7 +53,7 @@ class Uploader
             'pathName'  => $file->getPathname(),
             'size'      => (float) $file->getSizeByUnit('kb'),
             'isImage'   => $isImage,
-            'fileType'  => $isImage ? 'image' : 'file',
+            'fileType'  => $isImage ? 'IMAGE' : 'FILE',
             'extension' => $extension,
             'mimeType'  => $file->getMimeType()
         ];
@@ -127,8 +127,8 @@ class Uploader
      */
     private static function getMaxFileSize(): int
     {
-        $max_upload = (int) (ini_get('upload_max_filesize'));
-        $max_post = (int) (ini_get('post_max_size'));
+        $max_upload   = (int) (ini_get('upload_max_filesize'));
+        $max_post     = (int) (ini_get('post_max_size'));
         $memory_limit = (int) (ini_get('memory_limit'));
 
         return ($memory_limit > 0 ? min($max_upload, $max_post, $memory_limit) : min($max_upload, $max_post)) * 1024;
