@@ -76,8 +76,8 @@ class Uploader
                 if ( ! mkdir($directoryPath, 0777, true)) {
                     throw UploaderException::forCreateDirectory($directoryPath);
                 }
-                if ( ! is_file($directoryPath . 'index.html')) {
-                    $file = fopen($directoryPath . 'index.html', 'x+b');
+                if ( ! is_file($directoryPath . '/index.html')) {
+                    $file = fopen($directoryPath . '/index.html', 'x+b');
                     fclose($file);
                 }
             }
