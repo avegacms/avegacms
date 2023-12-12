@@ -60,16 +60,15 @@ class AvegaCmsRules
 
         if (
             ! empty($ignoreField) && ! empty($ignoreValue)
-            && ! preg_match('/^\{(\w+)\}$/', $ignoreValue)
+            && ! preg_match('/^\{(\w+)}$/', $ignoreValue)
         ) {
-            $row = $row->where("{$ignoreField} !=", $ignoreValue);
+            $row = $row->where("$ignoreField !=", $ignoreValue);
         }
 
         if ($row->get()->getRow() !== null) {
             $error = lang('Validation.uniqueDbKey.notUnique');
             return false;
         }
-
         return true;
     }
 
