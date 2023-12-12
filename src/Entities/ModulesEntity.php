@@ -51,7 +51,7 @@ class ModulesEntity extends Entity
         'extra'         => 'json-array',
         'url_pattern'   => 'string',
         'in_sitemap'    => 'integer',
-        'active'        => 'integer',
+        'active'        => 'int-bool',
         'created_by_id' => 'integer',
         'updated_by_id' => 'integer',
         'created_at'    => 'datetime',

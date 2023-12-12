@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace AvegaCms\Entities;
 
@@ -33,7 +33,7 @@ class LocalesEntity extends Entity
         'home'          => 'string',
         'extra'         => 'json-array',
         'is_default'    => 'integer',
-        'active'        => 'integer',
+        'active'        => 'int-bool',
         'created_by_id' => 'integer',
         'updated_by_id' => 'integer',
         'created_at'    => 'datetime',

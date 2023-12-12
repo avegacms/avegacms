@@ -37,7 +37,7 @@ class EmailTemplateEntity extends Entity
         'content'       => 'string',
         'variables'     => 'string',
         'template'      => 'string',
-        'active'        => 'integer',
+        'active'        => 'int-bool',
         'created_by_id' => 'integer',
         'updated_by_id' => 'integer',
         'created_at'    => 'datetime',
