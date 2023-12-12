@@ -84,6 +84,7 @@ class AvegaCmsRules
             $error = lang('Validation.verifyPassword');
             return false;
         }
+        
         return true;
     }
 
