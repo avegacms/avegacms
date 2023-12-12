@@ -1,6 +1,6 @@
 <?php
 
-namespace AvegaCms\Utils;
+namespace AvegaCms\Utilities;
 
 class Vite
 {
@@ -71,7 +71,7 @@ class Vite
         return implode(
             PHP_EOL,
             array_map(
-                fn($src) => link_tag(
+                fn ($src) => link_tag(
                     [
                         'href'  => $src,
                         'rel'   => 'stylesheet',
@@ -96,7 +96,7 @@ class Vite
         return implode(
             PHP_EOL,
             array_map(
-                fn($src) => script_tag(
+                fn ($src) => script_tag(
                     [
                         'src'     => $src,
                         'type'    => 'module',

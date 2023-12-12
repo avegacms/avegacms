@@ -2,7 +2,7 @@
 
 namespace AvegaCms\Controllers\Api;
 
-use AvegaCms\Utils\Cms;
+use AvegaCms\Utilities\Cms;
 
 class AvegaCmsAPI extends CmsResourceController
 {

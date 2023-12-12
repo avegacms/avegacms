@@ -1,11 +1,11 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace AvegaCms\Controllers\Api\Admin\Settings;
 
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
-use AvegaCms\Utils\SeoUtils;
+use AvegaCms\Utilities\SeoUtils;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\NavigationsModel;
 use AvegaCms\Entities\NavigationsEntity;

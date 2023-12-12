@@ -2,7 +2,7 @@
 
 namespace AvegaCms\Entities;
 
-use AvegaCms\Utils\Auth;
+use AvegaCms\Utilities\Auth;
 use CodeIgniter\Entity\Entity;
 
 /**

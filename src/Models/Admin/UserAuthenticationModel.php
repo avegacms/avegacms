@@ -2,7 +2,7 @@
 
 namespace AvegaCms\Models\Admin;
 
-use AvegaCms\Utils\Cms;
+use AvegaCms\Utilities\Cms;
 use AvegaCms\Entities\UserAuthenticationEntity;
 use CodeIgniter\Model;
 

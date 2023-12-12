@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace AvegaCms\Controllers\Api\Admin\Content;
 
@@ -10,7 +10,7 @@ use AvegaCms\Enums\MetaStatuses;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\{ContentModel, MetaDataModel};
 use AvegaCms\Entities\{MetaDataEntity, ContentEntity};
-use AvegaCms\Utils\SeoUtils;
+use AvegaCms\Utilities\SeoUtils;
 use ReflectionException;
 
 class Posts extends AvegaCmsAdminAPI

@@ -4,7 +4,7 @@ namespace AvegaCms\Database\Seeds;
 
 use CodeIgniter\Test\Fabricator;
 use AvegaCms\Enums\{SettingsReturnTypes, MetaDataTypes, MetaStatuses, UserStatuses};
-use AvegaCms\Utils\Cms;
+use AvegaCms\Utilities\Cms;
 use CodeIgniter\Database\{BaseConnection, Seeder};
 use Config\Database;
 use CodeIgniter\CLI\CLI;

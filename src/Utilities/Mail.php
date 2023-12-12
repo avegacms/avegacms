@@ -1,6 +1,6 @@
 <?php
 
-namespace AvegaCms\Utils;
+namespace AvegaCms\Utilities;
 
 use AvegaCms\Models\Admin\EmailTemplateModel;
 use Config\Services;
@@ -47,7 +47,7 @@ class Mail
 
         $config = self::getConfig($config);
         $parser = Services::parser();
-        $email = Services::email($config);
+        $email  = Services::email($config);
 
         $email->setFrom(
             $config['fromEmail'],

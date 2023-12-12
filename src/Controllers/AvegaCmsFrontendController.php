@@ -6,7 +6,7 @@ namespace AvegaCms\Controllers;
 
 use Config\Services;
 use AvegaCms\Enums\{EntityTypes, MetaDataTypes};
-use AvegaCms\Utils\{Cms, CmsModule};
+use AvegaCms\Utilities\{Cms, CmsModule};
 use AvegaCms\Entities\Seo\MetaEntity;
 use AvegaCms\Entities\{ContentEntity, MetaDataEntity, UserProfileEntity};
 use AvegaCms\Models\Admin\RolesModel;

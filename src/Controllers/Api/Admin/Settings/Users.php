@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace AvegaCms\Controllers\Api\Admin\Settings;
 
@@ -8,8 +8,8 @@ use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\{UserModel, UserRolesModel, RolesModel, UserTokensModel};
 use AvegaCms\Entities\{UserEntity, UserRolesEntity};
-use AvegaCms\Utils\{Cms, Uploader};
-use AvegaCms\Utils\Exceptions\UploaderException;
+use AvegaCms\Utilities\{Cms, Uploader};
+use AvegaCms\Utilities\Exceptions\UploaderException;
 use ReflectionException;
 
 class Users extends AvegaCmsAdminAPI

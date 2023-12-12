@@ -1,8 +1,8 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
-namespace AvegaCms\Utils\Exceptions;
+namespace AvegaCms\Utilities\Exceptions;
 
 use Exception;
 

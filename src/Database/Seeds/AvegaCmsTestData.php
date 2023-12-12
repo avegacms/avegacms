@@ -7,7 +7,7 @@ use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Database\Seeder;
 use CodeIgniter\Test\Fabricator;
 use Config\Database;
-use AvegaCms\Utils\Cms;
+use AvegaCms\Utilities\Cms;
 use AvegaCms\Enums\{MetaDataTypes, MetaStatuses};
 use AvegaCms\Models\Admin\{
     UserModel,

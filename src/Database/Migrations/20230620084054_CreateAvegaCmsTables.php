@@ -15,7 +15,7 @@ use AvegaCms\Enums\{
     NavigationTypes,
     MetaDataTypes
 };
-use AvegaCms\Utils\Migrator;
+use AvegaCms\Utilities\Migrator;
 
 class CreateAvegaCmsTables extends Migration
 {
