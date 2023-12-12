@@ -1,12 +1,12 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace AvegaCms\Entities;
 
 use AvegaCms\Models\Admin\MetaDataModel;
 use AvegaCms\Enums\{MetaDataTypes, MetaChangefreq};
-use AvegaCms\Utils\{Cms, SeoUtils};
+use AvegaCms\Utilities\{Cms, SeoUtils};
 use Config\Services;
 use AvegaCms\Entities\Seo\{BreadCrumbsEntity, MetaEntity, OpenGraphEntity, SiteMapEntity};
 use ReflectionException;

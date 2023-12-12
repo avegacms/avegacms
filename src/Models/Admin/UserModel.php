@@ -8,7 +8,7 @@ use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
 use Faker\Generator;
 use AvegaCms\Enums\UserStatuses;
-use AvegaCms\Utils\Cms;
+use AvegaCms\Utilities\Cms;
 use ReflectionException;
 
 class UserModel extends AvegaCmsModel

@@ -1,6 +1,6 @@
 <?php
 
-namespace AvegaCms\Utils;
+namespace AvegaCms\Utilities;
 
 class Auth
 {

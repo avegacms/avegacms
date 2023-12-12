@@ -1,6 +1,6 @@
 <?php
 
-namespace AvegaCms\Utils;
+namespace AvegaCms\Utilities;
 
 use AvegaCms\Config\AvegaCms;
 use AvegaCms\Enums\{MetaDataTypes, MetaStatuses};

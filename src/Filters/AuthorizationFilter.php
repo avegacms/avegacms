@@ -9,7 +9,7 @@ use Config\Services;
 use Exception;
 use AvegaCms\Libraries\Authorization\Authorization;
 use AvegaCms\Libraries\Authorization\Exceptions\AuthenticationException;
-use AvegaCms\Utils\Cms;
+use AvegaCms\Utilities\Cms;
 
 class AuthorizationFilter implements FilterInterface
 {

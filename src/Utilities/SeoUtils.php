@@ -1,6 +1,6 @@
 <?php
 
-namespace AvegaCms\Utils;
+namespace AvegaCms\Utilities;
 
 use AvegaCms\Models\Admin\{LocalesModel, MetaDataModel};
 use RuntimeException;

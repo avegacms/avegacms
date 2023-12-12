@@ -6,7 +6,7 @@ use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Config\Services;
-use AvegaCms\Utils\Cms;
+use AvegaCms\Utilities\Cms;
 use ReflectionException;
 
 class ThrottlerCorsFilter implements FilterInterface
@@ -51,7 +51,7 @@ class ThrottlerCorsFilter implements FilterInterface
 
             Services::response()->setHeader('Access-Control-Allow-Origin', '*');
         }
-        
+
         // Restrict an IP address to no more than 1 request per second across the entire site.
         if (Services::throttler()->check(md5($request->getIPAddress()), 60, MINUTE) === false) {
             return Services::response()->setStatusCode(429);

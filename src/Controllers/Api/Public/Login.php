@@ -8,7 +8,7 @@ use AvegaCms\Libraries\Authorization\Authorization;
 use AvegaCms\Libraries\Authorization\Exceptions\AuthorizationException;
 use CodeIgniter\Events\Events;
 use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Utils\Cms;
+use AvegaCms\Utilities\Cms;
 use Exception;
 use ReflectionException;
 

@@ -3,7 +3,7 @@
 namespace AvegaCms\Entities;
 
 use CodeIgniter\Entity\Entity;
-use AvegaCms\Utils\Auth;
+use AvegaCms\Utilities\Auth;
 
 /**
  * @property int|null $id
