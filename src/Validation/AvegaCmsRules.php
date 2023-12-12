@@ -62,7 +62,7 @@ class AvegaCmsRules
             ! empty($ignoreField) && ! empty($ignoreValue)
             && ! preg_match('/^\{(\w+)}$/', $ignoreValue)
         ) {
-            $row = $row->where("{$ignoreField} !=", $ignoreValue);
+            $row = $row->where("$ignoreField !=", $ignoreValue);
         }
 
         if ($row->get()->getRow() !== null) {
