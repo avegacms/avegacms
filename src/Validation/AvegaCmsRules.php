@@ -69,7 +69,6 @@ class AvegaCmsRules
             $error = lang('Validation.uniqueDbKey.notUnique');
             return false;
         }
-
         return true;
     }
 
@@ -84,7 +83,6 @@ class AvegaCmsRules
             $error = lang('Validation.verifyPassword');
             return false;
         }
-        
         return true;
     }
 
