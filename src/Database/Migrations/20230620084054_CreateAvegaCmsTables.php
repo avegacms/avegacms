@@ -43,7 +43,6 @@ class CreateAvegaCmsTables extends Migration
     public function __construct(?Forge $forge = null)
     {
         parent::__construct($forge);
-
         $this->attributes = ($this->db->getPlatform() === 'MySQLi') ? Migrator::$attributes : [];
     }
 
