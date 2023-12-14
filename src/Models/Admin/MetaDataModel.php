@@ -55,7 +55,7 @@ class MetaDataModel extends AvegaCmsModel
         'parent'                => ['rules' => 'if_exist|is_natural'],
         'locale_id'             => ['rules' => 'if_exist|required|is_natural_no_zero'],
         'module_id'             => ['rules' => 'if_exist|is_natural'],
-        'slug'                  => ['rules' => 'if_exist|required|permit_empty|string|max_length[64]|unique_db_key[metadata.locale_id+module_id+item_id+use_url_pattern+slug,id,{id}]'],
+        'slug'                  => ['rules' => 'if_exist|required|permit_empty|string|max_length[64]|unique_db_key[metadata.parent+locale_id+module_id+item_id+use_url_pattern+slug,id,{id}]'],
         'creator_id'            => ['rules' => 'if_exist|is_natural_no_zero'],
         'item_id'               => ['rules' => 'if_exist|is_natural'],
         'title'                 => ['rules' => 'if_exist|required|string|max_length[1024]'],
