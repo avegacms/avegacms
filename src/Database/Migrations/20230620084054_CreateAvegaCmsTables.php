@@ -43,7 +43,6 @@ class CreateAvegaCmsTables extends Migration
     public function __construct(?Forge $forge = null)
     {
         parent::__construct($forge);
-
         $this->attributes = ($this->db->getPlatform() === 'MySQLi') ? Migrator::$attributes : [];
     }
 
@@ -342,7 +341,7 @@ class CreateAvegaCmsTables extends Migration
             ...Migrator::dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
-        $this->forge->addUniqueKey(['locale_id', 'module_id', 'item_id', 'use_url_pattern', 'slug']);
+        $this->forge->addUniqueKey(['locale_id', 'parent', 'module_id', 'item_id', 'use_url_pattern', 'slug']);
         $this->createTable($this->tables['metadata']);
 
         /**
