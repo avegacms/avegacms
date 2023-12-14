@@ -342,7 +342,7 @@ class CreateAvegaCmsTables extends Migration
             ...Migrator::dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
-        $this->forge->addUniqueKey(['locale_id', 'module_id', 'item_id', 'use_url_pattern', 'slug']);
+        $this->forge->addUniqueKey(['locale_id', 'parent', 'module_id', 'item_id', 'use_url_pattern', 'slug']);
         $this->createTable($this->tables['metadata']);
 
         /**
