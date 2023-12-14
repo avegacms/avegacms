@@ -339,7 +339,6 @@ class MetaDataModel extends AvegaCmsModel
         $slug   = $faker->slug(rand(1, 6));
 
         return [
-
             'parent'        => 0,
             'locale_id'     => 0,
             'module_id'     => 0,
