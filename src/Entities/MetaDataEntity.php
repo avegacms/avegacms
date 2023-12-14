@@ -105,7 +105,7 @@ class MetaDataEntity extends AvegaCmsEntity
             $slug = mb_url_title(strtolower($this->rawData['title']));
         }
 
-        $this->attributes['slug'] = strtolower(mb_substr($slug, 0, 63));
+        $this->attributes['slug'] = strtolower(mb_substr($slug, 0, 64));
 
         return $this;
     }
