@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace AvegaCms\Traits;
 
@@ -137,7 +137,7 @@ trait CmsResponseTrait
     ): ResponseInterface {
         $data = null;
         if ( ! is_null($payload)) {
-            $data['data'] = $payload;
+            $data['data'] = is_array($payload) ? $payload : [$payload];
             if (in_array('pagination', array_keys($data['data']))) {
                 $meta['pagination'] = $data['data']['pagination'];
                 unset($data['data']['pagination']);
