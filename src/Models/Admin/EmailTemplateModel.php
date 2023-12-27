@@ -101,6 +101,7 @@ class EmailTemplateModel extends AvegaCmsModel
             [
                 'id',
                 'slug',
+                'module_id',
                 'locale_id',
                 'is_system',
                 'label',
@@ -122,6 +123,7 @@ class EmailTemplateModel extends AvegaCmsModel
             [
                 'id',
                 'slug',
+                'module_id',
                 'locale_id',
                 'is_system',
                 'label',
