@@ -8,6 +8,7 @@ use CodeIgniter\Entity\Entity;
  * @property int|null $id
  * @property string|null $label
  * @property string|null $slug
+ * @property int|null $moduleId
  * @property int|null $localeId
  * @property int|null $isSystem
  * @property string|null $subject
@@ -21,6 +22,7 @@ use CodeIgniter\Entity\Entity;
 class EmailTemplateEntity extends Entity
 {
     protected $datamap = [
+        'moduleId'    => 'module_id',
         'localeId'    => 'locale_id',
         'isSystem'    => 'is_system',
         'createdById' => 'created_by_id',
@@ -29,6 +31,7 @@ class EmailTemplateEntity extends Entity
     protected $dates   = ['created_at', 'updated_at'];
     protected $casts   = [
         'id'            => 'integer',
+        'module_id'     => 'integer',
         'label'         => 'string',
         'slug'          => 'string',
         'locale_id'     => 'integer',

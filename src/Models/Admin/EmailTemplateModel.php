@@ -16,6 +16,7 @@ class EmailTemplateModel extends AvegaCmsModel
     protected $protectFields    = true;
     protected $allowedFields    = [
         'slug',
+        'module_id',
         'locale_id',
         'is_system',
         'label',
@@ -25,7 +26,9 @@ class EmailTemplateModel extends AvegaCmsModel
         'template',
         'active',
         'created_by_id',
-        'updated_by_id'
+        'updated_by_id',
+        'created_at',
+        'updated_at'
     ];
 
     // Dates
@@ -38,8 +41,9 @@ class EmailTemplateModel extends AvegaCmsModel
     // Validation
     protected $validationRules      = [
         'id'            => ['rules' => 'if_exist|is_natural'],
+        'module_id'     => ['rules' => 'if_exist|is_natural'],
         'label'         => ['rules' => 'if_exist|permit_empty|string|max_length[255]'],
-        'slug'          => ['rules' => 'if_exist|required|permit_empty|alpha_dash|max_length[64]|unique_db_key[email_templates.locale_id+is_system+slug,id,{id}]'],
+        'slug'          => ['rules' => 'if_exist|required|permit_empty|alpha_dash|max_length[64]|unique_db_key[email_templates.module_id+locale_id+is_system+slug,id,{id}]'],
         'locale_id'     => ['rules' => 'if_exist|required|is_natural_no_zero'],
         'is_system'     => ['rules' => 'if_exist|required|is_natural'],
         'subject'       => ['rules' => 'if_exist|required|string'],
