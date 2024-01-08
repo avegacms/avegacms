@@ -144,3 +144,4 @@ nb-configuration.xml
 /.phpunit.*.cache
 
 /writable/
+/htdocs
