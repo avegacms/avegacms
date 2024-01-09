@@ -3,8 +3,8 @@
 namespace AvegaCms\Commands\Generators;
 
 use AvegaCms\Config\AvegaCms;
-use CodeIgniter\CLI\CLI;
 use CodeIgniter\Config\DotEnv;
+use CodeIgniter\CLI\CLI;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\GeneratorTrait;
 use CodeIgniter\Encryption\Encryption;
