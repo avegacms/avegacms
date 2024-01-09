@@ -55,7 +55,7 @@ class ModulesModel extends Model
         'description'   => ['rules' => 'if_exist|permit_empty|max_length[2048]'],
         'extra'         => ['rules' => 'if_exist|permit_empty'],
         'url_pattern'   => ['rules' => 'if_exist|permit_empty|max_length[255]'],
-        'in_sitemap'    => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
+        'in_sitemap'    => ['rules' => 'if_exist|is_natural|in_list[0,1,2]'],
         'active'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'created_by_id' => ['rules' => 'if_exist|is_natural'],
         'updated_by_id' => ['rules' => 'if_exist|is_natural']
@@ -169,7 +169,7 @@ class ModulesModel extends Model
                     $modules[$item->key] = $item->toArray();
                 }
             }
-            
+
             return $modules;
         });
 

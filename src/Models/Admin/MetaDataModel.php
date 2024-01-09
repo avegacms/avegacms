@@ -69,7 +69,7 @@ class MetaDataModel extends AvegaCmsModel
         'meta.og:type'          => ['rules' => 'if_exist|permit_empty|string|max_length[255]'],
         'meta.og:url'           => ['rules' => 'if_exist|permit_empty|string|max_length[2048]'],
         'meta.og:image'         => ['rules' => 'if_exist|permit_empty|string|max_length[512]'],
-        'in_sitemap'            => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
+        'in_sitemap'            => ['rules' => 'if_exist|is_natural|in_list[0,1,2]'],
         'meta_sitemap.priority' => ['rules' => 'if_exist|is_natural_no_zero|less_than_equal_to[100]'],
         'use_url_pattern'       => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'extra_data'            => ['rules' => 'if_exist|permit_empty|string'],

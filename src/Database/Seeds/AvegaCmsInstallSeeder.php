@@ -1624,6 +1624,10 @@ class AvegaCmsInstallSeeder extends Seeder
         }
     }
 
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
     private function _createRubricsAndPosts(): void
     {
         if ($rubrics = CLI::prompt(
@@ -1699,56 +1703,6 @@ class AvegaCmsInstallSeeder extends Seeder
             }
 
             CLI::newLine();
-        }
-    }
-
-    /**
-     * @return void
-     * @throws ReflectionException
-     */
-    private function _createPosts(): void
-    {
-        if (
-            CLI::prompt('Create new posts?', ['y', 'n']) === 'y' &&
-            ($num = CLI::prompt(
-                'How many posts do you want to create?',
-                null,
-                ['required', 'is_natural_no_zero']
-            ))
-        ) {
-            $useMultiLocales = Cms::settings('core.env.useMultiLocales');
-
-            $locales = $this->LLM->where([
-                'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
-            ])->findColumn('id');
-
-            foreach ($locales as $locale) {
-                $rubricsId = array_column(
-                    $this->MDM->select(['id', 'parent', 'locale_id', 'slug', 'use_url_pattern', 'url'])
-                        ->where(
-                            [
-                                'locale_id' => $locale,
-                                'meta_type' => MetaDataTypes::Rubric->value
-                            ]
-                        )->findAll(),
-                    'url',
-                    'id'
-                );
-
-                $j = 1;
-                for ($i = 0; $num > $i; $i++) {
-                    CLI::showProgress($j++, $num);
-                    $rubricId = array_rand($rubricsId);
-                    $this->_createMetaData(
-                        type: MetaDataTypes::Post->value,
-                        locale: $locale,
-                        parent: $rubricId,
-                        url: $rubricsId[$rubricId]
-                    );
-                }
-                CLI::showProgress(false);
-                CLI::newLine();
-            }
         }
     }
 
