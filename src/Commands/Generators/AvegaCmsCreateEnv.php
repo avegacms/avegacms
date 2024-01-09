@@ -130,7 +130,7 @@ class AvegaCmsCreateEnv extends BaseCommand
                         "database.default.hostname = '" . $env['db']['hostname'] . "'",
                         'database.default.database = ' . $env['db']['database'],
                         'database.default.username = ' . $env['db']['username'],
-                        'database.default.password = ' . empty($env['db']['password']) ? '' : empty($env['db']['password']),
+                        "database.default.password = '" . $env['db']['password'] . "'",
                         'database.default.DBDriver = ' . $env['db']['dbDriver'],
                         'database.default.dbPrefix = ' . $env['db']['dbPrefix'],
                         'database.default.port = ' . $env['db']['port'],
