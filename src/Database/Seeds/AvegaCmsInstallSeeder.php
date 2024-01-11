@@ -217,7 +217,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'version'       => $this->version,
                 'description'   => 'Cms.modules.description.content',
                 'extra'         => '',
-                'in_sitemap'    => 0,
+                'in_sitemap'    => 1,
                 'active'        => 1,
                 'created_by_id' => $userId,
                 'updated_by_id' => 0
@@ -432,7 +432,7 @@ class AvegaCmsInstallSeeder extends Seeder
                     'version'       => $this->version,
                     'description'   => 'Cms.modules.description.rubrics',
                     'extra'         => '',
-                    'in_sitemap'    => 0,
+                    'in_sitemap'    => 1,
                     'active'        => 1,
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
@@ -448,7 +448,7 @@ class AvegaCmsInstallSeeder extends Seeder
                     'version'       => $this->version,
                     'description'   => 'Cms.modules.description.pages',
                     'extra'         => '',
-                    'in_sitemap'    => 0,
+                    'in_sitemap'    => 1,
                     'active'        => 1,
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
@@ -464,7 +464,7 @@ class AvegaCmsInstallSeeder extends Seeder
                     'version'       => $this->version,
                     'description'   => 'Cms.modules.description.posts',
                     'extra'         => '',
-                    'in_sitemap'    => 0,
+                    'in_sitemap'    => 1,
                     'active'        => 1,
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
@@ -1770,7 +1770,8 @@ class AvegaCmsInstallSeeder extends Seeder
         }
 
         if ($type === MetaDataTypes::Page404->value) {
-            $meta['url'] = $meta['slug'] = 'page-not-found';
+            $meta['url']        = $meta['slug'] = 'page-not-found';
+            $meta['in_sitemap'] = 0;
         }
 
         if ( ! is_null($status)) {

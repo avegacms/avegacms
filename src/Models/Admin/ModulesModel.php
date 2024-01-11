@@ -181,12 +181,42 @@ class ModulesModel extends Model
     }
 
     /**
+     * @return array
+     */
+    public function getModulesSiteMapSchema(): array
+    {
+        return cache()->remember('ModulesSiteMapSchema', DAY * 30, function () {
+            $schema = [];
+            if (($all = $this->_getModulesSiteMapSchema()) !== null) {
+                $ids = [];
+                foreach ($all as $item) {
+                    $ids[]              = $item->id;
+                    $schema[$item->key] = $item->toArray();
+                }
+                if (($sub = $this->_getModulesSiteMapSchema($ids)) !== null) {
+                    foreach ($schema as $k => $list) {
+                        foreach ($sub as $item) {
+                            if ($list['parent'] === $item->parent) {
+                                $schema[$k]['sub'] = $item->toArray();
+                            }
+                        }
+                    }
+                }
+            }
+
+            return $schema;
+        });
+    }
+
+    /**
      * @return void
      */
     public function clearCache(): void
     {
         cache()->delete('ModulesMetaData');
+        cache()->delete('ModulesSiteMapSchema');
         $this->getModulesMeta();
+        $this->getModulesSiteMapSchema();
     }
 
     /**
@@ -211,5 +241,39 @@ class ModulesModel extends Model
         ]);
 
         return $this;
+    }
+
+    /**
+* @param array $ids
+* @return array
+     */
+    private function _getModulesSiteMapSchema(array $ids = []): array
+    {
+        $this->builder()->select(
+            [
+                'modules.id',
+                'modules.parent',
+                'modules.key',
+                'modules.slug',
+                'modules.name',
+                'modules.url_pattern',
+                'modules.in_sitemap',
+                'modules.active'
+            ]
+        )->where(
+            [
+                'modules.in_sitemap' => 1,
+                'modules.is_system'  => 0,
+                'modules.is_plugin'  => 0
+            ]
+        );
+
+        if ( ! empty($ids)) {
+            $this->builder()->whereIn('modules.parent', $ids);
+        } else {
+            $this->builder()->where(['modules.parent' => 0]);
+        }
+
+        return $this->findAll();
     }
 }

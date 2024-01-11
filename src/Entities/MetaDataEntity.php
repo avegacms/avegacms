@@ -226,7 +226,7 @@ class MetaDataEntity extends AvegaCmsEntity
         if ($meta['useMultiLocales'] = Cms::settings('core.env.useMultiLocales')) {
             foreach ($locales as $locale) {
                 $meta['alternate'][] = [
-                    'hreflang' => ($this->locale_id === $locale['id']) ? 'x-default' : $locale['slug'],
+                    'hreflang' => ($this->localeId === $locale['id']) ? 'x-default' : $locale['slug'],
                     'href'     => base_url($locale['slug']),
                 ];
             }
@@ -279,7 +279,7 @@ class MetaDataEntity extends AvegaCmsEntity
             }
         }
 
-        if ( ! empty($locale = SeoUtils::Locales($this->locale_id))) {
+        if ( ! empty($locale = SeoUtils::Locales($this->localeId))) {
             $breadCrumbs[] = [
                 'url'    => base_url(Cms::settings('core.env.useMultiLocales') ? $locale['slug'] : ''),
                 'title'  => esc($locale['home']),
