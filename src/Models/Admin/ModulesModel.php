@@ -196,8 +196,8 @@ class ModulesModel extends Model
                 if (($sub = $this->_getModulesSiteMapSchema($ids)) !== null) {
                     foreach ($schema as $k => $list) {
                         foreach ($sub as $item) {
-                            if ($list['parent'] === $item->parent) {
-                                $schema[$k]['sub'] = $item->toArray();
+                            if ($list['id'] === $item->parent) {
+                                $schema[$k]['sub'][$item->slug] = $item->toArray();
                             }
                         }
                     }
@@ -244,8 +244,8 @@ class ModulesModel extends Model
     }
 
     /**
-* @param array $ids
-* @return array
+     * @param  array  $ids
+     * @return array
      */
     private function _getModulesSiteMapSchema(array $ids = []): array
     {
@@ -262,6 +262,7 @@ class ModulesModel extends Model
             ]
         )->where(
             [
+                'modules.active'     => 1,
                 'modules.in_sitemap' => 1,
                 'modules.is_system'  => 0,
                 'modules.is_plugin'  => 0

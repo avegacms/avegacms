@@ -2,8 +2,6 @@
 
 namespace AvegaCms\Entities;
 
-use CodeIgniter\Entity\Entity;
-
 /**
  * @property int|null $id
  * @property int|null $parent
@@ -23,7 +21,7 @@ use CodeIgniter\Entity\Entity;
  * @property int|null $createdById
  * @property int|null $updatedById
  */
-class ModulesEntity extends Entity
+class ModulesEntity extends AvegaCmsEntity
 {
     protected $datamap = [
         'metaId'      => 'meta_id',
