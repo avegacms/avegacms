@@ -34,6 +34,11 @@ return [
             'recoveryCodeTime'     => 'Время действия хеша восстановления (минут)',
             'authSmsMessage'       => 'Текст смс для авторизации',
         ],
+        'seo'   => [
+            'useSitemap'   => 'Включить использование sitemap',
+            'useRobotsTxt' => 'Включить использование robots.txt',
+            'defRobotsTxt' => 'Содержание robots.txt (по умолчанию)',
+        ],
         'email' => [
             'fromEmail'     => 'Адрес отправителя',
             'fromName'      => 'Имя отправителя',
@@ -90,6 +95,11 @@ return [
             'recoveryField'        => 'Доступные поля для восстановления пароля: ',
             'recoveryCodeTime'     => 'Время действия хеша восстановления (минут)',
             'authSmsMessage'       => 'Код:{0} для входа. Никому не сообщайте его.',
+        ],
+        'seo'   => [
+            'useSitemap'   => 'Включить использование sitemap',
+            'useRobotsTxt' => 'Включить использование robots.txt',
+            'defRobotsTxt' => ''
         ],
         'email' => [
             'fromEmail'     => '',

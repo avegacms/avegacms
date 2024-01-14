@@ -1218,6 +1218,44 @@ class AvegaCmsInstallSeeder extends Seeder
                 'context'       => 'Settings.context.auth.authSmsMessage'
             ],
 
+            // Seo
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'seo',
+                'key'           => 'useSitemap',
+                'value'         => 1,
+                'default_value' => 1,
+                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'label'         => 'Settings.label.seo.useSitemap',
+                'context'       => 'Settings.context.seo.useSitemap'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'seo',
+                'key'           => 'useRobotsTxt',
+                'value'         => 1,
+                'default_value' => 1,
+                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'label'         => 'Settings.label.seo.useRobotsTxt',
+                'context'       => 'Settings.context.seo.useRobotsTxt'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'seo',
+                'key'           => 'defRobotsTxt',
+                'value'         => 1,
+                'default_value' => 1,
+                'return_type'   => SettingsReturnTypes::String->value,
+                'label'         => 'Settings.label.seo.defRobotsTxt',
+                'context'       => 'Settings.context.seo.defRobotsTxt'
+            ],
+
             // Email
             [
                 'module_id'     => 0,
