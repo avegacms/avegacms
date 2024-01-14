@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace AvegaCms\Controllers;
 
 use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Models\Admin\ModulesModel;
 use AvegaCms\Utilities\Cms;
 use ReflectionException;
 
@@ -17,7 +16,6 @@ class Seo extends BaseController
      */
     public function sitemap()
     {
-        //model(ModulesModel::class)->getModulesSiteMapSchema();
         if ( ! Cms::settings('core.seo.useSitemap') || ! file_exists(FCPATH . 'uploads/sitemaps/sitemap.xml')) {
             return response()->setStatusCode(404);
         }
