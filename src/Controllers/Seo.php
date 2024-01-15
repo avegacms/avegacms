@@ -32,7 +32,11 @@ class Seo extends BaseController
             return response()->setStatusCode(404);
         }
         if ( ! file_exists(FCPATH . 'robots.txt') || empty($robotsData = file_get_contents('./robots.txt', true))) {
-            $robotsData = 'User-agent: *' . PHP_EOL . 'Disallow:';
+            helper(['filesystem']);
+            if ( ! write_file('./robots.txt',
+                ($robotsData = view('template/seo/robots.php', [], ['debug' => false])))) {
+                echo 'Unable to write the file';
+            }
         }
         return response()->setBody($robotsData)->setStatusCode(200);
     }

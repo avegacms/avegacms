@@ -84,6 +84,7 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->_setLocales();
         $this->_createPages();
         $this->_createRubricsAndPosts();
+        $this->_createDefaultActions();
         $this->_createPublicFolders();
 
         cache()->clean();
@@ -1236,6 +1237,18 @@ class AvegaCmsInstallSeeder extends Seeder
                 'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'seo',
+                'key'           => 'allowSiteIndexing',
+                'value'         => 1,
+                'default_value' => 1,
+                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'label'         => 'Settings.label.seo.allowSiteIndexing',
+                'context'       => 'Settings.context.seo.allowSiteIndexing'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'seo',
                 'key'           => 'useRobotsTxt',
                 'value'         => 1,
                 'default_value' => 1,
@@ -1249,8 +1262,8 @@ class AvegaCmsInstallSeeder extends Seeder
                 'entity'        => 'core',
                 'slug'          => 'seo',
                 'key'           => 'defRobotsTxt',
-                'value'         => 1,
-                'default_value' => 1,
+                'value'         => '',
+                'default_value' => '',
                 'return_type'   => SettingsReturnTypes::String->value,
                 'label'         => 'Settings.label.seo.defRobotsTxt',
                 'context'       => 'Settings.context.seo.defRobotsTxt'
@@ -1745,6 +1758,15 @@ class AvegaCmsInstallSeeder extends Seeder
     }
 
     /**
+* @return void
+* @throws ReflectionException
+     */
+    private function _createDefaultActions(): void
+    {
+        Cms::settings('core.seo.defRobotsTxt', view('template/seo/robots.php', [], ['debug' => false]));
+    }
+
+    /**
      * @return void
      */
     private function _createPublicFolders(): void
@@ -1753,16 +1775,19 @@ class AvegaCmsInstallSeeder extends Seeder
             'uploads',
             'uploads/users',
             'uploads/sitemap',
+            'uploads/modules',
             'uploads/locales',
             'uploads/content',
             'uploads/content/thumbs'
         ];
 
         foreach ($directories as $directory) {
-            if ( ! is_dir($directory = FCPATH . $directory) && mkdir($directory, 0777, true)) {
-                file_put_contents($directory . '/index.html', '');
-            } else {
-                CLI::write('Can\'t create directory: ' . $directory);
+            if ( ! is_dir($directory = FCPATH . $directory)) {
+                if (mkdir($directory, 0777, true)) {
+                    file_put_contents($directory . '/index.html', '');
+                } else {
+                    CLI::write('Can\'t create directory: ' . $directory);
+                }
             }
         }
     }
