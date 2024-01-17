@@ -95,12 +95,11 @@ class MetaDataEntity extends AvegaCmsEntity
     }
 
     /**
-     * @param  string  $slug
      * @return $this
      */
-    public function setSlug(string $slug): MetaDataEntity
+    public function setSlug(): MetaDataEntity
     {
-        if (empty($slug)) {
+        if (empty($this->attributes['slug'])) {
             helper(['url']);
             $slug = mb_url_title(strtolower($this->rawData['title']));
         }
@@ -111,12 +110,12 @@ class MetaDataEntity extends AvegaCmsEntity
     }
 
     /**
-* @return $this
-* @throws ReflectionException
+     * @return $this
+     * @throws ReflectionException
      */
     public function setUrl(): MetaDataEntity
     {
-        $url = empty($this->attributes['url']) ? mb_url_title(strtolower($this->rawData['title'])) : $this->attributes['url'];
+        $url = empty($url = $this->attributes['url'] ?? ($this->rawData['url'] ?? '')) ? mb_url_title(strtolower($this->rawData['title'])) : $url;
 
         $this->attributes['url'] = match ($this->rawData['meta_type']) {
             MetaDataTypes::Main->value => Cms::settings('core.env.useMultiLocales') ? SeoUtils::Locales($this->rawData['locale_id'])['slug'] : '/',

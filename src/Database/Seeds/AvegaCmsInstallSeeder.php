@@ -83,7 +83,8 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->_createEmailSystemTemplate($userId);
         $this->_setLocales();
         $this->_createPages();
-        $this->_createRubricsAndPosts();
+        $this->_createRubrics();
+        $this->_createPosts();
         $this->_createDefaultActions();
         $this->_createPublicFolders();
 
@@ -1691,50 +1692,63 @@ class AvegaCmsInstallSeeder extends Seeder
      * @return void
      * @throws ReflectionException
      */
-    private function _createRubricsAndPosts(): void
+    private function _createRubrics(): void
     {
         if ($rubrics = CLI::prompt(
             'How many rubrics do you want to create?',
             null,
             ['required', 'is_natural']
         )) {
-            $useMultiLocales = Cms::settings('core.env.useMultiLocales');
-            $locales         = $this->LLM->where([
-                'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
-            ])->findColumn('id');
-            $mainPages       = array_column(
-                $this->MDM->select(['id', 'parent', 'locale_id', 'slug', 'use_url_pattern', 'url'])
-                    ->where(['meta_type' => MetaDataTypes::Main->value])->asArray()->findAll(),
-                null,
-                'locale_id'
-            );
+            if ($rubrics > 0) {
+                $useMultiLocales = Cms::settings('core.env.useMultiLocales');
+                $locales         = $this->LLM->where([
+                    'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
+                ])->findColumn('id');
+                $mainPages       = array_column(
+                    $this->MDM->select(['id', 'parent', 'locale_id', 'slug', 'use_url_pattern', 'url'])
+                        ->where(['meta_type' => MetaDataTypes::Main->value])->asArray()->findAll(),
+                    null,
+                    'locale_id'
+                );
 
-            foreach ($locales as $locale) {
-                $mainPage = $mainPages[$locale];
-                for ($i = 0; $rubrics > $i; $i++) {
-                    $this->_createMetaData(
-                        type: MetaDataTypes::Rubric->value,
-                        locale: $locale,
-                        parent: $mainPage['id'],
-                        url: $mainPage['url']
-                    );
+                foreach ($locales as $locale) {
+                    $mainPage = $mainPages[$locale];
+                    for ($i = 0; $rubrics > $i; $i++) {
+                        $this->_createMetaData(
+                            type: MetaDataTypes::Rubric->value,
+                            locale: $locale,
+                            parent: $mainPage['id']
+                        );
+                    }
                 }
             }
-            CLI::newLine();
+        }
+    }
 
-            if (
-                CLI::prompt('Create new posts?', ['y', 'n']) === 'y' &&
-                ($num = CLI::prompt(
-                    'How many posts do you want to create?',
-                    null,
-                    ['required', 'is_natural']
-                ))
-            ) {
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    private function _createPosts(): void
+    {
+        if (
+            CLI::prompt('Create new posts?', ['y', 'n']) === 'y' &&
+            ($num = CLI::prompt(
+                'How many posts do you want to create?',
+                null,
+                ['required', 'is_natural']
+            ))
+        ) {
+            if ($num > 0) {
                 $useMultiLocales = Cms::settings('core.env.useMultiLocales');
 
                 $locales = $this->LLM->where([
                     'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
                 ])->findColumn('id');
+
+                if ($this->MDM->where(['meta_type' => MetaDataTypes::Rubric->value])->findColumn('id') === null) {
+                    return;
+                }
 
                 foreach ($locales as $locale) {
                     $rubricsId = array_column(
@@ -1744,14 +1758,13 @@ class AvegaCmsInstallSeeder extends Seeder
                                     'locale_id' => $locale,
                                     'meta_type' => MetaDataTypes::Rubric->value
                                 ]
-                            )->findAll(),
+                            )->asArray()->findAll(),
                         'url',
                         'id'
                     );
 
-                    $j = 1;
                     for ($i = 0; $num > $i; $i++) {
-                        CLI::showProgress($j++, $num);
+                        CLI::showProgress($i++, $num);
                         $rubricId = array_rand($rubricsId);
                         $this->_createMetaData(
                             type: MetaDataTypes::Post->value,
@@ -1764,9 +1777,9 @@ class AvegaCmsInstallSeeder extends Seeder
                     CLI::newLine();
                 }
             }
-
-            CLI::newLine();
         }
+
+        CLI::newLine();
     }
 
     /**
@@ -1836,18 +1849,21 @@ class AvegaCmsInstallSeeder extends Seeder
         $meta['item_id']         = $item_id;
         $meta['use_url_pattern'] = 0;
 
-        if ($type === MetaDataTypes::Main->value) {
-            $meta['url']  = '';
-            $meta['slug'] = 'main';
-        }
-
-        if (in_array($type, [MetaDataTypes::Rubric->value, MetaDataTypes::Post->value])) {
-            $meta['url'] = $url . '/' . $meta['slug'];
-        }
-
-        if ($type === MetaDataTypes::Page404->value) {
-            $meta['url']        = $meta['slug'] = 'page-not-found';
-            $meta['in_sitemap'] = 0;
+        switch ($type) {
+            case MetaDataTypes::Main->value:
+                $meta['url']  = '';
+                $meta['slug'] = 'main';
+                break;
+            case MetaDataTypes::Rubric->value:
+                $meta['url'] = $meta['slug'];
+                break;
+            case MetaDataTypes::Post->value:
+                $meta['url'] = $url . '/' . $meta['slug'];
+                break;
+            case MetaDataTypes::Page404->value:
+                $meta['url']        = $meta['slug'] = 'page-not-found';
+                $meta['in_sitemap'] = 0;
+                break;
         }
 
         if ( ! is_null($status)) {
