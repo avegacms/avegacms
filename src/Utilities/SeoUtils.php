@@ -7,6 +7,8 @@ use AvegaCms\Models\Admin\{LocalesModel, MetaDataModel, ModulesModel};
 use RuntimeException;
 use ReflectionException;
 
+use function Symfony\Component\String\b;
+
 class SeoUtils
 {
     /**

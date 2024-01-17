@@ -6,17 +6,12 @@ namespace AvegaCms\Controllers;
 
 use AvegaCms\Enums\MetaChangefreq;
 use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Utilities\Cms;
-use ReflectionException;
+use AvegaCms\Utilities\{Cms, SeoUtils};
 use AvegaCms\Models\Admin\ModulesModel;
+use ReflectionException;
 
 class Seo extends BaseController
 {
-    public function __construct()
-    {
-        helper(['filesystem']);
-    }
-
     /**
      * @return ResponseInterface
      * @throws ReflectionException
@@ -27,8 +22,7 @@ class Seo extends BaseController
             (new AvegaCmsFrontendController())->error404();
         }
 
-        if ( ! file_exists(FCPATH . 'uploads/sitemaps/sitemap.xml') ||
-            empty($sitemap = file_get_contents('./uploads/sitemaps/sitemap.xml', true))) {
+        if ( ! file_exists(FCPATH . 'uploads/sitemaps/Sitemap.xml')) {
             $sitemap = ['isSiteMap' => true];
             $list    = model(ModulesModel::class)->getModulesSiteMapSchema();
             $date    = date('Y-m-d');
@@ -42,12 +36,10 @@ class Seo extends BaseController
                 ];
             }
 
-            if ( ! write_file('./uploads/sitemaps/sitemap.xml',
-                ($sitemap = view('template/seo/sitemap.php', $sitemap, ['debug' => false])))) {
-                log_message('error', 'Unable to write the sitemaps.xml file');
-            }
+            SeoUtils::createSiteMapXml('sitemap', $sitemap);
         }
-        return response()->setXML($sitemap)->setStatusCode(200);
+
+        return response()->setXML(file_get_contents('./uploads/sitemaps/Sitemap.xml', true))->setStatusCode(200);
     }
 
     /**
@@ -56,6 +48,8 @@ class Seo extends BaseController
      */
     public function robots(): ResponseInterface
     {
+        helper(['filesystem']);
+
         if ( ! Cms::settings('core.seo.useRobotsTxt')) {
             (new AvegaCmsFrontendController())->error404();
         }
