@@ -37,6 +37,7 @@ return [
         'seo'   => [
             'useSitemap'        => 'Включить использование sitemap',
             'allowSiteIndexing' => 'Разрешить индексирование сайта',
+            'sitemapBatchQty'   => 'Размер пакета для карты сайта',
             'useRobotsTxt'      => 'Включить использование robots.txt',
             'defRobotsTxt'      => 'Содержание robots.txt (по умолчанию)',
         ],
@@ -100,6 +101,7 @@ return [
         'seo'   => [
             'useSitemap'        => '',
             'allowSiteIndexing' => '',
+            'sitemapBatchQty'   => '',
             'useRobotsTxt'      => '',
             'defRobotsTxt'      => ''
         ],

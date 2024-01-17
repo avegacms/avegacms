@@ -12,6 +12,7 @@ namespace AvegaCms\Entities;
  * @property string|null $key
  * @property string|null $slug
  * @property string|null $name
+ * @property string|null $className
  * @property string|null $version
  * @property string|null $description
  * @property string|null $extra
@@ -23,6 +24,11 @@ namespace AvegaCms\Entities;
  */
 class ModulesEntity extends AvegaCmsEntity
 {
+    public function __construct(?array $data = null)
+    {
+        parent::__construct($data);
+    }
+
     protected $datamap = [
         'metaId'      => 'meta_id',
         'isCore'      => 'is_core',

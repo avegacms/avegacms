@@ -236,9 +236,9 @@ class MetaDataModel extends AvegaCmsModel
 
     /**
      * @param  array  $filter
-     * @return AvegaCmsModel
+     * @return MetaDataModel
      */
-    public function getRubricPosts(array $filter = []): AvegaCmsModel
+    public function getRubricPosts(array $filter = []): MetaDataModel
     {
         $this->builder()->select(
             [
@@ -268,7 +268,6 @@ class MetaDataModel extends AvegaCmsModel
 
         return $this->filter($filter);
     }
-
 
     /**
      * @return MetaDataModel

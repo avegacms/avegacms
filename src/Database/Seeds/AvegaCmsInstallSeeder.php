@@ -1249,6 +1249,18 @@ class AvegaCmsInstallSeeder extends Seeder
                 'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'seo',
+                'key'           => 'sitemapBatchQty',
+                'value'         => 1000,
+                'default_value' => 1000,
+                'return_type'   => SettingsReturnTypes::Integer->value,
+                'label'         => 'Settings.label.seo.sitemapBatchQty',
+                'context'       => 'Settings.context.seo.sitemapBatchQty'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'seo',
                 'key'           => 'useRobotsTxt',
                 'value'         => 1,
                 'default_value' => 1,
@@ -1758,8 +1770,8 @@ class AvegaCmsInstallSeeder extends Seeder
     }
 
     /**
-* @return void
-* @throws ReflectionException
+     * @return void
+     * @throws ReflectionException
      */
     private function _createDefaultActions(): void
     {
@@ -1774,7 +1786,7 @@ class AvegaCmsInstallSeeder extends Seeder
         $directories = [
             'uploads',
             'uploads/users',
-            'uploads/sitemap',
+            'uploads/sitemaps',
             'uploads/modules',
             'uploads/locales',
             'uploads/content',
