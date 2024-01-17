@@ -1762,9 +1762,9 @@ class AvegaCmsInstallSeeder extends Seeder
                         'url',
                         'id'
                     );
-
+                    $j         = 1;
                     for ($i = 0; $num > $i; $i++) {
-                        CLI::showProgress($i++, $num);
+                        CLI::showProgress($j++, $num);
                         $rubricId = array_rand($rubricsId);
                         $this->_createMetaData(
                             type: MetaDataTypes::Post->value,
