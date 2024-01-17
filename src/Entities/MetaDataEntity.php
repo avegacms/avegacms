@@ -111,13 +111,12 @@ class MetaDataEntity extends AvegaCmsEntity
     }
 
     /**
-     * @param  string  $url
-     * @return $this
-     * @throws ReflectionException
+* @return $this
+* @throws ReflectionException
      */
-    public function setUrl(string $url): MetaDataEntity
+    public function setUrl(): MetaDataEntity
     {
-        $url = empty($url) ? mb_url_title(strtolower($this->rawData['title'])) : $url;
+        $url = empty($this->attributes['url']) ? mb_url_title(strtolower($this->rawData['title'])) : $this->attributes['url'];
 
         $this->attributes['url'] = match ($this->rawData['meta_type']) {
             MetaDataTypes::Main->value => Cms::settings('core.env.useMultiLocales') ? SeoUtils::Locales($this->rawData['locale_id'])['slug'] : '/',
@@ -160,7 +159,7 @@ class MetaDataEntity extends AvegaCmsEntity
      */
     public function setMetaSitemap(): MetaDataEntity
     {
-        $meta = json_decode($this->attributes['meta_sitemap'], true);
+        $meta = json_decode($this->attributes['meta_sitemap'] ?? '', true);
 
         $meta['priority']   = $meta['priority'] ?? 50;
         $meta['changefreq'] = $meta['changefreq'] ?? MetaChangefreq::Monthly->value;

@@ -1854,6 +1854,8 @@ class AvegaCmsInstallSeeder extends Seeder
             $meta['status'] = $status;
         }
 
+        $meta['meta_sitemap'] = '';
+
         if ($metaId = $this->MDM->insert((new MetaDataEntity($meta)))) {
             $content       = (new Fabricator($this->CM, null))->makeArray();
             $content['id'] = $metaId;
