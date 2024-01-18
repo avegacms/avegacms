@@ -82,6 +82,7 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->_createLocales($userId);
         $this->_createEmailSystemTemplate($userId);
         $this->_setLocales();
+        $this->_createMainPages();
         $this->_createPages();
         $this->_createRubrics();
         $this->_createPosts();
@@ -1642,6 +1643,38 @@ class AvegaCmsInstallSeeder extends Seeder
 
     /**
      * @return void
+     * @throws ReflectionException
+     */
+    private function _createMainPages(): void
+    {
+        $useMultiLocales = Cms::settings('core.env.useMultiLocales');
+
+        $locales = $this->LLM->where([
+            'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
+        ])->findColumn('id');
+
+        foreach ($locales as $locale) {
+            // Создание главной страницы
+            $mainId = $this->_createMetaData(
+                type: MetaDataTypes::Main->value,
+                locale: $locale,
+                status: MetaStatuses::Publish->value
+            );
+
+            // Создание 404 страницы
+            $this->_createMetaData(
+                type: MetaDataTypes::Page404->value,
+                locale: $locale,
+                parent: $mainId,
+                status: MetaStatuses::Publish->value
+            );
+        }
+
+        CLI::newLine();
+    }
+
+    /**
+     * @return void
      * @throws Exception|ReflectionException
      */
     private function _createPages(): void
@@ -1649,11 +1682,11 @@ class AvegaCmsInstallSeeder extends Seeder
         if (CLI::prompt('Create new pages?', ['y', 'n']) === 'y' && ($num = CLI::prompt(
                 'How many pages do you want to create?',
                 null,
-                ['required', 'is_natural_no_zero']
+                ['required', 'is_natural']
             )) && ($nesting = CLI::prompt(
                 'What is the maximum nesting of pages?',
                 null,
-                ['required', 'is_natural_no_zero']
+                ['required', 'is_natural']
             ))
         ) {
             $useMultiLocales = Cms::settings('core.env.useMultiLocales');
@@ -1664,25 +1697,11 @@ class AvegaCmsInstallSeeder extends Seeder
 
             $this->numPages = $num;
 
-            foreach ($locales as $locale) {
-                // Создание главной страницы
-                $mainId = $this->_createMetaData(
-                    type: MetaDataTypes::Main->value,
-                    locale: $locale,
-                    status: MetaStatuses::Publish->value
-                );
+            $mainIds = $this->MDM->where(['meta_type' => MetaDataTypes::Main->value])->findColumn('id');
 
-                // Создание 404 страницы
-                $this->_createMetaData(
-                    type: MetaDataTypes::Page404->value,
-                    locale: $locale,
-                    parent: $mainId,
-                    status: MetaStatuses::Publish->value
-                );
-                $this->_createSubPages($num, $nesting, $locale, $mainId);
+            foreach ($locales as $key => $locale) {
+                $this->_createSubPages($num, $nesting, $locale, $mainIds[$key]);
             }
-
-            $this->MDM->update(['meta_type' => MetaDataTypes::Main->value], ['in_sitemap' => 1]);
 
             CLI::newLine();
         }
@@ -1851,8 +1870,9 @@ class AvegaCmsInstallSeeder extends Seeder
 
         switch ($type) {
             case MetaDataTypes::Main->value:
-                $meta['url']  = '';
-                $meta['slug'] = 'main';
+                $meta['url']        = '';
+                $meta['slug']       = 'main';
+                $meta['in_sitemap'] = 1;
                 break;
             case MetaDataTypes::Rubric->value:
                 $meta['url'] = $meta['slug'];
