@@ -16,7 +16,6 @@ class Sitemap extends BaseController
      */
     public static function run(string $pointer = ''): void
     {
-      
         $sitemap = [
             'content'       => [],
             'content.pages' => []
