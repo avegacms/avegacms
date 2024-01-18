@@ -11,8 +11,8 @@ namespace AvegaCms\Entities;
  * @property int|null $isSystem
  * @property string|null $key
  * @property string|null $slug
+ * @property string|null $className,
  * @property string|null $name
- * @property string|null $className
  * @property string|null $version
  * @property string|null $description
  * @property string|null $extra
@@ -34,6 +34,7 @@ class ModulesEntity extends AvegaCmsEntity
         'isCore'      => 'is_core',
         'isPlugin'    => 'is_plugin',
         'isSystem'    => 'is_system',
+        'className'   => 'class_name',
         'urlPattern'  => 'url_pattern',
         'inSitemap'   => 'in_sitemap',
         'createdById' => 'created_by_id',
@@ -49,6 +50,7 @@ class ModulesEntity extends AvegaCmsEntity
         'is_system'     => 'integer',
         'key'           => 'string',
         'slug'          => 'string',
+        'class_name'    => 'string',
         'name'          => 'string',
         'version'       => 'string',
         'description'   => 'string',
