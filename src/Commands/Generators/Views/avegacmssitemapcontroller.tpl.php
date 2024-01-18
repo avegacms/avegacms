@@ -4,9 +4,10 @@ declare(strict_types=1);
 namespace {namespace};
 
 use AvegaCms\Utilities\SeoUtils;
+use CodeIgniter\Controller;    
 use ReflectionException;
 
-class Sitemap
+class Sitemap extends Controller
 {
     /**
      * @param  string  $pointer
