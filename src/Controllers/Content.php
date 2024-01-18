@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace AvegaCms\Controllers;
 
@@ -27,7 +27,7 @@ class Content extends AvegaCmsFrontendController
         $template = 'content/';
         $data     = [];
 
-        switch ($this->dataEntity->meta_type) {
+        switch ($this->dataEntity->metaType) {
             case MetaDataTypes::Main->value:
                 $template .= 'main';
                 break;
