@@ -6,9 +6,10 @@ namespace AvegaCms\Controllers;
 
 use AvegaCms\Models\Admin\MetaDataSiteMapModel;
 use AvegaCms\Utilities\SeoUtils;
+use CodeIgniter\Controller;
 use ReflectionException;
 
-class Sitemap
+class Sitemap extends Controller
 {
     /**
      * @param  string  $pointer
