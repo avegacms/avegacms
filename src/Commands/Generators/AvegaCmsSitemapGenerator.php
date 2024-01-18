@@ -78,6 +78,6 @@ class AvegaCmsSitemapGenerator extends BaseCommand
             CLI::newLine();
             exit();
         }
-        return $this->parseTemplate($class);
+        return $this->parseTemplate('Modules/' . $class);
     }
 }

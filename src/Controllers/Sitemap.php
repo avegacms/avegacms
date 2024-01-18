@@ -8,7 +8,7 @@ use AvegaCms\Models\Admin\MetaDataSiteMapModel;
 use AvegaCms\Utilities\SeoUtils;
 use ReflectionException;
 
-class Sitemap extends BaseController
+class Sitemap
 {
     /**
      * @param  string  $pointer
