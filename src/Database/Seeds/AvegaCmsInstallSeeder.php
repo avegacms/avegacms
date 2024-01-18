@@ -1930,86 +1930,6 @@ class AvegaCmsInstallSeeder extends Seeder
     }
 
     /**
-     * @param  int  $num
-     * @param  int  $nesting
-     * @param  int  $locale
-     * @param  int  $parent
-     * @return void
-     * @throws Exception|ReflectionException
-     */
-    private function _createSubPagesOld(int $num, int $nesting, int $locale, int $parent): void
-    {
-        // TODO 1. Указываем кол-во страниц, вложенность, локаль, родителя
-
-        if ($num > 0) {
-            if ($this->numPages === $num) {
-                $subId = $this->_createMetaData(
-                    type: MetaDataTypes::Page->value,
-                    locale: $locale,
-                    parent: $parent,
-                );
-
-                $num--;
-
-                $this->_createSubPages(
-                    $num,
-                    $nesting,
-                    $locale,
-                    ($nesting > 1) ? $subId : $parent
-                );
-            } else {
-                if ($nesting > 1) {
-                    $parentId = $this->_getParentPageId($locale, rand(0, $nesting));
-                    if ($parentId !== null) {
-                        $subId = $this->_createMetaData(
-                            type: MetaDataTypes::Page->value,
-                            locale: $locale,
-                            parent: $parentId
-                        );
-                    } else {
-                        $subId = $this->_createMetaData(
-                            type: MetaDataTypes::Page->value,
-                            locale: $locale,
-                            parent: $parent
-                        );
-                    }
-                    $num--;
-                    $this->_createSubPages($num, $nesting, $locale, $subId);
-                }
-            }
-        }
-    }
-
-    /**
-     * @param  int  $locale
-     * @param  int  $level
-     * @return int|null
-     */
-    private function _getParentPageId(int $locale, int $level): int|null
-    {
-        $object = $this->MDM->select(['id', 'parent'])
-            ->where(['locale_id' => $locale, 'module_id' => 0, 'item_id' => 0])
-            ->whereIn('meta_type', [MetaDataTypes::Page->value, MetaDataTypes::Main->value])
-            ->findAll();
-
-        $list = [];
-
-        foreach ($object as $item) {
-            $list[] = $item->toArray();
-        }
-
-        $list = Cms::getTree($list);
-
-        if ($level === 0) {
-            return $list[0]['id'] ?? null;
-        }
-
-        $parent = dot_array_search(str_repeat('*.list', $level - 1), $list);
-
-        return ! is_null($parent) ? ($parent[array_rand($parent)]['id'] ?? null) : null;
-    }
-
-    /**
      * @param  int  $totalPages
      * @param  int  $nestedLevels
      * @return array
@@ -2034,16 +1954,4 @@ class AvegaCmsInstallSeeder extends Seeder
         return $distribution;
     }
 
-    /**
-     * @param  int  $id
-     * @return string
-     */
-    private function _getPageUrl(int $id): string
-    {
-        $url = $this->MDM->select(['url'])
-            ->where(['id' => $id])
-            ->whereIn('meta_type', [MetaDataTypes::Main->value, MetaDataTypes::Page->value])->asArray()->first();
-
-        return $url['url'] ?? '';
-    }
 }
