@@ -357,7 +357,7 @@ class MetaDataModel extends AvegaCmsModel
                 'og:title' => $title,
                 'og:type'  => 'website',
                 'og:url'   => '',
-                'og:image' => base_url('uploads/open_graph.png')
+                'og:image' => 'uploads/open_graph.png'
             ],
             'status'        => $status[array_rand($status)],
             'meta_type'     => '',

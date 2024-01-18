@@ -1907,75 +1907,51 @@ class AvegaCmsInstallSeeder extends Seeder
      * @param  int  $locale
      * @param  int  $parent
      * @return void
-     * @throws Exception|ReflectionException
+     * @throws ReflectionException
      */
     private function _createSubPages(int $num, int $nesting, int $locale, int $parent): void
     {
-        if ($num > 0) {
-            if ($this->numPages === $num) {
-                $subId = $this->_createMetaData(
-                    type: MetaDataTypes::Page->value,
-                    locale: $locale,
-                    parent: $parent,
-                );
-
-                $num--;
-
-                $this->_createSubPages(
-                    $num,
-                    $nesting,
-                    $locale,
-                    ($nesting > 1) ? $subId : $parent
-                );
-            } else {
-                if ($nesting > 1) {
-                    $parentId = $this->_getParentPageId($locale, rand(0, $nesting));
-                    if ($parentId !== null) {
-                        $subId = $this->_createMetaData(
+        if ($num > 0 && $nesting > 0 && ! empty($levels = $this->_getLevelList($num, $nesting))) {
+            $pages = [];
+            foreach ($levels as $k => $level) {
+                if ($level > 0) {
+                    $pages[$k] = [];
+                    for ($i = 1; $i <= $level; $i++) {
+                        $key         = ($k > 1) ? $k - 1 : $k;
+                        $pages[$k][] = $this->_createMetaData(
                             type: MetaDataTypes::Page->value,
                             locale: $locale,
-                            parent: $parentId
-                        );
-                    } else {
-                        $subId = $this->_createMetaData(
-                            type: MetaDataTypes::Page->value,
-                            locale: $locale,
-                            parent: $parent
+                            parent: ($k == 1) ? $parent : $pages[$key][array_rand($pages[$key])]
                         );
                     }
-                    $num--;
-                    $this->_createSubPages($num, $nesting, $locale, $subId);
                 }
             }
         }
     }
 
     /**
-     * @param  int  $locale
-     * @param  int  $level
-     * @return int|null
+     * @param  int  $totalPages
+     * @param  int  $nestedLevels
+     * @return array
      */
-    private function _getParentPageId(int $locale, int $level): int|null
+    private function _getLevelList(int $totalPages, int $nestedLevels): array
     {
-        $object = $this->MDM->select(['id', 'parent'])
-            ->where(['locale_id' => $locale, 'module_id' => 0, 'item_id' => 0])
-            ->whereIn('meta_type', [MetaDataTypes::Page->value, MetaDataTypes::Main->value])
-            ->findAll();
+        $distribution = [];
+        $pagesArray   = range(1, $totalPages);
 
-        $list = [];
+        shuffle($pagesArray);
 
-        foreach ($object as $item) {
-            $list[] = $item->toArray();
+        // Распределяем страницы по уровням
+        for ($i = 1; $i <= $nestedLevels; $i++) {
+            // Определяем случайное количество страниц для текущего уровня
+            $pagesForLevel = rand(1, $totalPages);
+            // Записываем случайное количество страниц для текущего уровня в массив
+            $distribution[$i] = count(array_splice($pagesArray, 0, $pagesForLevel));
+            // Уменьшаем общее количество страниц
+            $totalPages -= $pagesForLevel;
         }
 
-        $list = Cms::getTree($list);
-
-        if ($level === 0) {
-            return $list[0]['id'] ?? null;
-        }
-
-        $parent = dot_array_search(str_repeat('*.list', $level - 1), $list);
-
-        return ! is_null($parent) ? ($parent[array_rand($parent)]['id'] ?? null) : null;
+        return $distribution;
     }
+
 }

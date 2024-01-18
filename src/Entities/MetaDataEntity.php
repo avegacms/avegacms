@@ -99,7 +99,7 @@ class MetaDataEntity extends AvegaCmsEntity
      */
     public function setSlug(): MetaDataEntity
     {
-        if (empty($this->attributes['slug'])) {
+        if (empty($slug = $this->rawData['slug'])) {
             helper(['url']);
             $slug = mb_url_title(strtolower($this->rawData['title']));
         }
