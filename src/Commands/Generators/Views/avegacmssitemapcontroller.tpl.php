@@ -3,11 +3,10 @@ declare(strict_types=1);
 
 namespace Modules\{class}\Controllers;
 
-use AvegaCms\Controllers\BaseController;
 use AvegaCms\Utilities\SeoUtils;
 use ReflectionException;
 
-class Sitemap extends BaseController 
+class Sitemap
 {
     /**
      * @param  string  $pointer
