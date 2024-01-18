@@ -1,7 +1,7 @@
 <@php
 declare(strict_types=1);
 
-namespace Modules\{class}\Controllers;
+namespace {namespace};
 
 use AvegaCms\Utilities\SeoUtils;
 use ReflectionException;
