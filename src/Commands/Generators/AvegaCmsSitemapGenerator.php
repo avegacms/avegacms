@@ -30,14 +30,14 @@ class AvegaCmsSitemapGenerator extends BaseCommand
      *
      * @var string
      */
-    protected $description = '';
+    protected $description = 'Generates a sitemap controller file for module.';
 
     /**
      * The Command's Usage
      *
      * @var string
      */
-    protected $usage = 'avegacms:sitemap [arguments] [options]';
+    protected $usage = 'avegacms:sitemap <module name> [options]';
 
     /**
      * The Command's Arguments
@@ -52,7 +52,8 @@ class AvegaCmsSitemapGenerator extends BaseCommand
      * @var array
      */
     protected $options = [
-        '--force' => 'Force overwrite existing file.',
+        '--namespace' => 'Set root namespace. Default: "Modules".',
+        '--force'     => 'Force overwrite existing file.',
     ];
 
     /**
@@ -71,13 +72,15 @@ class AvegaCmsSitemapGenerator extends BaseCommand
         $this->generateClass($params);
     }
 
-    protected function prepare(string $class): string
+    protected function prepare(string $module): string
     {
-        if (empty($class)) {
+        if (empty($module)) {
             CLI::error(lang('Generator.error.controller.sitemap'), 'light_gray', 'red');
             CLI::newLine();
             exit();
         }
-        return $this->parseTemplate('Modules/' . $class);
+        return $this->parseTemplate('Sitemap',
+            []
+        );
     }
 }
