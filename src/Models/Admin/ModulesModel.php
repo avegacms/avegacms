@@ -55,7 +55,7 @@ class ModulesModel extends Model
         'description'   => ['rules' => 'if_exist|permit_empty|max_length[2048]'],
         'extra'         => ['rules' => 'if_exist|permit_empty'],
         'url_pattern'   => ['rules' => 'if_exist|permit_empty|max_length[255]'],
-        'in_sitemap'    => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
+        'in_sitemap'    => ['rules' => 'if_exist|is_natural|in_list[0,1,2]'],
         'active'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'created_by_id' => ['rules' => 'if_exist|is_natural'],
         'updated_by_id' => ['rules' => 'if_exist|is_natural']
@@ -169,7 +169,7 @@ class ModulesModel extends Model
                     $modules[$item->key] = $item->toArray();
                 }
             }
-            
+
             return $modules;
         });
 
@@ -181,12 +181,42 @@ class ModulesModel extends Model
     }
 
     /**
+     * @return array
+     */
+    public function getModulesSiteMapSchema(): array
+    {
+        return cache()->remember('ModulesSiteMapSchema', DAY * 30, function () {
+            $schema = [];
+            if (($all = $this->_getModulesSiteMapSchema()) !== null) {
+                $ids = [];
+                foreach ($all as $item) {
+                    $ids[]              = $item->id;
+                    $schema[$item->key] = $item->toArray();
+                }
+                if (($sub = $this->_getModulesSiteMapSchema($ids)) !== null) {
+                    foreach ($schema as $k => $list) {
+                        foreach ($sub as $item) {
+                            if ($list['id'] === $item->parent) {
+                                $schema[$k]['sub'][$item->slug] = $item->toArray();
+                            }
+                        }
+                    }
+                }
+            }
+
+            return $schema;
+        });
+    }
+
+    /**
      * @return void
      */
     public function clearCache(): void
     {
         cache()->delete('ModulesMetaData');
+        cache()->delete('ModulesSiteMapSchema');
         $this->getModulesMeta();
+        $this->getModulesSiteMapSchema();
     }
 
     /**
@@ -211,5 +241,40 @@ class ModulesModel extends Model
         ]);
 
         return $this;
+    }
+
+    /**
+     * @param  array  $ids
+     * @return array
+     */
+    private function _getModulesSiteMapSchema(array $ids = []): array
+    {
+        $this->builder()->select(
+            [
+                'modules.id',
+                'modules.parent',
+                'modules.key',
+                'modules.slug',
+                'modules.name',
+                'modules.url_pattern',
+                'modules.in_sitemap',
+                'modules.active'
+            ]
+        )->where(
+            [
+                'modules.active'     => 1,
+                'modules.in_sitemap' => 1,
+                'modules.is_system'  => 0,
+                'modules.is_plugin'  => 0
+            ]
+        );
+
+        if ( ! empty($ids)) {
+            $this->builder()->whereIn('modules.parent', $ids);
+        } else {
+            $this->builder()->where(['modules.parent' => 0]);
+        }
+
+        return $this->findAll();
     }
 }

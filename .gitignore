@@ -145,3 +145,4 @@ nb-configuration.xml
 
 /writable/
 /htdocs
+/.php-cs-fixer.dist.php

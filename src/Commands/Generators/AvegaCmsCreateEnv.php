@@ -3,8 +3,8 @@
 namespace AvegaCms\Commands\Generators;
 
 use AvegaCms\Config\AvegaCms;
-use CodeIgniter\CLI\CLI;
 use CodeIgniter\Config\DotEnv;
+use CodeIgniter\CLI\CLI;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\GeneratorTrait;
 use CodeIgniter\Encryption\Encryption;
@@ -82,7 +82,11 @@ class AvegaCmsCreateEnv extends BaseCommand
 
         $env['db']['database'] = CLI::prompt('Set your database.database', null, ['required']);
         $env['db']['username'] = CLI::prompt('Set your database.username', null, ['required']);
-        $env['db']['password'] = CLI::prompt('Set your database.password', null, ['required']);
+        $env['db']['password'] = CLI::prompt('Set your database.password', null, ['permit_empty']);
+
+        if (empty($env['db']['password'])) {
+            $env['db']['password'] = '';
+        }
 
         if (empty($env['db']['dbDriver'] = CLI::prompt('Set your database.DBDriver (by default MySQLi)', null,
             ['permit_empty']))) {
@@ -117,7 +121,8 @@ class AvegaCmsCreateEnv extends BaseCommand
                         '# database.default.DBPrefix =',
                         '# database.default.port = 3306',
                         '# encryption.key =',
-                        '# logger.threshold = 4'
+                        '# logger.threshold = 4',
+                        '# curlrequest.shareOptions = true'
                     ],
                     [
                         'CI_ENVIRONMENT = ' . $env['environment'],
@@ -125,12 +130,13 @@ class AvegaCmsCreateEnv extends BaseCommand
                         "database.default.hostname = '" . $env['db']['hostname'] . "'",
                         'database.default.database = ' . $env['db']['database'],
                         'database.default.username = ' . $env['db']['username'],
-                        'database.default.password = ' . $env['db']['password'],
+                        "database.default.password = '" . $env['db']['password'] . "'",
                         'database.default.DBDriver = ' . $env['db']['dbDriver'],
                         'database.default.dbPrefix = ' . $env['db']['dbPrefix'],
                         'database.default.port = ' . $env['db']['port'],
                         'encryption.key = ' . $env['encryption'],
-                        'logger.threshold = ' . $env['logger']
+                        'logger.threshold = ' . $env['logger'],
+                        'curlrequest.shareOptions = false'
                     ],
                     file_get_contents(ROOTPATH . 'env'),
                     $count

@@ -164,10 +164,7 @@ class AvegaCmsFrontendController extends BaseController
     #[NoReturn]
     public function error404(): void
     {
-        $this->dataEntity  = $this->MDM->getContentMetaData(
-            session('avegacms.client.locale.id') ?? 1,
-            'page-not-found'
-        );
+        $this->dataEntity  = $this->MDM->getContentMetaData404(session('avegacms.client.locale.id') ?? 1);
         $this->meta        = $this->dataEntity->metaRender();
         $this->breadCrumbs = $this->dataEntity->breadCrumbs($this->dataEntity->metaType);
 

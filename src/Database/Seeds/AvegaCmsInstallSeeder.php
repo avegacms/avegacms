@@ -83,6 +83,9 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->_createEmailSystemTemplate($userId);
         $this->_setLocales();
         $this->_createPages();
+        $this->_createRubrics();
+        $this->_createPosts();
+        $this->_createDefaultActions();
         $this->_createPublicFolders();
 
         cache()->clean();
@@ -216,7 +219,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'version'       => $this->version,
                 'description'   => 'Cms.modules.description.content',
                 'extra'         => '',
-                'in_sitemap'    => 0,
+                'in_sitemap'    => 1,
                 'active'        => 1,
                 'created_by_id' => $userId,
                 'updated_by_id' => 0
@@ -431,7 +434,7 @@ class AvegaCmsInstallSeeder extends Seeder
                     'version'       => $this->version,
                     'description'   => 'Cms.modules.description.rubrics',
                     'extra'         => '',
-                    'in_sitemap'    => 0,
+                    'in_sitemap'    => 1,
                     'active'        => 1,
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
@@ -447,7 +450,7 @@ class AvegaCmsInstallSeeder extends Seeder
                     'version'       => $this->version,
                     'description'   => 'Cms.modules.description.pages',
                     'extra'         => '',
-                    'in_sitemap'    => 0,
+                    'in_sitemap'    => 1,
                     'active'        => 1,
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
@@ -463,7 +466,7 @@ class AvegaCmsInstallSeeder extends Seeder
                     'version'       => $this->version,
                     'description'   => 'Cms.modules.description.posts',
                     'extra'         => '',
-                    'in_sitemap'    => 0,
+                    'in_sitemap'    => 1,
                     'active'        => 1,
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
@@ -1217,6 +1220,68 @@ class AvegaCmsInstallSeeder extends Seeder
                 'context'       => 'Settings.context.auth.authSmsMessage'
             ],
 
+            // Seo
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'seo',
+                'key'           => 'useSitemap',
+                'value'         => 1,
+                'default_value' => 1,
+                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'label'         => 'Settings.label.seo.useSitemap',
+                'context'       => 'Settings.context.seo.useSitemap'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'seo',
+                'key'           => 'allowSiteIndexing',
+                'value'         => 1,
+                'default_value' => 1,
+                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'label'         => 'Settings.label.seo.allowSiteIndexing',
+                'context'       => 'Settings.context.seo.allowSiteIndexing'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'seo',
+                'key'           => 'sitemapBatchQty',
+                'value'         => 1000,
+                'default_value' => 1000,
+                'return_type'   => SettingsReturnTypes::Integer->value,
+                'label'         => 'Settings.label.seo.sitemapBatchQty',
+                'context'       => 'Settings.context.seo.sitemapBatchQty'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'seo',
+                'key'           => 'useRobotsTxt',
+                'value'         => 1,
+                'default_value' => 1,
+                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'label'         => 'Settings.label.seo.useRobotsTxt',
+                'context'       => 'Settings.context.seo.useRobotsTxt'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'seo',
+                'key'           => 'defRobotsTxt',
+                'value'         => '',
+                'default_value' => '',
+                'return_type'   => SettingsReturnTypes::String->value,
+                'label'         => 'Settings.label.seo.defRobotsTxt',
+                'context'       => 'Settings.context.seo.defRobotsTxt'
+            ],
+
             // Email
             [
                 'module_id'     => 0,
@@ -1625,22 +1690,129 @@ class AvegaCmsInstallSeeder extends Seeder
 
     /**
      * @return void
+     * @throws ReflectionException
+     */
+    private function _createRubrics(): void
+    {
+        if ($rubrics = CLI::prompt(
+            'How many rubrics do you want to create?',
+            null,
+            ['required', 'is_natural']
+        )) {
+            if ($rubrics > 0) {
+                $useMultiLocales = Cms::settings('core.env.useMultiLocales');
+                $locales         = $this->LLM->where([
+                    'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
+                ])->findColumn('id');
+                $mainPages       = array_column(
+                    $this->MDM->select(['id', 'parent', 'locale_id', 'slug', 'use_url_pattern', 'url'])
+                        ->where(['meta_type' => MetaDataTypes::Main->value])->asArray()->findAll(),
+                    null,
+                    'locale_id'
+                );
+
+                foreach ($locales as $locale) {
+                    $mainPage = $mainPages[$locale];
+                    for ($i = 0; $rubrics > $i; $i++) {
+                        $this->_createMetaData(
+                            type: MetaDataTypes::Rubric->value,
+                            locale: $locale,
+                            parent: $mainPage['id']
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    private function _createPosts(): void
+    {
+        if (
+            CLI::prompt('Create new posts?', ['y', 'n']) === 'y' &&
+            ($num = CLI::prompt(
+                'How many posts do you want to create?',
+                null,
+                ['required', 'is_natural']
+            ))
+        ) {
+            if ($num > 0) {
+                $useMultiLocales = Cms::settings('core.env.useMultiLocales');
+
+                $locales = $this->LLM->where([
+                    'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
+                ])->findColumn('id');
+
+                if ($this->MDM->where(['meta_type' => MetaDataTypes::Rubric->value])->findColumn('id') === null) {
+                    return;
+                }
+
+                foreach ($locales as $locale) {
+                    $rubricsId = array_column(
+                        $this->MDM->select(['id', 'parent', 'locale_id', 'slug', 'use_url_pattern', 'url'])
+                            ->where(
+                                [
+                                    'locale_id' => $locale,
+                                    'meta_type' => MetaDataTypes::Rubric->value
+                                ]
+                            )->asArray()->findAll(),
+                        'url',
+                        'id'
+                    );
+                    $j         = 1;
+                    for ($i = 0; $num > $i; $i++) {
+                        CLI::showProgress($j++, $num);
+                        $rubricId = array_rand($rubricsId);
+                        $this->_createMetaData(
+                            type: MetaDataTypes::Post->value,
+                            locale: $locale,
+                            parent: $rubricId,
+                            url: $rubricsId[$rubricId]
+                        );
+                    }
+                    CLI::showProgress(false);
+                    CLI::newLine();
+                }
+            }
+        }
+
+        CLI::newLine();
+    }
+
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    private function _createDefaultActions(): void
+    {
+        Cms::settings('core.seo.defRobotsTxt', view('template/seo/robots.php', [], ['debug' => false]));
+    }
+
+    /**
+     * @return void
      */
     private function _createPublicFolders(): void
     {
         $directories = [
             'uploads',
             'uploads/users',
+            'uploads/sitemaps',
+            'uploads/modules',
             'uploads/locales',
             'uploads/content',
             'uploads/content/thumbs'
         ];
 
         foreach ($directories as $directory) {
-            if ( ! is_dir($directory = FCPATH . $directory) && mkdir($directory, 0777, true)) {
-                file_put_contents($directory . '/index.html', '');
-            } else {
-                CLI::write('Can\'t create directory: ' . $directory);
+            if ( ! is_dir($directory = FCPATH . $directory)) {
+                if (mkdir($directory, 0777, true)) {
+                    file_put_contents($directory . '/index.html', '');
+                } else {
+                    CLI::write('Can\'t create directory: ' . $directory);
+                }
             }
         }
     }
@@ -1677,22 +1849,28 @@ class AvegaCmsInstallSeeder extends Seeder
         $meta['item_id']         = $item_id;
         $meta['use_url_pattern'] = 0;
 
-        if ($type === MetaDataTypes::Main->value) {
-            $meta['url']  = '';
-            $meta['slug'] = 'main';
-        }
-
-        if (in_array($type, [MetaDataTypes::Rubric->value, MetaDataTypes::Post->value])) {
-            $meta['url'] = $url . '/' . $meta['slug'];
-        }
-
-        if ($type === MetaDataTypes::Page404->value) {
-            $meta['url'] = $meta['slug'] = 'page-not-found';
+        switch ($type) {
+            case MetaDataTypes::Main->value:
+                $meta['url']  = '';
+                $meta['slug'] = 'main';
+                break;
+            case MetaDataTypes::Rubric->value:
+                $meta['url'] = $meta['slug'];
+                break;
+            case MetaDataTypes::Post->value:
+                $meta['url'] = $url . '/' . $meta['slug'];
+                break;
+            case MetaDataTypes::Page404->value:
+                $meta['url']        = $meta['slug'] = 'page-not-found';
+                $meta['in_sitemap'] = 0;
+                break;
         }
 
         if ( ! is_null($status)) {
             $meta['status'] = $status;
         }
+
+        $meta['meta_sitemap'] = '';
 
         if ($metaId = $this->MDM->insert((new MetaDataEntity($meta)))) {
             $content       = (new Fabricator($this->CM, null))->makeArray();

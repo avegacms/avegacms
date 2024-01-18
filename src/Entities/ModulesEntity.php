@@ -2,8 +2,6 @@
 
 namespace AvegaCms\Entities;
 
-use CodeIgniter\Entity\Entity;
-
 /**
  * @property int|null $id
  * @property int|null $parent
@@ -14,6 +12,7 @@ use CodeIgniter\Entity\Entity;
  * @property string|null $key
  * @property string|null $slug
  * @property string|null $name
+ * @property string|null $className
  * @property string|null $version
  * @property string|null $description
  * @property string|null $extra
@@ -23,8 +22,13 @@ use CodeIgniter\Entity\Entity;
  * @property int|null $createdById
  * @property int|null $updatedById
  */
-class ModulesEntity extends Entity
+class ModulesEntity extends AvegaCmsEntity
 {
+    public function __construct(?array $data = null)
+    {
+        parent::__construct($data);
+    }
+
     protected $datamap = [
         'metaId'      => 'meta_id',
         'isCore'      => 'is_core',

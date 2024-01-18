@@ -54,6 +54,5 @@ class AvegaCmsAppStart extends BaseCommand
 
         $this->call('migrate --all');
         $this->call('db:seed AvegaCms\\Database\\Seeds\\AvegaCmsInstallSeeder');
-        $this->call('db:seed AvegaCms\\Database\\Seeds\\AvegaCmsTestData');
     }
 }

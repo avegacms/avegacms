@@ -81,39 +81,41 @@ class MetaDataModel extends AvegaCmsModel
      */
     public function getContentMetaData(int $locale, string $slug = ''): array|object|null
     {
-        $this->builder()->select(
-            [
-                'metadata.id',
-                'metadata.parent',
-                'metadata.locale_id',
-                'metadata.url',
-                'metadata.slug',
-                'metadata.in_sitemap',
-                'metadata.use_url_pattern',
-                'metadata.title',
-                'metadata.meta',
-                'metadata.extra_data',
-                'metadata.meta_type',
-                'metadata.publish_at'
-            ]
-        )->whereIn('metadata.meta_type',
+        $this->contentMetaDataSelect();
+
+        $this->builder()->whereIn('metadata.meta_type',
             [
                 MetaDataTypes::Main->value,
                 MetaDataTypes::Page->value,
                 MetaDataTypes::Rubric->value,
-                MetaDataTypes::Post->value,
-                MetaDataTypes::Page404->value
+                MetaDataTypes::Post->value
             ]
         )->where(
             [
-                'metadata.module_id' => 0,
-                'metadata.item_id'   => 0,
                 'metadata.slug'      => ! empty($slug) ? $slug : 'main',
                 'metadata.locale_id' => $locale
             ]
         );
 
         $this->checkStatus();
+
+        return $this->first();
+    }
+
+    /**
+     * @param  int  $locale
+     * @return array|object|null
+     */
+    public function getContentMetaData404(int $locale): array|object|null
+    {
+        $this->contentMetaDataSelect();
+
+        $this->builder()->where(
+            [
+                'metadata.meta_type' => MetaDataTypes::Page404->value,
+                'metadata.locale_id' => $locale
+            ]
+        );
 
         return $this->first();
     }
@@ -236,9 +238,9 @@ class MetaDataModel extends AvegaCmsModel
 
     /**
      * @param  array  $filter
-     * @return AvegaCmsModel
+     * @return MetaDataModel
      */
-    public function getRubricPosts(array $filter = []): AvegaCmsModel
+    public function getRubricPosts(array $filter = []): MetaDataModel
     {
         $this->builder()->select(
             [
@@ -269,7 +271,6 @@ class MetaDataModel extends AvegaCmsModel
         return $this->filter($filter);
     }
 
-
     /**
      * @return MetaDataModel
      */
@@ -286,6 +287,36 @@ class MetaDataModel extends AvegaCmsModel
                 ]
             )->groupEnd()
             ->groupEnd();
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    protected function contentMetaDataSelect(): MetaDataModel
+    {
+        $this->builder()->select(
+            [
+                'metadata.id',
+                'metadata.parent',
+                'metadata.locale_id',
+                'metadata.url',
+                'metadata.slug',
+                'metadata.in_sitemap',
+                'metadata.use_url_pattern',
+                'metadata.title',
+                'metadata.meta',
+                'metadata.extra_data',
+                'metadata.meta_type',
+                'metadata.publish_at'
+            ]
+        )->where(
+            [
+                'metadata.module_id' => 0,
+                'metadata.item_id'   => 0
+            ]
+        );
 
         return $this;
     }
