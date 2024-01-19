@@ -149,6 +149,7 @@ class CreateAvegaCmsTables extends Migration
             'is_system'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             'is_plugin'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             'slug'        => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
+            'class_name'  => ['type' => 'varchar', 'constraint' => 128, 'null' => true],
             'key'         => ['type' => 'varchar', 'constraint' => 255, 'unique' => true],
             'name'        => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
             'version'     => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
