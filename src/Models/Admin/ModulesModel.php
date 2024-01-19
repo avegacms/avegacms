@@ -69,13 +69,13 @@ class ModulesModel extends Model
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
-    protected $afterInsert    = [];
+    protected $afterInsert    = ['clearCache'];
     protected $beforeUpdate   = [];
-    protected $afterUpdate    = [];
+    protected $afterUpdate    = ['clearCache'];
     protected $beforeFind     = [];
     protected $afterFind      = [];
     protected $beforeDelete   = [];
-    protected $afterDelete    = [];
+    protected $afterDelete    = ['clearCache'];
 
     /**
      * @param  int  $parent
@@ -183,6 +183,7 @@ class ModulesModel extends Model
 
         return $modules;
     }
+
 
     /**
      * @return array
