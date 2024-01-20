@@ -98,8 +98,13 @@ class LoginModel extends Model
 
         if ( ! is_null($role)) {
             $this->builder()->join('user_roles', 'user_roles.user_id = users.id')
-                ->join('roles', 'roles.id = user_roles.role_id')
-                ->where(['roles.role' => $role]);
+                ->join('roles', 'roles.id = user_roles.role_id');
+
+            if (str_starts_with($role, '!')) {
+                $this->builder()->where(['roles.role !=' => str_ireplace('!', '', $role)]);
+            } else {
+                $this->builder()->where(['roles.role' => $role]);
+            }
         }
 
         return $this->first();
