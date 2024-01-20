@@ -24,6 +24,8 @@ class FilesLinksModel extends AvegaCmsModel
         'entity_id',
         'item_id',
         'uid',
+        'created_by_id',
+        'updated_by_id',
         'created_at',
         'updated_at'
     ];
@@ -37,13 +39,15 @@ class FilesLinksModel extends AvegaCmsModel
 
     // Validation
     protected $validationRules      = [
-        'id'        => ['rules' => 'if_exist|is_natural'],
-        'user_id'   => ['rules' => 'if_exist|is_natural_no_zero'],
-        'parent'    => ['rules' => 'if_exist|is_natural'],
-        'module_id' => ['rules' => 'if_exist|is_natural'],
-        'entity_id' => ['rules' => 'if_exist|is_natural'],
-        'item_id'   => ['rules' => 'if_exist|is_natural'],
-        'uid'       => ['rules' => 'if_exist|permit_empty|max_length[64]'],
+        'id'            => ['rules' => 'if_exist|is_natural'],
+        'user_id'       => ['rules' => 'if_exist|is_natural_no_zero'],
+        'parent'        => ['rules' => 'if_exist|is_natural'],
+        'module_id'     => ['rules' => 'if_exist|is_natural'],
+        'entity_id'     => ['rules' => 'if_exist|is_natural'],
+        'item_id'       => ['rules' => 'if_exist|is_natural'],
+        'uid'           => ['rules' => 'if_exist|permit_empty|max_length[64]'],
+        'created_by_id' => ['rules' => 'if_exist|is_natural'],
+        'updated_by_id' => ['rules' => 'if_exist|is_natural']
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;

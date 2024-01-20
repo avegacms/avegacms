@@ -251,7 +251,7 @@ class CreateAvegaCmsTables extends Migration
          */
         $this->forge->addField(
             [
-                'id'        => ['type' => 'int', 'constraint' => 16, 'unsigned' => true],
+                'id'        => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
                 'user_id'   => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
                 // id - родительского модуля
                 'parent'    => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
@@ -266,6 +266,7 @@ class CreateAvegaCmsTables extends Migration
                 'item_id'   => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
                 // принадлежность к модулю
                 'uid'       => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
+                ...Migrator::byId(),
                 ...Migrator::dateFields(['deleted_at'])
             ]
         );

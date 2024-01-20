@@ -27,14 +27,16 @@ class FilesLinksEntity extends Entity
     ];
     protected $dates   = ['created_at', 'updated_at'];
     protected $casts   = [
-        'id'         => 'integer',
-        'user_id'    => 'integer',
-        'parent'     => 'integer',
-        'module_id'  => 'integer',
-        'entity_id'  => 'integer',
-        'item_id'    => 'integer',
-        'uid'        => 'string',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'id'            => 'integer',
+        'user_id'       => 'integer',
+        'parent'        => 'integer',
+        'module_id'     => 'integer',
+        'entity_id'     => 'integer',
+        'item_id'       => 'integer',
+        'uid'           => 'string',
+        'created_by_id' => 'integer',
+        'updated_by_id' => 'integer',
+        'created_at'    => 'datetime',
+        'updated_at'    => 'datetime'
     ];
 }
