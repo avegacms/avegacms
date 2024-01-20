@@ -34,6 +34,7 @@ class CreateAvegaCmsTables extends Migration
         'tags'            => 'tags',
         'tags_links'      => 'tags_links',
         'files'           => 'files',
+        'files_links'     => 'files_links',
         'sessions'        => 'sessions',
         'permissions'     => 'permissions',
         'navigations'     => 'navigations',
@@ -220,59 +221,59 @@ class CreateAvegaCmsTables extends Migration
          * Таблица "местоположения" используется как для мультязычных, так и для мультирегиональных приложений/сайтов
          */
         $this->forge->addField([
-            'id'                => [
+            'id'          => [
                 'type'           => 'bigint',
                 'constraint'     => 16,
                 'unsigned'       => true,
                 'auto_increment' => true
             ],
-            'user_id'           => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
-            // ID пользователя загрузившего файл
-            'name'              => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
-            // название файла
-            'alternative_text'  => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
-            // альтернативный текст для изображения (если это изображение)
-            'caption'           => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
-            // подпись для файла
-            'width'             => ['type' => 'int', 'constraint' => 11, 'null' => 0, 'default' => 0],
-            // ширина файла (если это изображение)
-            'height'            => ['type' => 'int', 'constraint' => 11, 'null' => 0, 'default' => 0],
-            // высота файла (если это изображение)
-            'formats'           => ['type' => 'text', 'null' => true],
-            // объект, содержащий информацию о доступных форматах файла
-            'hash'              => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
-            // хэш файла
-            'ext'               => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
-            // расширение файла
-            'size'              => ['type' => 'float', 'null' => true, 'default' => 0],
-            // размер файла в байтах
-            'url'               => ['type' => 'varchar', 'constraint' => 1024, 'null' => true],
-            // URL-адрес файла
-            'preview_url'       => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
-            // URL-адрес превью файла (если это изображение)
-            'provider'          => [
+            'data'        => ['type' => 'text', 'null' => true],
+            'provider_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
+            'provider'    => [
                 'type'       => 'enum',
                 'constraint' => FileProviders::get('value'),
                 'default'    => FileProviders::Local->value
             ],
-            // поставщик хранения файла (например, local или cloudinary);
-            'provider_metadata' => ['type' => 'text', 'null' => true],
-            // дополнительные метаданные от провайдера хранения
-            'folder_path'       => ['type' => 'varchar', 'constraint' => 1024, 'null' => true],
-            // путь директории
-            'is_personal'       => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
-            // личный файл или будет доступен только пользователю загрузившего его
-            'file_type'         => [
+            'type'        => [
                 'type'       => 'enum',
                 'constraint' => FileTypes::get('value'),
                 'default'    => FileTypes::File->value
             ],
-            // тип загруженного файла
+            'active'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 1],
             ...Migrator::byId(),
             ...Migrator::dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
         $this->createTable($this->tables['files']);
+
+        /**
+         * Таблица связка файлов и модулей
+         */
+        $this->forge->addField(
+            [
+                'id'        => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
+                'user_id'   => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
+                // id - родительского модуля
+                'parent'    => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
+                // id - модуль
+                'module_id' => [
+                    'type'    => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true,
+                    'default' => 0
+                ],
+                // id - сущности элемента модуля
+                'entity_id' => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
+                // id - элемента сущности
+                'item_id'   => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
+                // принадлежность к модулю
+                'uid'       => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
+                'active'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 1],
+                ...Migrator::byId(),
+                ...Migrator::dateFields(['deleted_at'])
+            ]
+        );
+        $this->forge->addUniqueKey(['id', 'user_id', 'parent', 'module_id', 'entity_id', 'item_id']);
+        $this->forge->addForeignKey('id', $this->tables['files'], 'id', onDelete: 'CASCADE');
+        $this->createTable($this->tables['files_links']);
 
         /**
          * Таблица для хранения пользовательских сессий

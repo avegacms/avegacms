@@ -2,8 +2,11 @@
 
 namespace AvegaCms\Models\Admin;
 
+use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Model;
 use AvegaCms\Entities\FilesEntity;
+use AvegaCms\Enums\{FileTypes, FileProviders};
+use CodeIgniter\Validation\ValidationInterface;
 
 class FilesModel extends Model
 {
@@ -15,22 +18,11 @@ class FilesModel extends Model
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'name',
-        'user_id',
-        'alternative_text',
-        'caption',
-        'width',
-        'height',
-        'formats',
-        'hash',
-        'ext',
-        'size',
-        'url',
-        'preview_url',
+        'provider_id',
         'provider',
-        'provider_metadata',
-        'folder_path',
-        'is_personal',
+        'data',
+        'type',
+        'active',
         'created_by_id',
         'updated_by_id',
         'created_at',
@@ -45,7 +37,13 @@ class FilesModel extends Model
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'data'          => ['rules' => 'if_exist|required|string|max_length[2048]'],
+        'provider_id'   => ['rules' => 'if_exist|is_natural'],
+        'active'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
+        'created_by_id' => ['rules' => 'if_exist|is_natural'],
+        'updated_by_id' => ['rules' => 'if_exist|is_natural'],
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
@@ -60,4 +58,17 @@ class FilesModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
+    {
+        parent::__construct($db, $validation);
+
+        $this->validationRules = [
+            $this->validationRules,
+            ...[
+                'provider' => 'if_exist|required|in_list[' . implode(',', FileProviders::get('value')) . ']',
+                'type'     => 'if_exist|required|in_list[' . implode(',', FileTypes::get('value')) . ']',
+            ]
+        ];
+    }
 }
