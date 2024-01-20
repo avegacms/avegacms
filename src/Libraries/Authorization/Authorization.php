@@ -52,11 +52,12 @@ class Authorization
 
     /**
      * @param  array  $data
+     * @param  string|null  $role
      * @return array
      * @throws AuthorizationException
      * @throws ReflectionException
      */
-    public function auth(array $data): array
+    public function auth(array $data, ?string $role = null): array
     {
         if (empty($data)) {
             throw AuthorizationException::forNoData();
@@ -74,7 +75,7 @@ class Authorization
 
         $data = $this->validation->getValidated();
 
-        if (($user = $this->LM->getUser($loginType)) === null) {
+        if (($user = $this->LM->getUser($loginType, $role)) === null) {
             throw AuthorizationException::forUnknownUser();
         }
 

@@ -65,35 +65,42 @@ class LoginModel extends Model
 
     /**
      * @param  array  $fields
-     * @return array|null|LoginEntity
+     * @param  string|null  $role
+     * @return array|LoginEntity|null
      */
-    public function getUser(array $fields): array|null|LoginEntity
+    public function getUser(array $fields, ?string $role = null): array|null|LoginEntity
     {
         $this->builder()->select(
             [
-                'id',
-                'login',
-                'avatar',
-                'phone',
-                'email',
-                'timezone',
-                'password',
-                'secret',
-                'path',
-                'expires',
-                'profile',
-                'extra',
-                'status',
-                'condition'
+                'users.id',
+                'users.login',
+                'users.avatar',
+                'users.phone',
+                'users.email',
+                'users.timezone',
+                'users.password',
+                'users.secret',
+                'users.path',
+                'users.expires',
+                'users.profile',
+                'users.extra',
+                'users.status',
+                'users.condition'
             ]
         )->where($fields)
             ->whereIn(
-                'status',
+                'users.status',
                 [
                     UserStatuses::Active->value,
                     UserStatuses::Registration->value
                 ]
             );
+
+        if ( ! is_null($role)) {
+            $this->builder()->join('user_roles', 'user_roles.user_id = users.id')
+                ->join('roles', 'roles.id = user_roles.role_id')
+                ->where(['roles.role' => $role]);
+        }
 
         return $this->first();
     }
