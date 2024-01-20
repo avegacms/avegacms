@@ -266,6 +266,7 @@ class CreateAvegaCmsTables extends Migration
                 'item_id'   => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
                 // принадлежность к модулю
                 'uid'       => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
+                'active'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 1],
                 ...Migrator::byId(),
                 ...Migrator::dateFields(['deleted_at'])
             ]

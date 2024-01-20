@@ -24,6 +24,7 @@ class FilesLinksModel extends AvegaCmsModel
         'entity_id',
         'item_id',
         'uid',
+        'active',
         'created_by_id',
         'updated_by_id',
         'created_at',
@@ -46,6 +47,7 @@ class FilesLinksModel extends AvegaCmsModel
         'entity_id'     => ['rules' => 'if_exist|is_natural'],
         'item_id'       => ['rules' => 'if_exist|is_natural'],
         'uid'           => ['rules' => 'if_exist|permit_empty|max_length[64]'],
+        'active'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'created_by_id' => ['rules' => 'if_exist|is_natural'],
         'updated_by_id' => ['rules' => 'if_exist|is_natural']
     ];
