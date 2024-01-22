@@ -17,13 +17,12 @@ class EmailTemplateModel extends AvegaCmsModel
     protected $allowedFields    = [
         'slug',
         'module_id',
-        'locale_id',
         'is_system',
         'label',
         'subject',
         'content',
         'variables',
-        'template',
+        'view',
         'active',
         'created_by_id',
         'updated_by_id',
@@ -43,13 +42,12 @@ class EmailTemplateModel extends AvegaCmsModel
         'id'            => ['rules' => 'if_exist|is_natural'],
         'module_id'     => ['rules' => 'if_exist|is_natural'],
         'label'         => ['rules' => 'if_exist|permit_empty|string|max_length[255]'],
-        'slug'          => ['rules' => 'if_exist|required|permit_empty|alpha_dash|max_length[64]|unique_db_key[email_templates.module_id+locale_id+is_system+slug,id,{id}]'],
-        'locale_id'     => ['rules' => 'if_exist|required|is_natural_no_zero'],
+        'slug'          => ['rules' => 'if_exist|required|permit_empty|alpha_dash|max_length[64]|unique_db_key[email_templates.module_id+is_system+slug,id,{id}]'],
         'is_system'     => ['rules' => 'if_exist|required|is_natural'],
         'subject'       => ['rules' => 'if_exist|required|string'],
         'content'       => ['rules' => 'if_exist|permit_empty|string'],
         'variables'     => ['rules' => 'if_exist|permit_empty|string'],
-        'template'      => ['rules' => 'if_exist|permit_empty|string|max_length[255]'],
+        'view'          => ['rules' => 'if_exist|permit_empty|string|max_length[255]'],
         'active'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'created_by_id' => ['rules' => 'if_exist|is_natural'],
         'updated_by_id' => ['rules' => 'if_exist|is_natural']
@@ -71,23 +69,20 @@ class EmailTemplateModel extends AvegaCmsModel
 
     // AvegaCms filter settings
     protected array  $filterFields      = [
-        'slug'     => 'slug',
-        'label'    => 'label',
-        'locale'   => 'locale_id',
-        'template' => 'template'
+        'slug'  => 'email_templates.slug',
+        'label' => 'email_templates.label',
+        'view'  => 'email_templates.view'
     ];
     protected array  $searchFields      = [
         'label',
         'slug',
-        'template'
+        'view'
     ];
-    protected array  $sortableFields    = [
-        'locale'
-    ];
+    protected array  $sortableFields    = [];
     protected array  $filterCastsFields = [
-        'slug'     => 'string',
-        'locale'   => 'int',
-        'template' => 'string'
+        'slug'   => 'string',
+        'locale' => 'int',
+        'view'   => 'string'
     ];
     protected string $searchFieldAlias  = 'q';
     protected string $sortFieldAlias    = 's';
@@ -95,18 +90,20 @@ class EmailTemplateModel extends AvegaCmsModel
     protected int    $limit             = 20;
     protected int    $maxLimit          = 100;
 
-    public function getTemplates()
+    /**
+     * @return $this
+     */
+    public function getTemplates(): EmailTemplateModel
     {
         $this->builder()->select(
             [
-                'id',
-                'slug',
-                'module_id',
-                'locale_id',
-                'is_system',
-                'label',
-                'template',
-                'active'
+                'email_templates.id',
+                'email_templates.slug',
+                'email_templates.module_id',
+                'email_templates.is_system',
+                'email_templates.label',
+                'email_templates.view',
+                'email_templates.active'
             ]
         );
 
@@ -121,16 +118,15 @@ class EmailTemplateModel extends AvegaCmsModel
     {
         $this->builder()->select(
             [
-                'id',
-                'slug',
-                'module_id',
-                'locale_id',
-                'is_system',
-                'label',
-                'subject',
-                'content',
-                'template',
-                'active'
+                'email_templates.id',
+                'email_templates.slug',
+                'email_templates.module_id',
+                'email_templates.is_system',
+                'email_templates.label',
+                'email_templates.subject',
+                'email_templates.content',
+                'email_templates.view',
+                'email_templates.active'
             ]
         );
 
@@ -140,28 +136,27 @@ class EmailTemplateModel extends AvegaCmsModel
 
     /**
      * @param  string  $slug
-     * @param  int  $locale
      * @return array|object|null
      */
-    public function getEmailTemplate(string $slug, int $locale): array|object|null
+    public function getEmailTemplate(string $slug): array|object|null
     {
-        return cache()->remember("emailTemplate_{$slug}_{$locale}", 30 * DAY, function () use ($slug, $locale) {
-            $this->builder()->select(
-                [
-                    'subject',
-                    'content',
-                    'template',
-                ]
-            )->where(
-                [
-                    'slug'      => $slug,
-                    'locale_id' => $locale,
-                    'active'    => 1
-                ]
-            );
+        return cache()->remember('emailTemplate' . ucfirst($slug), 30 * DAY,
+            function () use ($slug) {
+                $this->builder()->select(
+                    [
+                        'email_templates.subject',
+                        'email_templates.content',
+                        'email_templates.view',
+                    ]
+                )->where(
+                    [
+                        'email_templates.slug'   => $slug,
+                        'email_templates.active' => 1
+                    ]
+                );
 
-            return $this->first();
-        });
+                return $this->first();
+            });
     }
 
     /**
@@ -170,8 +165,8 @@ class EmailTemplateModel extends AvegaCmsModel
      */
     public function clearEmailTemplateCache(array $data): void
     {
-        if (isset($data['slug']) && isset($data['locale_id'])) {
-            cache()->delete("emailTemplate_{$data['slug']}_{$data['locale_id']}");
+        if (isset($data['slug'])) {
+            cache()->delete('emailTemplate' . ucfirst($data['slug']));
         }
     }
 }

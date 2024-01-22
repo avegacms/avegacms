@@ -454,22 +454,20 @@ class CreateAvegaCmsTables extends Migration
         $this->forge->addField([
             'id'        => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
             'module_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true, 'default' => 0],
-            'locale_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => 0],
             'is_system' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             'label'     => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
             'slug'      => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
             'subject'   => ['type' => 'text', 'null' => true],
             'content'   => ['type' => 'text', 'null' => true],// Если нет шаблона, то код можно писать сюда
             'variables' => ['type' => 'text', 'null' => true],
-            'template'  => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
+            'view'      => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
             'active'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 1],
             ...Migrator::byId(),
             ...Migrator::dateFields(['deleted_at'])
         ]);
         $this->forge->addPrimaryKey('id');
-        $this->forge->addUniqueKey(['module_id', 'locale_id', 'is_system', 'slug']);
+        $this->forge->addUniqueKey(['module_id', 'is_system', 'slug']);
         $this->forge->addForeignKey('module_id', $this->tables['modules'], 'id', onDelete: 'CASCADE');
-        $this->forge->addForeignKey('locale_id', $this->tables['locales'], 'id', onDelete: 'CASCADE');
         $this->createTable($this->tables['email_templates']);
     }
 
