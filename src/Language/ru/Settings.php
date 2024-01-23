@@ -50,6 +50,7 @@ return [
             'userAgent'     => 'Email user agent',
             'charset'       => 'Кодировка электронной почты',
             'protocol'      => 'Протокол электронной почты',
+            'mailPath'      => 'Путь к серверу Sendmail',
             'priority'      => 'Приоритет',
             'mailType'      => 'Тип почты',
             'smtpHost'      => 'SMTP Хост',

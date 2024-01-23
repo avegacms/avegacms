@@ -4,7 +4,7 @@ namespace AvegaCms\Database\Seeds;
 
 use CodeIgniter\Test\Fabricator;
 use AvegaCms\Enums\{SettingsReturnTypes, MetaDataTypes, MetaStatuses, UserStatuses};
-use AvegaCms\Utilities\Cms;
+use AvegaCms\Utilities\{Cms, CmsModule};
 use CodeIgniter\Database\{BaseConnection, Seeder};
 use Config\Database;
 use CodeIgniter\CLI\CLI;
@@ -1307,7 +1307,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'entity'        => 'core',
                 'slug'          => 'email',
                 'key'           => 'fromEmail',
-                'value'         => '',
+                'value'         => 'testemail@mydev.app',
                 'default_value' => '',
                 'return_type'   => SettingsReturnTypes::String->value,
                 'label'         => 'Settings.label.email.fromEmail',
@@ -1390,8 +1390,20 @@ class AvegaCmsInstallSeeder extends Seeder
                 'is_core'       => 1,
                 'entity'        => 'core',
                 'slug'          => 'email',
+                'key'           => 'mailPath',
+                'value'         => '/usr/sbin/sendmail',
+                'default_value' => '/usr/sbin/sendmail',
+                'return_type'   => SettingsReturnTypes::String->value,
+                'label'         => 'Settings.label.email.mailPath',
+                'context'       => 'Settings.context.email.mailPath'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'email',
                 'key'           => 'protocol',
-                'value'         => 'mail',
+                'value'         => 'sendmail',
                 'default_value' => 'mail',
                 'return_type'   => SettingsReturnTypes::String->value,
                 'label'         => 'Settings.label.email.protocol',
@@ -1548,99 +1560,67 @@ class AvegaCmsInstallSeeder extends Seeder
     private function _createEmailSystemTemplate(int $userId): void
     {
         $templates = [
-            'ru' => [
-                [
-                    'label'     => 'Подтверждение email',
-                    'slug'      => 'confirm',
-                    'subject'   => '{siteName} подтверждение email',
-                    'content'   => 'Ваш код подтверждения email {code}',
-                    'variables' => '',
-                    'template'  => 'auth'
+            [
+                'is_system' => 1,
+                'slug'      => 'confirm',
+                'label'     => 'Подтверждение email',
+                'subject'   => [
+                    'ru' => 'Подтверждение email',
+                    'en' => 'Email confirmation',
+                    'de' => 'Autorisierungscode'
                 ],
-                [
-                    'label'     => 'Подтверждение кода авторизации',
-                    'slug'      => 'auth',
-                    'subject'   => 'Код авторизации',
-                    'content'   => 'Ваш код авторизации {code}',
-                    'variables' => '',
-                    'template'  => 'auth'
+                'content'   => [
+                    'ru' => 'Ваш код подтверждения email <b>{{CODE}}</b>.',
+                    'en' => 'Your confirmation email code <b>{{CODE}}</b>.',
+                    'de' => 'Ihr Zugangswiederherstellungsbestätigungscode ist <b>{{CODE}}</b>.'
                 ],
-                [
-                    'label'     => 'Подтверждение кода восстановления доступов',
-                    'slug'      => 'recovery',
-                    'subject'   => 'Восстановление доступов',
-                    'content'   => 'Ваш код подтверждения восстановления доступов {code}',
-                    'variables' => '',
-                    'template'  => 'auth'
-                ]
+                'view'      => '',
+                'variables' => ''
             ],
-            'en' => [
-                [
-                    'label'     => 'Email confirmation',
-                    'slug'      => 'confirm',
-                    'subject'   => '{siteName} confirmation of email',
-                    'content'   => 'Your confirmation email code {code}',
-                    'variables' => '',
-                    'template'  => 'auth'
+            [
+                'is_system' => 1,
+                'slug'      => 'auth',
+                'label'     => 'Подтверждение кода авторизации',
+                'subject'   => [
+                    'ru' => 'Ваш код авторизации',
+                    'en' => 'Authorization code',
+                    'de' => 'E-Mail-Bestätigung'
                 ],
-                [
-                    'label'     => 'Authorization code confirmation',
-                    'slug'      => 'auth',
-                    'subject'   => 'Authorization code',
-                    'content'   => 'Your authorization code {code}',
-                    'variables' => '',
-                    'template'  => 'auth'
+                'content'   => [
+                    'ru' => 'Ваш код авторизации <b>{{CODE}}</b>.',
+                    'en' => 'Your authorization code <b>{{CODE}}</b>.',
+                    'de' => 'Ihr Autorisierungscode ist <b>{{CODE}}</b>.'
                 ],
-                [
-                    'label'     => 'Restoring access',
-                    'slug'      => 'recovery',
-                    'subject'   => 'Restoring access',
-                    'content'   => 'Your access recovery confirmation code {code}',
-                    'variables' => '',
-                    'template'  => 'auth'
-                ]
+                'view'      => '',
+                'variables' => ''
             ],
-            'de' => [
-                [
-                    'label'     => 'E-Mail-Bestätigung',
-                    'slug'      => 'confirm',
-                    'subject'   => '{siteName} E-Mail-Bestätigung',
-                    'content'   => 'Ihr Bestätigungscode email {code}',
-                    'variables' => '',
-                    'template'  => 'auth'
+            [
+                'is_system' => 1,
+                'slug'      => 'recovery',
+                'label'     => 'Подтверждение кода восстановления доступов',
+                'subject'   => [
+                    'ru' => 'Восстановление доступов',
+                    'en' => 'Restoring access',
+                    'de' => 'Zugriff wiederherstellen'
                 ],
-                [
-                    'label'     => 'Bestätigung des Autorisierungscodes',
-                    'slug'      => 'auth',
-                    'subject'   => 'Autorisierungscode',
-                    'content'   => 'Ihr Autorisierungscode ist {code}',
-                    'variables' => '',
-                    'template'  => 'auth'
+                'content'   => [
+                    'ru' => 'Ваш код подтверждения восстановления доступов <b>{{CODE}}</b>.',
+                    'en' => 'Your access recovery confirmation code <b>{{CODE}}</b>.',
+                    'de' => 'Ihr Zugangswiederherstellungsbestätigungscode ist <b>{{CODE}}</b>.'
                 ],
-                [
-                    'label'     => 'Bestätigung des Zugriffs-Wiederherstellungscodes',
-                    'slug'      => 'recovery',
-                    'subject'   => 'Zugriff wiederherstellen',
-                    'content'   => 'Ihr Zugangswiederherstellungsbestätigungscode ist {code}',
-                    'variables' => '',
-                    'template'  => 'auth'
-                ]
+                'view'      => '',
+                'variables' => ''
             ]
         ];
 
-        $locales = $this->LLM->select(['id', 'slug'])
-            ->orderBy('id', 'ASC')
-            ->findAll();
-
         $emailTemplate = [];
 
-        foreach ($locales as $locale) {
-            foreach ($templates[$locale->slug] as $template) {
-                $template['locale_id']     = $locale->id;
-                $template['is_system']     = 1;
-                $template['created_by_id'] = $userId;
-                $emailTemplate[]           = (new EmailTemplateEntity($template));
-            }
+        $module = CmsModule::meta('settings.email_template');
+
+        foreach ($templates as $template) {
+            $template['module_id']     = $module['id'];
+            $template['created_by_id'] = $userId;
+            $emailTemplate[]           = (new EmailTemplateEntity($template));
         }
 
         $this->ETM->insertBatch($emailTemplate);
