@@ -1403,7 +1403,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'entity'        => 'core',
                 'slug'          => 'email',
                 'key'           => 'protocol',
-                'value'         => 'mail',
+                'value'         => 'sendmail',
                 'default_value' => 'mail',
                 'return_type'   => SettingsReturnTypes::String->value,
                 'label'         => 'Settings.label.email.protocol',
