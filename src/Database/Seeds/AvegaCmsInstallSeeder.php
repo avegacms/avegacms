@@ -1307,7 +1307,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'entity'        => 'core',
                 'slug'          => 'email',
                 'key'           => 'fromEmail',
-                'value'         => '',
+                'value'         => 'testemail@mydev.app',
                 'default_value' => '',
                 'return_type'   => SettingsReturnTypes::String->value,
                 'label'         => 'Settings.label.email.fromEmail',
@@ -1384,6 +1384,18 @@ class AvegaCmsInstallSeeder extends Seeder
                 'return_type'   => SettingsReturnTypes::String->value,
                 'label'         => 'Settings.label.email.charset',
                 'context'       => 'Settings.context.email.charset'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'core',
+                'slug'          => 'email',
+                'key'           => 'mailPath',
+                'value'         => '/usr/sbin/sendmail',
+                'default_value' => '/usr/sbin/sendmail',
+                'return_type'   => SettingsReturnTypes::String->value,
+                'label'         => 'Settings.label.email.mailPath',
+                'context'       => 'Settings.context.email.mailPath'
             ],
             [
                 'module_id'     => 0,

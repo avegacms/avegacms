@@ -42,4 +42,5 @@ class EmailTemplateEntity extends AvegaCmsEntity
         'updated_at'    => 'datetime'
     ];
 
+    //public function __construct(?array $data = null) {parent::__construct($data);}
 }

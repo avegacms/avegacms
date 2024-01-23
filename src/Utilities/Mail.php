@@ -32,6 +32,13 @@ class Mail
             throw MailException::forNoRecipient();
         }
 
+        if ( ! isset($recipient['to']) && ! isset($recipient['bcc']) && ! isset($recipient['cc'])) {
+            $recipient = ['to' => $recipient];
+            if (empty($recipient['to'])) {
+                throw MailException::forNoRecipient();
+            }
+        }
+
         if (isset($recipient['cc'])) {
             $recipient['cc'] = self::toArray($recipient['cc']);
         }
@@ -42,13 +49,6 @@ class Mail
 
         if (isset($recipient['to'])) {
             $recipient['to'] = self::toArray($recipient['to']);
-        }
-
-        if ( ! isset($recipient['bcc']) && ! isset($recipient['cc'])) {
-            $recipient['to'] = $recipient;
-            if (empty($recipient['to'])) {
-                throw MailException::forNoRecipient();
-            }
         }
 
         if (is_null($locale)) {
@@ -63,13 +63,13 @@ class Mail
             throw MailException::forTemplateNotFound();
         }
 
-        if ( ! empty($eTemplate['view'])) {
-            if ( ! file_exists(APPPATH . 'Views/' . ($view = 'template/email/blocks/' . $eTemplate['view']) . '.php')) {
+        if ( ! empty($eTemplate->view)) {
+            if ( ! file_exists(APPPATH . 'Views/' . ($view = 'template/email/blocks/' . $eTemplate->view) . '.php')) {
                 throw MailException::forNoViewTemplate($view);
             }
             $emailData['content'] = view($view, [$data, ...['locale' => $locale]], ['debug' => false]);
         } else {
-            $emailData['content'] = strtr($eTemplate['content'][$locale], self::prepData($data));
+            $emailData['content'] = strtr($eTemplate->content[$locale], self::prepData($data));
         }
 
         $config = self::getConfig($myConfig);
@@ -77,10 +77,10 @@ class Mail
 
         $email->setFrom(
             $config['fromEmail'],
-            $config['fromName'] ?? [],
+            $config['fromName'] ?? '',
             $config['protocol'] === 'smtp' ? null : ($config['returnEmail'] ?? null)
         )
-            ->setSubject($eTemplate['subject'][$locale] ?? '')
+            ->setSubject($eTemplate->subject[$locale] ?? '')
             ->setTo($recipient['to']);
 
         if ( ! empty($recipient['cc'] ?? '')) {
