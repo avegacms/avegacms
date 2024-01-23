@@ -2,77 +2,106 @@
 
 namespace AvegaCms\Utilities;
 
+use AvegaCms\Utilities\Exceptions\MailException;
 use AvegaCms\Models\Admin\EmailTemplateModel;
 use Config\Services;
-use RuntimeException;
 use ReflectionException;
 
 class Mail
 {
     /**
-     * @param  string  $slug
-     * @param  string|array  $to
-     * @param  int  $locale
+     * @param  string  $template
+     * @param  string|array  $recipient
      * @param  array  $data
-     * @param  array  $attach
-     * @param  array  $config
-     * @return bool
+     * @param  string|null  $locale
+     * @param  array|null  $attached
+     * @param  array|null  $myConfig
+     * @return void
+     * @throws MailException
      * @throws ReflectionException
      */
     public static function send(
-        string $slug,
-        string|array $to,
-        int $locale = 0,
+        string $template,
+        string|array $recipient,
         array $data = [],
-        array $attach = [],
-        array $config = []
-    ): bool {
-        if (empty($slug)) {
-            throw new RuntimeException('Slug cannot be empty');
+        ?string $locale = null,
+        ?array $attached = null,
+        ?array $myConfig = null
+    ): void {
+        if (empty($recipient = self::toArray($recipient))) {
+            throw MailException::forNoRecipient();
         }
 
-        if (empty($to) || empty($to['recipient'] ?? '')) {
-            throw new RuntimeException('The email address of the recipient of the letter is not specified');
+        if (isset($recipient['cc'])) {
+            $recipient['cc'] = self::toArray($recipient['cc']);
         }
 
-        $ETM = model(EmailTemplateModel::class);
-
-        if (($tData = $ETM->getEmailTemplate($slug, $locale)) === null) {
-            throw new RuntimeException('Email template not found');
+        if (isset($recipient['bcc'])) {
+            $recipient['bcc'] = self::toArray($recipient['bcc']);
         }
 
-        if ( ! empty($tData->template) && ! file_exists($file = APPPATH . 'Views/' . ($tData->template = 'template/email/templates/' . $tData->template) . '.php')) {
-            throw new RuntimeException("Email template file $file not found");
+        if (isset($recipient['to'])) {
+            $recipient['to'] = self::toArray($recipient['to']);
         }
 
-        $config = self::getConfig($config);
-        $parser = Services::parser();
+        if ( ! isset($recipient['bcc']) && ! isset($recipient['cc'])) {
+            $recipient['to'] = $recipient;
+            if (empty($recipient['to'])) {
+                throw MailException::forNoRecipient();
+            }
+        }
+
+        if (is_null($locale)) {
+            $locale = Cms::settings('core.env.defLocale');
+        }
+
+        if ( ! file_exists(APPPATH . 'Views/template/email/foundation.php')) {
+            throw MailException::forNoEmailFolder();
+        }
+
+        if (empty($eTemplate = model(EmailTemplateModel::class)->getEmailTemplate($template))) {
+            throw MailException::forTemplateNotFound();
+        }
+
+        if ( ! empty($eTemplate['view'])) {
+            if ( ! file_exists(APPPATH . 'Views/' . ($view = 'template/email/blocks/' . $eTemplate['view']) . '.php')) {
+                throw MailException::forNoViewTemplate($view);
+            }
+            $emailData['content'] = view($view, [$data, ...['locale' => $locale]], ['debug' => false]);
+        } else {
+            $emailData['content'] = strtr($eTemplate['content'][$locale], self::prepData($data));
+        }
+
+        $config = self::getConfig($myConfig);
         $email  = Services::email($config);
 
         $email->setFrom(
             $config['fromEmail'],
             $config['fromName'] ?? [],
             $config['protocol'] === 'smtp' ? null : ($config['returnEmail'] ?? null)
-        );
+        )
+            ->setSubject($eTemplate['subject'][$locale] ?? '')
+            ->setTo($recipient['to']);
 
-        $email->setSubject($parser->setData($data)->renderString($tData->subject));
+        if ( ! empty($recipient['cc'] ?? '')) {
+            $email->setCC($recipient['cc']);
+        }
+
+        if ( ! empty($recipient['bcc'] ?? '')) {
+            $email->setBCC($recipient['bcc']);
+        }
 
         if ( ! empty($config['replyEmail'])) {
-            $email->setReplyTo($config['replyEmail'], $config['replyName']);
+            $email->setReplyTo($config['replyEmail'], $config['replyName'] ?? '');
         }
 
-        $email->setTo($to['recipient']);
+        $email->setMessage(
+            ($config['mailType'] === 'html') ? view('template/email/foundation', $emailData,
+                ['debug' => false]) : $emailData['content']
+        );
 
-        if ( ! empty($to['ccRecipient'] ?? '')) {
-            $email->setCC($to['ccRecipient']);
-        }
-
-        if ( ! empty($to['bccRecipient'] ?? '')) {
-            $email->setBCC($to['bccRecipient']);
-        }
-
-        if ( ! empty($attach ?? '')) {
-            foreach ($attach as $item) {
+        if ( ! empty($attached ?? '')) {
+            foreach ($attached as $item) {
                 $email->attach(
                     $item['file'],
                     '',
@@ -82,28 +111,45 @@ class Mail
             }
         }
 
-        if ( ! empty($tData->template)) {
-            $data['emailTemplateData'] = $parser->setData($data)->render($tData->template);
-        } else {
-            $data['emailTemplateData'] = $parser->setData($data)->renderString($tData->content);
+        if ( ! $email->send()) {
+            log_message('error', $email->printDebugger(['headers']));
+            throw MailException::forNoSendEmail();
         }
-
-        $email->setMessage(
-            $parser->setData($data)->render(
-                'template/email/foundation',
-                ['cascadeData' => true]
-            )
-        );
-
-        return $email->send();
     }
 
     /**
-     * @param  array  $config
+     * @param  string|array  $email
+     * @return array
+     */
+    public static function toArray(string|array $email): array
+    {
+        return ! is_array($email) ? ((str_contains($email, ',')) ?
+            preg_split('/[\s,]/', $email, -1, PREG_SPLIT_NO_EMPTY) :
+            (array) trim($email)) : $email;
+    }
+
+    /**
+     * @param  array  $data
+     * @return array
+     */
+    public static function prepData(array $data): array
+    {
+        $prepData = [];
+        if ( ! empty($data)) {
+            foreach ($data as $key => $value) {
+                $prepData['{{' . strtoupper($key) . '}}'] = $value;
+            }
+        }
+
+        return $prepData;
+    }
+
+    /**
+     * @param  array|null  $config
      * @return array
      * @throws ReflectionException
      */
-    protected static function getConfig(array $config): array
+    protected static function getConfig(?array $config = null): array
     {
         $defConfig = Cms::settings('core.email');
 
