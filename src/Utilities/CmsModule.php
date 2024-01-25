@@ -130,12 +130,12 @@ class CmsModule
 
     /**
      * @param  string  $key
-     * @return array
+     * @return array|null
      */
-    public static function meta(string $key): array
+    public static function meta(string $key): array|null
     {
         if (($meta = model(ModulesModel::class)->getModulesMeta()[$key] ?? null) === null) {
-            throw new RuntimeException("Module metadata not found :: key {$key}");
+            log_message('error', "Module metadata not found :: key {$key}");
         }
 
         return $meta;
