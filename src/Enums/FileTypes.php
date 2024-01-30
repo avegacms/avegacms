@@ -4,11 +4,13 @@ namespace AvegaCms\Enums;
 
 enum FileTypes: string
 {
+    case Directory = 'DIRECTORY';
     case Image     = 'IMAGE';
+
     case File      = 'FILE';
     case Link      = 'LINK';
     case VideoLink = 'VIDEO_LINK';
-    
+
     /**
      * @param  string|null  $key
      * @return array
