@@ -1307,7 +1307,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'entity'        => 'core',
                 'slug'          => 'email',
                 'key'           => 'fromEmail',
-                'value'         => 'testemail@mydev.app',
+                'value'         => 'testemail@dvl.to',
                 'default_value' => '',
                 'return_type'   => SettingsReturnTypes::String->value,
                 'label'         => 'Settings.label.email.fromEmail',
