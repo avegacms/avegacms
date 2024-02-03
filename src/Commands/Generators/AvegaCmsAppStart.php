@@ -52,7 +52,7 @@ class AvegaCmsAppStart extends BaseCommand
             return;
         }
 
-        $this->call('php spark migrate --all');
-        $this->call('php spark db:seed AvegaCms\\Database\\Seeds\\AvegaCmsInstallSeeder');
+        $this->call('migrate --all');
+        $this->call('db:seed AvegaCms\\Database\\Seeds\\AvegaCmsInstallSeeder');
     }
 }

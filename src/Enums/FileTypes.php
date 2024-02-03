@@ -6,6 +6,8 @@ enum FileTypes: string
 {
     case Directory = 'DIRECTORY';
     case Image     = 'IMAGE';
+    case Video     = 'VIDEO';
+    case Audio     = 'AUDIO';
     case File      = 'FILE';
     case Link      = 'LINK';
     case VideoLink = 'VIDEO_LINK';
