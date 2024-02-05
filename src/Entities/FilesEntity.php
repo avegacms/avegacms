@@ -2,8 +2,6 @@
 
 namespace AvegaCms\Entities;
 
-use CodeIgniter\Entity\Entity;
-
 /**
  * @property int $id
  * @property int $providerId
@@ -14,7 +12,7 @@ use CodeIgniter\Entity\Entity;
  * @property int $createdById
  * @property int $updatedById
  */
-class FilesEntity extends Entity
+class FilesEntity extends AvegaCmsEntity
 {
     protected $datamap = [
         'providerId'  => 'provider_id',
