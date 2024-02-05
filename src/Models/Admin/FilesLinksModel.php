@@ -109,6 +109,6 @@ class FilesLinksModel extends AvegaCmsModel
             ]
         );
 
-        return ! is_null($id = $this->findColumn('id')) ? $id[0] : 0;
+        return ! is_null($id = $this->findColumn('id')) ? (int) $id[0] : 0;
     }
 }
