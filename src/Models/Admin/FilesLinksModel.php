@@ -4,13 +4,16 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Models\Admin;
 
+use AvegaCms\Enums\FileTypes;
 use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Entities\FilesLinksEntity;
+use CodeIgniter\Database\ConnectionInterface;
+use CodeIgniter\Validation\ValidationInterface;
 
 class FilesLinksModel extends AvegaCmsModel
 {
     protected $DBGroup          = 'default';
-    protected $table            = 'files_link';
+    protected $table            = 'files_links';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = false;
     protected $returnType       = FilesLinksEntity::class;
@@ -24,6 +27,7 @@ class FilesLinksModel extends AvegaCmsModel
         'entity_id',
         'item_id',
         'uid',
+        'type',
         'active',
         'created_by_id',
         'updated_by_id',
@@ -41,7 +45,7 @@ class FilesLinksModel extends AvegaCmsModel
     // Validation
     protected $validationRules      = [
         'id'            => ['rules' => 'if_exist|is_natural'],
-        'user_id'       => ['rules' => 'if_exist|is_natural_no_zero'],
+        'user_id'       => ['rules' => 'if_exist|is_natural'],
         'parent'        => ['rules' => 'if_exist|is_natural'],
         'module_id'     => ['rules' => 'if_exist|is_natural'],
         'entity_id'     => ['rules' => 'if_exist|is_natural'],
@@ -77,4 +81,34 @@ class FilesLinksModel extends AvegaCmsModel
     protected array  $filterEnumValues  = [];
     protected int    $limit             = 20;
     protected int    $maxLimit          = 100;
+
+    public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
+    {
+        parent::__construct($db, $validation);
+        $this->validationRules['type'] = [
+            'rules' => 'if_exist|required|in_list[' . implode(',', FileTypes::get('value')) . ']'
+        ];
+    }
+
+    /**
+     * @param  int|null  $parent
+     * @param  int|null  $moduleId
+     * @param  int|null  $entityId
+     * @param  int|null  $itemId
+     * @return int
+     */
+    public function getDirectoryData(?int $parent, ?int $moduleId, ?int $entityId, ?int $itemId): int
+    {
+        $this->builder()->where(
+            [
+                'type' => FileTypes::Directory->value,
+                ...(! is_null($parent) ? ['parent_id' => $parent] : []),
+                ...(! is_null($moduleId) ? ['module_id' => $moduleId] : []),
+                ...(! is_null($entityId) ? ['entity_id' => $entityId] : []),
+                ...(! is_null($itemId) ? ['item_id' => $itemId] : []),
+            ]
+        );
+
+        return ! is_null($id = $this->findColumn('id')) ? $id[0] : 0;
+    }
 }
