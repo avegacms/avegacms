@@ -2,7 +2,7 @@
 
 namespace AvegaCms\Entities;
 
-use CodeIgniter\Entity\Entity;
+use AvegaCms\Enums\FileTypes;
 
 /**
  * @property int $id
@@ -12,11 +12,12 @@ use CodeIgniter\Entity\Entity;
  * @property int $entityId
  * @property int $itemId
  * @property string $uid
+ * @property FileTypes $type
  * @property boolean $active
  * @property int $createdById
  * @property int $updatedById
  */
-class FilesLinksEntity extends Entity
+class FilesLinksEntity extends AvegaCmsEntity
 {
     protected $datamap = [
         'userId'      => 'user_id',
@@ -35,6 +36,7 @@ class FilesLinksEntity extends Entity
         'entity_id'     => 'integer',
         'item_id'       => 'integer',
         'uid'           => 'string',
+        'type'          => 'string',
         'active'        => 'int-bool',
         'created_by_id' => 'integer',
         'updated_by_id' => 'integer',

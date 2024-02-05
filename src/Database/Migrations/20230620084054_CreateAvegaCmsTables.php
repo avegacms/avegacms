@@ -267,6 +267,11 @@ class CreateAvegaCmsTables extends Migration
                 // принадлежность к модулю
                 'uid'       => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
                 'active'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 1],
+                'type'      => [
+                    'type'       => 'enum',
+                    'constraint' => FileTypes::get('value'),
+                    'default'    => FileTypes::File->value
+                ],
                 ...Migrator::byId(),
                 ...Migrator::dateFields(['deleted_at'])
             ]

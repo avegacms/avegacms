@@ -51,24 +51,54 @@ class FilesModel extends Model
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
-    protected $afterInsert    = [];
+    protected $afterInsert    = ['updateDirectoriesCache'];
     protected $beforeUpdate   = [];
     protected $afterUpdate    = [];
     protected $beforeFind     = [];
     protected $afterFind      = [];
     protected $beforeDelete   = [];
-    protected $afterDelete    = [];
+    protected $afterDelete    = ['updateDirectoriesCache'];
 
     public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
     {
         parent::__construct($db, $validation);
 
-        $this->validationRules = [
-            $this->validationRules,
-            ...[
-                'provider' => 'if_exist|required|in_list[' . implode(',', FileProviders::get('value')) . ']',
-                'type'     => 'if_exist|required|in_list[' . implode(',', FileTypes::get('value')) . ']',
-            ]
+        $this->validationRules['provider'] = [
+            'rules' => 'if_exist|required|in_list[' . implode(',', FileProviders::get('value')) . ']'
         ];
+        $this->validationRules['type']     = [
+            'rules' => 'if_exist|required|in_list[' . implode(',', FileTypes::get('value')) . ']'
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getDirectories(): array
+    {
+        return cache()->remember('FileManagerDirectories', 30 * DAY,
+            function () {
+                $this->builder()->select(
+                    [
+                        'files.id',
+                        'files.data',
+                        'files.provider_id',
+                        'files.provider',
+                        'files.active'
+                    ]
+                )->where(['files.type' => FileTypes::Directory->value]);
+
+                $result = $this->asArray()->findAll();
+
+                return ! empty($result) ? array_column($result, null, 'id') : [];
+            });
+    }
+
+    public function updateDirectoriesCache(array $data)
+    {
+        if ($data['data']['type'] === FileTypes::Directory->value) {
+            cache()->delete('FileManagerDirectories');
+            $this->getDirectories();
+        }
     }
 }

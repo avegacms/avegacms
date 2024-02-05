@@ -64,8 +64,12 @@ class Uploader
      * @return void
      * @throws UploaderException
      */
-    private static function checkFilePath(string $path): void
+    public static function checkFilePath(string $path): void
     {
+        if (is_dir(self::$uploadPath . $path)) {
+            return;
+        }
+
         if (empty($path = explode('/', $path))) {
             throw UploaderException::forEmptyPath();
         }

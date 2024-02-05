@@ -4,7 +4,7 @@ namespace AvegaCms\Database\Seeds;
 
 use CodeIgniter\Test\Fabricator;
 use AvegaCms\Enums\{SettingsReturnTypes, MetaDataTypes, MetaStatuses, UserStatuses};
-use AvegaCms\Utilities\{Cms, CmsModule};
+use AvegaCms\Utilities\{Cms, CmsModule, CmsFileManager};
 use CodeIgniter\Database\{BaseConnection, Seeder};
 use Config\Database;
 use CodeIgniter\CLI\CLI;
@@ -31,6 +31,7 @@ use AvegaCms\Entities\{ContentEntity,
     LocalesEntity,
     EmailTemplateEntity
 };
+use AvegaCms\Utilities\Exceptions\UploaderException;
 use ReflectionException;
 use Exception;
 
@@ -68,6 +69,7 @@ class AvegaCmsInstallSeeder extends Seeder
     /**
      * @return void
      * @throws ReflectionException
+     * @throws UploaderException
      */
     public function run(): void
     {
@@ -87,6 +89,7 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->_createRubrics();
         $this->_createPosts();
         $this->_createDefaultActions();
+        $this->_fileManagerRegistration();
         $this->_createPublicFolders();
 
         cache()->clean();
@@ -1809,6 +1812,20 @@ class AvegaCmsInstallSeeder extends Seeder
 
     /**
      * @return void
+     * @throws ReflectionException|UploaderException
+     */
+    private function _fileManagerRegistration(): void
+    {
+        CmsFileManager::createDirectory(
+            'content',
+            [
+                'module_id' => CmsModule::meta('content')['id']
+            ]
+        );
+    }
+
+    /**
+     * @return void
      */
     private function _createPublicFolders(): void
     {
@@ -1817,9 +1834,7 @@ class AvegaCmsInstallSeeder extends Seeder
             'uploads/users',
             'uploads/sitemaps',
             'uploads/modules',
-            'uploads/locales',
-            'uploads/content',
-            'uploads/content/thumbs'
+            'uploads/locales'
         ];
 
         foreach ($directories as $directory) {
