@@ -22,7 +22,7 @@ class TestFilesGenerator
         }
 
         $fileTypes = [
-            'images' => ['jpg', 'png', 'gif'],
+            'images' => ['jpg', 'jpeg', 'png', 'gif'],
             'files'  => ['pdf', 'docx', 'xls', 'zip']
         ];
 
@@ -30,8 +30,6 @@ class TestFilesGenerator
 
         $FM  = model(FilesModel::class);
         $FLM = model(FilesLinksModel::class);
-
-        //dd($directory);
 
         for ($i = 0; $i < $num; $i++) {
             $ft       = $type === 'mixed' ? array_rand($fileTypes) : $type;
