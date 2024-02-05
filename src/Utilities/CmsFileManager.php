@@ -46,6 +46,7 @@ class CmsFileManager
     public static function createDirectory(string $path, array $config): void
     {
         Uploader::checkFilePath($path);
+
         $id = model(FilesModel::class)->insert(
             [
                 'data'          => json_encode(['url' => $path]),
@@ -55,6 +56,7 @@ class CmsFileManager
                 'created_by_id' => $config['user_id'] ?? 0
             ]
         );
+
         if ($id) {
             model(FilesLinksModel::class)->insert(
                 [
