@@ -12,10 +12,11 @@ class TestFilesGenerator
      * @param  int  $directoryId
      * @param  string  $type
      * @param  int  $num
+     * @param  array  $custom
      * @return bool
      * @throws ReflectionException
      */
-    public static function run(int $directoryId, string $type = 'mixed', int $num = 1): bool
+    public static function run(int $directoryId, string $type = 'mixed', int $num = 1, array $custom = []): bool
     {
         if ($directoryId === 0 || empty($directory = model(FilesModel::class)->getDirectories()[$directoryId] ?? [])) {
             return false;
@@ -74,9 +75,9 @@ class TestFilesGenerator
                         'id'        => $id,
                         'user_id'   => $directory['user_id'] ?? 0,
                         'parent'    => $directory['id'],
-                        'module_id' => $directory['module_id'] ?? 0,
-                        'entity_id' => $directory['entity_id'] ?? 0,
-                        'item_id'   => $directory['item_id'] ?? 0,
+                        'module_id' => $custom['module_id'] ?? ($directory['module_id'] ?? 0),
+                        'entity_id' => $custom['entity_id'] ?? ($directory['entity_id'] ?? 0),
+                        'item_id'   => $custom['item_id'] ?? ($directory['item_id'] ?? 0),
                         'type'      => $fileType
                     ]
                 );
