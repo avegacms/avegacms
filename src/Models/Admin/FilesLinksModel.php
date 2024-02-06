@@ -118,7 +118,6 @@ class FilesLinksModel extends AvegaCmsModel
                 'files_links.module_id',
                 'files_links.entity_id',
                 'files_links.item_id',
-                'files_links.uid',
                 'files_links.type',
                 'files_links.active',
                 'files.data',

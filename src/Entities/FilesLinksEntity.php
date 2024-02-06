@@ -26,6 +26,7 @@ class FilesLinksEntity extends AvegaCmsEntity
         'itemId'      => 'item_id',
         'createdById' => 'created_by_id',
         'updatedById' => 'updated_by_id',
+        'providerId'  => 'provider_id',
     ];
     protected $dates   = ['created_at', 'updated_at'];
     protected $casts   = [
@@ -41,6 +42,10 @@ class FilesLinksEntity extends AvegaCmsEntity
         'created_by_id' => 'integer',
         'updated_by_id' => 'integer',
         'created_at'    => 'datetime',
-        'updated_at'    => 'datetime'
+        'updated_at'    => 'datetime',
+
+        'data'        => 'json-array',
+        'provider_id' => 'integer',
+        'provider'    => 'string',
     ];
 }
