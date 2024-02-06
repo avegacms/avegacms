@@ -62,23 +62,25 @@ class TestFilesGenerator
 
             $id = $FM->insert(
                 [
-                    'data'        => json_encode($file),
-                    'provider_id' => $directory['provider_id'] ?? 0,
-                    'provider'    => $directory['provider'] ?? 0,
-                    'type'        => $fileType
+                    'data'          => json_encode($file),
+                    'provider_id'   => $directory['provider_id'] ?? 0,
+                    'provider'      => $directory['provider'] ?? 0,
+                    'type'          => $fileType,
+                    'created_by_id' => $custom['user_id'] ?? ($directory['user_id'] ?? 0)
                 ]
             );
 
             if ($id) {
                 $FLM->insert(
                     [
-                        'id'        => $id,
-                        'user_id'   => $directory['user_id'] ?? 0,
-                        'parent'    => $directory['id'],
-                        'module_id' => $custom['module_id'] ?? ($directory['module_id'] ?? 0),
-                        'entity_id' => $custom['entity_id'] ?? ($directory['entity_id'] ?? 0),
-                        'item_id'   => $custom['item_id'] ?? ($directory['item_id'] ?? 0),
-                        'type'      => $fileType
+                        'id'            => $id,
+                        'user_id'       => $directory['user_id'] ?? 0,
+                        'parent'        => $directory['id'],
+                        'module_id'     => $custom['module_id'] ?? ($directory['module_id'] ?? 0),
+                        'entity_id'     => $custom['entity_id'] ?? ($directory['entity_id'] ?? 0),
+                        'item_id'       => $custom['item_id'] ?? ($directory['item_id'] ?? 0),
+                        'type'          => $fileType,
+                        'created_by_id' => $custom['user_id'] ?? ($directory['user_id'] ?? 0)
                     ]
                 );
             }
