@@ -71,10 +71,24 @@ class FilesLinksModel extends AvegaCmsModel
     protected $afterDelete    = [];
 
     // AvegaCms filter settings
-    protected array  $filterFields      = [];
+    protected array  $filterFields      = [
+        'id'     => 'files_links.id',
+        'parent' => 'files_links.parent',
+        'module' => 'files_links.module_id',
+        'entity' => 'files_links.entity_id',
+        'item'   => 'files_links.item_id',
+        'active' => 'files_links.active',
+    ];
     protected array  $searchFields      = [];
     protected array  $sortableFields    = [];
-    protected array  $filterCastsFields = [];
+    protected array  $filterCastsFields = [
+        'id'     => 'int|array',
+        'parent' => 'int',
+        'module' => 'int',
+        'entity' => 'int',
+        'item'   => 'int',
+        'active' => 'int'
+    ];
     protected string $searchFieldAlias  = 'q';
     protected string $sortFieldAlias    = 's';
     protected string $sortDefaultFields = '';
@@ -88,6 +102,32 @@ class FilesLinksModel extends AvegaCmsModel
         $this->validationRules['type'] = [
             'rules' => 'if_exist|required|in_list[' . implode(',', FileTypes::get('value')) . ']'
         ];
+    }
+
+    /**
+     * @param  array  $filter
+     * @return $this
+     */
+    public function getFiles(array $filter): FilesLinksModel
+    {
+        $this->builder()->select(
+            [
+                'files_links.id',
+                'files_links.user_id',
+                'files_links.parent',
+                'files_links.module_id',
+                'files_links.entity_id',
+                'files_links.item_id',
+                'files_links.type',
+                'files_links.active',
+                'files.data',
+                'files.provider_id',
+                'files.provider'
+            ]
+        )->join('files', 'files.id = files_links.id')
+            ->where(['files_links.type !=' => FileTypes::Directory->value]);
+
+        return $this->filter($filter);
     }
 
     /**

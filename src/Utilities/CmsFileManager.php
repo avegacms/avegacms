@@ -11,6 +11,22 @@ use ReflectionException;
 
 class CmsFileManager
 {
+    public static function getFiles(
+        array $filter = [],
+        bool $all = false
+    ): array {
+        $FLM = model(FilesLinksModel::class);
+        $FLM->getFiles($filter);
+
+        if ($all) {
+            $result = $FLM->findAll();
+        } else {
+            $result = $FLM->apiPagination();
+        }
+
+        return $result;
+    }
+
     /**
      * @param  int|null  $id
      * @param  int|null  $parent
