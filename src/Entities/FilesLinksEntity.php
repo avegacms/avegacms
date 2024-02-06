@@ -48,4 +48,12 @@ class FilesLinksEntity extends AvegaCmsEntity
         'provider_id' => 'integer',
         'provider'    => 'string',
     ];
+
+    public function getData()
+    {
+        dd(
+            $this->rawData['type'],
+            $this->attributes['data']
+        );
+    }
 }
