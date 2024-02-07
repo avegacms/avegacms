@@ -43,7 +43,6 @@ class FilesLinksEntity extends AvegaCmsEntity
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime',
 
-        'data'     => 'json-array',
         'provider' => 'integer',
     ];
 
