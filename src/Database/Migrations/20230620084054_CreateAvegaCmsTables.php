@@ -10,7 +10,6 @@ use AvegaCms\Enums\{
     UserConditions,
     SettingsReturnTypes,
     FileTypes,
-    FileProviders,
     MetaStatuses,
     NavigationTypes,
     MetaDataTypes
@@ -221,25 +220,20 @@ class CreateAvegaCmsTables extends Migration
          * Таблица "местоположения" используется как для мультязычных, так и для мультирегиональных приложений/сайтов
          */
         $this->forge->addField([
-            'id'          => [
+            'id'       => [
                 'type'           => 'bigint',
                 'constraint'     => 16,
                 'unsigned'       => true,
                 'auto_increment' => true
             ],
-            'data'        => ['type' => 'text', 'null' => true],
-            'provider_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
-            'provider'    => [
-                'type'       => 'enum',
-                'constraint' => FileProviders::get('value'),
-                'default'    => FileProviders::Local->value
-            ],
-            'type'        => [
+            'data'     => ['type' => 'text', 'null' => true],
+            'provider' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
+            'type'     => [
                 'type'       => 'enum',
                 'constraint' => FileTypes::get('value'),
                 'default'    => FileTypes::File->value
             ],
-            'active'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 1],
+            'active'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 1],
             ...Migrator::byId(),
             ...Migrator::dateFields(['deleted_at'])
         ]);

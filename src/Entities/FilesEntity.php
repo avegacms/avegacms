@@ -4,7 +4,6 @@ namespace AvegaCms\Entities;
 
 /**
  * @property int $id
- * @property int $providerId
  * @property string $provider
  * @property string $data
  * @property string $type
@@ -15,15 +14,13 @@ namespace AvegaCms\Entities;
 class FilesEntity extends AvegaCmsEntity
 {
     protected $datamap = [
-        'providerId'  => 'provider_id',
         'createdById' => 'created_by_id',
         'updatedById' => 'updated_by_id',
     ];
     protected $dates   = ['created_at', 'updated_at'];
     protected $casts   = [
         'id'            => 'integer',
-        'provider_id'   => 'integer',
-        'provider'      => 'string',
+        'provider'      => 'integer',
         'data'          => 'json-array',
         'type'          => 'string',
         'active'        => 'int-bool',
