@@ -6,7 +6,7 @@ namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Entities\FilesEntity;
 use AvegaCms\Models\AvegaCmsModel;
-use AvegaCms\Enums\{FileTypes, FileProviders};
+use AvegaCms\Enums\FileTypes;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
 
@@ -20,7 +20,6 @@ class FilesModel extends AvegaCmsModel
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'provider_id',
         'provider',
         'data',
         'type',
@@ -41,7 +40,7 @@ class FilesModel extends AvegaCmsModel
     // Validation
     protected $validationRules      = [
         'data'          => ['rules' => 'if_exist|required|string|max_length[2048]'],
-        'provider_id'   => ['rules' => 'if_exist|is_natural'],
+        'provider'      => ['rules' => 'if_exist|is_natural'],
         'active'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'created_by_id' => ['rules' => 'if_exist|is_natural'],
         'updated_by_id' => ['rules' => 'if_exist|is_natural'],
@@ -77,10 +76,7 @@ class FilesModel extends AvegaCmsModel
     {
         parent::__construct($db, $validation);
 
-        $this->validationRules['provider'] = [
-            'rules' => 'if_exist|required|in_list[' . implode(',', FileProviders::get('value')) . ']'
-        ];
-        $this->validationRules['type']     = [
+        $this->validationRules['type'] = [
             'rules' => 'if_exist|required|in_list[' . implode(',', FileTypes::get('value')) . ']'
         ];
     }
@@ -96,7 +92,6 @@ class FilesModel extends AvegaCmsModel
                     [
                         'files.id',
                         'files.data',
-                        'files.provider_id',
                         'files.provider',
                         'files.active',
                         'files_links.user_id',

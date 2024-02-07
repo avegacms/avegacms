@@ -43,17 +43,19 @@ class TestFilesGenerator
             $original = $name . '.' . $ext;
 
             $file = [
-                'ext'  => $ext,
-                'file' => $original,
-                'size' => $size,
-                'path' => $directory['data']['url'] . '/' . $original
+                'provider' => $directory['provider'] ?? 0,
+                'type'     => $fileType,
+                'ext'      => $ext,
+                'file'     => $original,
+                'size'     => $size,
+                'path'     => $directory['data']['url'] . '/' . $original
             ];
 
             switch ($ft) {
                 case 'images':
                     $file['thumb'] = $directory['data']['url'] . '/thumb_' . $original;
                     $file['alt']   = $title;
-                    $fileType      = FileTypes::Image->value;
+                    $fileType      = $file['type'] = FileTypes::Image->value;
                     break;
                 case 'files':
                     $file['title'] = $file['alt'] = $title;
@@ -63,7 +65,6 @@ class TestFilesGenerator
             $id = $FM->insert(
                 [
                     'data'          => json_encode($file),
-                    'provider_id'   => $directory['provider_id'] ?? 0,
                     'provider'      => $directory['provider'] ?? 0,
                     'type'          => $fileType,
                     'created_by_id' => $custom['user_id'] ?? ($directory['user_id'] ?? 0)

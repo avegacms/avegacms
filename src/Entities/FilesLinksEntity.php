@@ -12,7 +12,7 @@ use AvegaCms\Enums\FileTypes;
  * @property int $entityId
  * @property int $itemId
  * @property string $uid
- * @property FileTypes $type
+ * @property array|null $type
  * @property boolean $active
  * @property int $createdById
  * @property int $updatedById
@@ -26,7 +26,6 @@ class FilesLinksEntity extends AvegaCmsEntity
         'itemId'      => 'item_id',
         'createdById' => 'created_by_id',
         'updatedById' => 'updated_by_id',
-        'providerId'  => 'provider_id',
     ];
     protected $dates   = ['created_at', 'updated_at'];
     protected $casts   = [
@@ -44,16 +43,44 @@ class FilesLinksEntity extends AvegaCmsEntity
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime',
 
-        'data'        => 'json-array',
-        'provider_id' => 'integer',
-        'provider'    => 'string',
+        'data'     => 'json-array',
+        'provider' => 'integer',
     ];
 
-    public function getData()
+    /**
+     * @return array
+     */
+    public function getData(): array
     {
-        dd(
-            $this->rawData['type'],
-            $this->attributes['data']
-        );
+        $data             = json_decode($this->attributes['data'], true);
+        $data['path']     = base_url($data['path']);
+        $data['sizeText'] = $this->_getTextFileSize($data['size']);
+
+        switch ($data['type']) {
+            case FileTypes::Directory->value:
+                break;
+            case FileTypes::File->value:
+                break;
+            case FileTypes::Image->value:
+                $data['thumb'] = base_url($data['thumb']);
+                break;
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param  int  $size
+     * @return string
+     */
+    private function _getTextFileSize(int $size): string
+    {
+        if (($size = ($size / 1024)) < 1024) {
+            return round($size, 1) . ' ' . lang('Uploader.sizes.kb');
+        }
+        if (($size = (($size / 1024) / 1024)) < 1024) {
+            return round($size, 1) . ' ' . lang('Uploader.sizes.mb');
+        }
+        return round($size, 1) . ' ' . lang('Uploader.sizes.gb');
     }
 }

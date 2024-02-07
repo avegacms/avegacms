@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Utilities;
 
-use AvegaCms\Enums\{FileProviders, FileTypes};
+use AvegaCms\Enums\FileTypes;
 use AvegaCms\Utilities\Exceptions\UploaderException;
 use AvegaCms\Models\Admin\{FilesModel, FilesLinksModel};
 use ReflectionException;
@@ -66,8 +66,7 @@ class CmsFileManager
         $id = model(FilesModel::class)->insert(
             [
                 'data'          => json_encode(['url' => $path]),
-                'provider_id'   => $config['provider_id'] ?? 0,
-                'provider'      => $config['provider'] ?? FileProviders::Local->value,
+                'provider'      => $config['provider'] ?? 0,
                 'type'          => FileTypes::Directory->value,
                 'created_by_id' => $config['user_id'] ?? 0
             ]

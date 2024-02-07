@@ -106,7 +106,7 @@ class FilesLinksModel extends AvegaCmsModel
 
     /**
      * @param  array  $filter
-     * @return $this
+     * @return FilesLinksModel
      */
     public function getFiles(array $filter): FilesLinksModel
     {
@@ -121,7 +121,6 @@ class FilesLinksModel extends AvegaCmsModel
                 'files_links.type',
                 'files_links.active',
                 'files.data',
-                'files.provider_id',
                 'files.provider'
             ]
         )->join('files', 'files.id = files_links.id')
