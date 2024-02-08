@@ -55,6 +55,8 @@ class FilesLinksEntity extends AvegaCmsEntity
         $data['path']     = base_url($data['path']);
         $data['sizeText'] = $this->_getTextFileSize($data['size']);
 
+        unset($data['provider']);
+
         switch ($data['type']) {
             case FileTypes::Directory->value:
                 break;

@@ -157,7 +157,8 @@ class ModulesModel extends Model
                     'modules.active',
                     'metadata.id AS meta_id'
                 ]
-            )->join('metadata', 'metadata.module_id = modules.id AND metadata.parent = 1', 'left')
+            )->join('metadata', 'metadata.module_id = modules.id', 'left')
+                //->join('metadata', 'metadata.module_id = modules.id AND metadata.parent = 1', 'left')
                 ->where(['modules.is_plugin' => 0]);
 
             $modules = [];

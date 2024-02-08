@@ -137,7 +137,11 @@ class AvegaCmsFrontendController extends BaseController
                         $params['slug'] = empty($segments) ? '' : array_reverse($segments)[0];
                     }
                 } else {
-                    $params['slug'] = $module['slug'];
+                    if ((array_slice($segments, -2, 1)[0] ?? null) === $module['slug']) {
+                        $params['slug'] = end($segments);
+                    } else {
+                        $params['slug'] = $module['slug'];
+                    }
                 }
             }
         } else {
