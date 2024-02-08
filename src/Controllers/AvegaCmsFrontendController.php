@@ -146,7 +146,7 @@ class AvegaCmsFrontendController extends BaseController
             }
         } else {
             $params['locale']  = session()->get('avegacms.client.locale.id');
-            $params['segment'] = empty($segments) ? '' : array_reverse($segments)[0];
+            $params['segment'] = empty($segments) ? '' : end($segments);
         }
 
         $this->dataEntity = match ($this->metaType) {
