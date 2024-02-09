@@ -82,10 +82,10 @@ class FilesModel extends AvegaCmsModel
     }
 
     /**
-     * @param  int  $id
+     * @param  int|null  $id
      * @return array
      */
-    public function getDirectories(int $id): array
+    public function getDirectories(?int $id = null): array
     {
         $list = cache()->remember('FileManagerDirectories', 30 * DAY,
             function () {
@@ -116,7 +116,7 @@ class FilesModel extends AvegaCmsModel
                 return ! empty($result) ? array_column($result, null, 'id') : [];
             });
 
-        return $list[$id] ?? [];
+        return $id === null ? $list : ($list[$id] ?? []);
     }
 
     /**
