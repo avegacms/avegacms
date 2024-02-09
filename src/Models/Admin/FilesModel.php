@@ -52,13 +52,13 @@ class FilesModel extends AvegaCmsModel
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
-    protected $afterInsert    = ['updateDirectories'];
+    protected $afterInsert    = [];
     protected $beforeUpdate   = [];
-    protected $afterUpdate    = ['updateDirectories'];
+    protected $afterUpdate    = [];
     protected $beforeFind     = [];
     protected $afterFind      = [];
     protected $beforeDelete   = [];
-    protected $afterDelete    = ['updateDirectories'];
+    protected $afterDelete    = [];
 
     // AvegaCms filter settings
     protected array  $filterFields      = [];
@@ -79,55 +79,5 @@ class FilesModel extends AvegaCmsModel
         $this->validationRules['type'] = [
             'rules' => 'if_exist|required|in_list[' . implode(',', FileTypes::get('value')) . ']'
         ];
-    }
-
-    /**
-     * @param  int|null  $id
-     * @return array
-     */
-    public function getDirectories(?int $id = null): array
-    {
-        $list = cache()->remember('FileManagerDirectories', 30 * DAY,
-            function () {
-                $this->builder()->select(
-                    [
-                        'files.id',
-                        'files.data',
-                        'files.provider',
-                        'files.active',
-                        'files_links.user_id',
-                        'files_links.parent',
-                        'files_links.module_id',
-                        'files_links.entity_id',
-                        'files_links.item_id'
-                    ]
-                )->join('files_links', 'files_links.id = files.id')
-                    ->where(['files.type' => FileTypes::Directory->value]);
-
-                $result = $this->asArray()->findAll();
-
-                if ( ! empty($result)) {
-                    $result = array_column($result, null, 'id');
-                    foreach ($result as $k => $item) {
-                        $result[$k]['data'] = json_decode($item['data'], true);
-                    }
-                }
-
-                return ! empty($result) ? array_column($result, null, 'id') : [];
-            });
-
-        return $id === null ? $list : ($list[$id] ?? []);
-    }
-
-    /**
-     * @param  array  $data
-     * @return void
-     */
-    public function updateDirectories(array $data): void
-    {
-        if ($data['data']['type'] === FileTypes::Directory->value) {
-            cache()->delete('FileManagerDirectories');
-            $this->getDirectories();
-        }
     }
 }
