@@ -43,8 +43,8 @@ class CmsFileManager
             $id = model(FilesLinksModel::class)->getDirectoryData($parent, $moduleId, $entityId, $itemId);
         }
 
-        if ($id !== 0) {
-            $result = model(FilesModel::class)->getDirectories()[$id] ?? [];
+        if ($id > 0) {
+            $result = model(FilesModel::class)->getDirectories($id);
         }
 
         return $result;
