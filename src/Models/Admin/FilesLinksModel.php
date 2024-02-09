@@ -86,7 +86,7 @@ class FilesLinksModel extends AvegaCmsModel
         'parent' => 'int',
         'module' => 'int',
         'entity' => 'int',
-        'item'   => 'int',
+        'item'   => 'int|array',
         'active' => 'int'
     ];
     protected string $searchFieldAlias  = 'q';
