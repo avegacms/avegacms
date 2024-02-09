@@ -18,7 +18,7 @@ class TestFilesGenerator
      */
     public static function run(int $directoryId, string $type = 'mixed', int $num = 1, array $custom = []): bool
     {
-        if ($directoryId === 0 || empty($directory = model(FilesLinksModel::class)->getDirectories($directoryId) ?? [])) {
+        if (empty($directory = model(FilesLinksModel::class)->getDirectories($directoryId))) {
             return false;
         }
 
