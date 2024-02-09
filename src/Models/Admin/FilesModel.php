@@ -52,13 +52,13 @@ class FilesModel extends AvegaCmsModel
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
-    protected $afterInsert    = ['updateDirectoriesCache'];
+    protected $afterInsert    = ['updateDirectories'];
     protected $beforeUpdate   = [];
-    protected $afterUpdate    = [];
+    protected $afterUpdate    = ['updateDirectories'];
     protected $beforeFind     = [];
     protected $afterFind      = [];
     protected $beforeDelete   = [];
-    protected $afterDelete    = ['updateDirectoriesCache'];
+    protected $afterDelete    = ['updateDirectories'];
 
     // AvegaCms filter settings
     protected array  $filterFields      = [];
@@ -82,11 +82,12 @@ class FilesModel extends AvegaCmsModel
     }
 
     /**
+     * @param  int  $id
      * @return array
      */
-    public function getDirectories(): array
+    public function getDirectories(int $id): array
     {
-        return cache()->remember('FileManagerDirectories', 30 * DAY,
+        $list = cache()->remember('FileManagerDirectories', 30 * DAY,
             function () {
                 $this->builder()->select(
                     [
@@ -114,13 +115,15 @@ class FilesModel extends AvegaCmsModel
 
                 return ! empty($result) ? array_column($result, null, 'id') : [];
             });
+
+        return $list[$id] ?? [];
     }
 
     /**
      * @param  array  $data
      * @return void
      */
-    public function updateDirectoriesCache(array $data): void
+    public function updateDirectories(array $data): void
     {
         if ($data['data']['type'] === FileTypes::Directory->value) {
             cache()->delete('FileManagerDirectories');
