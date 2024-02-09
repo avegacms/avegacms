@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Utilities;
 
+use AvegaCms\Entities\FilesLinksEntity;
 use AvegaCms\Enums\FileTypes;
 use AvegaCms\Utilities\Exceptions\UploaderException;
 use AvegaCms\Models\Admin\{FilesModel, FilesLinksModel};
@@ -35,10 +36,15 @@ class CmsFileManager
      * @param  int|null  $moduleId
      * @param  int|null  $entityId
      * @param  int|null  $itemId
-     * @return array
+     * @return FilesLinksEntity|null
      */
-    public static function getDirectoryData(?int $id, ?int $parent, ?int $moduleId, ?int $entityId, ?int $itemId): array
-    {
+    public static function getDirectoryData(
+        ?int $id,
+        ?int $parent,
+        ?int $moduleId,
+        ?int $entityId,
+        ?int $itemId
+    ): FilesLinksEntity|null {
         return model(FilesLinksModel::class)->getDirectoryData($id, $parent, $moduleId, $entityId, $itemId);
     }
 

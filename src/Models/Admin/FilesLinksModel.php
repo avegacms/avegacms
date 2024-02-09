@@ -135,7 +135,7 @@ class FilesLinksModel extends AvegaCmsModel
      * @param  int|null  $moduleId
      * @param  int|null  $entityId
      * @param  int|null  $itemId
-     * @return array|FilesLinksEntity
+     * @return array|FilesLinksEntity|null
      */
     public function getDirectoryData(
         ?int $id,
@@ -143,7 +143,7 @@ class FilesLinksModel extends AvegaCmsModel
         ?int $moduleId,
         ?int $entityId,
         ?int $itemId
-    ): array|FilesLinksEntity {
+    ): array|FilesLinksEntity|null {
         $this->builder()->select(
             [
                 'files.id',
