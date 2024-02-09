@@ -28,6 +28,8 @@ class CmsFileManager
     }
 
     /**
+     * Возвращает информацию по директории
+     *
      * @param  int|null  $id
      * @param  int|null  $parent
      * @param  int|null  $moduleId
@@ -37,17 +39,7 @@ class CmsFileManager
      */
     public static function getDirectoryData(?int $id, ?int $parent, ?int $moduleId, ?int $entityId, ?int $itemId): array
     {
-        $result = [];
-
-        if (is_null($id)) {
-            $id = model(FilesLinksModel::class)->getDirectoryData($parent, $moduleId, $entityId, $itemId);
-        }
-
-        if ($id > 0) {
-            $result = model(FilesModel::class)->getDirectories($id);
-        }
-
-        return $result;
+        return model(FilesLinksModel::class)->getDirectoryData($id, $parent, $moduleId, $entityId, $itemId);
     }
 
     /**
