@@ -278,11 +278,11 @@ class AvegaCmsModel extends Model
             'int|array',
             'integer|array' => is_int($value) ?
                 $this->castAs($value, 'int', $fieldName) :
-                $this->castAs($value, 'array', $fieldName),
+                (is_array($value) && ! empty($value) ? $this->castAs($value, 'array', $fieldName) : null),
             'double|array',
             'float|array'   => is_float($value) ?
                 $this->castAs($value, 'float', $fieldName) :
-                $this->castAs($value, 'array', $fieldName),
+                (is_array($value) && ! empty($value) ? $this->castAs($value, 'array', $fieldName) : null),
             default         => null
         };
     }
