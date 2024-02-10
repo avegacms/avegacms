@@ -54,14 +54,17 @@ class CmsFileManager
      *
      * @param  string  $path
      * @param  array  $config
-     * @return void
+     * @return int
      * @throws UploaderException|ReflectionException
      */
-    public static function createDirectory(string $path, array $config): void
+    public static function createDirectory(string $path, array $config): int
     {
+        $FM  = model(FilesModel::class);
+        $FLM = model(FilesLinksModel::class);
+
         Uploader::checkFilePath($path);
 
-        $id = model(FilesModel::class)->insert(
+        $directoryId = $FM->insert(
             [
                 'data'          => json_encode(['url' => $path]),
                 'provider'      => $config['provider'] ?? 0,
@@ -70,10 +73,10 @@ class CmsFileManager
             ]
         );
 
-        if ($id) {
-            model(FilesLinksModel::class)->insert(
+        if ($directoryId) {
+            $FLM->insert(
                 [
-                    'id'            => $id,
+                    'id'            => $directoryId,
                     'user_id'       => $config['user_id'] ?? 0,
                     'parent'        => $config['parent'] ?? 0,
                     'module_id'     => $config['module_id'] ?? 0,
@@ -85,5 +88,7 @@ class CmsFileManager
                 ]
             );
         }
+
+        return $directoryId;
     }
 }
