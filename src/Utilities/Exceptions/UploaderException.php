@@ -31,6 +31,14 @@ class UploaderException extends Exception
     /**
      * @return UploaderException
      */
+    public static function forDirectoryNotFound(): UploaderException
+    {
+        return new static(lang('Uploader.errors.directoryNotFound'));
+    }
+
+    /**
+     * @return UploaderException
+     */
     public static function forEmptyPath(): UploaderException
     {
         return new static(lang('Uploader.errors.emptyPath'));

@@ -7,11 +7,71 @@ namespace AvegaCms\Utilities;
 use AvegaCms\Entities\FilesLinksEntity;
 use AvegaCms\Enums\FileTypes;
 use AvegaCms\Utilities\Exceptions\UploaderException;
+use CodeIgniter\Files\File;
+use Config\Mimes;
+use Config\Services;
 use AvegaCms\Models\Admin\{FilesModel, FilesLinksModel};
 use ReflectionException;
 
 class CmsFileManager
 {
+    /**
+     * @param  array  $settings
+     * @param  int  $userId
+     * @return array|FilesLinksEntity|null
+     * @throws UploaderException
+     */
+    public static function upload(array $settings, int $userId = 0): array|FilesLinksEntity|null
+    {
+        $request    = Services::request();
+        $validator  = Services::validation();
+        $directory  = [];
+        $entityId   = $settings['entity_id'] ?? 0;
+        $itemId     = $settings['item_id'] ?? 0;
+        $uploadPath = FCPATH . 'uploads/';
+        $FM         = model(FilesModel::class);
+        $FLM        = model(FilesLinksModel::class);
+
+        unset($settings['entity_id'], $settings['item_id']);
+
+        if ( ! is_numeric($settings['directory_id'] ?? false) && empty($directory = $FLM->getDirectories($settings['directory_id']))) {
+            throw UploaderException::forDirectoryNotFound();
+        }
+
+        $uploadPath .= $directory['data']['url'];
+
+        $settings['field'] = $settings['field'] ?? 'file';
+
+        if ($validator->setRules(self::uploadSettings($settings))->withRequest($request)->run() === false) {
+            throw new UploaderException($validator->getErrors());
+        }
+
+        $file = $request->getFile($settings['field']);
+
+        if ( ! $file->isValid()) {
+            throw new UploaderException($file->getErrorString() . '(' . $file->getError() . ')');
+        }
+
+        if ($file->hasMoved()) {
+            throw UploaderException::forHasMoved($file->getName());
+        }
+
+        $file->move($uploadPath, $file->getName());
+
+        $file    = new File($uploadPath . '/' . $file->getName());
+        $isImage = mb_strpos(Mimes::guessTypeFromExtension($extension = $file->getExtension()) ?? '', 'image') === 0;
+
+        $fileData = [
+            'provider' => 0,
+            'type'     => $isImage ? FileTypes::Image->value : FileTypes::File->value,
+            'ext'      => $extension,
+            'size'     => 0,
+            'file'     => $file->getName(),
+            'path'     => $directory['data']['url'],
+            'title'    => ''
+        ];
+    }
+
     /**
      * @param  array  $filter
      * @param  bool  $all
@@ -95,5 +155,49 @@ class CmsFileManager
         }
 
         return $directoryId;
+    }
+
+    /**
+     * @param  array  $settings
+     * @return array
+     */
+    private static function uploadSettings(array $settings): array
+    {
+        $field        = $settings['field'];
+        $max_upload   = (int) (ini_get('upload_max_filesize'));
+        $max_post     = (int) (ini_get('post_max_size'));
+        $memory_limit = (int) (ini_get('memory_limit'));
+
+        $maxSize = ($memory_limit > 0 ?
+                min($max_upload, $max_post, $memory_limit) :
+                min($max_upload, $max_post)) * 1024;
+
+        $uploadRule = 'uploaded[' . $field . ']|';
+
+        $uploadRule .= 'max_size[' . $field . ',' . (($settings['max_size'] ?? ($maxSize + 1) || $settings['max_size'] > $maxSize) ? $maxSize : $settings['max_size']) . ']';
+
+        if (isset($settings['max_dims'])) {
+            $uploadRule .= '|max_dims[' . $field . ',' . $settings['max_dims'] . ']';
+        }
+
+        if (isset($settings['mime_in'])) {
+            $uploadRule .= '|mime_in[' . $field . ',' . $settings['mime_in'] . ']';
+        }
+
+        if (isset($settings['ext_in'])) {
+            $uploadRule .= '|ext_in[' . $field . ',' . $settings['ext_in'] . ']';
+        }
+
+        if (isset($settings['is_image'])) {
+            $uploadRule .= '|is_image[' . $field . ']';
+        }
+
+        unset($settings);
+
+        return [
+            $field => [
+                'rules' => $uploadRule
+            ]
+        ];
     }
 }
