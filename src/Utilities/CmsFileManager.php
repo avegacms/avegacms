@@ -12,10 +12,15 @@ use ReflectionException;
 
 class CmsFileManager
 {
+    /**
+     * @param  array  $filter
+     * @param  bool  $all
+     * @return array|FilesLinksEntity|null
+     */
     public static function getFiles(
         array $filter = [],
         bool $all = false
-    ): array {
+    ): array|FilesLinksEntity|null {
         $FLM = model(FilesLinksModel::class);
         $FLM->getFiles($filter);
 
