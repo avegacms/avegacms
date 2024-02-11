@@ -46,19 +46,19 @@ class CmsFileManager
             throw new UploaderException($validator->getErrors());
         }
 
-        $file = $request->getFile($settings['field']);
+        $uploadedFile = $request->getFile($settings['field']);
 
-        if ( ! $file->isValid()) {
-            throw new UploaderException($file->getErrorString() . '(' . $file->getError() . ')');
+        if ( ! $uploadedFile->isValid()) {
+            throw new UploaderException($uploadedFile->getErrorString() . '(' . $uploadedFile->getError() . ')');
         }
 
-        if ($file->hasMoved()) {
-            throw UploaderException::forHasMoved($file->getName());
+        if ($uploadedFile->hasMoved()) {
+            throw UploaderException::forHasMoved($uploadedFile->getName());
         }
 
-        $file->move($uploadPath, $file->getName());
+        $uploadedFile->move($uploadPath, $uploadedFile->getName());
 
-        $file    = new File($uploadPath . '/' . $file->getName());
+        $file    = new File($uploadPath . '/' . $uploadedFile->getName());
         $isImage = mb_strpos(Mimes::guessTypeFromExtension($extension = $file->getExtension()) ?? '', 'image') === 0;
 
         $fileData = [
@@ -66,7 +66,7 @@ class CmsFileManager
             'type'     => $isImage ? FileTypes::Image->value : FileTypes::File->value,
             'ext'      => $extension,
             'size'     => 0,
-            'file'     => $file->getName(),
+            'file'     => $uploadedFile->getName(),
             'path'     => $directory['data']['url'],
             'title'    => ''
         ];
