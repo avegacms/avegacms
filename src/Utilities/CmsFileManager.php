@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Utilities;
 
-use AvegaCms\Entities\FilesLinksEntity;
+use AvegaCms\Entities\{FilesEntity, FilesLinksEntity};
 use AvegaCms\Enums\FileTypes;
 use AvegaCms\Utilities\Exceptions\UploaderException;
 use CodeIgniter\Files\File;
@@ -19,26 +19,21 @@ class CmsFileManager
      * @param  array  $settings
      * @param  int  $userId
      * @return array|FilesLinksEntity|null
-     * @throws UploaderException
+     * @throws UploaderException|ReflectionException
      */
     public static function upload(array $settings, int $userId = 0): array|FilesLinksEntity|null
     {
         $request    = Services::request();
         $validator  = Services::validation();
-        $directory  = [];
-        $entityId   = $settings['entity_id'] ?? 0;
-        $itemId     = $settings['item_id'] ?? 0;
         $uploadPath = FCPATH . 'uploads/';
         $FM         = model(FilesModel::class);
         $FLM        = model(FilesLinksModel::class);
 
-        unset($settings['entity_id'], $settings['item_id']);
-
-        if ( ! is_numeric($settings['directory_id'] ?? false) && empty($directory = $FLM->getDirectories($settings['directory_id']))) {
+        if ( ! is_numeric($settings['directory_id'] ?? false) || empty(($dir = $FLM->getDirectories($settings['directory_id'])))) {
             throw UploaderException::forDirectoryNotFound();
         }
 
-        $uploadPath .= $directory['data']['url'];
+        $uploadPath .= ($path = $dir['data']['url'] . (str_ends_with($dir['data']['url'], '/') ? '' : '/'));
 
         $settings['field'] = $settings['field'] ?? 'file';
 
@@ -56,20 +51,48 @@ class CmsFileManager
             throw UploaderException::forHasMoved($uploadedFile->getName());
         }
 
-        $uploadedFile->move($uploadPath, $uploadedFile->getName());
-
-        $file    = new File($uploadPath . '/' . $uploadedFile->getName());
-        $isImage = mb_strpos(Mimes::guessTypeFromExtension($extension = $file->getExtension()) ?? '', 'image') === 0;
-
+        // Переносим файл в нужную директорию
+        $uploadedFile->move($uploadPath, ($fileName = $uploadedFile->getRandomName()));
+        // Получаем информацию по файлу
+        $file     = new File($uploadPath . $fileName);
+        $isImage  = mb_strpos(Mimes::guessTypeFromExtension($extension = $file->getExtension()) ?? '', 'image') === 0;
+        $type     = ($isImage) ? FileTypes::Image->value : FileTypes::File->value;
         $fileData = [
-            'provider' => 0,
-            'type'     => $isImage ? FileTypes::Image->value : FileTypes::File->value,
-            'ext'      => $extension,
-            'size'     => 0,
-            'file'     => $uploadedFile->getName(),
-            'path'     => $directory['data']['url'],
-            'title'    => ''
+            'provider'      => 0,
+            'type'          => $type,
+            'data'          => [
+                'provider' => 0,
+                'type'     => $type,
+                'ext'      => $extension,
+                'size'     => $uploadedFile->getSize(),
+                'file'     => $fileName,
+                'path'     => $path . $fileName,
+                'title'    => $uploadedFile->getName()
+            ],
+            'created_by_id' => $userId
         ];
+
+        if (($id = $FM->insert((new FilesEntity ($fileData)))) === false) {
+            throw new UploaderException($FM->errors());
+        }
+
+        $fileLinks = [
+            'id'            => $id,
+            'user_id'       => $userId,
+            'parent'        => $dir['id'],
+            'module_id'     => $dir['module_id'],
+            'entity_id'     => $settings['entity_id'] ?? 0,
+            'item_id'       => $settings['item_id'] ?? 0,
+            'uid'           => '',
+            'type'          => $type,
+            'created_by_id' => $userId
+        ];
+
+        if ( ! $FLM->insert($fileLinks)) {
+            throw new UploaderException($FLM->errors());
+        }
+
+        return self::getFiles(['id' => $id], true);
     }
 
     /**
