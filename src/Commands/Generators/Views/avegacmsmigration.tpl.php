@@ -25,11 +25,19 @@ class {class} extends Migration{
 
     public function down(){$this->forge->dropTable('<?= $table ?>', true);}
 <?php else: ?>
-    public function up(){
+    /**
+     * @return void
+     */
+    public function up(): void
+    {
     //
     }
 
-    public function down(){
+    /**
+     * @return void
+     */
+    public function down(): void
+    {
     //
     }
 <?php endif ?>
