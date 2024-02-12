@@ -2,7 +2,8 @@
 
 namespace {namespace};
 
-use CodeIgniter\Database\Migration;use AvegaCms\Utilities\Migrator;
+use AvegaCms\Utilities\Migrator;
+use CodeIgniter\Database\Migration;
 
 class {class} extends Migration{
 <?php if ($session): ?>
@@ -24,8 +25,12 @@ class {class} extends Migration{
 
     public function down(){$this->forge->dropTable('<?= $table ?>', true);}
 <?php else: ?>
-    public function up(){//}
+    public function up(){
+    //
+    }
 
-    public function down(){//}
+    public function down(){
+    //
+    }
 <?php endif ?>
 }
