@@ -17,17 +17,17 @@ class CmsFileManager
 {
     /**
      * @param  array  $settings
-     * @param  int  $userId
      * @return array|FilesLinksEntity|null
      * @throws UploaderException|ReflectionException
      */
-    public static function upload(array $settings, int $userId = 0): array|FilesLinksEntity|null
+    public static function upload(array $settings): array|FilesLinksEntity|null
     {
         $request    = Services::request();
         $validator  = Services::validation();
         $uploadPath = FCPATH . 'uploads/';
         $FM         = model(FilesModel::class);
         $FLM        = model(FilesLinksModel::class);
+        $userId     = $settings['user_id'] ?? 0;
 
         if ( ! is_numeric($settings['directory_id'] ?? false) || empty(($dir = $FLM->getDirectories($settings['directory_id'])))) {
             throw UploaderException::forDirectoryNotFound();

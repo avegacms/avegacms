@@ -2,7 +2,7 @@
 
 namespace {namespace};
 
-use CodeIgniter\Database\Migration;use AvegaCms\Utils\Migrator;
+use CodeIgniter\Database\Migration;use AvegaCms\Utilities\Migrator;
 
 class {class} extends Migration{
 <?php if ($session): ?>
