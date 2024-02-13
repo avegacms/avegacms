@@ -179,7 +179,6 @@ class UserModel extends AvegaCmsModel
             'email'         => $faker->email(),
             'phone'         => '79' . rand(100000000, 999999999),
             'status'        => $statuses[array_rand($statuses)],
-            'password'      => '',
             'extra'         => [],
             'active_at'     => $faker->dateTimeBetween('-1 week', 'now', 'Asia/Omsk')->format('Y-m-d H:i:s'),
             'created_by_id' => 1
