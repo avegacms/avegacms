@@ -174,7 +174,7 @@ class UserModel extends AvegaCmsModel
      */
     protected function hashPassword(array $data): array
     {
-        if ( ! empty($data['data']['password'] ?? '')) {
+        if (empty($data['data']['password'] ?? '')) {
             return $data;
         }
         $data['data']['password'] = Auth::setPassword($data['data']['password']);
