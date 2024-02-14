@@ -65,7 +65,7 @@ class UserEntity extends Entity
      */
     public function setPassword(string $pass): Entity
     {
-        $this->attributes['password'] = Auth::setPassword($pass);
+        $this->attributes['password'] = ! empty($pass) ? Auth::setPassword($pass) : '';
 
         return $this;
     }
