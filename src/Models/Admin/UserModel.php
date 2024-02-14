@@ -4,6 +4,7 @@ namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Entities\UserEntity;
+use AvegaCms\Utilities\Auth;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
 use Faker\Generator;
@@ -97,9 +98,9 @@ class UserModel extends AvegaCmsModel
 
     // Callbacks
     protected $allowCallbacks = true;
-    protected $beforeInsert   = [];
+    protected $beforeInsert   = ['hashPassword'];
     protected $afterInsert    = [];
-    protected $beforeUpdate   = [];
+    protected $beforeUpdate   = ['hashPassword'];
     protected $afterUpdate    = [];
     protected $beforeFind     = [];
     protected $afterFind      = [];
@@ -165,6 +166,19 @@ class UserModel extends AvegaCmsModel
         }
 
         unset($settings, $loginType);
+    }
+
+    /**
+     * @param  array  $data
+     * @return array
+     */
+    protected function hashPassword(array $data): array
+    {
+        if ( ! empty($data['data']['password'] ?? '')) {
+            return $data;
+        }
+        $data['data']['password'] = Auth::setPassword($data['data']['password']);
+        return $data;
     }
 
     /**
