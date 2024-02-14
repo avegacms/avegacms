@@ -81,7 +81,7 @@ class UserModel extends AvegaCmsModel
     // Validation
     protected $validationRules      = [
         'id'       => ['rules' => 'if_exist|is_natural_no_zero'],
-        'login'    => ['rules' => 'if_exist|required|alpha_dash|max_length[36]|is_unique[users.login,id,{id}]'],
+        'login'    => ['rules' => 'if_exist|required|alpha_dash|max_length[36]'],
         'avatar'   => ['rules' => 'if_exist|permit_empty|max_length[255]'],
         'phone'    => ['rules' => 'if_exist|is_natural|mob_phone'],
         'email'    => ['rules' => 'if_exist|max_length[255]|valid_email'],
@@ -157,6 +157,7 @@ class UserModel extends AvegaCmsModel
         foreach ($loginType as $type) {
             if (isset($this->validationRules[$type])) {
                 $this->validationRules[$type]['rules'] = match ($type) {
+                    'login' => $this->validationRules[$type]['rules'] . '|required|is_unique[users.login,id,{id}]',
                     'email' => $this->validationRules[$type]['rules'] . '|required|is_unique[users.email,id,{id}]',
                     'phone' => $this->validationRules[$type]['rules'] . '|required|is_unique[users.phone,id,{id}]'
                 };
