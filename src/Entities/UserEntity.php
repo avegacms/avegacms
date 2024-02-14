@@ -42,7 +42,7 @@ class UserEntity extends Entity
         'phone'         => 'integer',
         'email'         => 'string',
         'timezone'      => 'string',
-        'password'      => 'string',
+        //'password'      => 'string',
         'secret'        => 'string',
         'path'          => 'string',
         'profile'       => 'json-array',
