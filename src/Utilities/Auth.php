@@ -46,7 +46,7 @@ class Auth
 
         // Проверка пароля с помощью регулярного выражения
         $pattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%?&])[A-Za-z\d@$!%?&]{8,20}$/';
-        if (!preg_match($pattern, $password)) {
+        if ( ! preg_match($pattern, $password)) {
             // Если пароль не соответствует требованиям, повторяем процесс генерации
             $password = self::genPassword($length);
         }

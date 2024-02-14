@@ -79,7 +79,9 @@ class AvegaCmsRules
      */
     public function verify_password($value, ?string &$error = null): bool
     {
-        if ( ! preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%?&])[A-Za-z\d@$!%?&]{8,20}$/', $value)) {
+        $pattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%?&])[A-Za-z\d@$!%?&]{8,20}$/';
+
+        if ( ! preg_match($pattern, $value)) {
             $error = lang('Validation.verifyPassword');
             return false;
         }
