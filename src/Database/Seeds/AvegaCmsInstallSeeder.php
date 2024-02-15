@@ -106,7 +106,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 [
                     'login'    => 'admin',
                     'email'    => 'admin@avegacms.ru',
-                    'password' => '123Qwe78',
+                    'password' => '123Qwe$78',
                     'status'   => UserStatuses::Active->value
                 ]
             ))
@@ -1713,11 +1713,12 @@ class AvegaCmsInstallSeeder extends Seeder
      */
     private function _createRubrics(): void
     {
-        if ($rubrics = CLI::prompt(
+        if (CLI::prompt('Create rubrics?', ['y', 'n']) === 'y' &&
+            ($rubrics = CLI::prompt(
             'How many rubrics do you want to create?',
             null,
             ['required', 'is_natural']
-        )) {
+        ))) {
             if ($rubrics > 0) {
                 $useMultiLocales = Cms::settings('core.env.useMultiLocales');
                 $locales         = $this->LLM->where([
