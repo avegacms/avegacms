@@ -94,26 +94,26 @@ class Login extends CmsResourceController
 
         switch ($auth['direct']) {
             case 'set_user':
-                Events::trigger('setAuthUserData', $auth['userdata']['user_id']);
-                $user   = $this->Authorization->setUser($auth['userdata']['user_id']);
+                Events::trigger('setAuthUserData', $auth['user_id']);
+                $user   = $this->Authorization->setUser($auth['user_id']);
                 $result = ['status' => 'authorized', 'userdata' => $user];
                 break;
             case 'send_code':
-                if ( ! empty($auth['userdata']['phone'] ?? '')) {
+                if ( ! empty($auth['phone'] ?? '')) {
                     // Отправляем смс с кодом пользователю
                     Events::trigger($auth['condition'] === UserConditions::Auth->value ? 'sendAuthSms' : 'sendRecoverySms',
                         [
-                            'user_id' => $auth['userdata']['user_id'],
-                            'phone'   => $auth['userdata']['phone'],
-                            'code'    => $auth['userdata']['code']
+                            'user_id' => $auth['user_id'],
+                            'phone'   => $auth['phone'],
+                            'code'    => $auth['code']
                         ]);
-                } elseif ( ! empty($auth['userdata']['email'] ?? '')) {
+                } elseif ( ! empty($auth['email'] ?? '')) {
                     // Отправляем email с кодом пользователю
                     Events::trigger($auth['condition'] === UserConditions::Auth->value ? 'sendAuthEmail' : 'sendRecoveryEmail',
                         [
-                            'user_id' => $auth['userdata']['user_id'],
-                            'email'   => $auth['userdata']['email'],
-                            'code'    => $auth['userdata']['code']
+                            'user_id' => $auth['user_id'],
+                            'email'   => $auth['email'],
+                            'code'    => $auth['code']
                         ]);
                 } else {
                     throw AuthorizationException::forNoData();
@@ -122,19 +122,19 @@ class Login extends CmsResourceController
                 $result['status'] = 'send_code';
 
                 if (ENVIRONMENT !== 'production') {
-                    $result['code'] = $auth['userdata']['code'];
+                    $result['code'] = $auth['code'];
                 }
 
                 if ($auth['condition'] === UserConditions::Recovery->value) {
-                    unset($auth['userdata']['condition'], $auth['userdata']['user_id']/*, $auth['userdata']['code']*/);
-                    $result['userdata']         = $auth['userdata'];
-                    $result['userdata']['code'] = $auth['userdata']['code']; // TODO удалить
+                    unset($auth['condition'], $auth['user_id']/*, $auth['code']*/);
+                    $result         = $auth;
+                    $result['code'] = $auth['code']; // TODO удалить
                 }
 
                 break;
             case 'password':
                 $result['status']           = 'password';
-                $result['userdata']['hash'] = $auth['userdata']['hash'];
+                $result['hash'] = $auth['hash'];
                 break;
             default:
                 throw AuthorizationException::forNoData();
