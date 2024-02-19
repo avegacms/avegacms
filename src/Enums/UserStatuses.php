@@ -20,4 +20,16 @@ enum UserStatuses: string
         return in_array($key, ['name', 'value', true]) ?
             array_column(UserStatuses::cases(), $key) : UserStatuses::cases();
     }
+
+    /**
+     * @return array
+     */
+    public static function list(): array
+    {
+        $list = [];
+        foreach (UserStatuses::cases() as $enum) {
+            $list[] = ['label' => lang('Users.enums.' . $enum->name), 'value' => $enum->value];
+        }
+        return $list;
+    }
 }
