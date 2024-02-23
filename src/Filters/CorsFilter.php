@@ -57,7 +57,7 @@ class CorsFilter implements FilterInterface
                         ]
                     )
                     ->setHeader('Access-Control-Allow-Methods', ['GET', 'PATCH', 'POST', 'PUT', 'OPTIONS', 'DELETE'])
-                    ->setStatusCode(200);
+                    ->setStatusCode(200)->send();
             }
 
             Services::response()->setHeader('Access-Control-Allow-Origin', '*');
