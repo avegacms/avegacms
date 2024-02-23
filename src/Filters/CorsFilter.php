@@ -2,18 +2,28 @@
 
 namespace AvegaCms\Filters;
 
+use AvegaCms\Utilities\Cms;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Config\Services;
-use AvegaCms\Utilities\Cms;
 use ReflectionException;
 
-class ThrottlerCorsFilter implements FilterInterface
+class CorsFilter implements FilterInterface
 {
     /**
-     * @param  RequestInterface  $request
-     * @param $arguments
+     * Do whatever processing this filter needs to do.
+     * By default it should not return anything during
+     * normal execution. However, when an abnormal state
+     * is found, it should return an instance of
+     * CodeIgniter\HTTP\Response. If it does, script
+     * execution will end and that Response will be
+     * sent back to the client, allowing for error pages,
+     * redirects, etc.
+     *
+     * @param RequestInterface $request
+     * @param array|null       $arguments
+     *
      * @return RequestInterface|ResponseInterface|string|void
      * @throws ReflectionException
      */
@@ -51,11 +61,6 @@ class ThrottlerCorsFilter implements FilterInterface
 
             Services::response()->setHeader('Access-Control-Allow-Origin', '*');
         }
-
-        // Restrict an IP address to no more than 1 request per second across the entire site.
-        if (Services::throttler()->check(md5($request->getIPAddress()), 60, MINUTE) === false) {
-            return Services::response()->setStatusCode(429);
-        }
     }
 
     /**
@@ -64,11 +69,11 @@ class ThrottlerCorsFilter implements FilterInterface
      * to stop execution of other after filters, short of
      * throwing an Exception or Error.
      *
-     * @param  RequestInterface  $request
-     * @param  ResponseInterface  $response
-     * @param  array|null  $arguments
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
+     * @param array|null        $arguments
      *
-     * @return void
+     * @return ResponseInterface|void
      */
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
