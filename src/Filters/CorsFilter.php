@@ -30,9 +30,12 @@ class CorsFilter implements FilterInterface
     public function before(RequestInterface $request, $arguments = null)
     {
         if (Cms::settings('core.auth.useCors')) {
+
+            $response = Services::response();
+
+            // Если предполётный запрос, то быстро формируем ответ
             if (strtoupper($request->getMethod()) === 'OPTIONS') {
-                return Services::response()
-                    ->setHeader('Access-Control-Allow-Origin', '*')
+                return $response->setHeader('Access-Control-Allow-Origin', '*')
                     ->setHeader('Access-Control-Allow-Credentials', 'true')
                     ->setHeader(
                         'Access-Control-Allow-Headers',
@@ -57,10 +60,20 @@ class CorsFilter implements FilterInterface
                         ]
                     )
                     ->setHeader('Access-Control-Allow-Methods', ['GET', 'PATCH', 'POST', 'PUT', 'OPTIONS', 'DELETE'])
-                    ->setStatusCode(200)->send();
+                    ->setStatusCode(200);
             }
 
-            Services::response()->setHeader('Access-Control-Allow-Origin', '*');
+            /*
+            // Проверяем заголовок Origin для разрешенного источника
+            $allowedOrigins = ['http://example.com', 'https://example.com'];
+            $origin = $request->getHeaderLine('Origin');
+
+            // Если Origin не в списке разрешенных, то отвечаем ошибкой или другим кодом
+            if (!in_array($origin, $allowedOrigins)) {
+                return service('response')->setStatusCode(403); // Отправляем код 403 (Forbidden)
+            }
+            */
+            //Services::response()->setHeader('Access-Control-Allow-Origin', '*');
         }
     }
 
@@ -75,9 +88,40 @@ class CorsFilter implements FilterInterface
      * @param array|null        $arguments
      *
      * @return ResponseInterface|void
+     * @throws ReflectionException
      */
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-        //
+        if (Cms::settings('core.auth.useCors')) {
+
+            $response = Services::response();
+
+            return $response->setHeader('Access-Control-Allow-Origin', '*')
+                ->setHeader('Access-Control-Allow-Credentials', 'true')
+                ->setHeader(
+                    'Access-Control-Allow-Headers',
+                    [
+                        'X-API-KEY',
+                        'Origin',
+                        'DNT',
+                        'X-Auth-Token',
+                        'X-Requested-With',
+                        'X-CustomHeader',
+                        'Content-Type',
+                        'Content-Length',
+                        'Accept',
+                        'Access-Control-Request-Method',
+                        'Authorization',
+                        'Keep-Alive',
+                        'User-Agent',
+                        'If-Modified-Since',
+                        'Cache-Control',
+                        'Content-Range',
+                        'Range'
+                    ]
+                )
+                ->setHeader('Access-Control-Allow-Methods', ['GET', 'PATCH', 'POST', 'PUT', 'OPTIONS', 'DELETE'])
+                ->setStatusCode(200);
+        }
     }
 }
