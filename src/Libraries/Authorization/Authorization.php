@@ -391,21 +391,7 @@ class Authorization
     public function refresh(array $data): array
     {
         $request = Services::request();
-
-        if (empty($authHeader = explode(' ', $request->getServer('HTTP_AUTHORIZATION') ?? '')) || count(
-                $authHeader
-            ) !== 2) {
-            throw AuthorizationException::forFailUnauthorized();
-        }
-
-        if ($this->settings['auth']['useJwt'] || $authHeader[0] !== 'Bearer' || count($token = explode('.',
-                $authHeader[1])) !== 3) {
-            throw AuthorizationException::forFailUnauthorized();
-        }
-
-        if (($payload = JWT::jsonDecode(JWT::urlsafeB64Decode($token[1]))) === null) {
-            throw AuthorizationException::forFailUnauthorized();
-        }
+        $payload = $this->_getJwtPayload();
 
         if (empty($data)) {
             throw AuthorizationException::forNoData();
@@ -420,7 +406,7 @@ class Authorization
         }
 
         foreach ($tokens as $item) {
-            if (hash_equals($item->refresh_token, $data['token'])) {
+            if (hash_equals($item->refreshToken, $data['token'])) {
                 if ($item->expires < now()) {
                     throw AuthorizationException::forFailUnauthorized('expiresToken');
                 }
@@ -430,14 +416,12 @@ class Authorization
                 }
 
                 $updated = $this->UTM->save(
-                    (new UserTokensEntity(
-                        [
-                            'id'           => $item->id,
-                            'access_token' => $jwt,
-                            'user_ip'      => $request->getIPAddress(),
-                            'user_agent'   => $request->getUserAgent()->getAgentString()
-                        ]
-                    ))
+                    [
+                        'id'           => $item->id,
+                        'access_token' => $jwt,
+                        'user_ip'      => $request->getIPAddress(),
+                        'user_agent'   => $request->getUserAgent()->getAgentString()
+                    ]
                 );
 
                 if ($updated) {
@@ -605,6 +589,11 @@ class Authorization
         return $code;
     }
 
+    protected function validate(array $rules, array $data): bool
+    {
+        return $this->validation->setRules($rules)->run($data);
+    }
+
     /**
      * @param  array  $map
      * @param  array  $segments
@@ -636,9 +625,28 @@ class Authorization
         return null;
     }
 
-    protected function validate(array $rules, array $data): bool
+    /**
+     * @return mixed
+     * @throws AuthorizationException
+     */
+    private function _getJwtPayload(): mixed
     {
-        return $this->validation->setRules($rules)->run($data);
+        if (empty($authHeader = explode(' ', Services::request()->getServer('HTTP_AUTHORIZATION') ?? '')) || count(
+                $authHeader
+            ) !== 2) {
+            throw AuthorizationException::forFailUnauthorized();
+        }
+
+        if ( ! $this->settings['auth']['useJwt'] || $authHeader[0] !== 'Bearer' || count($token = explode('.',
+                $authHeader[1])) !== 3) {
+            throw AuthorizationException::forFailUnauthorized();
+        }
+
+        if (($payload = JWT::jsonDecode(JWT::urlsafeB64Decode($token[1]))) === null) {
+            throw AuthorizationException::forFailUnauthorized();
+        }
+
+        return $payload;
     }
 
     /**
