@@ -536,7 +536,7 @@ class Authorization
                     throw new Exception($e->getMessage());
                 }
 
-                if (empty($tokens = $UTM->getUserTokens($userData->data->userId)->findAll())) {
+                if (empty($tokens = $UTM->getUserTokens($payload->data->userId)->findAll())) {
                     throw AuthenticationException::forNotAuthorized();
                 }
 
@@ -566,7 +566,7 @@ class Authorization
                 throw AuthenticationException::forUnknownPermission();
             }
 
-            if (empty($map = $UAM->getRoleAccessMap($payload->user->role, $userData->user->roleId))) {
+            if (empty($map = $UAM->getRoleAccessMap($userData->user->role, $userData->user->roleId))) {
                 throw AuthenticationException::forAccessDenied();
             }
 
