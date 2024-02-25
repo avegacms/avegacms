@@ -6,7 +6,6 @@ namespace AvegaCms\Libraries\Authorization;
 
 use AvegaCms\Enums\UserConditions;
 use AvegaCms\Libraries\Authorization\Exceptions\{AuthorizationException, AuthenticationException};
-use AvegaCms\Entities\{LoginEntity, UserEntity, UserTokensEntity};
 use AvegaCms\Models\Admin\{LoginModel, RolesModel, UserAuthenticationModel, UserRolesModel, UserTokensModel};
 use AvegaCms\Utilities\Cms;
 use CodeIgniter\Session\Session;
@@ -249,7 +248,7 @@ class Authorization
                 'user_agent'    => $userAgent
             ];
 
-            if ( ! $this->UTM->insert((new UserTokensEntity($newUserSession)))) {
+            if ( ! $this->UTM->insert($newUserSession)) {
                 throw AuthorizationException::forCreateToken();
             }
         }
@@ -260,7 +259,7 @@ class Authorization
         }
 
         $this->LM->save(
-            (new UserEntity([
+            [
                 'id'         => $user->id,
                 'secret'     => '',
                 'expires'    => 0,
@@ -268,7 +267,7 @@ class Authorization
                 'last_ip'    => $userIp,
                 'last_agent' => $userAgent,
                 'active_at'  => now($user->timezone)
-            ]))
+            ]
         );
 
         return $userSession;
@@ -497,7 +496,7 @@ class Authorization
                 (
                 $this->settings['auth']['useJwt'] ?
                     [
-                        'type' => 'jwt', 'token' => $authHeader[1]
+                        'type' => 'jwt', 'token' => $authHeader[2]
                     ] : false
                 ),
             default  => false
@@ -524,13 +523,18 @@ class Authorization
             case 'jwt':
 
                 $existToken = false;
-                $payload    = JWT::decode(
-                    $authType['token'],
-                    new Key(
-                        $this->settings['auth']['jwtSecretKey'],
-                        $this->settings['auth']['jwtAlg']
-                    )
-                );
+
+                try {
+                    $payload    = JWT::decode(
+                        $authType['token'],
+                        new Key(
+                            $this->settings['auth']['jwtSecretKey'],
+                            $this->settings['auth']['jwtAlg']
+                        )
+                    );
+                } catch (Exception $e) {
+                    throw new Exception($e->getMessage());
+                }
 
                 if (empty($tokens = $UTM->getUserTokens($payload->data->userId)->findAll())) {
                     throw AuthenticationException::forNotAuthorized();
@@ -551,7 +555,7 @@ class Authorization
                 }
 
                 $userData = $payload->data;
-
+            break;
             case 'token':
                 // TODO реализовать в дальнейшем
                 throw AuthenticationException::forTokenNotFound();
