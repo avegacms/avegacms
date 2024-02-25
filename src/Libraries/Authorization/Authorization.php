@@ -517,7 +517,7 @@ class Authorization
                     throw AuthenticationException::forNotAuthorized();
                 }
 
-                $userData = Cms::arrayToObject($this->session->get('avegacms.admin'));
+                $userData = Cms::arrayToObject($this->session->get('avegacms.admin'))->user;
 
                 break;
             case 'jwt':
@@ -594,7 +594,7 @@ class Authorization
             ]));
         }
 
-        Cms::setUser('user', $userData->user);
+        Cms::setUser('user', $userData);
     }
 
     /**
