@@ -441,7 +441,7 @@ class Authorization
      * @throws AuthorizationException
      * @throws ReflectionException
      */
-    public function logout(?string $role): void
+    public function logout(?string $role = null): void
     {
         $userId = 0;
 
