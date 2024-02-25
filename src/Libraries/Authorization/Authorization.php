@@ -465,10 +465,11 @@ class Authorization
     }
 
     /**
+     * @param  bool  $isPublicAccess
      * @return void
-     * @throws AuthenticationException|Exception
+     * @throws Exception
      */
-    public function checkUserAccess(): void
+    public function checkUserAccess(bool $isPublicAccess = false): void
     {
         $request  = Services::request();
         $userData = null;
@@ -522,7 +523,8 @@ class Authorization
                 break;
             case 'jwt':
 
-                $payload = JWT::decode(
+                $existToken = false;
+                $payload    = JWT::decode(
                     $authType['token'],
                     new Key(
                         $this->settings['auth']['jwtSecretKey'],
@@ -539,49 +541,56 @@ class Authorization
                         if ($item->expires < now()) {
                             throw AuthenticationException::forExpiredToken();
                         }
-                        $userData = $payload->data;
+                        $existToken = true;
                         break;
                     }
                 }
-                throw AuthenticationException::forTokenNotFound();
+
+                if ($existToken === false) {
+                    throw AuthenticationException::forTokenNotFound();
+                }
+
+                $userData = $payload->data;
+
             case 'token':
                 // TODO реализовать в дальнейшем
                 throw AuthenticationException::forTokenNotFound();
         }
 
-        if (empty($segments = array_slice(array_slice($request->uri->getSegments(), 2), 0, 2))) {
-            throw AuthenticationException::forUnknownPermission();
-        }
+        if ($isPublicAccess === false) {
+            if (empty($segments = array_slice(array_slice($request->uri->getSegments(), 2), 0, 2))) {
+                throw AuthenticationException::forUnknownPermission();
+            }
 
-        if (empty($map = $UAM->getRoleAccessMap($userData->user->role, $userData->user->roleId))) {
-            throw AuthenticationException::forAccessDenied();
-        }
+            if (empty($map = $UAM->getRoleAccessMap($userData->user->role, $userData->user->roleId))) {
+                throw AuthenticationException::forAccessDenied();
+            }
 
-        if (($permission = $this->_findPermission($map, $segments)) === null) {
-            throw AuthenticationException::forForbiddenAccess();
-        }
+            if (($permission = $this->_findPermission($map, $segments)) === null) {
+                throw AuthenticationException::forForbiddenAccess();
+            }
 
-        $method = $request->getMethod();
+            $action = (bool) match ($request->getMethod()) {
+                'get'    => $permission['read'],
+                'post'   => $permission['create'],
+                'put',
+                'patch'  => $permission['update'],
+                'delete' => $permission['delete'],
+                default  => false
+            };
 
-        $action = (bool) match ($method) {
-            'get'    => $permission['read'],
-            'post'   => $permission['create'],
-            'put',
-            'patch'  => $permission['update'],
-            'delete' => $permission['delete'],
-            default  => false
-        };
+            if ($action === false) {
+                throw AuthenticationException::forForbiddenAccess();
+            }
 
-        if ($action === false) {
-            throw AuthenticationException::forForbiddenAccess();
+            Cms::setUser('permission', Cms::arrayToObject([
+                'self'      => (bool) $permission['self'],
+                'moderated' => (bool) $permission['moderated'],
+                'settings'  => (bool) $permission['settings']
+            ]));
         }
 
         Cms::setUser('user', $userData->user);
-        Cms::setUser('permission', Cms::arrayToObject([
-            'self'      => (bool) $permission['self'],
-            'moderated' => (bool) $permission['moderated'],
-            'settings'  => (bool) $permission['settings']
-        ]));
     }
 
     /**
@@ -595,14 +604,12 @@ class Authorization
         $code = $this->_getCode();
 
         $this->LM->save(
-            (new LoginEntity(
-                [
-                    'id'        => $userId,
-                    'secret'    => $this->_hashCode($code),
-                    'expires'   => $this->_setExpiresTime($condition),
-                    'condition' => UserConditions::from($condition)->value
-                ]
-            ))
+            [
+                'id'        => $userId,
+                'secret'    => $this->_hashCode($code),
+                'expires'   => $this->_setExpiresTime($condition),
+                'condition' => UserConditions::from($condition)->value
+            ]
         );
 
         return $code;
