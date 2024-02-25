@@ -354,7 +354,7 @@ class Authorization
         $request = Services::request();
 
         $update = $this->LM->save(
-            (new LoginEntity([
+            [
                 'id'         => $user->id,
                 'secret'     => '',
                 'expires'    => 0,
@@ -363,7 +363,7 @@ class Authorization
                 'last_ip'    => $request->getIPAddress(),
                 'last_agent' => $request->getUserAgent()->getAgentString(),
                 'active_at'  => now($user->timezone)
-            ]))
+            ]
         );
 
         if ($update === false) {
@@ -436,13 +436,32 @@ class Authorization
     }
 
     /**
+     * @param  string|null  $role
      * @return void
+     * @throws AuthorizationException
+     * @throws ReflectionException
      */
-    public function logout(): void
+    public function logout(?string $role): void
     {
-        $session                   = session()->get('avegacms');
-        $session['client']['user'] = null;
-        session()->set('avegacms', $session);
+        $userId = 0;
+
+        if ($this->settings['auth']['useJwt']) {
+            $payload = $this->_getJwtPayload();
+            $this->UTM->where(['user_id' => ($userId = $payload->data->userId)])->delete();
+        }
+
+        if ($this->settings['auth']['useSession']) {
+            $session = session('avegacms');
+            if ($session[$role]['user'] ?? false) {
+                $userId                 = $session[$role]['user']['user']['userId'];
+                $session[$role]['user'] = null;
+                session()->set('avegacms', $session);
+            }
+        }
+
+        if ($userId > 0) {
+            $this->LM->update($userId, ['secret' => '', 'expires' => 0, 'condition' => UserConditions::None->value]);
+        }
     }
 
     /**
