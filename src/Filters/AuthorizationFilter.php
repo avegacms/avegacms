@@ -31,12 +31,13 @@ class AuthorizationFilter implements FilterInterface
     public function before(RequestInterface $request, $arguments = null)
     {
         try {
-            if (($settings = Cms::settings('core.auth')) === null) {
+            if (($settings = Cms::settings('core')) === null) {
                 throw new Exception('Auth settings not found');
             }
             (new Authorization($settings))->checkUserAccess();
+            unset($settings);
         } catch (AuthenticationException|Exception $e) {
-            return Services::response()->setStatusCode($e->getCode(), $e->getMessage());
+            return Services::response()->setStatusCode(401, $e->getMessage());
         }
     }
 
