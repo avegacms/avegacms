@@ -517,7 +517,7 @@ class Authorization
                     throw AuthenticationException::forNotAuthorized();
                 }
 
-                $userData = Cms::arrayToObject($this->session->get('avegacms.admin'))->user;
+                $userData = Cms::arrayToObject($this->session->get('avegacms.admin'));
 
                 break;
             case 'jwt':
@@ -525,7 +525,7 @@ class Authorization
                 $existToken = false;
 
                 try {
-                    $payload    = JWT::decode(
+                    $userData = JWT::decode(
                         $authType['token'],
                         new Key(
                             $this->settings['auth']['jwtSecretKey'],
@@ -536,7 +536,7 @@ class Authorization
                     throw new Exception($e->getMessage());
                 }
 
-                if (empty($tokens = $UTM->getUserTokens($payload->data->userId)->findAll())) {
+                if (empty($tokens = $UTM->getUserTokens($userData->data->userId)->findAll())) {
                     throw AuthenticationException::forNotAuthorized();
                 }
 
@@ -554,8 +554,7 @@ class Authorization
                     throw AuthenticationException::forTokenNotFound();
                 }
 
-                $userData = $payload->data;
-            break;
+                break;
             case 'token':
                 // TODO реализовать в дальнейшем
                 throw AuthenticationException::forTokenNotFound();
