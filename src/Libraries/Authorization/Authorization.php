@@ -566,7 +566,7 @@ class Authorization
                 throw AuthenticationException::forUnknownPermission();
             }
 
-            if (empty($map = $UAM->getRoleAccessMap($userData->user->role, $userData->user->roleId))) {
+            if (empty($map = $UAM->getRoleAccessMap($payload->user->role, $userData->user->roleId))) {
                 throw AuthenticationException::forAccessDenied();
             }
 
