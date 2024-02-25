@@ -497,7 +497,7 @@ class Authorization
                 (
                 $this->settings['auth']['useJwt'] ?
                     [
-                        'type' => 'jwt', 'token' => $authHeader[1]
+                        'type' => 'jwt', 'token' => $authHeader[2]
                     ] : false
                 ),
             default  => false
