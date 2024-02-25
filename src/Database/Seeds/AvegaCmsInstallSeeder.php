@@ -1084,7 +1084,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'useWhiteIpList',
-                'value'         => 1,
+                'value'         => 0,
                 'default_value' => 0,
                 'return_type'   => SettingsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.auth.useWhiteIpList',
@@ -1715,10 +1715,10 @@ class AvegaCmsInstallSeeder extends Seeder
     {
         if (CLI::prompt('Create rubrics?', ['y', 'n']) === 'y' &&
             ($rubrics = CLI::prompt(
-            'How many rubrics do you want to create?',
-            null,
-            ['required', 'is_natural']
-        ))) {
+                'How many rubrics do you want to create?',
+                null,
+                ['required', 'is_natural']
+            ))) {
             if ($rubrics > 0) {
                 $useMultiLocales = Cms::settings('core.env.useMultiLocales');
                 $locales         = $this->LLM->where([
