@@ -29,13 +29,14 @@ class CorsFilter implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        if (false && Cms::settings('core.auth.useCors')) {
-            // Если предполётный запрос, то быстро формируем ответ
-            if (strtoupper($request->getMethod()) === 'OPTIONS') {
-                return service('response')->setHeader('Access-Control-Allow-Origin', '*')
+        if (Cms::settings('core.auth.useCors')) {
+            // Intercept OPTIONS method
+            if ($request->getMethod() === 'OPTIONS') {
+                return Services::response()
+                    ->setHeader('Access-Control-Allow-Origin', '*')
+                    ->setHeader('Access-Control-Allow-Methods', ['GET', 'PATCH', 'POST', 'PUT', 'OPTIONS', 'DELETE'])
                     ->setHeader('Access-Control-Allow-Credentials', 'true')
-                    ->setHeader(
-                        'Access-Control-Allow-Headers',
+                    ->setHeader('Access-Control-Allow-Headers',
                         [
                             'X-API-KEY',
                             'Origin',
@@ -55,21 +56,9 @@ class CorsFilter implements FilterInterface
                             'Content-Range',
                             'Range'
                         ]
-                    )
-                    ->setHeader('Access-Control-Allow-Methods', ['GET', 'PATCH', 'POST', 'PUT', 'OPTIONS', 'DELETE'])
-                    ->setStatusCode(200);
+                    );
             }
 
-            /*
-            // Проверяем заголовок Origin для разрешенного источника
-            $allowedOrigins = ['http://example.com', 'https://example.com'];
-            $origin = $request->getHeaderLine('Origin');
-
-            // Если Origin не в списке разрешенных, то отвечаем ошибкой или другим кодом
-            if (!in_array($origin, $allowedOrigins)) {
-                return service('response')->setStatusCode(403); // Отправляем код 403 (Forbidden)
-            }
-            */
             Services::response()->setHeader('Access-Control-Allow-Origin', '*');
         }
     }
@@ -90,32 +79,31 @@ class CorsFilter implements FilterInterface
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
         if (Cms::settings('core.auth.useCors')) {
-            return $response->setHeader('Access-Control-Allow-Origin', '*')
-                ->setHeader('Access-Control-Allow-Credentials', 'true')
-                ->setHeader(
-                    'Access-Control-Allow-Headers',
-                    [
-                        'X-API-KEY',
-                        'Origin',
-                        'DNT',
-                        'X-Auth-Token',
-                        'X-Requested-With',
-                        'X-CustomHeader',
-                        'Content-Type',
-                        'Content-Length',
-                        'Accept',
-                        'Access-Control-Request-Method',
-                        'Authorization',
-                        'Keep-Alive',
-                        'User-Agent',
-                        'If-Modified-Since',
-                        'Cache-Control',
-                        'Content-Range',
-                        'Range'
-                    ]
-                )
-                ->setHeader('Access-Control-Allow-Methods', ['GET', 'PATCH', 'POST', 'PUT', 'OPTIONS', 'DELETE'])
-                ->setStatusCode(200);
+            /*$response->setHeader('Access-Control-Allow-Origin', '*');
+            $response->setHeader('Access-Control-Allow-Methods', ['GET', 'PATCH', 'POST', 'PUT', 'OPTIONS', 'DELETE']);
+            $response->setHeader('Access-Control-Allow-Credentials', 'true');
+            $response->setHeader('Access-Control-Allow-Headers',
+                [
+                    'X-API-KEY',
+                    'Origin',
+                    'DNT',
+                    'X-Auth-Token',
+                    'X-Requested-With',
+                    'X-CustomHeader',
+                    'Content-Type',
+                    'Content-Length',
+                    'Accept',
+                    'Access-Control-Request-Method',
+                    'Authorization',
+                    'Keep-Alive',
+                    'User-Agent',
+                    'If-Modified-Since',
+                    'Cache-Control',
+                    'Content-Range',
+                    'Range'
+                ]);*/
+
+            return $response->setHeader('Access-Control-Allow-Origin', '*');
         }
     }
 }
