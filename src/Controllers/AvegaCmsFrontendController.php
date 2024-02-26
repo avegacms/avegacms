@@ -106,10 +106,11 @@ class AvegaCmsFrontendController extends BaseController
     protected function initRender(): ?ResponseInterface
     {
         $module   = $params = [];
-        $segments = Services::request()->uri->getSegments();
+        $segments = request()->uri->getSegments();
 
-        if ($segments[1] === 'api' && in_array($segments[2], ['public', 'admin'])) {
-            return $this->response->setStatusCode(404);
+        if ($segments[0] === 'api' && in_array($segments[1], ['public', 'admin'])) {
+            response()->setStatusCode(404)->send();
+            die;
         }
 
         if (($this->metaType = strtoupper($this->metaType)) === EntityTypes::Module->value) {
