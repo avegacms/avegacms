@@ -58,7 +58,8 @@ class CorsFilter implements FilterInterface
                         ]
                     )->setStatusCode(204);
             }
-            //return Services::response()->setHeader('Access-Control-Allow-Origin', '*');
+
+            Services::response()->setHeader('Access-Control-Allow-Origin', '*');
         }
     }
 
