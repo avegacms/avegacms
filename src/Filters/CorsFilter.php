@@ -31,7 +31,7 @@ class CorsFilter implements FilterInterface
     {
         if (Cms::settings('core.auth.useCors')) {
             // Intercept OPTIONS method
-            if ($request->getMethod() === 'OPTIONS') {
+            if ($request->getMethod(true) === 'OPTIONS' && $request->hasHeader('Access-Control-Request-Method')) {
                 return Services::response()
                     ->setHeader('Access-Control-Allow-Origin', '*')
                     ->setHeader('Access-Control-Allow-Methods', ['GET', 'PATCH', 'POST', 'PUT', 'OPTIONS', 'DELETE'])
@@ -56,10 +56,9 @@ class CorsFilter implements FilterInterface
                             'Content-Range',
                             'Range'
                         ]
-                    );
+                    )->setStatusCode(204);
             }
-
-            Services::response()->setHeader('Access-Control-Allow-Origin', '*');
+            //return Services::response()->setHeader('Access-Control-Allow-Origin', '*');
         }
     }
 
@@ -79,31 +78,39 @@ class CorsFilter implements FilterInterface
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
         if (Cms::settings('core.auth.useCors')) {
-            /*$response->setHeader('Access-Control-Allow-Origin', '*');
-            $response->setHeader('Access-Control-Allow-Methods', ['GET', 'PATCH', 'POST', 'PUT', 'OPTIONS', 'DELETE']);
-            $response->setHeader('Access-Control-Allow-Credentials', 'true');
-            $response->setHeader('Access-Control-Allow-Headers',
-                [
-                    'X-API-KEY',
-                    'Origin',
-                    'DNT',
-                    'X-Auth-Token',
-                    'X-Requested-With',
-                    'X-CustomHeader',
-                    'Content-Type',
-                    'Content-Length',
-                    'Accept',
-                    'Access-Control-Request-Method',
-                    'Authorization',
-                    'Keep-Alive',
-                    'User-Agent',
-                    'If-Modified-Since',
-                    'Cache-Control',
-                    'Content-Range',
-                    'Range'
-                ]);*/
+            if ($request->getMethod(true) === 'OPTIONS') {
+                $response->setHeader('Access-Control-Allow-Origin', '*');
+            }
 
-            return $response->setHeader('Access-Control-Allow-Origin', '*');
+            if ( ! $response->hasHeader('Access-Control-Allow-Origin')) {
+                $response->setHeader('Access-Control-Allow-Origin', '*');
+                $response->setHeader('Access-Control-Allow-Methods',
+                    ['GET', 'PATCH', 'POST', 'PUT', 'OPTIONS', 'DELETE']);
+                $response->setHeader('Access-Control-Allow-Credentials', 'true');
+                $response->setHeader('Access-Control-Allow-Headers',
+                    [
+                        'X-API-KEY',
+                        'Origin',
+                        'DNT',
+                        'X-Auth-Token',
+                        'X-Requested-With',
+                        'X-CustomHeader',
+                        'Content-Type',
+                        'Content-Length',
+                        'Accept',
+                        'Access-Control-Request-Method',
+                        'Authorization',
+                        'Keep-Alive',
+                        'User-Agent',
+                        'If-Modified-Since',
+                        'Cache-Control',
+                        'Content-Range',
+                        'Range'
+                    ]
+                );
+            }
+
+            return $response;
         }
     }
 }
