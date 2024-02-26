@@ -108,7 +108,7 @@ class AvegaCmsFrontendController extends BaseController
         $module   = $params = [];
         $segments = Services::request()->uri->getSegments();
 
-        if ($segments[1] === 'api' && in_array($segments[2], ['public', 'admin'])) {
+        if ($segments[0] === 'api' && in_array($segments[1], ['public', 'admin'])) {
             return $this->response->setStatusCode(404);
         }
 
