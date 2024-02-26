@@ -54,5 +54,7 @@ class Cors extends BaseController
                 ->setHeader('Access-Control-Allow-Methods', ['GET', 'PATCH', 'POST', 'PUT', 'OPTIONS', 'DELETE'])
                 ->setStatusCode(200);
         }
+
+        return $this->response->setStatusCode(400);
     }
 }
