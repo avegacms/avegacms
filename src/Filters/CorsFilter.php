@@ -21,21 +21,18 @@ class CorsFilter implements FilterInterface
      * sent back to the client, allowing for error pages,
      * redirects, etc.
      *
-     * @param RequestInterface $request
-     * @param array|null       $arguments
+     * @param  RequestInterface  $request
+     * @param  array|null  $arguments
      *
      * @return RequestInterface|ResponseInterface|string|void
      * @throws ReflectionException
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        if (Cms::settings('core.auth.useCors')) {
-
-            $response = service('response');
-
+        if (false && Cms::settings('core.auth.useCors')) {
             // Если предполётный запрос, то быстро формируем ответ
             if (strtoupper($request->getMethod()) === 'OPTIONS') {
-                return $response->setHeader('Access-Control-Allow-Origin', '*')
+                return service('response')->setHeader('Access-Control-Allow-Origin', '*')
                     ->setHeader('Access-Control-Allow-Credentials', 'true')
                     ->setHeader(
                         'Access-Control-Allow-Headers',
@@ -83,9 +80,9 @@ class CorsFilter implements FilterInterface
      * to stop execution of other after filters, short of
      * throwing an Exception or Error.
      *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
-     * @param array|null        $arguments
+     * @param  RequestInterface  $request
+     * @param  ResponseInterface  $response
+     * @param  array|null  $arguments
      *
      * @return ResponseInterface|void
      * @throws ReflectionException
@@ -93,7 +90,6 @@ class CorsFilter implements FilterInterface
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
         if (Cms::settings('core.auth.useCors')) {
-
             return $response->setHeader('Access-Control-Allow-Origin', '*')
                 ->setHeader('Access-Control-Allow-Credentials', 'true')
                 ->setHeader(
