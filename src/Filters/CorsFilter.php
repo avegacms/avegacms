@@ -31,7 +31,7 @@ class CorsFilter implements FilterInterface
     {
         if (Cms::settings('core.auth.useCors')) {
 
-            $response = Services::response();
+            $response = service('response');
 
             // Если предполётный запрос, то быстро формируем ответ
             if (strtoupper($request->getMethod()) === 'OPTIONS') {
@@ -73,7 +73,7 @@ class CorsFilter implements FilterInterface
                 return service('response')->setStatusCode(403); // Отправляем код 403 (Forbidden)
             }
             */
-            //Services::response()->setHeader('Access-Control-Allow-Origin', '*');
+            Services::response()->setHeader('Access-Control-Allow-Origin', '*');
         }
     }
 
@@ -93,8 +93,6 @@ class CorsFilter implements FilterInterface
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
         if (Cms::settings('core.auth.useCors')) {
-
-            $response = Services::response();
 
             return $response->setHeader('Access-Control-Allow-Origin', '*')
                 ->setHeader('Access-Control-Allow-Credentials', 'true')
