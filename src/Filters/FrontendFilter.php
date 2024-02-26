@@ -23,7 +23,7 @@ class FrontendFilter implements FilterInterface
         $settings = Cms::settings('core.env');
 
         if ($settings['useFrontend'] === false) {
-            return Services::response()->setStatusCode(404);
+            return;
         }
 
         $locales      = array_column(SeoUtils::Locales(), null, 'slug');
