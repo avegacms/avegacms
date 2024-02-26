@@ -231,7 +231,7 @@ class Authorization
                 $this->UTM->delete($sessions[0]);
             }
 
-            $refreshTokenTime = now() + ($this->settings['auth']['jwtRefreshTime'] * DAY);
+            $refreshTokenTime = now() + ($this->settings['auth']['jwtRefreshTime'] * MINUTE);
 
             $newUserSession = [
                 'id'            => $userSession['sessionId'] = sha1($user->id . $userAgent . bin2hex(random_bytes(32))),
