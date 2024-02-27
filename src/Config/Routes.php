@@ -3,6 +3,7 @@
 use CodeIgniter\Router\RouteCollection;
 
 use AvegaCms\Controllers\{Content, Seo, Cors};
+use AvegaCms\Controllers\Api\AvegaCmsAPI;
 use AvegaCms\Controllers\Api\Public\Login;
 use AvegaCms\Controllers\Api\Admin\Content\{Pages, Rubrics, Posts};
 use AvegaCms\Controllers\Api\Admin\Settings\{Locales,
@@ -135,4 +136,10 @@ $routes->group('api', function (RouteCollection $routes) {
 $routes->get('robots.txt', [Seo::class, 'robots']);
 $routes->get('sitemap.xml', [Seo::class, 'sitemap']);
 
-$routes->get('(.*)', [Content::class, 'index'], ['priority' => 10000]);
+$routes->match(
+    ['get', 'post', 'put', 'patch', 'delete'],
+    'api/(:any)', [AvegaCmsAPI::class, 'apiMethodBotFound'],
+    ['priority' => 10000]
+);
+
+$routes->get('(.*)', [Content::class, 'index'], ['priority' => 10001]);

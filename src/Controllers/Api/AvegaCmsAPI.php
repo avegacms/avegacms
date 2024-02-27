@@ -3,6 +3,7 @@
 namespace AvegaCms\Controllers\Api;
 
 use AvegaCms\Utilities\Cms;
+use CodeIgniter\HTTP\ResponseInterface;
 
 class AvegaCmsAPI extends CmsResourceController
 {
@@ -14,5 +15,13 @@ class AvegaCmsAPI extends CmsResourceController
         helper(['date']);
         $this->userData       = Cms::userData();
         $this->userPermission = Cms::userPermission();
+    }
+
+    /**
+     * @return ResponseInterface
+     */
+    public function apiMethodBotFound(): ResponseInterface
+    {
+        return $this->failNotFound();
     }
 }
