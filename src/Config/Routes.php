@@ -2,7 +2,7 @@
 
 use CodeIgniter\Router\RouteCollection;
 
-use AvegaCms\Controllers\{Content, Seo, Cors};
+use AvegaCms\Controllers\{Content, Seo};
 use AvegaCms\Controllers\Api\AvegaCmsAPI;
 use AvegaCms\Controllers\Api\Public\Login;
 use AvegaCms\Controllers\Api\Admin\Content\{Pages, Rubrics, Posts};

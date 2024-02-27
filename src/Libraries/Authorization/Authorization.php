@@ -221,7 +221,8 @@ class Authorization
         $userIp    = $request->getIPAddress();
 
         if ($this->settings['auth']['useJwt']) {
-            if (empty($token = $this->_signatureTokenJWT($userSession['user']))) {
+            $jwt = $this->_signatureTokenJWT($userSession['user']);
+            if (empty($jwt['token'])) {
                 throw AuthorizationException::forCreateToken();
             }
 
@@ -231,19 +232,17 @@ class Authorization
                 $this->UTM->delete($sessions[0]);
             }
 
-            $refreshTokenTime = now() + ($this->settings['auth']['jwtRefreshTime'] * MINUTE);
-
             $newUserSession = [
                 'id'            => $userSession['sessionId'] = sha1($user->id . $userAgent . bin2hex(random_bytes(32))),
                 'user_id'       => $user->id,
-                'access_token'  => $userSession['accessToken'] = $token,
+                'access_token'  => $userSession['accessToken'] = $jwt['token'],
                 'refresh_token' => $userSession['refreshToken'] = sha1(
                     $userSession['user']['phone'] .
-                    $refreshTokenTime .
+                    $jwt['expired'] .
                     $this->settings['auth']['jwtSecretKey'] .
                     $userAgent
                 ),
-                'expires'       => $refreshTokenTime,
+                'expires'       => $jwt['expired'],
                 'user_ip'       => $userIp,
                 'user_agent'    => $userAgent
             ];
@@ -410,21 +409,24 @@ class Authorization
                     throw AuthorizationException::forFailUnauthorized('expiresToken');
                 }
 
-                if (empty($jwt = $this->_signatureTokenJWT((array) $payload->data))) {
+                $jwt = $this->_signatureTokenJWT((array) $payload->data);
+
+                if (empty($jwt['token'])) {
                     throw AuthorizationException::forCreateToken();
                 }
 
                 $updated = $this->UTM->save(
                     [
                         'id'           => $item->id,
-                        'access_token' => $jwt,
+                        'access_token' => $jwt['token'],
+                        'expires'      => $jwt['expired'],
                         'user_ip'      => $request->getIPAddress(),
                         'user_agent'   => $request->getUserAgent()->getAgentString()
                     ]
                 );
 
                 if ($updated) {
-                    return ['data' => ['access_token' => $jwt]];
+                    return ['data' => ['access_token' => $jwt['token']]];
                 }
 
                 break;
@@ -718,26 +720,29 @@ class Authorization
 
     /**
      * @param  array  $userData
-     * @return string
+     * @return array
      */
-    public function _signatureTokenJWT(array $userData): string
+    public function _signatureTokenJWT(array $userData): array
     {
         $issuedAtTime    = time();
         $tokenExpiration = $issuedAtTime + ($this->settings['auth']['jwtLiveTime'] * MINUTE);
 
-        return JWT::encode(
-            [
-                'iss'  => base_url(),
-                'aud'  => 'API',
-                'sub'  => 'AvegaCMS API',
-                'nbf'  => $issuedAtTime,
-                'iat'  => $issuedAtTime, // Время выпуска JWT
-                'exp'  => $tokenExpiration,
-                'data' => $userData
-            ],
-            $this->settings['auth']['jwtSecretKey'],
-            $this->settings['auth']['jwtAlg']
-        );
+        return [
+            'expired' => $tokenExpiration,
+            'token'   => JWT::encode(
+                [
+                    'iss'  => base_url(),
+                    'aud'  => 'API',
+                    'sub'  => 'AvegaCMS API',
+                    'nbf'  => $issuedAtTime,
+                    'iat'  => $issuedAtTime, // Время выпуска JWT
+                    'exp'  => $tokenExpiration, // Время действия JWT-токена
+                    'data' => $userData
+                ],
+                $this->settings['auth']['jwtSecretKey'],
+                $this->settings['auth']['jwtAlg']
+            )
+        ];
     }
 
     /**
