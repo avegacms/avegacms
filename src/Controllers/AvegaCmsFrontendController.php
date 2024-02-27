@@ -108,11 +108,6 @@ class AvegaCmsFrontendController extends BaseController
         $module   = $params = [];
         $segments = request()->uri->getSegments();
 
-        if ($segments[0] === 'api' && in_array($segments[1], ['public', 'admin'])) {
-            response()->setStatusCode(404)->send();
-            die;
-        }
-
         if (($this->metaType = strtoupper($this->metaType)) === EntityTypes::Module->value) {
             if ($this->moduleKey === null || ($module = CmsModule::meta($this->moduleKey)) === null || empty($segments)) {
                 $this->error404();
