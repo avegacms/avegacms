@@ -20,7 +20,7 @@ class AvegaCmsAPI extends CmsResourceController
     /**
      * @return ResponseInterface
      */
-    public function apiMethodBotFound(): ResponseInterface
+    public function apiMethodNotFound(): ResponseInterface
     {
         return $this->failNotFound();
     }
