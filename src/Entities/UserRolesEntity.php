@@ -16,6 +16,8 @@ use CodeIgniter\Entity\Entity;
  * @property string|null $email
  * @property string|null $timezone
  * @property string|null $status
+ * @property array|null $profile
+ * @property array|null $extra
  */
 class UserRolesEntity extends Entity
 {
@@ -37,7 +39,9 @@ class UserRolesEntity extends Entity
         'phone'    => 'integer',
         'email'    => 'string',
         'timezone' => 'string',
-        'status'   => 'string'
+        'status'   => 'string',
+        'profile'  => 'json-array',
+        'extra'    => 'json-array',
     ];
 
     /**
