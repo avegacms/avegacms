@@ -37,11 +37,11 @@ class UserTokensModel extends Model
     protected $validationRules      = [
         'id'            => ['rules' => 'if_exist|required|alpha_dash|max_length[128]'],
         'user_id'       => ['rules' => 'if_exist|is_natural_no_zero'],
-        'access_token'  => ['rules' => 'if_exist|required|alpha_dash|max_length[2048]'],
-        'refresh_token' => ['rules' => 'if_exist|required|alpha_dash|max_length[64]'],
+        'access_token'  => ['rules' => 'if_exist|required|alpha_numeric_punct|max_length[2048]'],
+        'refresh_token' => ['rules' => 'if_exist|required|alpha_numeric_punct|max_length[64]'],
         'expires'       => ['rules' => 'if_exist|is_natural'],
-        'user_ip'       => ['rules' => 'if_exist|alpha_dash|max_length[255]'],
-        'user_agent'    => ['rules' => 'if_exist|alpha_dash|max_length[512]']
+        'user_ip'       => ['rules' => 'if_exist|max_length[255]'],
+        'user_agent'    => ['rules' => 'if_exist|max_length[512]']
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
