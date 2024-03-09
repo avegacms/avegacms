@@ -248,7 +248,7 @@ class Authorization
             ];
 
             if ( ! $this->UTM->insert($newUserSession)) {
-                throw new AuthorizationException($this->UTM->getErrors());
+                throw new AuthorizationException($this->UTM->errors());
             }
         }
 
@@ -426,7 +426,7 @@ class Authorization
                 );
 
                 if ( ! $updated) {
-                    throw new AuthorizationException($this->UTM->getErrors());
+                    throw new AuthorizationException($this->UTM->errors());
                 }
 
                 return ['data' => ['access_token' => $jwt['token']]];
