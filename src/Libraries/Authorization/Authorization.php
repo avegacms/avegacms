@@ -248,7 +248,7 @@ class Authorization
             ];
 
             if ( ! $this->UTM->insert($newUserSession)) {
-                throw AuthorizationException::forCreateToken();
+                throw new AuthorizationException($this->UTM->getErrors());
             }
         }
 
@@ -425,11 +425,11 @@ class Authorization
                     ]
                 );
 
-                if ($updated) {
-                    return ['data' => ['access_token' => $jwt['token']]];
+                if ( ! $updated) {
+                    throw new AuthorizationException($this->UTM->getErrors());
                 }
 
-                break;
+                return ['data' => ['access_token' => $jwt['token']]];
             }
         }
 
@@ -543,7 +543,7 @@ class Authorization
                 }
 
                 foreach ($tokens as $item) {
-                    if (hash_equals($item->access_token, $authType['token'])) {
+                    if (hash_equals($item->accessToken, $authType['token'])) {
                         if ($item->expires < now()) {
                             throw AuthenticationException::forExpiredToken();
                         }

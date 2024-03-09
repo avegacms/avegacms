@@ -129,7 +129,7 @@ class CreateAvegaCmsTables extends Migration
         $this->forge->addField([
             'id'            => ['type' => 'varchar', 'constraint' => 128, 'unique' => true, 'null' => true],
             'user_id'       => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
-            'access_token'  => ['type' => 'varchar', 'constraint' => 1024],
+            'access_token'  => ['type' => 'varchar', 'constraint' => 2048],
             'refresh_token' => ['type' => 'varchar', 'constraint' => 64, 'unique' => true],
             'expires'       => ['type' => 'int', 'null' => true, 'default' => 0],
             'user_ip'       => ['type' => 'varchar', 'constraint' => 255],
