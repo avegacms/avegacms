@@ -6,7 +6,13 @@ namespace AvegaCms\Libraries\Authorization;
 
 use AvegaCms\Enums\UserConditions;
 use AvegaCms\Libraries\Authorization\Exceptions\{AuthorizationException, AuthenticationException};
-use AvegaCms\Models\Admin\{LoginModel, RolesModel, UserAuthenticationModel, UserRolesModel, UserTokensModel};
+use AvegaCms\Models\Admin\{LoginModel,
+    RolesModel,
+    UserAuthenticationModel,
+    UserRolesModel,
+    UserTokensModel,
+    SessionsModel
+};
 use AvegaCms\Utilities\Cms;
 use CodeIgniter\Session\Session;
 use CodeIgniter\Validation\Validation;
@@ -370,7 +376,7 @@ class Authorization
 
         if ($this->settings['auth']['useJwt']) {
             // Удаляем все записи токенов по пользователю
-            $this->UTM->delete(['user_id' => $user->id]);
+            $this->UTM->where(['user_id' => $user->id])->delete();
         }
 
         return [
@@ -576,12 +582,12 @@ class Authorization
                 throw AuthenticationException::forForbiddenAccess();
             }
 
-            $action = (bool) match ($request->getMethod()) {
-                'get'    => $permission['read'],
-                'post'   => $permission['create'],
-                'put',
-                'patch'  => $permission['update'],
-                'delete' => $permission['delete'],
+            $action = (bool) match ($request->getMethod(true)) {
+                'GET'    => $permission['read'],
+                'POST'   => $permission['create'],
+                'PUT',
+                'PATCH'  => $permission['update'],
+                'DELETE' => $permission['delete'],
                 default  => false
             };
 
@@ -619,6 +625,24 @@ class Authorization
         );
 
         return $code;
+    }
+
+    /**
+     * @param  int  $userId
+     * @return bool
+     */
+    public function destroyUserSessions(int $userId): bool
+    {
+        if ($this->settings['auth']['useJwt']) {
+            // Удаляем все записи токенов по пользователю
+            return $this->UTM->where(['user_id' => $userId])->delete();
+        }
+        
+        if ($this->settings['auth']['useSession']) {
+            return model(SessionsModel::class)->where(['user_id' => $userId])->delete();
+        }
+
+        return false;
     }
 
     protected function validate(array $rules, array $data): bool

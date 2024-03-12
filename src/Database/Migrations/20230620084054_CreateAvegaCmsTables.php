@@ -279,6 +279,7 @@ class CreateAvegaCmsTables extends Migration
          */
         $this->forge->addField([
             'id'         => ['type' => 'varchar', 'constraint' => 128, 'null' => false],
+            'user_id'    => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
             'ip_address' => ['type' => 'varchar', 'constraint' => 45, 'null' => false],
             'timestamp'  => ['type' => 'timestamp', 'null' => true, 'default' => new RawSql('CURRENT_TIMESTAMP')],
             'data'       => ['type' => 'blob', 'null' => false]
