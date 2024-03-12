@@ -634,14 +634,17 @@ class Authorization
     public function destroyUserSessions(int $userId): bool
     {
         if ($this->settings['auth']['useJwt']) {
-            // Удаляем все записи токенов по пользователю
-            return $this->UTM->where(['user_id' => $userId])->delete();
+            if ( ! $this->UTM->where(['user_id' => $userId])->delete()) {
+                throw AuthenticationException::forDestroyUserSessionError();
+            }
+            return true;
         }
-        
         if ($this->settings['auth']['useSession']) {
-            return model(SessionsModel::class)->where(['user_id' => $userId])->delete();
+            if ( ! model(SessionsModel::class)->where(['user_id' => $userId])->delete()) {
+                throw AuthenticationException::forDestroyUserSessionError();
+            }
+            return true;
         }
-
         return false;
     }
 
