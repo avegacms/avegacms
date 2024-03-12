@@ -576,12 +576,12 @@ class Authorization
                 throw AuthenticationException::forForbiddenAccess();
             }
 
-            $action = (bool) match ($request->getMethod()) {
-                'get'    => $permission['read'],
-                'post'   => $permission['create'],
-                'put',
-                'patch'  => $permission['update'],
-                'delete' => $permission['delete'],
+            $action = (bool) match ($request->getMethod(true)) {
+                'GET'    => $permission['read'],
+                'POST'   => $permission['create'],
+                'PUT',
+                'PATCH'  => $permission['update'],
+                'DELETE' => $permission['delete'],
                 default  => false
             };
 
