@@ -663,6 +663,11 @@ class Authorization
         return false;
     }
 
+    /**
+     * @param  array  $rules
+     * @param  array  $data
+     * @return bool
+     */
     protected function validate(array $rules, array $data): bool
     {
         $this->validation = Services::validation();
