@@ -46,13 +46,11 @@ class Authorization
             throw AuthorizationException::forNoData();
         }
 
-        $this->settings   = $settings;
-        $this->LM         = model(LoginModel::class);
-        $this->RM         = model(RolesModel::class);
-        $this->UTM        = model(UserTokensModel::class);
-        $this->URM        = model(UserRolesModel::class);
-        $this->session    = Services::session();
-        $this->validation = Services::validation();
+        $this->settings = $settings;
+        $this->LM       = model(LoginModel::class);
+        $this->RM       = model(RolesModel::class);
+        $this->UTM      = model(UserTokensModel::class);
+        $this->URM      = model(UserRolesModel::class);
     }
 
     /**
@@ -260,7 +258,22 @@ class Authorization
 
         if ($this->settings['auth']['useSession']) {
             Cms::initClientSession();
-            $this->_setClientSession($userSession);
+
+            $roles = $this->RM->getActiveRoles();
+
+            if ( ! isset($roles[$userdata['user']['role']])) {
+                throw AuthorizationException::forUnknownRole();
+            }
+
+            $session = session('avegacms');
+
+            if ($roles[$userSession['user']['role']]['selfAuth']) {
+                $session['client']['user'] = $userSession;
+            } else {
+                $session['admin'] = $userSession;
+            }
+
+            session()->set('avegacms', $session);
         }
 
         $this->LM->save(
@@ -517,15 +530,17 @@ class Authorization
         switch ($authType['type']) {
             case 'session':
 
-                if ($this->session->has('avegacms') === false) {
+                $session = session();
+
+                if ($session->has('avegacms') === false) {
                     throw AuthenticationException::forUserSessionNotExist();
                 }
 
-                if ($this->session->get('avegacms.admin.isAuth') !== true) {
+                if ($session->get('avegacms.admin.isAuth') !== true) {
                     throw AuthenticationException::forNotAuthorized();
                 }
 
-                $userData = Cms::arrayToObject($this->session->get('avegacms.admin'))->user;
+                $userData = Cms::arrayToObject($session->get('avegacms.admin'))->user;
 
                 break;
             case 'jwt':
@@ -650,6 +665,7 @@ class Authorization
 
     protected function validate(array $rules, array $data): bool
     {
+        $this->validation = Services::validation();
         return $this->validation->setRules($rules)->run($data);
     }
 
@@ -788,34 +804,6 @@ class Authorization
         }
 
         throw AuthorizationException::forUnknownLoginField(implode(':', $fields));
-    }
-
-    /**
-     * @param  array  $userdata
-     * @return void
-     * @throws AuthorizationException
-     */
-    private function _setClientSession(array $userdata = []): void
-    {
-        if ($this->session->has('avegacms') === false) {
-            throw AuthorizationException::forUserSessionNotExist();
-        }
-
-        $roles = $this->RM->getActiveRoles();
-
-        if ( ! isset($roles[$userdata['user']['role']])) {
-            throw AuthorizationException::forUnknownRole();
-        }
-
-        $session = $this->session->get('avegacms');
-
-        if ($roles[$userdata['user']['role']]['selfAuth']) {
-            $session['client']['user'] = $userdata;
-        } else {
-            $session['admin'] = $userdata;
-        }
-
-        $this->session->set('avegacms', $session);
     }
 
     /**

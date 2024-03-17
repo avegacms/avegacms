@@ -95,7 +95,6 @@ class Cms
      */
     public static function initClientSession(array $data = []): void
     {
-        log_message('error','[AVEGACMS] :: initClientSession');
         $session = Services::session();
         if ( ! $session->has('avegacms')) {
             $session->set('avegacms',
