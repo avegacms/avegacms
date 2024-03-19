@@ -10,7 +10,7 @@ use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\{SettingsModel, ModulesModel};
 use ReflectionException;
 use AvegaCms\Entities\SettingsEntity;
-use AvegaCms\Enums\SettingsReturnTypes;
+use AvegaCms\Enums\FieldsReturnTypes;
 
 class Settings extends AvegaCmsAdminAPI
 {
@@ -38,7 +38,7 @@ class Settings extends AvegaCmsAdminAPI
         return $this->cmsRespond(
             [
                 'modules' => [0 => 'AvegaCms Core', ...model(ModulesModel::class)->getModulesList()],
-                'return'  => SettingsReturnTypes::get('value')
+                'return'  => FieldsReturnTypes::get('value')
             ]
         );
     }

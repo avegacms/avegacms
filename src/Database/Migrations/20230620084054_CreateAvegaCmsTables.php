@@ -8,7 +8,7 @@ use CodeIgniter\Database\RawSql;
 use AvegaCms\Enums\{
     UserStatuses,
     UserConditions,
-    SettingsReturnTypes,
+    FieldsReturnTypes,
     FileTypes,
     MetaStatuses,
     NavigationTypes,
@@ -179,8 +179,8 @@ class CreateAvegaCmsTables extends Migration
             'default_value' => ['type' => 'text', 'null' => true],
             'return_type'   => [
                 'type'       => 'enum',
-                'constraint' => SettingsReturnTypes::get('value'),
-                'default'    => SettingsReturnTypes::String->value
+                'constraint' => FieldsReturnTypes::get('value'),
+                'default'    => FieldsReturnTypes::String->value
             ],
             'label'         => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
             'context'       => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
