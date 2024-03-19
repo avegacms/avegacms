@@ -2,7 +2,7 @@
 
 namespace AvegaCms\Enums;
 
-enum SettingsReturnTypes: string
+enum FieldsReturnTypes: string
 {
     case Integer   = 'INTEGER';
     case Float     = 'FLOAT';
@@ -21,6 +21,6 @@ enum SettingsReturnTypes: string
     public static function get(?string $key = null): array
     {
         return in_array($key, ['name', 'value', true]) ?
-            array_column(SettingsReturnTypes::cases(), $key) : SettingsReturnTypes::cases();
+            array_column(FieldsReturnTypes::cases(), $key) : FieldsReturnTypes::cases();
     }
 }

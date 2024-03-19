@@ -3,7 +3,7 @@
 namespace AvegaCms\Database\Seeds;
 
 use CodeIgniter\Test\Fabricator;
-use AvegaCms\Enums\{SettingsReturnTypes, MetaDataTypes, MetaStatuses, UserStatuses};
+use AvegaCms\Enums\{FieldsReturnTypes, MetaDataTypes, MetaStatuses, UserStatuses};
 use AvegaCms\Utilities\{Cms, CmsModule, CmsFileManager};
 use CodeIgniter\Database\{BaseConnection, Seeder};
 use Config\Database;
@@ -892,7 +892,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'timezone',
                 'value'         => 'Europe/Moscow',
                 'default_value' => 'Europe/Moscow',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.env.timezone',
                 'context'       => 'Settings.context.env.timezone'
             ],
@@ -904,7 +904,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'secretKey',
                 'value'         => bin2hex(random_bytes(32)),
                 'default_value' => '',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.env.secretKey',
                 'context'       => 'Settings.context.env.secretKey'
             ],
@@ -916,7 +916,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'defLocale',
                 'value'         => 'ru',
                 'default_value' => 'ru',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.env.defLocale',
                 'context'       => 'Settings.context.env.defLocale'
             ],
@@ -928,7 +928,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'useMultiLocales',
                 'value'         => 0,
                 'default_value' => 0,
-                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'return_type'   => FieldsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.env.useMultiLocales',
                 'context'       => 'Settings.context.env.useMultiLocales'
             ],
@@ -940,7 +940,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'useFrontend',
                 'value'         => 1,
                 'default_value' => 1,
-                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'return_type'   => FieldsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.env.useFrontend',
                 'context'       => 'Settings.context.env.useFrontend'
             ],
@@ -952,7 +952,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'useViewData',
                 'value'         => 1,
                 'default_value' => 1,
-                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'return_type'   => FieldsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.env.useViewData',
                 'context'       => 'Settings.context.env.useViewData'
             ],
@@ -966,7 +966,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'useCors',
                 'value'         => 0,
                 'default_value' => 0,
-                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'return_type'   => FieldsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.auth.useCors',
                 'context'       => 'Settings.context.auth.useCors'
             ],
@@ -978,7 +978,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'useSession',
                 'value'         => 1,
                 'default_value' => 1,
-                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'return_type'   => FieldsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.auth.useSession',
                 'context'       => 'Settings.context.auth.useSession'
             ],
@@ -990,7 +990,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'allowPreRegistration',
                 'value'         => 0,
                 'default_value' => 0,
-                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'return_type'   => FieldsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.auth.allowPreRegistration',
                 'context'       => 'Settings.context.auth.allowPreRegistration'
             ],
@@ -1002,7 +1002,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'useToken',
                 'value'         => 0,
                 'default_value' => 0,
-                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'return_type'   => FieldsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.auth.useToken',
                 'context'       => 'Settings.context.auth.useToken'
             ],
@@ -1014,7 +1014,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'useJwt',
                 'value'         => 0,
                 'default_value' => 0,
-                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'return_type'   => FieldsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.auth.useJwt',
                 'context'       => 'Settings.context.auth.useJwt'
             ],
@@ -1026,7 +1026,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'jwtSecretKey',
                 'value'         => bin2hex(random_bytes(32)),
                 'default_value' => '',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.auth.jwtSecretKey',
                 'context'       => 'Settings.context.auth.jwtSecretKey'
             ],
@@ -1038,7 +1038,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'jwtSessionsLimit',
                 'value'         => 3,
                 'default_value' => 3,
-                'return_type'   => SettingsReturnTypes::Integer->value,
+                'return_type'   => FieldsReturnTypes::Integer->value,
                 'label'         => 'Settings.label.auth.jwtSessionsLimit',
                 'context'       => 'Settings.context.auth.jwtSessionsLimit'
             ],
@@ -1050,7 +1050,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'jwtLiveTime',
                 'value'         => 30,
                 'default_value' => 30,
-                'return_type'   => SettingsReturnTypes::Integer->value,
+                'return_type'   => FieldsReturnTypes::Integer->value,
                 'label'         => 'Settings.label.auth.jwtLiveTime',
                 'context'       => 'Settings.context.auth.jwtLiveTime'
             ],
@@ -1062,7 +1062,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'jwtRefreshTime',
                 'value'         => 30,
                 'default_value' => 30,
-                'return_type'   => SettingsReturnTypes::Integer->value,
+                'return_type'   => FieldsReturnTypes::Integer->value,
                 'label'         => 'Settings.label.auth.jwtLiveTime',
                 'context'       => 'Settings.context.auth.jwtLiveTime'
             ],
@@ -1074,7 +1074,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'jwtAlg',
                 'value'         => 'HS256',
                 'default_value' => 'HS256',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.auth.jwtAlg',
                 'context'       => 'Settings.context.auth.jwtAlg'
             ],
@@ -1086,7 +1086,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'useWhiteIpList',
                 'value'         => 0,
                 'default_value' => 0,
-                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'return_type'   => FieldsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.auth.useWhiteIpList',
                 'context'       => 'Settings.context.auth.useWhiteIpList'
             ],
@@ -1098,7 +1098,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'whiteIpList',
                 'value'         => serialize([]),
                 'default_value' => serialize([]),
-                'return_type'   => SettingsReturnTypes::Array->value,
+                'return_type'   => FieldsReturnTypes::Array->value,
                 'label'         => 'Settings.label.auth.whiteIpList',
                 'context'       => 'Settings.context.auth.whiteIpList'
             ],
@@ -1128,7 +1128,7 @@ class AvegaCmsInstallSeeder extends Seeder
                         'login:email:phone'
                     ]
                 ),
-                'return_type'   => SettingsReturnTypes::Array->value,
+                'return_type'   => FieldsReturnTypes::Array->value,
                 'label'         => 'Settings.label.auth.loginTypeList',
                 'context'       => 'Settings.context.auth.loginTypeList'
             ],
@@ -1140,7 +1140,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'loginType',
                 'value'         => 'email',
                 'default_value' => 'email',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.auth.loginType',
                 'context'       => 'Settings.context.auth.loginType'
             ],
@@ -1152,7 +1152,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'use2fa',
                 'value'         => 0,
                 'default_value' => 0,
-                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'return_type'   => FieldsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.auth.use2fa',
                 'context'       => 'Settings.context.auth.use2fa'
             ],
@@ -1164,7 +1164,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => '2faField',
                 'value'         => 'email',
                 'default_value' => 'email',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.auth.2faField',
                 'context'       => 'Settings.context.auth.2faField'
             ],
@@ -1176,7 +1176,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'verifyCodeLength',
                 'value'         => 4,
                 'default_value' => 4,
-                'return_type'   => SettingsReturnTypes::Integer->value,
+                'return_type'   => FieldsReturnTypes::Integer->value,
                 'label'         => 'Settings.label.auth.verifyCodeLength',
                 'context'       => 'Settings.context.auth.verifyCodeLength'
             ],
@@ -1188,7 +1188,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'verifyCodeTime',
                 'value'         => 5,
                 'default_value' => 5,
-                'return_type'   => SettingsReturnTypes::Integer->value,
+                'return_type'   => FieldsReturnTypes::Integer->value,
                 'label'         => 'Settings.label.auth.verifyCodeTime',
                 'context'       => 'Settings.context.auth.verifyCodeTime'
             ],
@@ -1200,7 +1200,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'useRecovery',
                 'value'         => 1,
                 'default_value' => 1,
-                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'return_type'   => FieldsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.auth.useRecovery',
                 'context'       => 'Settings.context.auth.useRecovery'
             ],
@@ -1212,7 +1212,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'recoveryField',
                 'value'         => 'email',
                 'default_value' => 'email',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.auth.recoveryField',
                 'context'       => 'Settings.context.auth.recoveryField'
             ],
@@ -1224,7 +1224,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'recoveryCodeTime',
                 'value'         => 10,
                 'default_value' => 10,
-                'return_type'   => SettingsReturnTypes::Integer->value,
+                'return_type'   => FieldsReturnTypes::Integer->value,
                 'label'         => 'Settings.label.auth.recoveryCodeTime',
                 'context'       => 'Settings.context.auth.recoveryCodeTime'
             ],
@@ -1236,7 +1236,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'authSmsMessage',
                 'value'         => '',
                 'default_value' => '',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.auth.authSmsMessage',
                 'context'       => 'Settings.context.auth.authSmsMessage'
             ],
@@ -1250,7 +1250,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'useSitemap',
                 'value'         => 1,
                 'default_value' => 1,
-                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'return_type'   => FieldsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.seo.useSitemap',
                 'context'       => 'Settings.context.seo.useSitemap'
             ],
@@ -1262,7 +1262,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'allowSiteIndexing',
                 'value'         => 1,
                 'default_value' => 1,
-                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'return_type'   => FieldsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.seo.allowSiteIndexing',
                 'context'       => 'Settings.context.seo.allowSiteIndexing'
             ],
@@ -1274,7 +1274,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'sitemapBatchQty',
                 'value'         => 1000,
                 'default_value' => 1000,
-                'return_type'   => SettingsReturnTypes::Integer->value,
+                'return_type'   => FieldsReturnTypes::Integer->value,
                 'label'         => 'Settings.label.seo.sitemapBatchQty',
                 'context'       => 'Settings.context.seo.sitemapBatchQty'
             ],
@@ -1286,7 +1286,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'useRobotsTxt',
                 'value'         => 1,
                 'default_value' => 1,
-                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'return_type'   => FieldsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.seo.useRobotsTxt',
                 'context'       => 'Settings.context.seo.useRobotsTxt'
             ],
@@ -1298,7 +1298,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'defRobotsTxt',
                 'value'         => '',
                 'default_value' => '',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.seo.defRobotsTxt',
                 'context'       => 'Settings.context.seo.defRobotsTxt'
             ],
@@ -1312,7 +1312,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'fromEmail',
                 'value'         => 'testemail@dvl.to',
                 'default_value' => '',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.email.fromEmail',
                 'context'       => 'Settings.context.email.fromEmail'
             ],
@@ -1324,7 +1324,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'fromName',
                 'value'         => '',
                 'default_value' => '',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.email.fromName',
                 'context'       => 'Settings.context.email.fromName'
             ],
@@ -1336,7 +1336,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'replyEmail',
                 'value'         => '',
                 'default_value' => '',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.email.replyEmail',
                 'context'       => 'Settings.context.email.replyEmail'
             ],
@@ -1348,7 +1348,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'replyName',
                 'value'         => '',
                 'default_value' => '',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.email.replyName',
                 'context'       => 'Settings.context.email.replyName'
             ],
@@ -1360,7 +1360,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'returnEmail',
                 'value'         => '',
                 'default_value' => '',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.email.returnEmail',
                 'context'       => 'Settings.context.email.returnEmail'
             ],
@@ -1372,7 +1372,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'userAgent',
                 'value'         => '*',
                 'default_value' => '*',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.email.userAgent',
                 'context'       => 'Settings.context.email.userAgent'
             ],
@@ -1384,7 +1384,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'charset',
                 'value'         => 'UTF-8',
                 'default_value' => 'UTF-8',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.email.charset',
                 'context'       => 'Settings.context.email.charset'
             ],
@@ -1396,7 +1396,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'mailPath',
                 'value'         => '/usr/sbin/sendmail',
                 'default_value' => '/usr/sbin/sendmail',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.email.mailPath',
                 'context'       => 'Settings.context.email.mailPath'
             ],
@@ -1408,7 +1408,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'protocol',
                 'value'         => 'sendmail',
                 'default_value' => 'mail',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.email.protocol',
                 'context'       => 'Settings.context.email.protocol'
             ],
@@ -1420,7 +1420,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'priority',
                 'value'         => 1,
                 'default_value' => 3,
-                'return_type'   => SettingsReturnTypes::Integer->value,
+                'return_type'   => FieldsReturnTypes::Integer->value,
                 'label'         => 'Settings.label.email.priority',
                 'context'       => 'Settings.context.email.priority'
             ],
@@ -1432,7 +1432,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'mailType',
                 'value'         => 'html',
                 'default_value' => 'html',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.email.mailType',
                 'context'       => 'Settings.context.email.mailType'
             ],
@@ -1444,7 +1444,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'smtpHost',
                 'value'         => '',
                 'default_value' => '',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.email.smtpHost',
                 'context'       => 'Settings.context.email.smtpHost'
             ],
@@ -1456,7 +1456,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'smtpUser',
                 'value'         => '',
                 'default_value' => '',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.email.smtpUser',
                 'context'       => 'Settings.context.email.smtpUser'
             ],
@@ -1468,7 +1468,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'smtpPass',
                 'value'         => '',
                 'default_value' => '',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.email.smtpPass',
                 'context'       => 'Settings.context.email.smtpPass'
             ],
@@ -1480,7 +1480,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'smtpPort',
                 'value'         => 465,
                 'default_value' => 465,
-                'return_type'   => SettingsReturnTypes::Integer->value,
+                'return_type'   => FieldsReturnTypes::Integer->value,
                 'label'         => 'Settings.label.email.smtpPort',
                 'context'       => 'Settings.context.email.smtpPort'
             ],
@@ -1492,7 +1492,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'smtpTimeout',
                 'value'         => 5,
                 'default_value' => 5,
-                'return_type'   => SettingsReturnTypes::Integer->value,
+                'return_type'   => FieldsReturnTypes::Integer->value,
                 'label'         => 'Settings.label.email.smtpTimeout',
                 'context'       => 'Settings.context.email.smtpTimeout'
             ],
@@ -1504,7 +1504,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'smtpKeepalive',
                 'value'         => 0,
                 'default_value' => 0,
-                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'return_type'   => FieldsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.email.smtpKeepalive',
                 'context'       => 'Settings.context.email.smtpKeepalive'
             ],
@@ -1516,7 +1516,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'smtpCrypto',
                 'value'         => 'ssl',
                 'default_value' => 'ssl',
-                'return_type'   => SettingsReturnTypes::String->value,
+                'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.email.smtpCrypto',
                 'context'       => 'Settings.context.email.smtpCrypto'
             ],
@@ -1530,7 +1530,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'postsPerPage',
                 'value'         => 20,
                 'default_value' => 20,
-                'return_type'   => SettingsReturnTypes::Integer->value,
+                'return_type'   => FieldsReturnTypes::Integer->value,
                 'label'         => 'Settings.label.posts.postsPerPage',
                 'context'       => 'Settings.context.posts.postsPerPage'
             ],
@@ -1542,7 +1542,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'key'           => 'showAuthorPost',
                 'value'         => 1,
                 'default_value' => 1,
-                'return_type'   => SettingsReturnTypes::Boolean->value,
+                'return_type'   => FieldsReturnTypes::Boolean->value,
                 'label'         => 'Settings.label.posts.showAuthorPost',
                 'context'       => 'Settings.context.posts.showAuthorPost'
             ],

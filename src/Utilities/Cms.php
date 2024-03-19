@@ -3,7 +3,7 @@
 namespace AvegaCms\Utilities;
 
 use AvegaCms\Entities\{ContentEntity, MetaDataEntity, SettingsEntity};
-use AvegaCms\Enums\{MetaDataTypes, MetaStatuses, SettingsReturnTypes};
+use AvegaCms\Enums\{MetaDataTypes, MetaStatuses, FieldsReturnTypes};
 use AvegaCms\Models\Admin\{ContentModel, MetaDataModel, SettingsModel};
 use Config\Services;
 use RuntimeException;
@@ -183,7 +183,7 @@ class Cms
                             'key'           => $property ?? '',
                             'value'         => $value,
                             'default_value' => $config['default_value'] ?? '',
-                            'return_type'   => $config['return_type'] ?? SettingsReturnTypes::String->value,
+                            'return_type'   => $config['return_type'] ?? FieldsReturnTypes::String->value,
                             'label'         => $config['label'] ?? '',
                             'context'       => $config['context'] ?? '',
                             'sort'          => $config['sort'] ?? 100
@@ -285,20 +285,20 @@ class Cms
     public static function castAs($value, string $type): mixed
     {
         return match ($type) {
-            SettingsReturnTypes::Integer->value => (int) $value,
-            SettingsReturnTypes::Double->value  => (double) $value,
-            SettingsReturnTypes::Float->value   => (float) $value,
-            SettingsReturnTypes::String->value  => (string) $value,
-            SettingsReturnTypes::Boolean->value => (bool) $value,
-            SettingsReturnTypes::Json->value    => $value,
-            SettingsReturnTypes::Array->value   => (array) (
+            FieldsReturnTypes::Integer->value => (int) $value,
+            FieldsReturnTypes::Double->value  => (double) $value,
+            FieldsReturnTypes::Float->value   => (float) $value,
+            FieldsReturnTypes::String->value  => (string) $value,
+            FieldsReturnTypes::Boolean->value => (bool) $value,
+            FieldsReturnTypes::Json->value    => $value,
+            FieldsReturnTypes::Array->value   => (array) (
             (
             (is_string($value) && (str_starts_with($value, 'a:') || str_starts_with($value, 's:'))) ?
                 unserialize($value) :
                 $value
             )
             ),
-            default                             => null
+            default                           => null
         };
     }
 }

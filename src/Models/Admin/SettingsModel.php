@@ -4,7 +4,7 @@ namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Entities\SettingsEntity;
-use AvegaCms\Enums\SettingsReturnTypes;
+use AvegaCms\Enums\FieldsReturnTypes;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
 
@@ -97,7 +97,7 @@ class SettingsModel extends AvegaCmsModel
         parent::__construct($db, $validation);
 
         $this->validationRules['return_type'] = 'if_exist|in_list[' . implode(',',
-                SettingsReturnTypes::get('value')) . ']';
+                FieldsReturnTypes::get('value')) . ']';
     }
 
     /**
