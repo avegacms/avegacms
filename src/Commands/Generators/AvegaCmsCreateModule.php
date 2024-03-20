@@ -87,7 +87,12 @@ class AvegaCmsCreateModule extends BaseCommand
         $this->createFolders($this->moduleFolder, ROOTPATH . 'modules' . DIRECTORY_SEPARATOR . ucfirst($module));
     }
 
-    protected function createFolders(array $folders, string $path)
+    /**
+     * @param  array  $folders
+     * @param  string  $path
+     * @return void
+     */
+    protected function createFolders(array $folders, string $path): void
     {
         foreach ($folders as $folder => $item) {
             if (mkdir($file = $path . DIRECTORY_SEPARATOR . $folder, 0777, true)) {
