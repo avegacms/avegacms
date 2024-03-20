@@ -61,6 +61,7 @@ class AvegaCmsCreateModule extends BaseCommand
             ]
         ],
         'Database'    => [
+            'Factories'  => '.gitkeep',
             'Migrations' => '.gitkeep',
             'Seeds'      => '.gitkeep'
         ],
