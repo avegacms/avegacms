@@ -261,7 +261,7 @@ class Authorization
 
             $roles = $this->RM->getActiveRoles();
 
-            if ( ! isset($roles[$userdata['user']['role']])) {
+            if ( ! isset($roles[$userSession['user']['role']])) {
                 throw AuthorizationException::forUnknownRole();
             }
 

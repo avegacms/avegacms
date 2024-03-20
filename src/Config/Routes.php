@@ -28,6 +28,7 @@ $routes->group('api', function (RouteCollection $routes) {
         $routes->group('content', function (RouteCollection $routes) {
             $routes->get('/', 'Content::index');
         });
+        $routes->get('logout', [Login::class, 'logout']);
         $routes->post('login/(:segment)', [Login::class, 'index/$1']);
     });
     $routes->group('admin', ['namespace' => 'AvegaCms\Controllers\Api\Admin', 'filter' => 'auth'],
