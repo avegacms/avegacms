@@ -79,6 +79,21 @@ class Login extends CmsResourceController
         }
     }
 
+    public function logout():ResponseInterface
+    {
+        try {
+            $this->Authorization->logout();
+            return $this->respondNoContent();
+
+        } catch (AuthorizationException|Exception $e) {
+            return match ($e->getCode()) {
+                403     => $this->failForbidden($e->getMessage()),
+                401     => $this->failUnauthorized($e->getMessage()),
+                default => $this->failValidationErrors(class_basename($e) === 'AuthorizationException' ? $e->getMessages() : $e->getMessage())
+            };
+        }
+    }
+
     /**
      * @param  array  $auth
      * @return array|array[]
