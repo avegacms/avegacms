@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace {namespace};
 
 use Faker\Generator;
-use {model}
+use {model};
 
 class {class} extends {modelName}
 {
@@ -12,9 +12,9 @@ class {class} extends {modelName}
     {
         // Test example
         return [
-            'name'  => $faker->firstName,
-            'email'  => $faker->email,
-            'phone'  => $faker->phoneNumber,
+            'name'       => $faker->firstName,
+            'email'      => $faker->email,
+            'phone'      => $faker->phoneNumber,
             'title'      => $faker->word(),
             'code'       => $faker->numberBetween(1000, 9999),
             'active'     => $faker->numberBetween(0, 1),
