@@ -512,7 +512,7 @@ class Authorization
 
         $authType = match ($authHeader[0]) {
             'Token'  => ($this->settings['auth']['useToken']) ? ['type' => 'token', 'token' => $authHeader[1]] : false,
-            'Bearer' => (strtolower($authHeader[1]) === 'session' && $this->settings['useSession']) ?
+            'Bearer' => (strtolower($authHeader[1]) === 'session' && $this->settings['auth']['useSession']) ?
                 ['type' => 'session'] :
                 (
                 $this->settings['auth']['useJwt'] ?
