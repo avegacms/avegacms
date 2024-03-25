@@ -15,12 +15,66 @@ use ReflectionException;
 
 class CmsFileManager
 {
+    const entityRules = [
+        'entity_id' => ['rules' => 'if_exist|is_natural'],
+        'item_id'   => ['rules' => 'if_exist|is_natural'],
+        'user_id'   => ['rules' => 'if_exist|is_natural']
+    ];
+
+    const excludedDirs = [
+        FCPATH . 'uploads',
+        'uploads'
+    ];
+
+    /**
+     * @param  array  $entity
+     * @param  array|string|null  $uploadConfig
+     * @param  array  $fileConfig
+     * @return array|FilesLinksEntity|null
+     * @throws UploaderException
+     */
+    public static function upload(
+        array $entity,
+        array|string $uploadConfig = null,
+        array $fileConfig = []
+    ): array|FilesLinksEntity|null {
+        $request    = Services::request();
+        $validator  = Services::validation();
+        $uploadPath = FCPATH . 'uploads/';
+        $directory  = is_array($uploadConfig) ? ($uploadConfig['directory'] ?? 'content') : (is_null($uploadConfig) ? '' : $uploadConfig);
+        $FM         = model(FilesModel::class);
+        $FLM        = model(FilesLinksModel::class);
+        $userId     = $entity['user_id'] = ($entity['user_id'] ?? 0);
+
+        // TODO 1. Проверить валидацию $entity
+        // TODO 2. Проверить существование директории
+
+        if ($validator->setRules(self::entityRules)->run($entity) === false) {
+            throw new UploaderException($validator->getErrors());
+        }
+
+        foreach (self::excludedDirs as $dir) {
+            if (str_starts_with($directory, $dir)) {
+                $directory = trim(substr($directory, strlen($dir)), '/');
+                break;
+            }
+        }
+
+        if (empty($directory) || empty($dirData = $FLM->getDirectories($directory))) {
+            throw UploaderException::forEmptyPath();
+        }
+        /*echo '<pre>';
+        var_dump([self::entityRules, $entity]);
+        echo '</pre>';
+        exit();*/
+    }
+
     /**
      * @param  array  $settings
      * @return array|FilesLinksEntity|null
      * @throws UploaderException|ReflectionException
      */
-    public static function upload(array $settings): array|FilesLinksEntity|null
+    public static function upload_1(array $settings): array|FilesLinksEntity|null
     {
         $request    = Services::request();
         $validator  = Services::validation();
@@ -70,6 +124,7 @@ class CmsFileManager
                 'title'    => $uploadedFile->getName(),
                 'thumb'    => ($isImage) ? self::createThumb($uploadPath . $fileName) : ''
             ],
+            'extra'         => '',
             'created_by_id' => $userId
         ];
 
