@@ -31,23 +31,32 @@ class CmsFileManager
      * @param  array|string|null  $uploadConfig
      * @param  array  $fileConfig
      * @return array|FilesLinksEntity|null
-     * @throws UploaderException
+     * @throws UploaderException|ReflectionException
      */
     public static function upload(
         array $entity,
         array|string $uploadConfig = null,
         array $fileConfig = []
     ): array|FilesLinksEntity|null {
-        $request    = Services::request();
-        $validator  = Services::validation();
-        $uploadPath = FCPATH . 'uploads/';
-        $directory  = is_array($uploadConfig) ? ($uploadConfig['directory'] ?? 'content') : (is_null($uploadConfig) ? '' : $uploadConfig);
-        $FM         = model(FilesModel::class);
-        $FLM        = model(FilesLinksModel::class);
-        $userId     = $entity['user_id'] = ($entity['user_id'] ?? 0);
+        $request   = Services::request();
+        $validator = Services::validation();
+        $directory = is_array($uploadConfig) ? ($uploadConfig['directory'] ?? 'content') : (is_null($uploadConfig) ? '' : $uploadConfig);
+        $FM        = model(FilesModel::class);
+        $FLM       = model(FilesLinksModel::class);
+        $userId    = $entity['user_id'] = ($entity['user_id'] ?? 0);
 
-        // TODO 1. Проверить валидацию $entity
-        // TODO 2. Проверить существование директории
+        // TODO 1. Проверить валидацию $entity [v]
+        // TODO 2. Проверить существование директории [v]
+        // TODO 3. Собрать конфиг для загрузки файл [v]
+        // TODO 4. Валидация загрузки файла [v]
+        // TODO 5. Получить объект файла [v]
+        // TODO 6. Проверить является ли файл картинкой:
+        // TODO 6.1  Проверить настройки на необходимость создания webp-формата
+        // TODO 6.2  Создать thumb по необходимым настройкам
+        // TODO 7. Если файл картинка, и конфиг $fileConfig не пустой, то:
+        // TODO 7.1. Создать необходимое количество вариантов картинок + сделать проверку на п. 6.1
+        // TODO 8. Создать запись в БД
+        // TODO 9. Вернуть объект
 
         if ($validator->setRules(self::entityRules)->run($entity) === false) {
             throw new UploaderException($validator->getErrors());
@@ -60,13 +69,97 @@ class CmsFileManager
             }
         }
 
-        if (empty($directory) || empty($dirData = $FLM->getDirectories($directory))) {
+        if (empty($directory)) {
             throw UploaderException::forEmptyPath();
         }
+
+        if (empty($dirData = $FLM->getDirectories($directory))) {
+            throw UploaderException::forDirectoryNotFound($directory);
+        }
+
+        $defConfig = Cms::settings('filemanager.uploadConfig');
+        $field     = $uploadConfig['field'] ?? $defConfig['field'];
+
+        if ( ! is_array($uploadConfig)) {
+            $uploadConfig = ['directory' => $directory];
+        }
+
         /*echo '<pre>';
-        var_dump([self::entityRules, $entity]);
+        var_dump([self::uploadSettings($defConfig, $uploadConfig), $_FILES]);
         echo '</pre>';
         exit();*/
+
+        if ( ! $validator->setRules(self::uploadSettings($defConfig, $uploadConfig))->withRequest($request)->run()) {
+            throw new UploaderException($validator->getErrors());
+        }
+
+        $uploadedFile = $request->getFile($field);
+
+        if ( ! $uploadedFile->isValid()) {
+            throw new UploaderException($uploadedFile->getErrorString() . '(' . $uploadedFile->getError() . ')');
+        }
+
+        if ($uploadedFile->hasMoved()) {
+            throw UploaderException::forHasMoved($uploadedFile->getName());
+        }
+
+        $uploadPath = FCPATH . ($directory = ('uploads/' . $directory));
+
+        // Переносим файл в нужную директорию
+        $uploadedFile->move($uploadPath, ($fileName = $uploadedFile->getRandomName()));
+        // Получаем информацию по файлу
+        $file     = new File($uploadPath . $fileName);
+        $isImage  = mb_strpos(Mimes::guessTypeFromExtension($extension = $file->getExtension()) ?? '', 'image') === 0;
+        $type     = ($isImage) ? FileTypes::Image->value : FileTypes::File->value;
+        $fileData = [
+            'provider'      => 0,
+            'type'          => $type,
+            'data'          => [
+                'provider' => 0,
+                'type'     => $type,
+                'ext'      => $extension,
+                'size'     => $uploadedFile->getSize(),
+                'file'     => $fileName,
+                'path'     => $directory . '/' . $fileName,
+                'title'    => $uploadedFile->getName(),
+                //'thumb'    => ($isImage) ? self::createThumb($uploadPath . $fileName) : ''
+            ],
+            'extra'         => '',
+            'created_by_id' => $userId
+        ];
+
+        echo '<pre>';
+        var_dump($fileData);
+        echo '</pre>';
+        exit();
+
+        if (($id = $FM->insert((new FilesEntity ($fileData)))) === false) {
+            throw new UploaderException($FM->errors());
+        }
+
+        $fileLinks = [
+            'id'            => $id,
+            'user_id'       => $userId,
+            'parent'        => $dir['id'],
+            'module_id'     => $dir['module_id'],
+            'entity_id'     => $settings['entity_id'] ?? 0,
+            'item_id'       => $settings['item_id'] ?? 0,
+            'uid'           => '',
+            'type'          => $type,
+            'created_by_id' => $userId
+        ];
+
+        if ( ! $FLM->insert($fileLinks)) {
+            throw new UploaderException($FLM->errors());
+        }
+
+        return self::getFiles(['id' => $id], true);
+
+
+        echo '<pre>';
+        var_dump([$entity, $directory, $dirData, $config]);
+        echo '</pre>';
+        exit();
     }
 
     /**
@@ -241,37 +334,48 @@ class CmsFileManager
     }
 
     /**
+     * @param  array  $defConfig
      * @param  array  $settings
-     * @return array
+     * @return array[]
      */
-    private static function uploadSettings(array $settings): array
+    private static function uploadSettings(array $defConfig, array $settings): array
     {
-        $field        = $settings['field'];
-        $max_upload   = (int) (ini_get('upload_max_filesize'));
-        $max_post     = (int) (ini_get('post_max_size'));
-        $memory_limit = (int) (ini_get('memory_limit'));
+        $field       = $settings['field'] ?? $defConfig['field'];
+        $maxUpload   = (int) (ini_get('upload_max_filesize'));
+        $maxPost     = (int) (ini_get('post_max_size'));
+        $memoryLimit = (int) (ini_get('memory_limit'));
 
-        $maxSize = ($memory_limit > 0 ?
-                min($max_upload, $max_post, $memory_limit) :
-                min($max_upload, $max_post)) * 1024;
+        $settings['maxSize'] = $settings['maxSize'] ?? $defConfig['maxSize'];
+
+        $maxSize = ($memoryLimit > 0 ?
+                min($maxUpload, $maxPost, $memoryLimit) :
+                min($maxUpload, $maxPost)) * 1024;
 
         $uploadRule = 'uploaded[' . $field . ']|';
 
-        $uploadRule .= 'max_size[' . $field . ',' . (($settings['max_size'] ?? ($maxSize + 1) || $settings['max_size'] > $maxSize) ? $maxSize : $settings['max_size']) . ']';
+        $uploadRule .= 'max_size[' . $field . ',' . (($settings['maxSize'] ?? ($maxSize + 1) || $settings['maxSize'] > $maxSize) ? $maxSize : $settings['maxSize']) . ']';
 
-        if (isset($settings['max_dims'])) {
-            $uploadRule .= '|max_dims[' . $field . ',' . $settings['max_dims'] . ']';
+        if (isset($settings['maxDims'])) {
+            $uploadRule .= '|max_dims[' . $field . ',' . $settings['maxDims'] . ']';
         }
 
-        if (isset($settings['mime_in'])) {
-            $uploadRule .= '|mime_in[' . $field . ',' . $settings['mime_in'] . ']';
+        if (isset($settings['mimeIn'])) {
+            $uploadRule .= '|mime_in[' . $field . ',' . $settings['mimeIn'] . ']';
         }
 
-        if (isset($settings['ext_in'])) {
-            $uploadRule .= '|ext_in[' . $field . ',' . $settings['ext_in'] . ']';
-        }
+        $settings['extInImages'] = $settings['extInImages'] ?? $defConfig['extInImages'];
+        $settings['extInFiles']  = $settings['extInFiles'] ?? $defConfig['extInFiles'];
 
-        if (isset($settings['is_image'])) {
+        $ext = match ($settings['extType'] ?? 'all') {
+            'images' => implode(',', $settings['extInImages']),
+            'files'  => implode(',', $settings['extInFiles']),
+            default  => implode(',', $settings['extInFiles']) . ',' . implode(',', $settings['extInImages'])
+        };
+
+        $uploadRule .= '|ext_in[' . $field . ',' . trim($ext, ',') . ']';
+
+        if (isset($settings['isImage'])) {
+            $uploadRule .= '|ext_in[' . $field . ',' . trim(implode('|', $settings['extInImages']), '|') . ']';
             $uploadRule .= '|is_image[' . $field . ']';
         }
 

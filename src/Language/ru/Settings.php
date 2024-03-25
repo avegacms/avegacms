@@ -63,7 +63,7 @@ return [
         ],
         'filemanager' => [
             'uploadConfigField'       => 'Название поля загружаемого файла',
-            'uploadConfigMaxSize'     => 'Максимальный размер загружаемого файла',
+            'uploadConfigMaxSize'     => 'Максимальный размер загружаемого файла (Mб.)',
             'uploadConfigExtInImages' => 'Разрешенный для загрузки формат изображений',
             'uploadConfigExtInFiles'  => 'Разрешенный для загрузки формат файлов',
             'uploadConfigCreateWebp'  => 'Разрешить создание изображений в формате webp',
@@ -137,7 +137,7 @@ return [
         ],
         'filemanager' => [
             'uploadConfigField'       => 'Название поля загружаемого файла',
-            'uploadConfigMaxSize'     => 'Максимальный размер загружаемого файла',
+            'uploadConfigMaxSize'     => 'Максимальный размер загружаемого файла (Mб.)',
             'uploadConfigExtInImages' => 'Разрешенный для загрузки формат изображений',
             'uploadConfigExtInFiles'  => 'Разрешенный для загрузки формат файлов',
             'uploadConfigCreateWebp'  => 'Разрешить создание изображений в формате webp',

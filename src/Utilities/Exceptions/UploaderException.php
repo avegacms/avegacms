@@ -31,9 +31,9 @@ class UploaderException extends Exception
     /**
      * @return UploaderException
      */
-    public static function forDirectoryNotFound(): UploaderException
+    public static function forDirectoryNotFound(string $directory): UploaderException
     {
-        return new static(lang('Uploader.errors.directoryNotFound'));
+        return new static(lang('Uploader.errors.directoryNotFound', [$directory]));
     }
 
     /**

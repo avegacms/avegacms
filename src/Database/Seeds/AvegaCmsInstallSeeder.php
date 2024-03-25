@@ -1540,8 +1540,8 @@ class AvegaCmsInstallSeeder extends Seeder
                 'entity'        => 'filemanager',
                 'slug'          => 'uploadConfig',
                 'key'           => 'maxSize',
-                'value'         => 12288,
-                'default_value' => 12288,
+                'value'         => 12,
+                'default_value' => 12,
                 'return_type'   => FieldsReturnTypes::Integer->value,
                 'label'         => 'Settings.label.filemanager.uploadConfigMaxSize',
                 'context'       => 'Settings.context.filemanager.uploadConfigMaxSize'
@@ -1556,6 +1556,7 @@ class AvegaCmsInstallSeeder extends Seeder
                     [
                         'gif',
                         'jpg',
+                        'jpeg',
                         'png',
                         'webp'
                     ]
@@ -1564,6 +1565,7 @@ class AvegaCmsInstallSeeder extends Seeder
                     [
                         'gif',
                         'jpg',
+                        'jpeg',
                         'png',
                         'webp'
                     ]
