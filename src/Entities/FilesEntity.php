@@ -22,6 +22,7 @@ class FilesEntity extends AvegaCmsEntity
         'id'            => 'integer',
         'provider'      => 'integer',
         'data'          => 'json-array',
+        'extra'         => 'json-array',
         'type'          => 'string',
         'active'        => 'int-bool',
         'created_by_id' => 'integer',

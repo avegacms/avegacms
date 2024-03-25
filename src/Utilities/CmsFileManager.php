@@ -67,7 +67,8 @@ class CmsFileManager
                 'size'     => $uploadedFile->getSize(),
                 'file'     => $fileName,
                 'path'     => $path . $fileName,
-                'title'    => $uploadedFile->getName()
+                'title'    => $uploadedFile->getName(),
+                'thumb'    => ($isImage) ? self::createThumb($uploadPath . $fileName) : ''
             ],
             'created_by_id' => $userId
         ];
@@ -178,6 +179,10 @@ class CmsFileManager
         }
 
         return $directoryId;
+    }
+
+    public static function createThumb(string $path): string
+    {
     }
 
     /**

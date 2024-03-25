@@ -883,7 +883,7 @@ class AvegaCmsInstallSeeder extends Seeder
     private function _createSettings(): void
     {
         $settingsList = [
-            // .env
+            // .Env
             [
                 'module_id'     => 0,
                 'is_core'       => 1,
@@ -957,7 +957,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'context'       => 'Settings.context.env.useViewData'
             ],
 
-            // auth
+            // Auth
             [
                 'module_id'     => 0,
                 'is_core'       => 1,
@@ -1519,6 +1519,158 @@ class AvegaCmsInstallSeeder extends Seeder
                 'return_type'   => FieldsReturnTypes::String->value,
                 'label'         => 'Settings.label.email.smtpCrypto',
                 'context'       => 'Settings.context.email.smtpCrypto'
+            ],
+
+            // FileManager
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'filemanager',
+                'slug'          => 'uploadConfig',
+                'key'           => 'field',
+                'value'         => 'file',
+                'default_value' => 'file',
+                'return_type'   => FieldsReturnTypes::String->value,
+                'label'         => 'Settings.label.filemanager.uploadConfigField',
+                'context'       => 'Settings.context.filemanager.uploadConfigField'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'filemanager',
+                'slug'          => 'uploadConfig',
+                'key'           => 'maxSize',
+                'value'         => 12288,
+                'default_value' => 12288,
+                'return_type'   => FieldsReturnTypes::Integer->value,
+                'label'         => 'Settings.label.filemanager.uploadConfigMaxSize',
+                'context'       => 'Settings.context.filemanager.uploadConfigMaxSize'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'filemanager',
+                'slug'          => 'uploadConfig',
+                'key'           => 'extInImages',
+                'value'         => serialize(
+                    [
+                        'gif',
+                        'jpg',
+                        'png',
+                        'webp'
+                    ]
+                ),
+                'default_value' => serialize(
+                    [
+                        'gif',
+                        'jpg',
+                        'png',
+                        'webp'
+                    ]
+                ),
+                'return_type'   => FieldsReturnTypes::Array->value,
+                'label'         => 'Settings.label.filemanager.uploadConfigExtInImages',
+                'context'       => 'Settings.context.filemanager.uploadConfigExtInImages'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'filemanager',
+                'slug'          => 'uploadConfig',
+                'key'           => 'extInFiles',
+                'value'         => serialize(
+                    [
+                        'doc',
+                        'rtf',
+                        'pdf',
+                        'txt',
+                        'odt',
+                        'odp',
+                        'ppsx',
+                        'xls',
+                        'xlsx',
+                        'csv',
+                        'ods',
+                        'psd',
+                        'xml',
+                        '7z',
+                        '7zip',
+                        'rar',
+                        'zip',
+                    ]
+                ),
+                'default_value' => serialize(
+                    [
+                        'doc',
+                        'rtf',
+                        'pdf',
+                        'txt',
+                        'odt',
+                        'odp',
+                        'ppsx',
+                        'xls',
+                        'xlsx',
+                        'csv',
+                        'ods',
+                        'psd',
+                        'xml',
+                        '7z',
+                        '7zip',
+                        'rar',
+                        'zip',
+                    ]
+                ),
+                'return_type'   => FieldsReturnTypes::Array->value,
+                'label'         => 'Settings.label.filemanager.uploadConfigExtInFiles',
+                'context'       => 'Settings.context.filemanager.uploadConfigExtInFiles'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'filemanager',
+                'slug'          => 'uploadConfig',
+                'key'           => 'createWebp',
+                'value'         => 1,
+                'default_value' => 1,
+                'return_type'   => FieldsReturnTypes::Boolean->value,
+                'label'         => 'Settings.label.filemanager.uploadConfigCreateWebp',
+                'context'       => 'Settings.context.filemanager.uploadConfigCreateWebp'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'filemanager',
+                'slug'          => 'uploadConfig',
+                'key'           => 'thumbPrefix',
+                'value'         => 'fm_thumb_',
+                'default_value' => 'fm_thumb_',
+                'return_type'   => FieldsReturnTypes::String->value,
+                'label'         => 'Settings.label.filemanager.uploadConfigThumbPrefix',
+                'context'       => 'Settings.context.filemanager.uploadConfigThumbPrefix'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'filemanager',
+                'slug'          => 'uploadConfig',
+                'key'           => 'thumbWidth',
+                'value'         => 120,
+                'default_value' => 120,
+                'return_type'   => FieldsReturnTypes::Integer->value,
+                'label'         => 'Settings.label.filemanager.uploadConfigThumbWidth',
+                'context'       => 'Settings.context.filemanager.uploadConfigThumbWidth'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => 1,
+                'entity'        => 'filemanager',
+                'slug'          => 'uploadConfig',
+                'key'           => 'thumbHeight',
+                'value'         => 120,
+                'default_value' => 120,
+                'return_type'   => FieldsReturnTypes::Integer->value,
+                'label'         => 'Settings.label.filemanager.uploadConfigThumbHeight',
+                'context'       => 'Settings.context.filemanager.uploadConfigThumbHeight'
             ],
 
             // Content
