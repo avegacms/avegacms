@@ -62,14 +62,18 @@ return [
             'smtpCrypto'    => 'SMTP Crypto',
         ],
         'filemanager' => [
-            'uploadConfigField'       => 'Название поля загружаемого файла',
-            'uploadConfigMaxSize'     => 'Максимальный размер загружаемого файла (Mб.)',
-            'uploadConfigExtInImages' => 'Разрешенный для загрузки формат изображений',
-            'uploadConfigExtInFiles'  => 'Разрешенный для загрузки формат файлов',
-            'uploadConfigCreateWebp'  => 'Разрешить создание изображений в формате webp',
-            'uploadConfigThumbPrefix' => 'Название префикса миниатюры файлового менеджера',
-            'uploadConfigThumbWidth'  => 'Ширина миниатюры для файлового менеджера',
-            'uploadConfigThumbHeight' => 'Высота миниатюры для файлового менеджера'
+            'uploadConfigField'              => 'Название поля загружаемого файла',
+            'uploadConfigMaxSize'            => 'Максимальный размер загружаемого файла (Mб.)',
+            'uploadConfigExtInImages'        => 'Разрешенный для загрузки формат изображений',
+            'uploadConfigExtInFiles'         => 'Разрешенный для загрузки формат файлов',
+            'uploadConfigCreateWebp'         => 'Разрешить создание изображений в формате webp',
+            'uploadConfigWebpQuality'        => 'Качество WebP изображения',
+            'uploadConfigThumbPrefix'        => 'Название префикса миниатюры файлового менеджера',
+            'uploadConfigThumbQuality'       => 'Качество миниатюры для файлового менеджера',
+            'uploadConfigThumbMaintainRatio' => 'Сохранять соотношение сторон миниатюры файлового менеджера',
+            'uploadConfigThumbMasterDim'     => 'Ось масштабирования миниатюры в файловом менеджере',
+            'uploadConfigThumbWidth'         => 'Ширина миниатюры для файлового менеджера',
+            'uploadConfigThumbHeight'        => 'Высота миниатюры для файлового менеджера'
         ],
         'posts'       => [
             'postsPerPage'   => 'Количество записей на странице',
@@ -136,14 +140,18 @@ return [
             'smtpCrypto'    => 'Может принимать следующие значения: ssl, tls',
         ],
         'filemanager' => [
-            'uploadConfigField'       => 'Название поля загружаемого файла',
-            'uploadConfigMaxSize'     => 'Максимальный размер загружаемого файла (Mб.)',
-            'uploadConfigExtInImages' => 'Разрешенный для загрузки формат изображений',
-            'uploadConfigExtInFiles'  => 'Разрешенный для загрузки формат файлов',
-            'uploadConfigCreateWebp'  => 'Разрешить создание изображений в формате webp',
-            'uploadConfigThumbPrefix' => 'Название префикса миниатюры файлового менеджера',
-            'uploadConfigThumbWidth'  => 'Ширина миниатюры для файлового менеджера',
-            'uploadConfigThumbHeight' => 'Высота миниатюры для файлового менеджера'
+            'uploadConfigField'              => 'Название поля загружаемого файла',
+            'uploadConfigMaxSize'            => 'Максимальный размер загружаемого файла (Mб.)',
+            'uploadConfigExtInImages'        => 'Разрешенный для загрузки формат изображений',
+            'uploadConfigExtInFiles'         => 'Разрешенный для загрузки формат файлов',
+            'uploadConfigCreateWebp'         => 'Разрешить создание изображений в формате webp',
+            'uploadConfigWebpQuality'        => 'Качество WebP изображения',
+            'uploadConfigThumbPrefix'        => 'Название префикса миниатюры файлового менеджера',
+            'uploadConfigThumbQuality'       => 'Качество миниатюры для файлового менеджера',
+            'uploadConfigThumbMaintainRatio' => 'Сохранять соотношение сторон миниатюры файлового менеджера',
+            'uploadConfigThumbMasterDim'     => 'Ось масштабирования миниатюры в файловом менеджере',
+            'uploadConfigThumbWidth'         => 'Ширина миниатюры для файлового менеджера',
+            'uploadConfigThumbHeight'        => 'Высота миниатюры для файлового менеджера'
         ],
         'posts'       => [
             'postsPerPage'   => 'Количество записей на странице',

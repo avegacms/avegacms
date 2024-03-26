@@ -4,12 +4,13 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Utilities;
 
+use Config\Mimes;
+use Config\Services;
+use CodeIgniter\Files\File;
+use CodeIgniter\Images\Exceptions\ImageException;
 use AvegaCms\Entities\{FilesEntity, FilesLinksEntity};
 use AvegaCms\Enums\FileTypes;
 use AvegaCms\Utilities\Exceptions\UploaderException;
-use CodeIgniter\Files\File;
-use Config\Mimes;
-use Config\Services;
 use AvegaCms\Models\Admin\{FilesModel, FilesLinksModel};
 use ReflectionException;
 
@@ -44,6 +45,7 @@ class CmsFileManager
         $FM        = model(FilesModel::class);
         $FLM       = model(FilesLinksModel::class);
         $userId    = $entity['user_id'] = ($entity['user_id'] ?? 0);
+        $defConfig = Cms::settings('filemanager.uploadConfig');
 
         // TODO 1. Проверить валидацию $entity [v]
         // TODO 2. Проверить существование директории [v]
@@ -77,19 +79,13 @@ class CmsFileManager
             throw UploaderException::forDirectoryNotFound($directory);
         }
 
-        $defConfig = Cms::settings('filemanager.uploadConfig');
-        $field     = $uploadConfig['field'] ?? $defConfig['field'];
+        $field = $uploadConfig['field'] ?? 'file';
 
         if ( ! is_array($uploadConfig)) {
             $uploadConfig = ['directory' => $directory];
         }
 
-        /*echo '<pre>';
-        var_dump([self::uploadSettings($defConfig, $uploadConfig), $_FILES]);
-        echo '</pre>';
-        exit();*/
-
-        if ( ! $validator->setRules(self::uploadSettings($defConfig, $uploadConfig))->withRequest($request)->run()) {
+        if ( ! $validator->setRules(self::uploadSettings($uploadConfig))->withRequest($request)->run()) {
             throw new UploaderException($validator->getErrors());
         }
 
@@ -103,7 +99,7 @@ class CmsFileManager
             throw UploaderException::forHasMoved($uploadedFile->getName());
         }
 
-        $uploadPath = FCPATH . ($directory = ('uploads/' . $directory));
+        $uploadPath = FCPATH . ($directory = ('uploads/' . $directory)) . '/';
 
         // Переносим файл в нужную директорию
         $uploadedFile->move($uploadPath, ($fileName = $uploadedFile->getRandomName()));
@@ -115,21 +111,27 @@ class CmsFileManager
             'provider'      => 0,
             'type'          => $type,
             'data'          => [
-                'provider' => 0,
-                'type'     => $type,
-                'ext'      => $extension,
-                'size'     => $uploadedFile->getSize(),
-                'file'     => $fileName,
-                'path'     => $directory . '/' . $fileName,
-                'title'    => $uploadedFile->getName(),
-                //'thumb'    => ($isImage) ? self::createThumb($uploadPath . $fileName) : ''
+                'title' => $uploadedFile->getName(),
+                'ext'   => $extension,
+                'size'  => $uploadedFile->getSize(),
+                'file'  => $fileName,
+                'path'  => $directory . '/' . $fileName
             ],
-            'extra'         => '',
             'created_by_id' => $userId
         ];
 
+        if ($type === FileTypes::Image->value) {
+            $fileData['data']['thumb'] = self::createThumb($directory . '/' . $fileName);
+            if ($defConfig['createWebp']) {
+                $fileData['data']['path'] = [
+                    'original' => $fileData['data']['path'],
+                    'webp'     => self::convertToWebp($fileData['data']['path'], webpQuality: $defConfig['webpQuality'])
+                ];
+            }
+        }
+
         echo '<pre>';
-        var_dump($fileData);
+        var_dump([$fileData]);
         echo '</pre>';
         exit();
 
@@ -329,31 +331,212 @@ class CmsFileManager
         return $directoryId;
     }
 
-    public static function createThumb(string $path): string
+    /**
+     * @param  string  $filePath
+     * @param  array  $config
+     * @return array
+     * @throws ReflectionException|UploaderException
+     */
+    public static function createThumb(string $filePath, array $config = []): array
     {
+        $original = FCPATH . trim($filePath, '/');
+
+        if ( ! file_exists($original)) {
+            throw UploaderException::forFileNotFound($filePath);
+        }
+
+        $defConfig = Cms::settings('filemanager.uploadConfig');
+        $fileName  = basename($original);
+        $fileUrl   = pathinfo($filePath, PATHINFO_DIRNAME);
+        $settings  = [
+            'thumbPrefix'        => $config['thumbPrefix'] ?? $defConfig['thumbPrefix'],
+            'thumbQuality'       => $config['thumbQuality'] ?? $defConfig['thumbQuality'],
+            'thumbMaintainRatio' => $config['thumbMaintainRatio'] ?? $defConfig['thumbMaintainRatio'],
+            'thumbMasterDim'     => $config['thumbMasterDim'] ?? $defConfig['thumbMasterDim'],
+            'thumbWidth'         => $config['thumbWidth'] ?? $defConfig['thumbWidth'],
+            'thumbHeight'        => $config['thumbHeight'] ?? $defConfig['thumbHeight'],
+        ];
+
+        try {
+            $url = $fileUrl . '/' . $settings['thumbPrefix'] . $fileName;
+
+            Services::image()
+                ->withFile($original)
+                ->fit($settings['thumbWidth'], $settings['thumbHeight'])
+                ->resize(
+                    $settings['thumbWidth'],
+                    $settings['thumbHeight'],
+                    $settings['thumbMaintainRatio'],
+                    $settings['thumbMasterDim']
+                )->save(FCPATH . $url, $settings['thumbQuality']);
+
+            $result = [
+                'original' => $url
+            ];
+
+            if ($defConfig['createWebp']) {
+                $result['webp'] = self::convertToWebp($url, webpQuality: $defConfig['webpQuality']);
+            }
+
+            return $result;
+        } catch (ImageException $e) {
+            throw UploaderException::forFailThumbCreated($e->getMessage());
+        }
     }
 
     /**
-     * @param  array  $defConfig
+     * Метод конвертации изображения в WebP формат
+     *
+     * @param  string  $filePath
+     * @param  string  $newPath
+     * @param  int  $webpQuality
+     * @return string
+     * @throws UploaderException
+     */
+    public static function convertToWebp(string $filePath, string $newPath = '', int $webpQuality = 80): string
+    {
+        $original = FCPATH . trim($filePath, '/');
+
+        if ( ! empty($newPath)) {
+            $newPath = trim($newPath, '/');
+        }
+
+        if ( ! file_exists($original)) {
+            throw UploaderException::forFileNotFound($filePath);
+        }
+
+        if ( ! extension_loaded('gd') || ! function_exists('gd_info')) {
+            throw UploaderException::forGDLibNotSupported();
+        }
+
+        $fileName = basename($original);
+
+        // Если пытаемся преобразовать изображение в webp-формате
+        if (getimagesize($original)['mime'] === 'image/webp') {
+            $url = $filePath;
+            if ( ! empty($newPath)) {
+                if ( ! is_dir(FCPATH . $newPath)) {
+                    throw UploaderException::forDirectoryNotFound($newPath);
+                }
+                if ( ! copy($original, FCPATH . ($url = $newPath . $fileName))) {
+                    throw UploaderException::forNotMovedFile($url);
+                }
+            }
+            return $url;
+        }
+
+        $fileName = pathinfo($original, PATHINFO_FILENAME) . '.webp';
+        $fileUrl  = pathinfo($filePath, PATHINFO_DIRNAME);
+        $url      = $fileUrl . '/' . $fileName;
+
+        if ( ! empty($newPath)) {
+            if ( ! is_dir(FCPATH . $newPath)) {
+                throw UploaderException::forDirectoryNotFound($newPath);
+            }
+            $url = $newPath . '/' . $fileName;
+        }
+
+        try {
+            Services::image()
+                ->withFile($original)
+                ->convert(IMAGETYPE_WEBP)
+                ->save(FCPATH . $url, $webpQuality);
+
+            return $url;
+        } catch (ImageException $e) {
+            throw UploaderException::forFiledToConvertImageToWebP($e->getMessage());
+        }
+    }
+
+    /**
+     * Метод конвертации изображения в WebP формат
+     *
+     * @param  string  $filePath
+     * @param  string  $newPath
+     * @param  int  $webpQuality
+     * @return string
+     * @throws UploaderException
+     */
+    public static function convertToWebp_1(string $filePath, string $newPath = '', int $webpQuality = 80): string
+    {
+        $original = FCPATH . trim($filePath, '/');
+
+        if ( ! empty($newPath)) {
+            $newPath = trim($newPath, '/');
+        }
+
+        if ( ! file_exists($original)) {
+            throw UploaderException::forFileNotFound($filePath);
+        }
+
+        if ( ! extension_loaded('gd') || ! function_exists('gd_info')) {
+            throw UploaderException::forGDLibNotSupported();
+        }
+
+        $fileName = basename($original);
+        $fileUrl  = pathinfo($filePath, PATHINFO_DIRNAME);
+
+        if (($mime = getimagesize($original)['mime']) === 'image/webp') {
+            $url = $filePath;
+            if ( ! empty($newPath)) {
+                if ( ! is_dir(FCPATH . $newPath)) {
+                    throw UploaderException::forDirectoryNotFound($newPath);
+                }
+                if ( ! copy($original, FCPATH . ($url = $newPath . $fileName))) {
+                    throw UploaderException::forNotMovedFile($url);
+                }
+            }
+            return $url;
+        }
+
+        $webpImage = match ($mime) {
+            'image/jpeg' => imagecreatefromjpeg($original),
+            'image/png'  => imagecreatefrompng($original),
+            'image/gif'  => imagecreatefromgif($original),
+            default      => throw UploaderException::forUnsupportedImageFormat($mime)
+        };
+
+        $fileName = pathinfo($original, PATHINFO_FILENAME) . '.webp';
+        $url      = $fileUrl . '/' . $fileName;
+
+        if ( ! empty($newPath)) {
+            if ( ! is_dir(FCPATH . $newPath)) {
+                throw UploaderException::forDirectoryNotFound($newPath);
+            }
+            $url = $newPath . '/' . $fileName;
+        }
+
+        // Save image as WebP
+        if ( ! imagewebp($webpImage, FCPATH . $url, $webpQuality)) {
+            throw UploaderException::forFiledToConvertImageToWebP();
+        }
+        // Free up memory
+        imagedestroy($webpImage);
+
+        return $url;
+    }
+
+    /**
      * @param  array  $settings
      * @return array[]
+     * @throws ReflectionException
      */
-    private static function uploadSettings(array $defConfig, array $settings): array
+    private static function uploadSettings(array $settings): array
     {
+        $defConfig   = Cms::settings('filemanager.uploadConfig');
         $field       = $settings['field'] ?? $defConfig['field'];
         $maxUpload   = (int) (ini_get('upload_max_filesize'));
         $maxPost     = (int) (ini_get('post_max_size'));
         $memoryLimit = (int) (ini_get('memory_limit'));
 
-        $settings['maxSize'] = $settings['maxSize'] ?? $defConfig['maxSize'];
+        $settings['maxSize'] = ($settings['maxSize'] ?? $defConfig['maxSize']) * 1024;
 
         $maxSize = ($memoryLimit > 0 ?
                 min($maxUpload, $maxPost, $memoryLimit) :
                 min($maxUpload, $maxPost)) * 1024;
 
-        $uploadRule = 'uploaded[' . $field . ']|';
-
-        $uploadRule .= 'max_size[' . $field . ',' . (($settings['maxSize'] ?? ($maxSize + 1) || $settings['maxSize'] > $maxSize) ? $maxSize : $settings['maxSize']) . ']';
+        $maxSize    = ($settings['maxSize'] > $maxSize) ? $maxSize : $settings['maxSize'];
+        $uploadRule = 'uploaded[' . $field . ']|max_size[' . $field . ',' . $maxSize . ']';
 
         if (isset($settings['maxDims'])) {
             $uploadRule .= '|max_dims[' . $field . ',' . $settings['maxDims'] . ']';
