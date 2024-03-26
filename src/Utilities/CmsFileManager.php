@@ -52,9 +52,9 @@ class CmsFileManager
         // TODO 3. Собрать конфиг для загрузки файл [v]
         // TODO 4. Валидация загрузки файла [v]
         // TODO 5. Получить объект файла [v]
-        // TODO 6. Проверить является ли файл картинкой:
-        // TODO 6.1  Проверить настройки на необходимость создания webp-формата
-        // TODO 6.2  Создать thumb по необходимым настройкам
+        // TODO 6. Проверить является ли файл картинкой: [v]
+        // TODO 6.1  Проверить настройки на необходимость создания webp-формата [v]
+        // TODO 6.2  Создать thumb по необходимым настройкам [v]
         // TODO 7. Если файл картинка, и конфиг $fileConfig не пустой, то:
         // TODO 7.1. Создать необходимое количество вариантов картинок + сделать проверку на п. 6.1
         // TODO 8. Создать запись в БД
@@ -130,22 +130,19 @@ class CmsFileManager
             }
         }
 
-        echo '<pre>';
-        var_dump([$fileData]);
-        echo '</pre>';
-        exit();
+        $fileData['data'] = json_encode($fileData['data']);
 
-        if (($id = $FM->insert((new FilesEntity ($fileData)))) === false) {
+        if (($id = $FM->insert($fileData)) === false) {
             throw new UploaderException($FM->errors());
         }
 
         $fileLinks = [
             'id'            => $id,
             'user_id'       => $userId,
-            'parent'        => $dir['id'],
-            'module_id'     => $dir['module_id'],
-            'entity_id'     => $settings['entity_id'] ?? 0,
-            'item_id'       => $settings['item_id'] ?? 0,
+            'parent'        => $dirData['id'],
+            'module_id'     => $dirData['module_id'],
+            'entity_id'     => $dirData['entity_id'] ?? 0,
+            'item_id'       => $dirData['item_id'] ?? 0,
             'uid'           => '',
             'type'          => $type,
             'created_by_id' => $userId
@@ -362,7 +359,6 @@ class CmsFileManager
 
             Services::image()
                 ->withFile($original)
-                ->fit($settings['thumbWidth'], $settings['thumbHeight'])
                 ->resize(
                     $settings['thumbWidth'],
                     $settings['thumbHeight'],
@@ -446,74 +442,6 @@ class CmsFileManager
         } catch (ImageException $e) {
             throw UploaderException::forFiledToConvertImageToWebP($e->getMessage());
         }
-    }
-
-    /**
-     * Метод конвертации изображения в WebP формат
-     *
-     * @param  string  $filePath
-     * @param  string  $newPath
-     * @param  int  $webpQuality
-     * @return string
-     * @throws UploaderException
-     */
-    public static function convertToWebp_1(string $filePath, string $newPath = '', int $webpQuality = 80): string
-    {
-        $original = FCPATH . trim($filePath, '/');
-
-        if ( ! empty($newPath)) {
-            $newPath = trim($newPath, '/');
-        }
-
-        if ( ! file_exists($original)) {
-            throw UploaderException::forFileNotFound($filePath);
-        }
-
-        if ( ! extension_loaded('gd') || ! function_exists('gd_info')) {
-            throw UploaderException::forGDLibNotSupported();
-        }
-
-        $fileName = basename($original);
-        $fileUrl  = pathinfo($filePath, PATHINFO_DIRNAME);
-
-        if (($mime = getimagesize($original)['mime']) === 'image/webp') {
-            $url = $filePath;
-            if ( ! empty($newPath)) {
-                if ( ! is_dir(FCPATH . $newPath)) {
-                    throw UploaderException::forDirectoryNotFound($newPath);
-                }
-                if ( ! copy($original, FCPATH . ($url = $newPath . $fileName))) {
-                    throw UploaderException::forNotMovedFile($url);
-                }
-            }
-            return $url;
-        }
-
-        $webpImage = match ($mime) {
-            'image/jpeg' => imagecreatefromjpeg($original),
-            'image/png'  => imagecreatefrompng($original),
-            'image/gif'  => imagecreatefromgif($original),
-            default      => throw UploaderException::forUnsupportedImageFormat($mime)
-        };
-
-        $fileName = pathinfo($original, PATHINFO_FILENAME) . '.webp';
-        $url      = $fileUrl . '/' . $fileName;
-
-        if ( ! empty($newPath)) {
-            if ( ! is_dir(FCPATH . $newPath)) {
-                throw UploaderException::forDirectoryNotFound($newPath);
-            }
-            $url = $newPath . '/' . $fileName;
-        }
-
-        // Save image as WebP
-        if ( ! imagewebp($webpImage, FCPATH . $url, $webpQuality)) {
-            throw UploaderException::forFiledToConvertImageToWebP();
-        }
-        // Free up memory
-        imagedestroy($webpImage);
-
-        return $url;
     }
 
     /**
