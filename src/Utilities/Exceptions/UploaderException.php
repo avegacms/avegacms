@@ -29,11 +29,21 @@ class UploaderException extends Exception
     }
 
     /**
+     * @param  string  $directory
      * @return UploaderException
      */
-    public static function forDirectoryNotFound(): UploaderException
+    public static function forDirectoryNotFound(string $directory): UploaderException
     {
-        return new static(lang('Uploader.errors.directoryNotFound'));
+        return new static(lang('Uploader.errors.directoryNotFound', [$directory]));
+    }
+
+    /**
+     * @param  string  $file
+     * @return UploaderException
+     */
+    public static function forFileNotFound(string $file): UploaderException
+    {
+        return new static(lang('Uploader.errors.fileNotFound', [$file]));
     }
 
     /**
@@ -42,6 +52,14 @@ class UploaderException extends Exception
     public static function forEmptyPath(): UploaderException
     {
         return new static(lang('Uploader.errors.emptyPath'));
+    }
+
+    /**
+     * @return UploaderException
+     */
+    public static function forGDLibNotSupported(): UploaderException
+    {
+        return new static(lang('Uploader.errors.gdLibNotSupported'));
     }
 
     /**
@@ -60,5 +78,37 @@ class UploaderException extends Exception
     public static function forHasMoved(string $file): UploaderException
     {
         return new static(lang('Uploader.errors.hasMoved', [$file]));
+    }
+
+    /**
+     * @param  string  $file
+     * @return UploaderException
+     */
+    public static function forNotMovedFile(string $file): UploaderException
+    {
+        return new static(lang('Uploader.errors.notMovedFile', [$file]));
+    }
+
+    public static function forUnsupportedImageFormat(string $mime): UploaderException
+    {
+        return new static(lang('Uploader.errors.unsupportedImageFormat', [$mime]));
+    }
+
+    /**
+     * @param  string  $message
+     * @return UploaderException
+     */
+    public static function forFiledToConvertImageToWebP(string $message): UploaderException
+    {
+        return new static(lang('Uploader.errors.filedToConvertImageToWebP', [$message]));
+    }
+
+    /**
+     * @param  string  $message
+     * @return UploaderException
+     */
+    public static function forFailThumbCreated(string $message): UploaderException
+    {
+        return new static(lang('Uploader.errors.failThumbCreated', [$message]));
     }
 }

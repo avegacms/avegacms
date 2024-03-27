@@ -4,44 +4,79 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Utilities;
 
-use AvegaCms\Entities\{FilesEntity, FilesLinksEntity};
-use AvegaCms\Enums\FileTypes;
-use AvegaCms\Utilities\Exceptions\UploaderException;
-use CodeIgniter\Files\File;
 use Config\Mimes;
 use Config\Services;
+use CodeIgniter\Files\File;
+use CodeIgniter\Images\Exceptions\ImageException;
+use AvegaCms\Entities\FilesLinksEntity;
+use AvegaCms\Enums\FileTypes;
+use AvegaCms\Utilities\Exceptions\UploaderException;
 use AvegaCms\Models\Admin\{FilesModel, FilesLinksModel};
 use ReflectionException;
 
 class CmsFileManager
 {
+    const entityRules = [
+        'entity_id' => ['rules' => 'if_exist|is_natural'],
+        'item_id'   => ['rules' => 'if_exist|is_natural'],
+        'user_id'   => ['rules' => 'if_exist|is_natural']
+    ];
+
+    const excludedDirs = [
+        FCPATH . 'uploads',
+        'uploads'
+    ];
+
     /**
-     * @param  array  $settings
+     * @param  array  $entity
+     * @param  array|string|null  $uploadConfig
+     * @param  array  $fileConfig
      * @return array|FilesLinksEntity|null
      * @throws UploaderException|ReflectionException
      */
-    public static function upload(array $settings): array|FilesLinksEntity|null
-    {
-        $request    = Services::request();
-        $validator  = Services::validation();
-        $uploadPath = FCPATH . 'uploads/';
-        $FM         = model(FilesModel::class);
-        $FLM        = model(FilesLinksModel::class);
-        $userId     = $settings['user_id'] ?? 0;
+    public static function upload(
+        array $entity,
+        array|string $uploadConfig = null,
+        array $fileConfig = []
+    ): array|FilesLinksEntity|null {
+        $request   = Services::request();
+        $validator = Services::validation();
+        $directory = is_array($uploadConfig) ? ($uploadConfig['directory'] ?? 'content') : (is_null($uploadConfig) ? '' : $uploadConfig);
+        $FM        = model(FilesModel::class);
+        $FLM       = model(FilesLinksModel::class);
+        $userId    = $entity['user_id'] = ($entity['user_id'] ?? 0);
+        $defConfig = Cms::settings('filemanager.uploadConfig');
 
-        if ( ! is_numeric($settings['directory_id'] ?? false) || empty(($dir = $FLM->getDirectories($settings['directory_id'])))) {
-            throw UploaderException::forDirectoryNotFound();
-        }
-
-        $uploadPath .= ($path = $dir['data']['url'] . (str_ends_with($dir['data']['url'], '/') ? '' : '/'));
-
-        $settings['field'] = $settings['field'] ?? 'file';
-
-        if ($validator->setRules(self::uploadSettings($settings))->withRequest($request)->run() === false) {
+        if ($validator->setRules(self::entityRules)->run($entity) === false) {
             throw new UploaderException($validator->getErrors());
         }
 
-        $uploadedFile = $request->getFile($settings['field']);
+        foreach (self::excludedDirs as $dir) {
+            if (str_starts_with($directory, $dir)) {
+                $directory = trim(substr($directory, strlen($dir)), '/');
+                break;
+            }
+        }
+
+        if (empty($directory)) {
+            throw UploaderException::forEmptyPath();
+        }
+
+        if (empty($dirData = $FLM->getDirectories($directory))) {
+            throw UploaderException::forDirectoryNotFound($directory);
+        }
+
+        $field = $uploadConfig['field'] ?? 'file';
+
+        if ( ! is_array($uploadConfig)) {
+            $uploadConfig = ['directory' => $directory];
+        }
+
+        if ( ! $validator->setRules(self::uploadSettings($uploadConfig))->withRequest($request)->run()) {
+            throw new UploaderException($validator->getErrors());
+        }
+
+        $uploadedFile = $request->getFile($field);
 
         if ( ! $uploadedFile->isValid()) {
             throw new UploaderException($uploadedFile->getErrorString() . '(' . $uploadedFile->getError() . ')');
@@ -50,6 +85,8 @@ class CmsFileManager
         if ($uploadedFile->hasMoved()) {
             throw UploaderException::forHasMoved($uploadedFile->getName());
         }
+
+        $uploadPath = FCPATH . ($directory = ('uploads/' . $directory)) . '/';
 
         // Переносим файл в нужную директорию
         $uploadedFile->move($uploadPath, ($fileName = $uploadedFile->getRandomName()));
@@ -63,26 +100,48 @@ class CmsFileManager
             'data'          => [
                 'provider' => 0,
                 'type'     => $type,
+                'title'    => $uploadedFile->getName(),
                 'ext'      => $extension,
                 'size'     => $uploadedFile->getSize(),
                 'file'     => $fileName,
-                'path'     => $path . $fileName,
-                'title'    => $uploadedFile->getName()
+                'path'     => $directory . '/' . $fileName
             ],
             'created_by_id' => $userId
         ];
 
-        if (($id = $FM->insert((new FilesEntity ($fileData)))) === false) {
+        if ($type === FileTypes::Image->value) {
+            $file = $directory . '/' . $fileName;
+
+            $fileData['data']['thumb'] = self::createThumb($file);
+
+            if ($defConfig['createWebp']) {
+                $fileData['data']['path'] = [
+                    'original' => $fileData['data']['path'],
+                    'webp'     => self::convertToWebp($fileData['data']['path'], webpQuality: $defConfig['webpQuality'])
+                ];
+            }
+
+            if ( ! empty($fileConfig)) {
+                $fileData['data']['variants'] = match (($action = array_key_first($fileConfig))) {
+                    'resize' => self::resizeImage($file, $fileConfig[$action]),
+                    default  => ''
+                };
+            }
+        }
+
+        $fileData['data'] = json_encode($fileData['data']);
+
+        if (($id = $FM->insert($fileData)) === false) {
             throw new UploaderException($FM->errors());
         }
 
         $fileLinks = [
             'id'            => $id,
             'user_id'       => $userId,
-            'parent'        => $dir['id'],
-            'module_id'     => $dir['module_id'],
-            'entity_id'     => $settings['entity_id'] ?? 0,
-            'item_id'       => $settings['item_id'] ?? 0,
+            'parent'        => $dirData['id'],
+            'module_id'     => $dirData['module_id'],
+            'entity_id'     => $entity['entity_id'] ?? 0,
+            'item_id'       => $entity['item_id'] ?? 0,
             'uid'           => '',
             'type'          => $type,
             'created_by_id' => $userId
@@ -181,37 +240,198 @@ class CmsFileManager
     }
 
     /**
+     * @param  string  $filePath
+     * @param  array  $config
+     * @return array
+     * @throws ReflectionException|UploaderException
+     */
+    public static function createThumb(string $filePath, array $config = []): array
+    {
+        $original = FCPATH . trim($filePath, '/');
+
+        if ( ! file_exists($original)) {
+            throw UploaderException::forFileNotFound($filePath);
+        }
+
+        $defConfig = Cms::settings('filemanager.uploadConfig');
+        $fileName  = basename($original);
+        $fileUrl   = pathinfo($filePath, PATHINFO_DIRNAME);
+        $settings  = [
+            'thumbPrefix'        => $config['thumbPrefix'] ?? $defConfig['thumbPrefix'],
+            'thumbQuality'       => $config['thumbQuality'] ?? $defConfig['thumbQuality'],
+            'thumbMaintainRatio' => $config['thumbMaintainRatio'] ?? $defConfig['thumbMaintainRatio'],
+            'thumbMasterDim'     => $config['thumbMasterDim'] ?? $defConfig['thumbMasterDim'],
+            'thumbWidth'         => $config['thumbWidth'] ?? $defConfig['thumbWidth'],
+            'thumbHeight'        => $config['thumbHeight'] ?? $defConfig['thumbHeight'],
+        ];
+
+        try {
+            $url = $fileUrl . '/' . $settings['thumbPrefix'] . $fileName;
+
+            Services::image()
+                ->withFile($original)
+                ->resize(
+                    $settings['thumbWidth'],
+                    $settings['thumbHeight'],
+                    $settings['thumbMaintainRatio'],
+                    $settings['thumbMasterDim']
+                )->save(FCPATH . $url, $settings['thumbQuality']);
+
+            $result = [
+                'original' => $url
+            ];
+
+            if ($defConfig['createWebp']) {
+                $result['webp'] = self::convertToWebp($url, webpQuality: $defConfig['webpQuality']);
+            }
+
+            return $result;
+        } catch (ImageException $e) {
+            throw UploaderException::forFailThumbCreated($e->getMessage());
+        }
+    }
+
+    /**
+     * Метод конвертации изображения в WebP формат
+     *
+     * @param  string  $filePath
+     * @param  string  $newPath
+     * @param  int  $webpQuality
+     * @return string
+     * @throws UploaderException
+     */
+    public static function convertToWebp(string $filePath, string $newPath = '', int $webpQuality = 80): string
+    {
+        $original = FCPATH . trim($filePath, '/');
+
+        if ( ! empty($newPath)) {
+            $newPath = trim($newPath, '/');
+        }
+
+        if ( ! file_exists($original)) {
+            throw UploaderException::forFileNotFound($filePath);
+        }
+
+        if ( ! extension_loaded('gd') || ! function_exists('gd_info')) {
+            throw UploaderException::forGDLibNotSupported();
+        }
+
+        $fileName = basename($original);
+
+        // Если пытаемся преобразовать изображение в webp-формате
+        if (getimagesize($original)['mime'] === 'image/webp') {
+            $url = $filePath;
+            if ( ! empty($newPath)) {
+                if ( ! is_dir(FCPATH . $newPath)) {
+                    throw UploaderException::forDirectoryNotFound($newPath);
+                }
+                if ( ! copy($original, FCPATH . ($url = $newPath . $fileName))) {
+                    throw UploaderException::forNotMovedFile($url);
+                }
+            }
+            return $url;
+        }
+
+        $fileName = pathinfo($original, PATHINFO_FILENAME) . '.webp';
+        $fileUrl  = pathinfo($filePath, PATHINFO_DIRNAME);
+        $url      = $fileUrl . '/' . $fileName;
+
+        if ( ! empty($newPath)) {
+            if ( ! is_dir(FCPATH . $newPath)) {
+                throw UploaderException::forDirectoryNotFound($newPath);
+            }
+            $url = $newPath . '/' . $fileName;
+        }
+
+        try {
+            Services::image()
+                ->withFile($original)
+                ->convert(IMAGETYPE_WEBP)
+                ->save(FCPATH . $url, $webpQuality);
+
+            return $url;
+        } catch (ImageException $e) {
+            throw UploaderException::forFiledToConvertImageToWebP($e->getMessage());
+        }
+    }
+
+    /**
+     * @param  string  $filePath
      * @param  array  $settings
      * @return array
+     * @throws ReflectionException|UploaderException
+     */
+    public static function resizeImage(string $filePath, array $settings): array
+    {
+        $original   = FCPATH . trim($filePath, '/');
+        $fileName   = pathinfo($original, PATHINFO_BASENAME);
+        $fileUrl    = pathinfo($filePath, PATHINFO_DIRNAME);
+        $createWebp = Cms::settings('filemanager.uploadConfig')['createWebp'];
+        $variants   = [];
+
+        foreach ($settings as $prefix => $setting) {
+            $url = $fileUrl . '/' . $prefix . '_' . $fileName;
+
+            $result = Services::image()
+                ->withFile($original)
+                ->resize($setting['width'], $setting['height'], $setting['maintainRatio'], $setting['masterDim'])
+                ->save(FCPATH . $url, $setting['quality']);
+
+            if ($result) {
+                $variant['original'] = $url;
+                if ($createWebp) {
+                    $variant['webp'] = self::convertToWebp($url, webpQuality: $setting['quality']);
+                }
+                $variants[$prefix] = $variant;
+            }
+        }
+
+        return $variants;
+    }
+
+    /**
+     * @param  array  $settings
+     * @return array[]
+     * @throws ReflectionException
      */
     private static function uploadSettings(array $settings): array
     {
-        $field        = $settings['field'];
-        $max_upload   = (int) (ini_get('upload_max_filesize'));
-        $max_post     = (int) (ini_get('post_max_size'));
-        $memory_limit = (int) (ini_get('memory_limit'));
+        $defConfig   = Cms::settings('filemanager.uploadConfig');
+        $field       = $settings['field'] ?? $defConfig['field'];
+        $maxUpload   = (int) (ini_get('upload_max_filesize'));
+        $maxPost     = (int) (ini_get('post_max_size'));
+        $memoryLimit = (int) (ini_get('memory_limit'));
 
-        $maxSize = ($memory_limit > 0 ?
-                min($max_upload, $max_post, $memory_limit) :
-                min($max_upload, $max_post)) * 1024;
+        $settings['maxSize'] = ($settings['maxSize'] ?? $defConfig['maxSize']) * 1024;
 
-        $uploadRule = 'uploaded[' . $field . ']|';
+        $maxSize = ($memoryLimit > 0 ?
+                min($maxUpload, $maxPost, $memoryLimit) :
+                min($maxUpload, $maxPost)) * 1024;
 
-        $uploadRule .= 'max_size[' . $field . ',' . (($settings['max_size'] ?? ($maxSize + 1) || $settings['max_size'] > $maxSize) ? $maxSize : $settings['max_size']) . ']';
+        $maxSize    = ($settings['maxSize'] > $maxSize) ? $maxSize : $settings['maxSize'];
+        $uploadRule = 'uploaded[' . $field . ']|max_size[' . $field . ',' . $maxSize . ']';
 
-        if (isset($settings['max_dims'])) {
-            $uploadRule .= '|max_dims[' . $field . ',' . $settings['max_dims'] . ']';
+        if (isset($settings['maxDims'])) {
+            $uploadRule .= '|max_dims[' . $field . ',' . $settings['maxDims'] . ']';
         }
 
-        if (isset($settings['mime_in'])) {
-            $uploadRule .= '|mime_in[' . $field . ',' . $settings['mime_in'] . ']';
+        if (isset($settings['mimeIn'])) {
+            $uploadRule .= '|mime_in[' . $field . ',' . $settings['mimeIn'] . ']';
         }
 
-        if (isset($settings['ext_in'])) {
-            $uploadRule .= '|ext_in[' . $field . ',' . $settings['ext_in'] . ']';
-        }
+        $settings['extInImages'] = $settings['extInImages'] ?? $defConfig['extInImages'];
+        $settings['extInFiles']  = $settings['extInFiles'] ?? $defConfig['extInFiles'];
 
-        if (isset($settings['is_image'])) {
+        $ext = match ($settings['extType'] ?? 'all') {
+            'images' => implode(',', $settings['extInImages']),
+            'files'  => implode(',', $settings['extInFiles']),
+            default  => implode(',', $settings['extInFiles']) . ',' . implode(',', $settings['extInImages'])
+        };
+
+        $uploadRule .= '|ext_in[' . $field . ',' . trim($ext, ',') . ']';
+
+        if (isset($settings['isImage'])) {
+            $uploadRule .= '|ext_in[' . $field . ',' . trim(implode('|', $settings['extInImages']), '|') . ']';
             $uploadRule .= '|is_image[' . $field . ']';
         }
 

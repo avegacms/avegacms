@@ -43,7 +43,7 @@ class FilesLinksEntity extends AvegaCmsEntity
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime',
 
-        'provider' => 'integer',
+        'provider' => 'integer'
     ];
 
     /**
@@ -51,19 +51,35 @@ class FilesLinksEntity extends AvegaCmsEntity
      */
     public function getData(): array
     {
-        $data             = json_decode($this->attributes['data'], true);
-        $data['path']     = base_url($data['path']);
-        $data['sizeText'] = $this->_getTextFileSize($data['size']);
-
-        unset($data['provider']);
+        $data = json_decode($this->attributes['data'], true);
 
         switch ($data['type']) {
             case FileTypes::Directory->value:
                 break;
             case FileTypes::File->value:
+                $data['path']     = base_url($data['path']);
+                $data['sizeText'] = $this->_getTextFileSize($data['size']);
                 break;
             case FileTypes::Image->value:
-                $data['thumb'] = base_url($data['thumb']);
+                $data['sizeText']         = $this->_getTextFileSize($data['size']);
+                $data['path']['original'] = base_url($data['path']['original']);
+                if ( ! empty($data['path']['webp'])) {
+                    $data['path']['webp'] = base_url($data['path']['webp']);
+                }
+
+                $data['thumb']['original'] = base_url($data['thumb']['original']);
+                if ( ! empty($data['thumb']['webp'])) {
+                    $data['thumb']['webp'] = base_url($data['thumb']['webp']);
+                }
+
+                if ( ! empty($data['variants'] ?? '')) {
+                    foreach ($data['variants'] as $k => $variants) {
+                        foreach ($variants as $pointer => $variant) {
+                            $data['variants'][$k][$pointer] = base_url($variant);
+                        }
+                    }
+                }
+
                 break;
         }
 

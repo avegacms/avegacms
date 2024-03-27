@@ -227,6 +227,7 @@ class CreateAvegaCmsTables extends Migration
                 'auto_increment' => true
             ],
             'data'     => ['type' => 'text', 'null' => true],
+            'extra'    => ['type' => 'text', 'null' => true],
             'provider' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
             'type'     => [
                 'type'       => 'enum',

@@ -172,13 +172,13 @@ class FilesLinksModel extends AvegaCmsModel
     }
 
     /**
-     * @param  int|null  $id
+     * @param  string  $path
      * @return array
      */
-    public function getDirectories(?int $id = null): array
+    public function getDirectories(string $path = ''): array
     {
-        $list = cache()->remember('FileManagerDirectories', 30 * DAY,
-            function () {
+        return cache()->remember('FileManagerDirectories', 30 * DAY,
+            function () use ($path) {
                 $this->builder()->select(
                     [
                         'files.id',
@@ -194,19 +194,22 @@ class FilesLinksModel extends AvegaCmsModel
                 )->join('files', 'files.id = files_links.id')
                     ->where(['files_links.type' => FileTypes::Directory->value]);
 
-                $result = $this->asArray()->findAll();
+                $result      = $this->asArray()->findAll();
+                $directories = [];
 
                 if ( ! empty($result)) {
-                    $result = array_column($result, null, 'id');
-                    foreach ($result as $k => $item) {
-                        $result[$k]['data'] = json_decode($item['data'], true);
+                    foreach ($result as $item) {
+                        $url = json_decode($item['data'], true);
+                        if ( ! empty($url = $url['url'])) {
+                            unset($item['data']);
+                            $directories[$url] = $item;
+                        }
                     }
                 }
 
-                return ! empty($result) ? array_column($result, null, 'id') : [];
-            });
-
-        return $id === null ? $list : ($list[$id] ?? []);
+                return empty($directories) ? [] : (empty($path) ? $directories : ($directories[$path] ?? []));
+            }
+        );
     }
 
     /**

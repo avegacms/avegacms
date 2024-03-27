@@ -22,6 +22,7 @@ class FilesModel extends AvegaCmsModel
     protected $allowedFields    = [
         'provider',
         'data',
+        'extra',
         'type',
         'active',
         'created_by_id',
@@ -39,7 +40,8 @@ class FilesModel extends AvegaCmsModel
 
     // Validation
     protected $validationRules      = [
-        'data'          => ['rules' => 'if_exist|required|string|max_length[2048]'],
+        'data'          => ['rules' => 'if_exist|required|max_length[2048]'],
+        'extra'         => ['rules' => 'if_exist|permit_empty|max_length[16384]'],
         'provider'      => ['rules' => 'if_exist|is_natural'],
         'active'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'created_by_id' => ['rules' => 'if_exist|is_natural'],
