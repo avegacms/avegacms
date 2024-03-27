@@ -107,7 +107,7 @@ class UserRolesModel extends AvegaCmsModel
      */
     public function getUserRoles(int $userId, string $role = ''): Model
     {
-        $this->builder()->select(['user_roles.role_id', 'user_roles.user_id', 'r.role'])
+        $this->builder()->select(['user_roles.role_id', 'user_roles.user_id', 'r.role', 'r.self_auth'])
             ->join('users AS u', 'u.id = user_roles.user_id')
             ->join('roles AS r', 'r.id = user_roles.role_id')
             ->whereIn('u.status', [UserStatuses::Active->value, UserStatuses::Registration->value])

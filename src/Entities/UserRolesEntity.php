@@ -18,13 +18,15 @@ use CodeIgniter\Entity\Entity;
  * @property string|null $status
  * @property array|null $profile
  * @property array|null $extra
+ * @property int|null $selfAuth
  */
 class UserRolesEntity extends Entity
 {
     protected $datamap = [
         'roleId'      => 'role_id',
         'userId'      => 'user_id',
-        'createdById' => 'created_by_id'
+        'createdById' => 'created_by_id',
+        'selfAuth'    => 'self_auth'
     ];
     protected $dates   = ['created_at'];
     protected $casts   = [
@@ -33,15 +35,16 @@ class UserRolesEntity extends Entity
         'created_by_id' => 'integer',
         'created_at'    => 'datetime',
 
-        'id'       => 'integer',
-        'login'    => 'string',
-        'avatar'   => '?string',
-        'phone'    => 'integer',
-        'email'    => 'string',
-        'timezone' => 'string',
-        'status'   => 'string',
-        'profile'  => 'json-array',
-        'extra'    => 'json-array',
+        'id'        => 'integer',
+        'login'     => 'string',
+        'avatar'    => '?string',
+        'phone'     => 'integer',
+        'email'     => 'string',
+        'timezone'  => 'string',
+        'status'    => 'string',
+        'profile'   => 'json-array',
+        'extra'     => 'json-array',
+        'self_auth' => 'integer'
     ];
 
     /**

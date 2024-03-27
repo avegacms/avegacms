@@ -176,6 +176,115 @@ class Authorization
         };
     }
 
+    // setUserProfile / getUserProfile
+
+    /**
+     * @param  int  $userId
+     * @param  string  $userRole
+     * @param  array  $userData
+     * @return array
+     * @throws AuthorizationException|ReflectionException|Exception
+     */
+    public function setUser(int $userId, string $userRole = '', array $userData = []): array
+    {
+        if (($user = $this->LM->getUser(['id' => $userId])) === null) {
+            throw AuthorizationException::forUnknownUser();
+        }
+
+        unset($user->password, $user->secret, $user->expires);
+
+        if (($role = $this->URM->getUserRoles($user->id, $userRole)->first()) === null) {
+            throw AuthorizationException::forUnknownRole($userRole);
+        }
+
+        $request     = Services::request();
+        $userAgent   = $request->getUserAgent()->getAgentString();
+        $userIp      = $request->getIPAddress();
+        $userSession = [
+            'isAuth' => true,
+            'userId' => $user->id,
+            'roleId' => $role->roleId
+        ];
+
+        if ($this->settings['auth']['useSession']) {
+            Cms::initClientSession();
+            $session = session('avegacms');
+
+            if ($role->selfAuth) {
+                $session['modules'][$role->role] = $userSession;
+            } else {
+                $session['admin'] = $userSession;
+            }
+
+            session()->set('avegacms', $session);
+        } elseif ($this->settings['auth']['useJwt']) {
+            $jwt = $this->_signatureTokenJWT($userSession);
+
+            if (empty($jwt['token'])) {
+                throw AuthorizationException::forCreateToken();
+            }
+
+            $sessions = ($this->UTM->getUserTokens($user->id)->findColumn('id') ?? []);
+
+            if (count($sessions) >= $this->settings['auth']['jwtSessionsLimit']) {
+                $this->UTM->delete($sessions[0]);
+            }
+
+            $userSession['sessionId']    = sha1($user->id . $userAgent . bin2hex(random_bytes(32)));
+            $userSession['accessToken']  = $jwt['token'];
+            $userSession['refreshToken'] = sha1(
+                $user->phone .
+                $jwt['expired'] .
+                $this->settings['auth']['jwtSecretKey'] .
+                $userAgent
+            );
+
+            $newUserSession = [
+                'id'            => $userSession['sessionId'],
+                'user_id'       => $user->id,
+                'access_token'  => $userSession['accessToken'],
+                'refresh_token' => $userSession['refreshToken'],
+                'expires'       => $jwt['expired'],
+                'user_ip'       => $userIp,
+                'user_agent'    => $userAgent
+            ];
+
+            if ( ! $this->UTM->insert($newUserSession)) {
+                throw new AuthorizationException($this->UTM->errors());
+            }
+        } else {
+            throw AuthorizationException::forUserSessionNotExist();
+        }
+
+        $this->LM->save(
+            [
+                'id'         => $user->id,
+                'secret'     => '',
+                'expires'    => 0,
+                'condition'  => UserConditions::None->value,
+                'last_ip'    => $userIp,
+                'last_agent' => $userAgent,
+                'active_at'  => now($user->timezone)
+            ]
+        );
+
+
+        $profileData = [
+            'timezone'  => $user->timezone,
+            'login'     => $user->login,
+            'status'    => $user->status,
+            'condition' => $user->condition,
+            'avatar'    => $user->avatar,
+            'phone'     => $user->phone,
+            'email'     => $user->email,
+            'profile'   => $user->profile,
+            'extra'     => $user->extra,
+            ...$userData
+        ];
+
+        return $userSession;
+    }
+
     /**
      * @param  int  $userId
      * @param  string  $userRole
@@ -183,7 +292,7 @@ class Authorization
      * @return array[]
      * @throws ReflectionException|Exception
      */
-    public function setUser(int $userId, string $userRole = '', array $userData = []): array
+    public function setUser_1(int $userId, string $userRole = '', array $userData = []): array
     {
         if (($user = $this->LM->getUser(['id' => $userId])) === null) {
             throw AuthorizationException::forUnknownUser();
