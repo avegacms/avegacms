@@ -20,9 +20,6 @@ use AvegaCms\Controllers\Api\Admin\Settings\{Locales,
  * @var RouteCollection $routes
  */
 
-$routes->options('(:any)', '', ['filter' => 'cors']);
-//$routes->options('(:any)', [Cors::class, 'PreFlight']);
-
 $routes->group('api', function (RouteCollection $routes) {
     $routes->group('public', ['namespace' => 'AvegaCms\Controllers\Api\Public'], function (RouteCollection $routes) {
         $routes->group('content', function (RouteCollection $routes) {
