@@ -8,7 +8,7 @@ use Config\Mimes;
 use Config\Services;
 use CodeIgniter\Files\File;
 use CodeIgniter\Images\Exceptions\ImageException;
-use AvegaCms\Entities\{FilesEntity, FilesLinksEntity};
+use AvegaCms\Entities\FilesLinksEntity;
 use AvegaCms\Enums\FileTypes;
 use AvegaCms\Utilities\Exceptions\UploaderException;
 use AvegaCms\Models\Admin\{FilesModel, FilesLinksModel};
@@ -46,19 +46,6 @@ class CmsFileManager
         $FLM       = model(FilesLinksModel::class);
         $userId    = $entity['user_id'] = ($entity['user_id'] ?? 0);
         $defConfig = Cms::settings('filemanager.uploadConfig');
-
-        // TODO 1. Проверить валидацию $entity [v]
-        // TODO 2. Проверить существование директории [v]
-        // TODO 3. Собрать конфиг для загрузки файл [v]
-        // TODO 4. Валидация загрузки файла [v]
-        // TODO 5. Получить объект файла [v]
-        // TODO 6. Проверить является ли файл картинкой: [v]
-        // TODO 6.1  Проверить настройки на необходимость создания webp-формата [v]
-        // TODO 6.2  Создать thumb по необходимым настройкам [v]
-        // TODO 7. Если файл картинка, и конфиг $fileConfig не пустой, то:
-        // TODO 7.1. Создать необходимое количество вариантов картинок + сделать проверку на п. 6.1
-        // TODO 8. Создать запись в БД
-        // TODO 9. Вернуть объект
 
         if ($validator->setRules(self::entityRules)->run($entity) === false) {
             throw new UploaderException($validator->getErrors());
@@ -123,12 +110,22 @@ class CmsFileManager
         ];
 
         if ($type === FileTypes::Image->value) {
-            $fileData['data']['thumb'] = self::createThumb($directory . '/' . $fileName);
+            $file = $directory . '/' . $fileName;
+
+            $fileData['data']['thumb'] = self::createThumb($file);
+
             if ($defConfig['createWebp']) {
                 $fileData['data']['path'] = [
                     'original' => $fileData['data']['path'],
                     'webp'     => self::convertToWebp($fileData['data']['path'], webpQuality: $defConfig['webpQuality'])
                 ];
+            }
+
+            if ( ! empty($fileConfig)) {
+                $fileData['data']['variants'] = match (($action = array_key_first($fileConfig))) {
+                    'resize' => self::resizeImage($file, $fileConfig[$action]),
+                    default  => ''
+                };
             }
         }
 
@@ -356,6 +353,40 @@ class CmsFileManager
         } catch (ImageException $e) {
             throw UploaderException::forFiledToConvertImageToWebP($e->getMessage());
         }
+    }
+
+    /**
+     * @param  string  $filePath
+     * @param  array  $settings
+     * @return array
+     * @throws ReflectionException|UploaderException
+     */
+    public static function resizeImage(string $filePath, array $settings): array
+    {
+        $original   = FCPATH . trim($filePath, '/');
+        $fileName   = pathinfo($original, PATHINFO_BASENAME);
+        $fileUrl    = pathinfo($filePath, PATHINFO_DIRNAME);
+        $createWebp = Cms::settings('filemanager.uploadConfig')['createWebp'];
+        $variants   = [];
+
+        foreach ($settings as $prefix => $setting) {
+            $url = $fileUrl . '/' . $prefix . '_' . $fileName;
+
+            $result = Services::image()
+                ->withFile($original)
+                ->resize($setting['width'], $setting['height'], $setting['maintainRatio'], $setting['masterDim'])
+                ->save(FCPATH . $url, $setting['quality']);
+
+            if ($result) {
+                $variant['original'] = $url;
+                if ($createWebp) {
+                    $variant['webp'] = self::convertToWebp($url, webpQuality: $setting['quality']);
+                }
+                $variants[$prefix] = $variant;
+            }
+        }
+
+        return $variants;
     }
 
     /**
