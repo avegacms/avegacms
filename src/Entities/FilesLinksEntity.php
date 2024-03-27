@@ -71,6 +71,15 @@ class FilesLinksEntity extends AvegaCmsEntity
                 if ( ! empty($data['thumb']['webp'])) {
                     $data['thumb']['webp'] = base_url($data['thumb']['webp']);
                 }
+
+                if ( ! empty($data['variants'] ?? '')) {
+                    foreach ($data['variants'] as $k => $variants) {
+                        foreach ($variants as $pointer => $variant) {
+                            $data['variants'][$k][$pointer] = base_url($variant);
+                        }
+                    }
+                }
+
                 break;
         }
 
