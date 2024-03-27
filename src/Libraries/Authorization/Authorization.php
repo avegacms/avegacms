@@ -493,14 +493,13 @@ class Authorization
     {
         $request  = Services::request();
         $userData = null;
+        $UTM      = model(UserTokensModel::class);
+        $UAM      = model(UserAuthenticationModel::class);
 
-        $UTM = model(UserTokensModel::class);
-        $UAM = model(UserAuthenticationModel::class);
-
-        if ($this->settings['auth']['useWhiteIpList'] && ! empty($this->settings['auth']['whiteIpList']) && in_array(
-                $request->getIPAddress(),
-                $this->settings['auth']['whiteIpList']
-            )) {
+        if ($this->settings['auth']['useWhiteIpList'] &&
+            ! empty($this->settings['auth']['whiteIpList']) &&
+            in_array($request->getIPAddress(), $this->settings['auth']['whiteIpList'])
+        ) {
             throw AuthenticationException::forAccessDenied();
         }
 
