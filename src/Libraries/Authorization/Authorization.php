@@ -268,7 +268,7 @@ class Authorization
             ]
         );
 
-        Auth::setProfile($user->id, $role->roleId, $userData);
+        Auth::setProfile($user->id, $role->role, $userData);
 
         return $userSession;
     }
@@ -521,7 +521,7 @@ class Authorization
                     throw AuthenticationException::forNotAuthorized();
                 }
 
-                $userData = $session->get('avegacms.admin');
+                $userData = (object) $session->get('avegacms.admin');
 
                 break;
             case 'jwt':
@@ -570,20 +570,23 @@ class Authorization
                 throw AuthenticationException::forUnknownPermission();
             }
 
-            if (empty($map = $UAM->getRoleAccessMap($userData->role, $userData->roleId))) {
-                throw AuthenticationException::forAccessDenied();
-            }
-
-            if (($permission = $this->_findPermission($map, $segments)) === null) {
-                throw AuthenticationException::forForbiddenAccess();
+            if ($segments[0] !== 'profile') {
+                if (empty($map = $UAM->getRoleAccessMap($userData->role, $userData->roleId))) {
+                    throw AuthenticationException::forAccessDenied();
+                }
+                if (($permission = $this->_findPermission($map, $segments)) === null) {
+                    throw AuthenticationException::forForbiddenAccess();
+                }
+            } else {
+                $permission['read'] = 1;
             }
 
             $action = (bool) match ($request->getMethod(true)) {
-                'GET'    => $permission['read'],
-                'POST'   => $permission['create'],
+                'GET'    => ($permission['read'] ?? 0),
+                'POST'   => ($permission['create'] ?? 0),
                 'PUT',
-                'PATCH'  => $permission['update'],
-                'DELETE' => $permission['delete'],
+                'PATCH'  => ($permission['update'] ?? 0),
+                'DELETE' => ($permission['delete'] ?? 0),
                 default  => false
             };
 
@@ -592,9 +595,9 @@ class Authorization
             }
 
             Cms::setUser('permission', Cms::arrayToObject([
-                'self'      => (bool) $permission['self'],
-                'moderated' => (bool) $permission['moderated'],
-                'settings'  => (bool) $permission['settings']
+                'self'      => (bool) ($permission['self'] ?? 0),
+                'moderated' => (bool) ($permission['moderated'] ?? 0),
+                'settings'  => (bool) ($permission['settings'] ?? 0)
             ]));
         }
 
