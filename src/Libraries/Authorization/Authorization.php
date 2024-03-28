@@ -6,6 +6,7 @@ namespace AvegaCms\Libraries\Authorization;
 
 use AvegaCms\Enums\UserConditions;
 use AvegaCms\Libraries\Authorization\Exceptions\{AuthorizationException, AuthenticationException};
+use AvegaCms\Utilities\Auth;
 use AvegaCms\Models\Admin\{LoginModel,
     RolesModel,
     UserAuthenticationModel,
@@ -176,8 +177,6 @@ class Authorization
         };
     }
 
-    // setUserProfile / getUserProfile
-
     /**
      * @param  int  $userId
      * @param  string  $userRole
@@ -203,7 +202,8 @@ class Authorization
         $userSession = [
             'isAuth' => true,
             'userId' => $user->id,
-            'roleId' => $role->roleId
+            'roleId' => $role->roleId,
+            'role'   => $role->role
         ];
 
         if ($this->settings['auth']['useSession']) {
@@ -268,134 +268,7 @@ class Authorization
             ]
         );
 
-
-        $profileData = [
-            'timezone'  => $user->timezone,
-            'login'     => $user->login,
-            'status'    => $user->status,
-            'condition' => $user->condition,
-            'avatar'    => $user->avatar,
-            'phone'     => $user->phone,
-            'email'     => $user->email,
-            'profile'   => $user->profile,
-            'extra'     => $user->extra,
-            ...$userData
-        ];
-
-        return $userSession;
-    }
-
-    /**
-     * @param  int  $userId
-     * @param  string  $userRole
-     * @param  array  $userData
-     * @return array[]
-     * @throws ReflectionException|Exception
-     */
-    public function setUser_1(int $userId, string $userRole = '', array $userData = []): array
-    {
-        if (($user = $this->LM->getUser(['id' => $userId])) === null) {
-            throw AuthorizationException::forUnknownUser();
-        }
-
-        unset($user->password, $user->secret, $user->expires);
-
-        if (($role = $this->URM->getUserRoles($user->id, $userRole)->first()) === null) {
-            throw AuthorizationException::forUnknownRole($userRole);
-        }
-
-        $userSession = [
-            'isAuth'       => true,
-            'sessionId'    => '',
-            'accessToken'  => '',
-            'refreshToken' => '',
-            'redirect'     => '',
-            'user'         => [
-
-                'userId'    => $user->id,
-                'timezone'  => $user->timezone,
-                'login'     => $user->login,
-                'status'    => $user->status,
-                'condition' => $user->condition,
-                'avatar'    => $user->avatar,
-                'phone'     => $user->phone,
-                'email'     => $user->email,
-                'profile'   => $user->profile,
-                'extra'     => $user->extra,
-                'roleId'    => $role->roleId,
-                'role'      => $role->role,
-                ...$userData
-            ]
-        ];
-
-        $request = Services::request();
-
-        $userAgent = $request->getUserAgent()->getAgentString();
-        $userIp    = $request->getIPAddress();
-
-        if ($this->settings['auth']['useJwt']) {
-            $jwt = $this->_signatureTokenJWT($userSession['user']);
-            if (empty($jwt['token'])) {
-                throw AuthorizationException::forCreateToken();
-            }
-
-            if (count(
-                    $sessions = ($this->UTM->getUserTokens($user->id)->findColumn('id') ?? [])
-                ) >= $this->settings['auth']['jwtSessionsLimit']) {
-                $this->UTM->delete($sessions[0]);
-            }
-
-            $newUserSession = [
-                'id'            => $userSession['sessionId'] = sha1($user->id . $userAgent . bin2hex(random_bytes(32))),
-                'user_id'       => $user->id,
-                'access_token'  => $userSession['accessToken'] = $jwt['token'],
-                'refresh_token' => $userSession['refreshToken'] = sha1(
-                    $userSession['user']['phone'] .
-                    $jwt['expired'] .
-                    $this->settings['auth']['jwtSecretKey'] .
-                    $userAgent
-                ),
-                'expires'       => $jwt['expired'],
-                'user_ip'       => $userIp,
-                'user_agent'    => $userAgent
-            ];
-
-            if ( ! $this->UTM->insert($newUserSession)) {
-                throw new AuthorizationException($this->UTM->errors());
-            }
-        }
-
-        if ($this->settings['auth']['useSession']) {
-            Cms::initClientSession();
-
-            $roles = $this->RM->getActiveRoles();
-
-            if ( ! isset($roles[$userSession['user']['role']])) {
-                throw AuthorizationException::forUnknownRole();
-            }
-
-            $session = session('avegacms');
-
-            if ($roles[$userSession['user']['role']]['selfAuth']) {
-                $session['client']['user'] = $userSession;
-            } else {
-                $session['admin'] = $userSession;
-            }
-
-            session()->set('avegacms', $session);
-        }
-
-        $this->LM->save(
-            [
-                'id'         => $user->id,
-                'secret'     => '',
-                'expires'    => 0,
-                'condition'  => UserConditions::None->value,
-                'last_ip'    => $userIp,
-                'last_agent' => $userAgent,
-                'active_at'  => now($user->timezone)
-            ]
-        );
+        Auth::setProfile($user->id, $role->roleId, $userData);
 
         return $userSession;
     }
@@ -648,7 +521,7 @@ class Authorization
                     throw AuthenticationException::forNotAuthorized();
                 }
 
-                $userData = Cms::arrayToObject($session->get('avegacms.admin'))->user;
+                $userData = $session->get('avegacms.admin');
 
                 break;
             case 'jwt':

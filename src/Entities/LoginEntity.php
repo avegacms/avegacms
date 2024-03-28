@@ -2,7 +2,6 @@
 
 namespace AvegaCms\Entities;
 
-use CodeIgniter\Entity\Entity;
 use AvegaCms\Utilities\Auth;
 
 /**
@@ -19,12 +18,13 @@ use AvegaCms\Utilities\Auth;
  * @property array|null $extra
  * @property string|null $status
  * @property string|null $condition
+ * @property string|null $role
  * @property int|null $expires
  * @property int|null $createdById
  * @property int|null $updatedById
  * @property mixed|null $active_at
  */
-class LoginEntity extends Entity
+class LoginEntity extends AvegaCmsEntity
 {
     protected $datamap = [
         'createdById' => 'created_by_id',
@@ -52,7 +52,8 @@ class LoginEntity extends Entity
         'active_at'     => 'datetime',
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime',
-        'deleted_at'    => 'datetime'
+        'deleted_at'    => 'datetime',
+        'role'          => 'string'
     ];
 
     /**
