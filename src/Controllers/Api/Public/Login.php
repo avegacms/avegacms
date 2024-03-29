@@ -6,6 +6,7 @@ use AvegaCms\Controllers\Api\CmsResourceController;
 use AvegaCms\Enums\UserConditions;
 use AvegaCms\Libraries\Authorization\Authorization;
 use AvegaCms\Libraries\Authorization\Exceptions\AuthorizationException;
+use AvegaCms\Utilities\Auth;
 use CodeIgniter\Events\Events;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Utilities\Cms;
@@ -69,7 +70,7 @@ class Login extends CmsResourceController
                 default:
                     throw AuthorizationException::forUnknownAuthType();
             }
-            return $this->respondUpdated($result);
+            return $this->cmsRespond($result);
         } catch (AuthorizationException|Exception $e) {
             return match ($e->getCode()) {
                 403     => $this->failForbidden($e->getMessage()),
@@ -110,7 +111,7 @@ class Login extends CmsResourceController
         switch ($auth['direct']) {
             case 'set_user':
                 Events::trigger('setAuthUserData', $auth['user_id']);
-                $result = ['status' => 'authorized'];
+                $result = ['status' => 'authorized', 'profile'=> Auth::getProfile($auth['user_id'], $auth['role'])];
                 break;
             case 'send_code':
                 if ( ! empty($auth['phone'] ?? '')) {

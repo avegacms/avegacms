@@ -91,8 +91,10 @@ class Authorization
             'status'    => true,
             'direct'    => 'set_user',
             'user_id'   => $user->id,
+            'role'      => $user->role,
             'condition' => UserConditions::Auth->value
         ];
+
         $loginType = key($loginType);
 
         if ($this->settings['auth']['use2fa'] || $loginType === 'phone') {
