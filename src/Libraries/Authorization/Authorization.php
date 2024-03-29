@@ -194,7 +194,7 @@ class Authorization
         unset($user->password, $user->secret, $user->expires);
 
         if (($role = $this->URM->getUserRoles($user->id, $userRole)->first()) === null) {
-            throw AuthorizationException::forUnknownRole($userRole);
+            throw AuthorizationException::forUnknownRole($user->id . '---' . $userRole);
         }
 
         $request     = Services::request();
