@@ -94,7 +94,12 @@ class Auth
         });
     }
 
-    public static function getProfile(int $userId, string $role): array
+    /**
+     * @param  int  $userId
+     * @param  string  $role
+     * @return array|null
+     */
+    public static function getProfile(int $userId, string $role): array|null
     {
         return cache('Profile' . ucfirst(strtolower($role)) . '_' . $userId);
     }
