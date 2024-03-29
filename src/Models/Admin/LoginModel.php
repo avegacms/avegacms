@@ -96,7 +96,8 @@ class LoginModel extends Model
                 'users.extra',
                 'users.status',
                 'users.condition',
-                'roles.role'
+                'roles.role',
+                'user_roles.role_id'
             ]
         )->join('user_roles', 'user_roles.user_id = users.id')
             ->join('roles', 'roles.id = user_roles.role_id')

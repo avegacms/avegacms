@@ -193,10 +193,6 @@ class Authorization
 
         unset($user->password, $user->secret, $user->expires);
 
-        if (($role = $this->URM->getUserRoles($user->id, $userRole)->first()) === null) {
-            throw AuthorizationException::forUnknownRole($user->id . '---' . $userRole);
-        }
-
         $request     = Services::request();
         $userAgent   = $request->getUserAgent()->getAgentString();
         $userIp      = $request->getIPAddress();
@@ -204,7 +200,7 @@ class Authorization
             'isAuth' => true,
             'userId' => $user->id,
             'roleId' => $role->roleId,
-            'role'   => $role->role
+            'role'   => $user->role
         ];
 
         if ($this->settings['auth']['useSession']) {
@@ -269,7 +265,7 @@ class Authorization
             ]
         );
 
-        Auth::setProfile($user->id, $role->role, $userData);
+        Auth::setProfile($user->id, $user->role, $userData);
 
         return $userSession;
     }
