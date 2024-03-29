@@ -202,6 +202,7 @@ class FilesLinksModel extends AvegaCmsModel
                         $url = json_decode($item['data'], true);
                         if ( ! empty($url = $url['url'])) {
                             unset($item['data']);
+                            $item['url']       = $url;
                             $directories[$url] = $item;
                         }
                     }
