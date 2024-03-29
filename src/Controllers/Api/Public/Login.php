@@ -80,12 +80,11 @@ class Login extends CmsResourceController
         }
     }
 
-    public function logout():ResponseInterface
+    public function logout(): ResponseInterface
     {
         try {
             $this->Authorization->logout();
             return $this->respondNoContent();
-
         } catch (AuthorizationException|Exception $e) {
             return match ($e->getCode()) {
                 403     => $this->failForbidden($e->getMessage()),
@@ -111,7 +110,7 @@ class Login extends CmsResourceController
         switch ($auth['direct']) {
             case 'set_user':
                 Events::trigger('setAuthUserData', $auth['user_id']);
-                $result = ['status' => 'authorized', 'profile'=> Auth::getProfile($auth['user_id'], $auth['role'])];
+                $result = ['status' => 'authorized', 'profile' => Auth::getProfile($auth['user_id'], $auth['role'])];
                 break;
             case 'send_code':
                 if ( ! empty($auth['phone'] ?? '')) {
@@ -148,8 +147,8 @@ class Login extends CmsResourceController
 
                 break;
             case 'password':
-                $result['status']           = 'password';
-                $result['hash'] = $auth['hash'];
+                $result['status'] = 'password';
+                $result['hash']   = $auth['hash'];
                 break;
             default:
                 throw AuthorizationException::forNoData();
