@@ -8,17 +8,18 @@ use ReflectionException;
 
 class TestFilesGenerator
 {
+
     /**
-     * @param  int  $directoryId
+     * @param  string  $path
      * @param  string  $type
      * @param  int  $num
      * @param  array  $custom
      * @return bool
      * @throws ReflectionException
      */
-    public static function run(int $directoryId, string $type = 'mixed', int $num = 1, array $custom = []): bool
+    public static function run(string $path, string $type = 'mixed', int $num = 1, array $custom = []): bool
     {
-        if (empty($directory = model(FilesLinksModel::class)->getDirectories($directoryId))) {
+        if (empty($directory = model(FilesLinksModel::class)->getDirectories($path))) {
             return false;
         }
 
