@@ -70,6 +70,16 @@ class LoginModel extends Model
      */
     public function getUser(array $fields, ?string $role = null): array|null|LoginEntity
     {
+        $list = [];
+
+        foreach ($fields as $key => $field) {
+            if (in_array($key, ['login', 'email', 'phone'])) {
+                $list['users.' . $key] = $field;
+            } elseif ($key == 'role_id') {
+                $list['user_roles.' . $key] = $field;
+            }
+        }
+
         $this->builder()->select(
             [
                 'users.id',
@@ -85,21 +95,15 @@ class LoginModel extends Model
                 'users.profile',
                 'users.extra',
                 'users.status',
-                'users.condition'
+                'users.condition',
+                'roles.role'
             ]
-        )->where($fields)
-            ->whereIn(
-                'users.status',
-                [
-                    UserStatuses::Active->value,
-                    UserStatuses::Registration->value
-                ]
-            );
+        )->join('user_roles', 'user_roles.user_id = users.id')
+            ->join('roles', 'roles.id = user_roles.role_id')
+            ->where($list)
+            ->whereIn('users.status', [UserStatuses::Active->value, UserStatuses::Registration->value]);
 
         if ( ! is_null($role)) {
-            $this->builder()->join('user_roles', 'user_roles.user_id = users.id')
-                ->join('roles', 'roles.id = user_roles.role_id');
-
             if (str_starts_with($role, '!')) {
                 $this->builder()->where(['roles.role !=' => str_ireplace('!', '', $role)]);
             } else {

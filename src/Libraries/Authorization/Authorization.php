@@ -6,6 +6,7 @@ namespace AvegaCms\Libraries\Authorization;
 
 use AvegaCms\Enums\UserConditions;
 use AvegaCms\Libraries\Authorization\Exceptions\{AuthorizationException, AuthenticationException};
+use AvegaCms\Utilities\Auth;
 use AvegaCms\Models\Admin\{LoginModel,
     RolesModel,
     UserAuthenticationModel,
@@ -180,8 +181,8 @@ class Authorization
      * @param  int  $userId
      * @param  string  $userRole
      * @param  array  $userData
-     * @return array[]
-     * @throws ReflectionException|Exception
+     * @return array
+     * @throws AuthorizationException|ReflectionException|Exception
      */
     public function setUser(int $userId, string $userRole = '', array $userData = []): array
     {
@@ -195,57 +196,54 @@ class Authorization
             throw AuthorizationException::forUnknownRole($userRole);
         }
 
+        $request     = Services::request();
+        $userAgent   = $request->getUserAgent()->getAgentString();
+        $userIp      = $request->getIPAddress();
         $userSession = [
-            'isAuth'       => true,
-            'sessionId'    => '',
-            'accessToken'  => '',
-            'refreshToken' => '',
-            'redirect'     => '',
-            'user'         => [
-
-                'userId'    => $user->id,
-                'timezone'  => $user->timezone,
-                'login'     => $user->login,
-                'status'    => $user->status,
-                'condition' => $user->condition,
-                'avatar'    => $user->avatar,
-                'phone'     => $user->phone,
-                'email'     => $user->email,
-                'profile'   => $user->profile,
-                'extra'     => $user->extra,
-                'roleId'    => $role->roleId,
-                'role'      => $role->role,
-                ...$userData
-            ]
+            'isAuth' => true,
+            'userId' => $user->id,
+            'roleId' => $role->roleId,
+            'role'   => $role->role
         ];
 
-        $request = Services::request();
+        if ($this->settings['auth']['useSession']) {
+            Cms::initClientSession();
+            $session = session('avegacms');
 
-        $userAgent = $request->getUserAgent()->getAgentString();
-        $userIp    = $request->getIPAddress();
+            if ($role->selfAuth) {
+                $session['modules'][$role->role] = $userSession;
+            } else {
+                $session['admin'] = $userSession;
+            }
 
-        if ($this->settings['auth']['useJwt']) {
-            $jwt = $this->_signatureTokenJWT($userSession['user']);
+            session()->set('avegacms', $session);
+        } elseif ($this->settings['auth']['useJwt']) {
+            $jwt = $this->_signatureTokenJWT($userSession);
+
             if (empty($jwt['token'])) {
                 throw AuthorizationException::forCreateToken();
             }
 
-            if (count(
-                    $sessions = ($this->UTM->getUserTokens($user->id)->findColumn('id') ?? [])
-                ) >= $this->settings['auth']['jwtSessionsLimit']) {
+            $sessions = ($this->UTM->getUserTokens($user->id)->findColumn('id') ?? []);
+
+            if (count($sessions) >= $this->settings['auth']['jwtSessionsLimit']) {
                 $this->UTM->delete($sessions[0]);
             }
 
+            $userSession['sessionId']    = sha1($user->id . $userAgent . bin2hex(random_bytes(32)));
+            $userSession['accessToken']  = $jwt['token'];
+            $userSession['refreshToken'] = sha1(
+                $user->phone .
+                $jwt['expired'] .
+                $this->settings['auth']['jwtSecretKey'] .
+                $userAgent
+            );
+
             $newUserSession = [
-                'id'            => $userSession['sessionId'] = sha1($user->id . $userAgent . bin2hex(random_bytes(32))),
+                'id'            => $userSession['sessionId'],
                 'user_id'       => $user->id,
-                'access_token'  => $userSession['accessToken'] = $jwt['token'],
-                'refresh_token' => $userSession['refreshToken'] = sha1(
-                    $userSession['user']['phone'] .
-                    $jwt['expired'] .
-                    $this->settings['auth']['jwtSecretKey'] .
-                    $userAgent
-                ),
+                'access_token'  => $userSession['accessToken'],
+                'refresh_token' => $userSession['refreshToken'],
                 'expires'       => $jwt['expired'],
                 'user_ip'       => $userIp,
                 'user_agent'    => $userAgent
@@ -254,26 +252,8 @@ class Authorization
             if ( ! $this->UTM->insert($newUserSession)) {
                 throw new AuthorizationException($this->UTM->errors());
             }
-        }
-
-        if ($this->settings['auth']['useSession']) {
-            Cms::initClientSession();
-
-            $roles = $this->RM->getActiveRoles();
-
-            if ( ! isset($roles[$userSession['user']['role']])) {
-                throw AuthorizationException::forUnknownRole();
-            }
-
-            $session = session('avegacms');
-
-            if ($roles[$userSession['user']['role']]['selfAuth']) {
-                $session['client']['user'] = $userSession;
-            } else {
-                $session['admin'] = $userSession;
-            }
-
-            session()->set('avegacms', $session);
+        } else {
+            throw AuthorizationException::forUserSessionNotExist();
         }
 
         $this->LM->save(
@@ -287,6 +267,8 @@ class Authorization
                 'active_at'  => now($user->timezone)
             ]
         );
+
+        Auth::setProfile($user->id, $role->role, $userData);
 
         return $userSession;
     }
@@ -493,14 +475,13 @@ class Authorization
     {
         $request  = Services::request();
         $userData = null;
+        $UTM      = model(UserTokensModel::class);
+        $UAM      = model(UserAuthenticationModel::class);
 
-        $UTM = model(UserTokensModel::class);
-        $UAM = model(UserAuthenticationModel::class);
-
-        if ($this->settings['auth']['useWhiteIpList'] && ! empty($this->settings['auth']['whiteIpList']) && in_array(
-                $request->getIPAddress(),
-                $this->settings['auth']['whiteIpList']
-            )) {
+        if ($this->settings['auth']['useWhiteIpList'] &&
+            ! empty($this->settings['auth']['whiteIpList']) &&
+            in_array($request->getIPAddress(), $this->settings['auth']['whiteIpList'])
+        ) {
             throw AuthenticationException::forAccessDenied();
         }
 
@@ -540,7 +521,7 @@ class Authorization
                     throw AuthenticationException::forNotAuthorized();
                 }
 
-                $userData = Cms::arrayToObject($session->get('avegacms.admin'))->user;
+                $userData = (object) $session->get('avegacms.admin');
 
                 break;
             case 'jwt':
@@ -589,20 +570,23 @@ class Authorization
                 throw AuthenticationException::forUnknownPermission();
             }
 
-            if (empty($map = $UAM->getRoleAccessMap($userData->role, $userData->roleId))) {
-                throw AuthenticationException::forAccessDenied();
-            }
-
-            if (($permission = $this->_findPermission($map, $segments)) === null) {
-                throw AuthenticationException::forForbiddenAccess();
+            if ($segments[0] !== 'profile') {
+                if (empty($map = $UAM->getRoleAccessMap($userData->role, $userData->roleId))) {
+                    throw AuthenticationException::forAccessDenied();
+                }
+                if (($permission = $this->_findPermission($map, $segments)) === null) {
+                    throw AuthenticationException::forForbiddenAccess();
+                }
+            } else {
+                $permission['read'] = 1;
             }
 
             $action = (bool) match ($request->getMethod(true)) {
-                'GET'    => $permission['read'],
-                'POST'   => $permission['create'],
+                'GET'    => ($permission['read'] ?? 0),
+                'POST'   => ($permission['create'] ?? 0),
                 'PUT',
-                'PATCH'  => $permission['update'],
-                'DELETE' => $permission['delete'],
+                'PATCH'  => ($permission['update'] ?? 0),
+                'DELETE' => ($permission['delete'] ?? 0),
                 default  => false
             };
 
@@ -611,9 +595,9 @@ class Authorization
             }
 
             Cms::setUser('permission', Cms::arrayToObject([
-                'self'      => (bool) $permission['self'],
-                'moderated' => (bool) $permission['moderated'],
-                'settings'  => (bool) $permission['settings']
+                'self'      => (bool) ($permission['self'] ?? 0),
+                'moderated' => (bool) ($permission['moderated'] ?? 0),
+                'settings'  => (bool) ($permission['settings'] ?? 0)
             ]));
         }
 

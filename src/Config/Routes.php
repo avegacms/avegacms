@@ -5,6 +5,7 @@ use CodeIgniter\Router\RouteCollection;
 use AvegaCms\Controllers\{Content, Seo};
 use AvegaCms\Controllers\Api\AvegaCmsAPI;
 use AvegaCms\Controllers\Api\Public\Login;
+use AvegaCms\Controllers\Api\Admin\Profile;
 use AvegaCms\Controllers\Api\Admin\Content\{Pages, Rubrics, Posts};
 use AvegaCms\Controllers\Api\Admin\Settings\{Locales,
     Modules,
@@ -20,9 +21,6 @@ use AvegaCms\Controllers\Api\Admin\Settings\{Locales,
  * @var RouteCollection $routes
  */
 
-$routes->options('(:any)', '', ['filter' => 'cors']);
-//$routes->options('(:any)', [Cors::class, 'PreFlight']);
-
 $routes->group('api', function (RouteCollection $routes) {
     $routes->group('public', ['namespace' => 'AvegaCms\Controllers\Api\Public'], function (RouteCollection $routes) {
         $routes->group('content', function (RouteCollection $routes) {
@@ -33,6 +31,7 @@ $routes->group('api', function (RouteCollection $routes) {
     });
     $routes->group('admin', ['namespace' => 'AvegaCms\Controllers\Api\Admin', 'filter' => 'auth'],
         function (RouteCollection $routes) {
+            $routes->get('profile', [Profile::class, 'index']);
             $routes->group('content', function (RouteCollection $routes) {
                 $routes->group('pages', function (RouteCollection $routes) {
                     $routes->get('/', [Pages::class, 'index']);
@@ -62,7 +61,6 @@ $routes->group('api', function (RouteCollection $routes) {
                     $routes->delete('(:num)', [[Rubrics::class, 'delete'], '$1']);
                 });
             });
-
             $routes->group('settings', function (RouteCollection $routes) {
                 $routes->group('locales', function (RouteCollection $routes) {
                     $routes->get('/', [Locales::class, 'index']);

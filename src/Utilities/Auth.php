@@ -1,6 +1,11 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Utilities;
+
+use AvegaCms\Libraries\Authorization\Exceptions\AuthorizationException;
+use AvegaCms\Models\Admin\LoginModel;
 
 class Auth
 {
@@ -13,9 +18,12 @@ class Auth
         return password_hash($pass, PASSWORD_BCRYPT);
     }
 
+    /**
+     * @param  int  $length
+     * @return string
+     */
     public static function genPassword(int $length = 12): string
     {
-
         $allChars = $uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $allChars .= $lowercase = 'abcdefghijklmnopqrstuvwxyz';
         $allChars .= $numbers = '0123456789';
@@ -52,5 +60,42 @@ class Auth
         }
 
         return $password;
+    }
+
+    /**
+     * @param  int  $userId
+     * @param  string  $role
+     * @param  array  $userData
+     * @return void
+     * @throws AuthorizationException
+     */
+    public static function setProfile(int $userId, string $role, array $userData = []): void
+    {
+        if (($user = model(LoginModel::class)->getUser(['id' => $userId, 'role' => $role])) === null) {
+            throw AuthorizationException::forUnknownUser();
+        }
+
+        $hashName = 'Profile' . ucfirst(strtolower($role)) . '_' . $userId;
+
+        cache()->delete($hashName);
+        cache()->remember($hashName, 30 * DAY, function () use ($user, $userData) {
+            return [
+                'timezone'  => $user->timezone,
+                'login'     => $user->login,
+                'status'    => $user->status,
+                'condition' => $user->condition,
+                'avatar'    => $user->avatar,
+                'phone'     => $user->phone,
+                'email'     => $user->email,
+                'profile'   => $user->profile,
+                'extra'     => $user->extra,
+                ...$userData
+            ];
+        });
+    }
+
+    public static function getProfile(int $userId, string $role): array
+    {
+        return cache('Profile' . ucfirst(strtolower($role)) . '_' . $userId);
     }
 }
