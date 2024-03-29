@@ -73,7 +73,7 @@ class LoginModel extends Model
         $list = [];
 
         foreach ($fields as $key => $field) {
-            if (in_array($key, ['login', 'email', 'phone'])) {
+            if (in_array($key, ['id', 'login', 'email', 'phone'])) {
                 $list['users.' . $key] = $field;
             } elseif ($key == 'role_id') {
                 $list['user_roles.' . $key] = $field;
