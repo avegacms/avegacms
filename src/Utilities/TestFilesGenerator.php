@@ -42,6 +42,7 @@ class TestFilesGenerator
             $fileType = FileTypes::File->value;
 
             $original = $name . '.' . $ext;
+            $urlPath  = 'uploads/' . $directory['url'];
 
             $file = [
                 'provider' => $directory['provider'] ?? 0,
@@ -49,12 +50,14 @@ class TestFilesGenerator
                 'ext'      => $ext,
                 'file'     => $original,
                 'size'     => $size,
-                'path'     => $directory['data']['url'] . '/' . $original
+                'path'     => $urlPath . '/' . $original
             ];
 
             switch ($ft) {
                 case 'images':
-                    $file['thumb'] = $directory['data']['url'] . '/thumb_' . $original;
+
+                    $file['path']  = ['original' => $urlPath . '/' . $original];
+                    $file['thumb'] = ['original' => $urlPath . '/thumb_' . $original];
                     $file['alt']   = $title;
                     $fileType      = $file['type'] = FileTypes::Image->value;
                     break;
