@@ -110,8 +110,7 @@ class Login extends CmsResourceController
         switch ($auth['direct']) {
             case 'set_user':
                 Events::trigger('setAuthUserData', $auth['user_id']);
-                $user   = $this->Authorization->setUser($auth['user_id']);
-                $result = ['status' => 'authorized', 'userdata' => $user];
+                $result = ['status' => 'authorized'];
                 break;
             case 'send_code':
                 if ( ! empty($auth['phone'] ?? '')) {

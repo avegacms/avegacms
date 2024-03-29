@@ -93,7 +93,6 @@ class Authorization
             'user_id'   => $user->id,
             'condition' => UserConditions::Auth->value
         ];
-
         $loginType = key($loginType);
 
         if ($this->settings['auth']['use2fa'] || $loginType === 'phone') {
