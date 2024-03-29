@@ -177,40 +177,38 @@ class FilesLinksModel extends AvegaCmsModel
      */
     public function getDirectories(string $path = ''): array
     {
-        return cache()->remember('FileManagerDirectories', 30 * DAY,
-            function () use ($path) {
-                $this->builder()->select(
-                    [
-                        'files.id',
-                        'files.data',
-                        'files.provider',
-                        'files.active',
-                        'files_links.user_id',
-                        'files_links.parent',
-                        'files_links.module_id',
-                        'files_links.entity_id',
-                        'files_links.item_id'
-                    ]
-                )->join('files', 'files.id = files_links.id')
-                    ->where(['files_links.type' => FileTypes::Directory->value]);
+        $directories = cache()->remember('FileManagerDirectories', 30 * DAY, function () {
+            $this->builder()->select(
+                [
+                    'files.id',
+                    'files.data',
+                    'files.provider',
+                    'files.active',
+                    'files_links.user_id',
+                    'files_links.parent',
+                    'files_links.module_id',
+                    'files_links.entity_id',
+                    'files_links.item_id'
+                ]
+            )->join('files', 'files.id = files_links.id')
+                ->where(['files_links.type' => FileTypes::Directory->value]);
 
-                $result      = $this->asArray()->findAll();
-                $directories = [];
+            $result      = $this->asArray()->findAll();
+            $directories = [];
 
-                if ( ! empty($result)) {
-                    foreach ($result as $item) {
-                        $url = json_decode($item['data'], true);
-                        if ( ! empty($url = $url['url'])) {
-                            unset($item['data']);
-                            $item['url']       = $url;
-                            $directories[$url] = $item;
-                        }
-                    }
+            if ( ! empty($result)) {
+                foreach ($result as $item) {
+                    $url = json_decode($item['data'], true);
+                    unset($item['data']);
+                    $item['url']               = $url['url'];
+                    $directories[$item['url']] = $item;
                 }
-
-                return empty($directories) ? [] : (empty($path) ? $directories : ($directories[$path] ?? []));
             }
-        );
+
+            return $directories;
+        });
+
+        return empty($directories) ? [] : (empty($path) ? $directories : ($directories[$path] ?? []));
     }
 
     /**
