@@ -29,7 +29,8 @@ class LoginEntity extends AvegaCmsEntity
     protected $datamap = [
         'createdById' => 'created_by_id',
         'updatedById' => 'updated_by_id',
-        'activeAt'    => 'active_at'
+        'activeAt'    => 'active_at',
+        'roleId'      => 'role_id'
     ];
     protected $dates   = ['active_at', 'created_at', 'updated_at', 'deleted_at'];
     protected $casts   = [
@@ -53,7 +54,8 @@ class LoginEntity extends AvegaCmsEntity
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime',
         'deleted_at'    => 'datetime',
-        'role'          => 'string'
+        'role'          => 'string',
+        'role_id'       => 'integer'
     ];
 
     /**
