@@ -166,7 +166,8 @@ class Authorization
             UserConditions::Auth->value       => [
                 'status'  => true,
                 'direct'  => 'set_user',
-                'user_id' => $user->id
+                'user_id' => $user->id,
+                'role' => $user->role
             ],
             UserConditions::Recovery->value   => [
                 'status'  => true,
@@ -187,7 +188,7 @@ class Authorization
      */
     public function setUser(int $userId, string $userRole = '', array $userData = []): array
     {
-        if (($user = $this->LM->getUser(['id' => $userId])) === null) {
+        if (($user = $this->LM->getUser(['id' => $userId, 'role' => $userRole])) === null) {
             throw AuthorizationException::forUnknownUser();
         }
 
@@ -199,7 +200,7 @@ class Authorization
         $userSession = [
             'isAuth' => true,
             'userId' => $user->id,
-            'roleId' => $role->roleId,
+            'roleId' => $user->roleId,
             'role'   => $user->role
         ];
 
@@ -207,8 +208,8 @@ class Authorization
             Cms::initClientSession();
             $session = session('avegacms');
 
-            if ($role->selfAuth) {
-                $session['modules'][$role->role] = $userSession;
+            if ($user->selfAuth) {
+                $session['modules'][$user->role] = $userSession;
             } else {
                 $session['admin'] = $userSession;
             }

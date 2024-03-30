@@ -73,10 +73,14 @@ class LoginModel extends Model
         $list = [];
 
         foreach ($fields as $key => $field) {
-            if (in_array($key, ['id', 'login', 'email', 'phone'])) {
-                $list['users.' . $key] = $field;
-            } elseif ($key == 'role_id') {
-                $list['user_roles.' . $key] = $field;
+            if ( ! empty($field)) {
+                if (in_array($key, ['id', 'login', 'email', 'phone'])) {
+                    $list['users.' . $key] = $field;
+                } elseif ($key == 'role_id') {
+                    $list['user_roles.' . $key] = $field;
+                } elseif ($key == 'role') {
+                    $list['roles.' . $key] = $field;
+                }
             }
         }
 
@@ -97,6 +101,7 @@ class LoginModel extends Model
                 'users.status',
                 'users.condition',
                 'roles.role',
+                'roles.self_auth',
                 'user_roles.role_id'
             ]
         )->join('user_roles', 'user_roles.user_id = users.id')
