@@ -167,7 +167,7 @@ class Authorization
                 'status'  => true,
                 'direct'  => 'set_user',
                 'user_id' => $user->id,
-                'role' => $user->role
+                'role'    => $user->role
             ],
             UserConditions::Recovery->value   => [
                 'status'  => true,
@@ -266,7 +266,7 @@ class Authorization
             ]
         );
 
-        Auth::setProfile($user->id, $user->role, $userData);
+        $userSession['profile'] = Auth::setProfile($user->id, $user->role, $userData);
 
         return $userSession;
     }

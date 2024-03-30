@@ -66,19 +66,18 @@ class Auth
      * @param  int  $userId
      * @param  string  $role
      * @param  array  $userData
-     * @return void
+     * @return array
      * @throws AuthorizationException
      */
-    public static function setProfile(int $userId, string $role, array $userData = []): void
+    public static function setProfile(int $userId, string $role, array $userData = []): array
     {
         if (($user = model(LoginModel::class)->getUser(['id' => $userId, 'role' => $role])) === null) {
             throw AuthorizationException::forUnknownUser();
         }
 
         $hashName = 'Profile' . ucfirst(strtolower($role)) . '_' . $userId;
-
         cache()->delete($hashName);
-        cache()->remember($hashName, 30 * DAY, function () use ($user, $userData) {
+        return cache()->remember($hashName, 30 * DAY, function () use ($user, $userData) {
             return [
                 'timezone'  => $user->timezone,
                 'login'     => $user->login,
