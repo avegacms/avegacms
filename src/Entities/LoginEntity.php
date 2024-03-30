@@ -30,7 +30,8 @@ class LoginEntity extends AvegaCmsEntity
         'createdById' => 'created_by_id',
         'updatedById' => 'updated_by_id',
         'activeAt'    => 'active_at',
-        'roleId'      => 'role_id'
+        'roleId'      => 'role_id',
+        'selfAuth'    => 'self_auth'
     ];
     protected $dates   = ['active_at', 'created_at', 'updated_at', 'deleted_at'];
     protected $casts   = [
@@ -55,7 +56,8 @@ class LoginEntity extends AvegaCmsEntity
         'updated_at'    => 'datetime',
         'deleted_at'    => 'datetime',
         'role'          => 'string',
-        'role_id'       => 'integer'
+        'role_id'       => 'integer',
+        'self_auth'     => 'integer'
     ];
 
     /**
