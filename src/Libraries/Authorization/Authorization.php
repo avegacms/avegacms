@@ -201,7 +201,8 @@ class Authorization
             'isAuth' => true,
             'userId' => $user->id,
             'roleId' => $user->roleId,
-            'role'   => $user->role
+            'role'   => $user->role,
+            'status' => $user->status
         ];
 
         if ($this->settings['auth']['useSession']) {
