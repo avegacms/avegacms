@@ -21,9 +21,12 @@ class Profile extends AvegaCmsAdminAPI
      */
     public function index(): ResponseInterface
     {
-        if (($profile = Auth::getProfile($this->userData->userId, $this->userData->role)) === null) {
-            Auth::setProfile($this->userData->userId, $this->userData->role);
-            $profile = Auth::getProfile($this->userData->userId, $this->userData->role);
+        $userId = $this->userData->userId;
+        $role   = $this->userData->role;
+
+        if (($profile = Auth::getProfile($userId, $role)) === null) {
+            Auth::setProfile($userId, $role);
+            $profile = Auth::getProfile($userId, $role);
         }
         return $this->cmsRespond($profile);
     }
