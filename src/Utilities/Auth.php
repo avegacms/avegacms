@@ -79,6 +79,9 @@ class Auth
         cache()->delete($hashName);
         return cache()->remember($hashName, 30 * DAY, function () use ($user, $userData) {
             return [
+                'userId'    => $user->id,
+                'roleId'    => $user->roleId,
+                'role'      => $user->role,
                 'timezone'  => $user->timezone,
                 'login'     => $user->login,
                 'status'    => $user->status,
@@ -86,8 +89,8 @@ class Auth
                 'avatar'    => $user->avatar,
                 'phone'     => $user->phone,
                 'email'     => $user->email,
-                'profile'   => $user->profile,
-                'extra'     => $user->extra,
+                'userData'  => $user->profile,
+                'module'    => $user->module,
                 ...$userData
             ];
         });

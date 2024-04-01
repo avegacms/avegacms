@@ -19,6 +19,7 @@ use AvegaCms\Utilities\Auth;
  * @property string|null $status
  * @property string|null $condition
  * @property string|null $role
+ * @property int|null $roleId
  * @property string|null $module
  * @property int|null $expires
  * @property int|null $createdById
@@ -45,7 +46,7 @@ class LoginEntity extends AvegaCmsEntity
         'password'      => 'string',
         'secret'        => 'string',
         'path'          => 'string',
-        'module'        => 'string',
+        'module'        => '?string',
         'profile'       => 'json-array',
         'extra'         => 'json-array',
         'status'        => 'string',
