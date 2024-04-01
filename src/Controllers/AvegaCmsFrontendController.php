@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Controllers;
 
+use CodeIgniter\Events\Events;
 use Config\Services;
 use AvegaCms\Enums\{EntityTypes, MetaDataTypes};
 use AvegaCms\Utilities\{Cms, CmsModule};
@@ -69,20 +70,10 @@ class AvegaCmsFrontendController extends BaseController
         $data['breadcrumbs'] = $this->breadCrumbs;
         $data['pager']       = $this->pager;
         $data['template']    = null;
-        $data['admin']       = null;
-        $data['client']      = null;
+        $eventData           = (object) [];
 
-        // Загружаем профиль авторизованных пользователей
-        if (($session = session()->get('avegacms')) !== null) {
-            if ($session['admin']['user']['user'] ?? false) {
-                $data['admin'] = (new UserProfileEntity($session['admin']['user']['user']));
-            }
-            if ($client = ($session['client']['user']['user'] ?? false)) {
-                $roleEntity     = model(RolesModel::class)->getActiveRoles()[$client['role']]['roleEntity'] ?? false;
-                $data['client'] = ($roleEntity && class_exists($roleEntity)) ? (new $roleEntity($client)) : (new UserProfileEntity($client));
-                unset($roleEntity, $client);
-            }
-        }
+        Events::trigger('initPageRender', $eventData);
+        $data = [...$data, ...((array) $eventData)];
 
         if (Cms::settings('core.env.useViewData')) {
             if ( ! file_exists($file = APPPATH . 'Views/' . ($view = 'template/' . $view) . '.php')) {
