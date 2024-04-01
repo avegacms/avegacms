@@ -198,11 +198,8 @@ class Authorization
         $userAgent   = $request->getUserAgent()->getAgentString();
         $userIp      = $request->getIPAddress();
         $userSession = [
-            'isAuth' => true,
-            'userId' => $user->id,
-            'roleId' => $user->roleId,
-            'role'   => $user->role,
-            'status' => $user->status
+            'isAuth'   => true,
+            'selfAuth' => true,
         ];
 
         if ($this->settings['auth']['useSession']) {
@@ -570,7 +567,7 @@ class Authorization
             }
 
             if ($segments[0] !== 'profile') {
-                if (empty($map = $UAM->getRoleAccessMap($userData->role, $userData->roleId))) {
+                if (empty($map = $UAM->getRoleAccessMap($userData->profile->role, $userData->profile->roleId))) {
                     throw AuthenticationException::forAccessDenied();
                 }
                 if (($permission = $this->_findPermission($map, $segments)) === null) {
