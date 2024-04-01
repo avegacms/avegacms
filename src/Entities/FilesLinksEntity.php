@@ -87,6 +87,14 @@ class FilesLinksEntity extends AvegaCmsEntity
     }
 
     /**
+     * @return string
+     */
+    public function getCreated(): string
+    {
+        return date('d.m.Y H:i', strtotime($this->attributes['created']));
+    }
+
+    /**
      * @param  int  $size
      * @return string
      */

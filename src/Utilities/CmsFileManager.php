@@ -82,6 +82,9 @@ class CmsFileManager
             throw new UploaderException($uploadedFile->getErrorString() . '(' . $uploadedFile->getError() . ')');
         }
 
+        // Получаем текущие название файла без расширения
+        $title = pathinfo($uploadedFile->getName(), PATHINFO_FILENAME);
+
         if ($uploadedFile->hasMoved()) {
             throw UploaderException::forHasMoved($uploadedFile->getName());
         }
@@ -100,7 +103,7 @@ class CmsFileManager
             'data'          => [
                 'provider' => 0,
                 'type'     => $type,
-                'title'    => $uploadedFile->getName(),
+                'title'    => $title,
                 'ext'      => $extension,
                 'size'     => $uploadedFile->getSize(),
                 'file'     => $fileName,
@@ -209,7 +212,7 @@ class CmsFileManager
         $FM  = model(FilesModel::class);
         $FLM = model(FilesLinksModel::class);
 
-        Uploader::checkFilePath($path);
+        self::checkFilePath($path);
 
         $directoryId = $FM->insert(
             [
@@ -387,6 +390,39 @@ class CmsFileManager
         }
 
         return $variants;
+    }
+
+    /**
+     * @param  string  $path
+     * @return void
+     * @throws UploaderException
+     */
+    public static function checkFilePath(string $path): void
+    {
+        $uploadPath = FCPATH . 'uploads';
+        $path       = trim($path, '/');
+
+        if (is_dir($uploadPath . '/' . $path)) {
+            return;
+        }
+
+        if (empty($path = explode('/', $path))) {
+            throw UploaderException::forEmptyPath();
+        }
+
+        $directoryPath = $uploadPath;
+
+        foreach ($path as $directory) {
+            if ( ! is_dir($directoryPath .= '/' . $directory)) {
+                if ( ! mkdir($directoryPath, 0777, true)) {
+                    throw UploaderException::forCreateDirectory($directoryPath);
+                }
+                if ( ! is_file($directoryPath . '/index.html')) {
+                    $file = fopen($directoryPath . '/index.html', 'x+b');
+                    fclose($file);
+                }
+            }
+        }
     }
 
     /**
