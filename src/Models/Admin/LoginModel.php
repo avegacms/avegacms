@@ -101,11 +101,14 @@ class LoginModel extends Model
                 'users.status',
                 'users.condition',
                 'roles.role',
+                'roles.module_id',
                 'roles.self_auth',
-                'user_roles.role_id'
+                'user_roles.role_id',
+                'modules.slug AS module'
             ]
         )->join('user_roles', 'user_roles.user_id = users.id')
             ->join('roles', 'roles.id = user_roles.role_id')
+            ->join('modules', 'modules.id = roles.module_id', 'left')
             ->where($list)
             ->whereIn('users.status', [UserStatuses::Active->value, UserStatuses::Registration->value]);
 
