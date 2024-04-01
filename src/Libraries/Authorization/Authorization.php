@@ -210,7 +210,7 @@ class Authorization
             $session = session('avegacms');
 
             if ($user->selfAuth) {
-                $session['modules'][$user->role] = $userSession;
+                $session['modules'][$user->module ?? $user->role] = $userSession;
             } else {
                 $session['admin'] = $userSession;
             }

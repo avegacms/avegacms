@@ -100,6 +100,8 @@ class CreateAvegaCmsTables extends Migration
             'priority'    => ['type' => 'tinyint', 'constraint' => 3, 'null' => 0, 'default' => 0],
             // Роль имеет свой отдельный доступ
             'self_auth'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            // ID модуля
+            'module_id'   => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
             // Сущность для профиля роли
             'role_entity' => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
             'active'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],

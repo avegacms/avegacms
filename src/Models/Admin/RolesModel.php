@@ -20,6 +20,7 @@ class RolesModel extends AvegaCmsModel
         'color',
         'path',
         'self_auth',
+        'module_id',
         'role_entity',
         'active',
         'priority',
@@ -45,6 +46,7 @@ class RolesModel extends AvegaCmsModel
         'path'          => ['rules' => 'if_exist|permit_empty|max_length[512]'],
         'priority'      => ['rules' => 'if_exist|is_natural|max_length[3]'],
         'self_auth'     => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
+        'module_id'     => ['rules' => 'if_exist|is_natural'],
         'role_entity'   => ['rules' => 'if_exist|permit_empty|max_length[512]'],
         'active'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'created_by_id' => ['rules' => 'if_exist|is_natural'],
@@ -88,7 +90,9 @@ class RolesModel extends AvegaCmsModel
     {
         return cache()->remember('ActiveRoles', DAY * 30, function () {
             $roles = [];
-            $this->builder()->select(['id', 'role', 'path', 'self_auth', 'role_entity'])->where(['active' => 1]);
+            $this->builder()
+                ->select(['id', 'role', 'path', 'self_auth', 'module_id', 'role_entity'])
+                ->where(['active' => 1]);
             $rolesData = $this->findAll();
             foreach ($rolesData as $role) {
                 $roles[] = $role->toArray();
