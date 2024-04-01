@@ -200,6 +200,11 @@ class Authorization
         $userSession = [
             'isAuth'   => true,
             'selfAuth' => true,
+            'module'   => $user->module,
+            'userId'   => $user->id,
+            'roleId'   => $user->roleId,
+            'role'     => $user->role,
+            'status'   => $user->status
         ];
 
         if ($this->settings['auth']['useSession']) {
@@ -567,7 +572,7 @@ class Authorization
             }
 
             if ($segments[0] !== 'profile') {
-                if (empty($map = $UAM->getRoleAccessMap($userData->profile->role, $userData->profile->roleId))) {
+                if (empty($map = $UAM->getRoleAccessMap($userData->role, $userData->roleId))) {
                     throw AuthenticationException::forAccessDenied();
                 }
                 if (($permission = $this->_findPermission($map, $segments)) === null) {
