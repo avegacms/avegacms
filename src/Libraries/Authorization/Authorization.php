@@ -439,12 +439,11 @@ class Authorization
     }
 
     /**
-     * @param  string|null  $role
      * @return void
      * @throws AuthorizationException
      * @throws ReflectionException
      */
-    public function logout(?string $role = null): void
+    public function logout(): void
     {
         $userId = 0;
 
@@ -455,11 +454,14 @@ class Authorization
 
         if ($this->settings['auth']['useSession']) {
             $session = session('avegacms');
-            if ($session[$role]['user'] ?? false) {
-                $userId                 = $session[$role]['user']['user']['userId'];
-                $session[$role]['user'] = null;
-                session()->set('avegacms', $session);
+            $userId  = $session['userId'];
+            if ($session['selfAuth'] === true) {
+                $session['modules'][$session['module'] ?? $session['role']] = null;
+            } else {
+                $session['admin'] = null;
             }
+
+            session()->set('avegacms', $session);
         }
 
         if ($userId > 0) {
