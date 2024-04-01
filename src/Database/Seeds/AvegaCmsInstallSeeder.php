@@ -2034,6 +2034,7 @@ class AvegaCmsInstallSeeder extends Seeder
     {
         $directories = [
             'uploads',
+            'uploads/content',
             'uploads/users',
             'uploads/sitemaps',
             'uploads/modules',
