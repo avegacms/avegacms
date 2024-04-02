@@ -31,19 +31,19 @@ class CmsFileManager
      * @param  array  $entity
      * @param  array|string|null  $uploadConfig
      * @param  array  $fileConfig
+     * @param  bool  $onlyUpload
      * @return array|FilesLinksEntity|null
-     * @throws UploaderException|ReflectionException
+     * @throws ReflectionException|UploaderException
      */
     public static function upload(
         array $entity,
         array|string $uploadConfig = null,
-        array $fileConfig = []
+        array $fileConfig = [],
+        bool $onlyUpload = false
     ): array|FilesLinksEntity|null {
         $request   = Services::request();
         $validator = Services::validation();
         $directory = is_array($uploadConfig) ? ($uploadConfig['directory'] ?? 'content') : (is_null($uploadConfig) ? '' : $uploadConfig);
-        $FM        = model(FilesModel::class);
-        $FLM       = model(FilesLinksModel::class);
         $userId    = $entity['user_id'] = ($entity['user_id'] ?? 0);
         $defConfig = Cms::settings('filemanager.uploadConfig');
 
@@ -62,8 +62,12 @@ class CmsFileManager
             throw UploaderException::forEmptyPath();
         }
 
-        if (empty($dirData = $FLM->getDirectories($directory))) {
-            throw UploaderException::forDirectoryNotFound($directory);
+        if ($onlyUpload === false) {
+            $FM  = model(FilesModel::class);
+            $FLM = model(FilesLinksModel::class);
+            if (empty($dirData = $FLM->getDirectories($directory))) {
+                throw UploaderException::forDirectoryNotFound($directory);
+            }
         }
 
         $field = $uploadConfig['field'] ?? 'file';
@@ -133,6 +137,10 @@ class CmsFileManager
         }
 
         $fileData['data'] = json_encode($fileData['data']);
+
+        if ($onlyUpload) {
+            return $fileData;
+        }
 
         if (($id = $FM->insert($fileData)) === false) {
             throw new UploaderException($FM->errors());
