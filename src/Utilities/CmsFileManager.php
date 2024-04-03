@@ -101,6 +101,7 @@ class CmsFileManager
         $file     = new File($uploadPath . $fileName);
         $isImage  = mb_strpos(Mimes::guessTypeFromExtension($extension = $file->getExtension()) ?? '', 'image') === 0;
         $type     = ($isImage) ? FileTypes::Image->value : FileTypes::File->value;
+        $dirFile  = $directory . '/' . $fileName;
         $fileData = [
             'provider'      => 0,
             'type'          => $type,
@@ -111,26 +112,25 @@ class CmsFileManager
                 'ext'      => $extension,
                 'size'     => $uploadedFile->getSize(),
                 'file'     => $fileName,
-                'path'     => $directory . '/' . $fileName
+                'path'     => $dirFile
             ],
             'created_by_id' => $userId
         ];
 
         if ($type === FileTypes::Image->value) {
-            $file = $directory . '/' . $fileName;
-
-            $fileData['data']['thumb'] = self::createThumb($file);
-
-            if ($defConfig['createWebp']) {
-                $fileData['data']['path'] = [
-                    'original' => $fileData['data']['path'],
-                    'webp'     => self::convertToWebp($fileData['data']['path'], webpQuality: $defConfig['webpQuality'])
-                ];
+            if ($onlyUpload === false || ($onlyUpload && empty($fileConfig))) {
+                $fileData['data']['thumb']            = self::createThumb($dirFile);
+                $fileData['data']['path']['original'] = $dirFile;
+                if ($defConfig['createWebp']) {
+                    $fileData['data']['path']['webp'] = self::convertToWebp($dirFile,
+                        webpQuality: $defConfig['webpQuality']);
+                }
             }
 
             if ( ! empty($fileConfig)) {
                 $fileData['data']['variants'] = match (($action = array_key_first($fileConfig))) {
-                    'resize' => self::resizeImage($file, $fileConfig[$action]),
+                    'resize' => self::resizeImage($dirFile, $fileConfig[$action]),
+                    'fit'    => self::fitImage($dirFile, $fileConfig[$action]),
                     default  => ''
                 };
             }
@@ -398,6 +398,32 @@ class CmsFileManager
         }
 
         return $variants;
+    }
+
+    /**
+     * @param  string  $filePath
+     * @param  array  $settings
+     * @return array
+     * @throws ReflectionException|UploaderException
+     */
+    public static function fitImage(string $filePath, array $settings): array
+    {
+        $createWebp = Cms::settings('filemanager.uploadConfig')['createWebp'];
+        $result     = [];
+
+        $fit = Services::image()
+            ->withFile(FCPATH . trim($filePath, '/'))
+            ->fit($settings['width'], $settings['height'], $settings['position'])
+            ->save($filePath, $settings['quality'] ?? 90);
+
+        if ($fit) {
+            $result['original'] = $filePath;
+            if ($createWebp) {
+                $result['webp'] = self::convertToWebp($filePath, webpQuality: $setting['quality'] ?? 90);
+            }
+        }
+
+        return $result;
     }
 
     /**
