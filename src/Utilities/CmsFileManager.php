@@ -413,7 +413,7 @@ class CmsFileManager
 
         $fit = Services::image()
             ->withFile(FCPATH . trim($filePath, '/'))
-            ->fit($settings['width'], $settings['height'], $settings['position'])
+            ->fit($settings['width'], $settings['height'], $settings['position'] ?? 'center')
             ->save($filePath, $settings['quality'] ?? 90);
 
         if ($fit) {
