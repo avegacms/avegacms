@@ -7,7 +7,7 @@ use AvegaCms\Utilities\Auth;
 /**
  * @property int|null $id
  * @property string|null $login
- * @property string|null $avatar
+ * @property array|null $avatar
  * @property int|null $phone
  * @property string|null $email
  * @property string|null $timezone
@@ -39,7 +39,6 @@ class LoginEntity extends AvegaCmsEntity
     protected $casts   = [
         'id'            => 'integer',
         'login'         => 'string',
-        'avatar'        => '?string',
         'phone'         => 'string',
         'email'         => 'string',
         'timezone'      => 'string',
@@ -74,11 +73,16 @@ class LoginEntity extends AvegaCmsEntity
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getAvatar(): string|null
+    public function getAvatar(): array
     {
-        return ( ! empty($this->attributes['avatar'])) ? base_url('/uploads/users/' . $this->attributes['avatar']) : null;
+        if (empty($avatar = json_decode($this->attributes['avatar'], true))) {
+            return [];
+        }
+
+        foreach ($avatar as $key => $item) {
+            $avatar[$key] = base_url($item);
+        }
+
+        return $avatar;
     }
 }
