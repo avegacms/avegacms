@@ -16,4 +16,16 @@ enum UserGenders: string
         return in_array($key, ['name', 'value', true]) ?
             array_column(UserGenders::cases(), $key) : UserGenders::cases();
     }
+
+    /**
+     * @return array
+     */
+    public static function list(): array
+    {
+        $list = [];
+        foreach (UserGenders::cases() as $enum) {
+            $list[] = ['label' => lang('Users.enums.' . $enum->name), 'value' => $enum->value];
+        }
+        return $list;
+    }
 }
