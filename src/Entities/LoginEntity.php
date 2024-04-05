@@ -76,7 +76,10 @@ class LoginEntity extends AvegaCmsEntity
     public function getAvatar(): array
     {
         if (empty($avatar = json_decode($this->attributes['avatar'], true))) {
-            return [];
+            return [
+                'original' => null,
+                'webp'     => null
+            ];
         }
 
         foreach ($avatar as $key => $item) {
