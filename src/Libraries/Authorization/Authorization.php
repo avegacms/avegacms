@@ -569,7 +569,7 @@ class Authorization
         }
 
         if ($isPublicAccess === false) {
-            if (empty($segments = array_slice(array_slice($request->uri->getSegments(), 2), 0, 2))) {
+            if (empty($segments = array_slice(array_slice($request->getUri()->getSegments(), 2), 0, 2))) {
                 throw AuthenticationException::forUnknownPermission();
             }
 

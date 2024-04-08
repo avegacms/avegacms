@@ -27,7 +27,7 @@ class FrontendFilter implements FilterInterface
         }
 
         $locales      = array_column(SeoUtils::Locales(), null, 'slug');
-        $segment      = strtolower($request->uri->getSegment(1));
+        $segment      = strtolower($request->getUri()->getSegment(1));
         $excludedUrls = [
             'sitemap.xml',
             'robots.txt',
