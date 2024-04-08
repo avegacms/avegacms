@@ -230,7 +230,7 @@ class MetaDataEntity extends AvegaCmsEntity
             }
         }
 
-        $meta['canonical'] = base_url(Services::request()->uri->getRoutePath());
+        $meta['canonical'] = base_url(Services::request()->getUri()->getRoutePath());
         $meta['robots']    = ($this->inSitemap === 1) ? 'index, follow' : 'noindex, nofollow';
 
         return (new MetaEntity($meta));
