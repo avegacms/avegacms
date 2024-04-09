@@ -23,6 +23,7 @@ class AvegaCmsFrontendController extends BaseController
     protected string          $metaType        = 'module';
     protected bool            $useTemplateMeta = false; // Флаг использования кастомных метаданных
     protected ?string         $moduleKey       = null;
+    protected array           $metaParams      = []; // Массив для мета-параметров поиска в metadata
     protected array           $breadCrumbs     = [];
     protected MetaDataModel   $MDM;
     protected ?MetaDataEntity $dataEntity      = null;
@@ -138,6 +139,11 @@ class AvegaCmsFrontendController extends BaseController
         } else {
             $params['locale']  = session()->get('avegacms.client.locale.id');
             $params['segment'] = empty($segments) ? '' : end($segments);
+        }
+
+        // Проверяем были ли переданы доп. мета параметры для поиска
+        if ( ! empty($this->metaParams) && ($this->metaType === EntityTypes::Module->value)) {
+            $params = [...$params, ...$this->metaParams];
         }
 
         $this->dataEntity = match ($this->metaType) {
