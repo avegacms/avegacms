@@ -50,16 +50,7 @@ class AvegaCmsFrontendController extends BaseController
      */
     public function render(array $pageData, string $view = '', array $options = []): ResponseInterface
     {
-        $parentMeta = [];
-
-        if ($this->dataEntity === null || $this->dataEntity->metaType !== MetaDataTypes::Main->value
-            && empty($parentMeta = $this->MDM->getMetaMap($this->dataEntity->parentCrumbId ?? $this->dataEntity->id,
-                $this->dataEntity->parentCrumbId))) {
-            $this->error404();
-        }
-
-        $this->meta        = $this->dataEntity->metaRender();
-        $this->breadCrumbs = $this->dataEntity->breadCrumbs($this->dataEntity->metaType, $parentMeta);
+        $this->meta = $this->dataEntity->metaRender();
 
         if ($this->content === null) {
             $this->content = ($this->customerContent === null) ? model(ContentModel::class)->getContent($this->dataEntity->id) : (new ContentEntity($this->customerContent));
@@ -154,6 +145,14 @@ class AvegaCmsFrontendController extends BaseController
         if ($this->dataEntity === null) {
             $this->error404();
         }
+
+        if ($this->dataEntity === null || $this->dataEntity->metaType !== MetaDataTypes::Main->value
+            && empty($parentMeta = $this->MDM->getMetaMap($this->dataEntity->parentCrumbId ?? $this->dataEntity->id,
+                $this->dataEntity->parentCrumbId))) {
+            $this->error404();
+        }
+
+        $this->breadCrumbs = $this->dataEntity->breadCrumbs($this->dataEntity->metaType, $parentMeta ?? []);
 
         return null;
     }
