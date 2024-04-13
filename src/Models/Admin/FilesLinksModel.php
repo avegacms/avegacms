@@ -218,7 +218,7 @@ class FilesLinksModel extends AvegaCmsModel
      */
     public function updateDirectories(array $data): void
     {
-        if ($data['data']['type'] === FileTypes::Directory->value) {
+        if (isset($data['data']['type']) && $data['data']['type'] === FileTypes::Directory->value) {
             cache()->delete('FileManagerDirectories');
             $this->getDirectories();
         }
