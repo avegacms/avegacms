@@ -119,8 +119,9 @@ class CmsFileManager
 
         if ($type === FileTypes::Image->value) {
             if ($onlyUpload === false || ($onlyUpload && empty($fileConfig))) {
-                $fileData['data']['thumb']            = self::createThumb($dirFile);
-                $fileData['data']['path']['original'] = $dirFile;
+                $fileData['data']['thumb'] = self::createThumb($dirFile);
+                $fileData['data']['path']  = ['original' => $dirFile];
+
                 if ($defConfig['createWebp']) {
                     $fileData['data']['path']['webp'] = self::convertToWebp($dirFile,
                         webpQuality: $defConfig['webpQuality']);
