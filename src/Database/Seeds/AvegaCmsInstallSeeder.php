@@ -2029,7 +2029,7 @@ class AvegaCmsInstallSeeder extends Seeder
         CmsFileManager::createDirectory(
             'users',
             [
-                'module_id' => CmsModule::meta('users')['id']
+                'module_id' => CmsModule::meta('settings.users')['id']
             ]
         );
     }
