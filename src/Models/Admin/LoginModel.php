@@ -2,8 +2,8 @@
 
 namespace AvegaCms\Models\Admin;
 
+use AvegaCms\Utilities\CmsFileManager;
 use CodeIgniter\Model;
-use AvegaCms\Entities\LoginEntity;
 use AvegaCms\Enums\UserStatuses;
 
 class LoginModel extends Model
@@ -12,7 +12,7 @@ class LoginModel extends Model
     protected $table            = 'users';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = LoginEntity::class;
+    protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
@@ -59,16 +59,32 @@ class LoginModel extends Model
     protected $beforeUpdate   = [];
     protected $afterUpdate    = [];
     protected $beforeFind     = [];
-    protected $afterFind      = [''];
+    protected $afterFind      = ['getUserAvatar'];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
+    protected array $casts   = [
+        'id'            => 'int',
+        'avatar'        => 'int',
+        'phone'         => 'int',
+        'profile'       => '?json-array',
+        'extra'         => '?json-array',
+        'expires'       => 'int',
+        'created_by_id' => 'int',
+        'updated_by_id' => 'int',
+        'created_at'    => '?datetime',
+        'updated_at'    => '?datetime',
+        'deleted_at'    => '?datetime',
+        'roleId'        => 'int',
+        'self_auth'     => 'int'
+    ];
+
     /**
-     * @param  array  $fields
-     * @param  string|null  $role
-     * @return array|LoginEntity|null
+     * @param array $fields
+     * @param string|null $role
+     * @return array|object|null
      */
-    public function getUser(array $fields, ?string $role = null): array|null|LoginEntity
+    public function getUser(array $fields, ?string $role = null)
     {
         $list = [];
 
@@ -101,9 +117,9 @@ class LoginModel extends Model
                 'users.status',
                 'users.condition',
                 'roles.role',
-                'roles.module_id',
-                'roles.self_auth',
-                'user_roles.role_id',
+                'roles.module_id AS moduleId',
+                'roles.self_auth AS selfAuth',
+                'user_roles.role_id AS roleId',
                 'modules.slug AS module'
             ]
         )->join('user_roles', 'user_roles.user_id = users.id')
@@ -119,7 +135,19 @@ class LoginModel extends Model
                 $this->builder()->where(['roles.role' => $role]);
             }
         }
-
         return $this->first();
+    }
+
+    public function getUserAvatar(array $data)
+    {
+        if ($data['method'] === 'first') {
+            if ($data['data']->avatar > 0) {
+                $data['data']->avatar = CmsFileManager::getFiles(['id' => $data['data']->avatar]);
+            } else {
+                $data['data']->avatar = null;
+            }
+        }
+
+        return $data;
     }
 }
