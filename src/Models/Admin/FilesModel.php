@@ -79,7 +79,6 @@ class FilesModel extends AvegaCmsModel
         'provider'      => 'int',
         'data'          => '?json-array',
         'extra'         => '?json-array',
-        'type'          => 'string',
         'active'        => 'int-bool',
         'created_by_id' => 'int',
         'updated_by_id' => 'int',
