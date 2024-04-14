@@ -62,8 +62,7 @@ class UserModel extends AvegaCmsModel
     public array  $filterCastsFields = [
         'id'     => 'int|array',
         'login'  => 'string',
-        'avatar' => 'string',
-        'phone'  => 'int',
+        'phone'  => 'integer',
         'email'  => 'string',
         'status' => 'string',
     ];
@@ -83,7 +82,7 @@ class UserModel extends AvegaCmsModel
     protected $validationRules      = [
         'id'       => ['rules' => 'if_exist|is_natural_no_zero'],
         'login'    => ['rules' => 'if_exist|required|alpha_dash|max_length[36]'],
-        'avatar'   => ['rules' => 'if_exist|permit_empty|max_length[255]'],
+        'avatar'   => ['rules' => 'if_exist|is_natural'],
         'phone'    => ['rules' => 'if_exist|is_natural|mob_phone'],
         'email'    => ['rules' => 'if_exist|max_length[255]|valid_email'],
         'timezone' => ['rules' => 'if_exist|required|max_length[144]'],
