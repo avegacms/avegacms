@@ -212,10 +212,9 @@ class FilesLinksModel extends AvegaCmsModel
 
             $result      = $this->asArray()->findAll();
             $directories = [];
-
             if ( ! empty($result)) {
                 foreach ($result as $item) {
-                    $url = json_decode($item['data'], true);
+                    $url = json_decode(json_decode($item['data'], true), true);
                     unset($item['data']);
                     $item['url']               = $url['url'];
                     $directories[$item['url']] = $item;
