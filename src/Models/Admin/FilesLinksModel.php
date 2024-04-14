@@ -16,7 +16,7 @@ class FilesLinksModel extends AvegaCmsModel
     protected $table            = 'files_links';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = false;
-    protected $returnType       = FilesLinksEntity::class;
+    protected $returnType       = 'object';//FilesLinksEntity::class;
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
@@ -95,6 +95,22 @@ class FilesLinksModel extends AvegaCmsModel
     protected array  $filterEnumValues  = [];
     protected int    $limit             = 20;
     protected int    $maxLimit          = 100;
+
+    protected array $casts   = [
+        'id'            => 'int',
+        'user_id'       => 'int',
+        'parent'        => 'int',
+        'module_id'     => 'int',
+        'entity_id'     => 'int',
+        'item_id'       => 'int',
+        'active'        => 'int-bool',
+        'created_by_id' => 'int',
+        'updated_by_id' => 'int',
+        'created_at'    => 'datetime',
+        'updated_at'    => 'datetime',
+
+        'provider' => 'int'
+    ];
 
     public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
     {
