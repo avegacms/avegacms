@@ -16,7 +16,7 @@ class FilesModel extends AvegaCmsModel
     protected $table            = 'files';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = FilesEntity::class;
+    protected $returnType       = 'object';//FilesEntity::class;
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
@@ -73,6 +73,19 @@ class FilesModel extends AvegaCmsModel
     protected array  $filterEnumValues  = [];
     protected int    $limit             = 20;
     protected int    $maxLimit          = 100;
+
+    protected array $casts   = [
+        'id'            => 'int',
+        'provider'      => 'int',
+        'data'          => '?json-array',
+        'extra'         => '?json-array',
+        'type'          => 'string',
+        'active'        => 'int-bool',
+        'created_by_id' => 'int',
+        'updated_by_id' => 'int',
+        'created_at'    => 'datetime',
+        'updated_at'    => '?datetime',
+    ];
 
     public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
     {
