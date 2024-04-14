@@ -82,7 +82,7 @@ class CreateAvegaCmsTables extends Migration
             'last_agent' => ['type' => 'varchar', 'constraint' => 512],
             'active_at'  => ['type' => 'datetime', 'null' => true],
             ...Migrator::byId(),
-            ...Migrator::dateFields([])
+            ...Migrator::dateFields()
         ]);
         $this->forge->addPrimaryKey('id');
         $this->createTable($this->tables['users']);

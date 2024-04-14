@@ -265,7 +265,7 @@ class Authorization
                 'condition'  => UserConditions::None->value,
                 'last_ip'    => $userIp,
                 'last_agent' => $userAgent,
-                'active_at'  => now($user->timezone)
+                'active_at'  => date('Y-m-d H:i:s', now($user->timezone))
             ]
         );
 
@@ -362,7 +362,7 @@ class Authorization
                 'condition'  => UserConditions::None->value,
                 'last_ip'    => $request->getIPAddress(),
                 'last_agent' => $request->getUserAgent()->getAgentString(),
-                'active_at'  => now($user->timezone)
+                'active_at'  => date('Y-m-d H:i:s', now($user->timezone))
             ]
         );
 
