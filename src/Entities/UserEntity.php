@@ -8,7 +8,7 @@ use CodeIgniter\Entity\Entity;
 /**
  * @property int|null $id
  * @property string|null $login
- * @property string|null $avatar
+ * @property int|null $avatar
  * @property int|null $phone
  * @property string|null $email
  * @property string|null $timezone
@@ -38,7 +38,7 @@ class UserEntity extends Entity
     protected $casts   = [
         'id'            => 'integer',
         'login'         => 'string',
-        'avatar'        => '?string',
+        'avatar'        => '?integer',
         'phone'         => 'integer',
         'email'         => 'string',
         'timezone'      => 'string',
@@ -68,13 +68,5 @@ class UserEntity extends Entity
         $this->attributes['password'] = ! empty($pass) ? Auth::setPassword($pass) : '';
 
         return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getAvatar(): string|null
-    {
-        return ( ! empty($this->attributes['avatar'])) ? base_url('/uploads/users/' . $this->attributes['avatar']) : null;
     }
 }
