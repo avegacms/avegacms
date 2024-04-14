@@ -2025,6 +2025,13 @@ class AvegaCmsInstallSeeder extends Seeder
                 'module_id' => CmsModule::meta('content')['id']
             ]
         );
+
+        CmsFileManager::createDirectory(
+            'users',
+            [
+                'module_id' => CmsModule::meta('users')['id']
+            ]
+        );
     }
 
     /**
