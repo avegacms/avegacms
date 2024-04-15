@@ -145,7 +145,11 @@ class LoginModel extends Model
     {
         if ($data['method'] === 'first') {
             if ($data['data']->avatar > 0) {
-                $data['data']->avatar = CmsFileManager::getFiles(['id' => $data['data']->avatar]);
+                if ( ! empty($avatar = CmsFileManager::getFiles(['id' => $data['data']->avatar], true))) {
+                    $data['data']->avatar = $avatar->{0};
+                } else {
+                    $data['data']->avatar = null;
+                }
             } else {
                 $data['data']->avatar = null;
             }
