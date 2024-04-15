@@ -179,7 +179,7 @@ class CmsFileManager
             $result = $FLM->apiPagination();
         }
 
-        return $result;
+        return (object) $result;
     }
 
     /**
