@@ -19,7 +19,7 @@ class TestFilesGenerator
      */
     public static function run(string $path, string $type = 'mixed', int $num = 1, array $custom = []): bool
     {
-        if (empty($directory = model(FilesLinksModel::class)->getDirectories($path))) {
+        if (($directory = model(FilesLinksModel::class)->getDirectories($path)) === null) {
             return false;
         }
 
@@ -42,10 +42,10 @@ class TestFilesGenerator
             $fileType = FileTypes::File->value;
 
             $original = $name . '.' . $ext;
-            $urlPath  = 'uploads/' . $directory['url'];
+            $urlPath  = 'uploads/' . $directory->url;
 
             $file = [
-                'provider' => $directory['provider'] ?? 0,
+                'provider' => $directory->provider ?? 0,
                 'type'     => $fileType,
                 'ext'      => $ext,
                 'file'     => $original,
@@ -68,10 +68,10 @@ class TestFilesGenerator
 
             $id = $FM->insert(
                 [
-                    'data'          => json_encode($file),
-                    'provider'      => $directory['provider'] ?? 0,
+                    'data'          => $file,
+                    'provider'      => $directory->provider ?? 0,
                     'type'          => $fileType,
-                    'created_by_id' => $custom['user_id'] ?? ($directory['user_id'] ?? 0)
+                    'created_by_id' => $custom['user_id'] ?? ($directory->user_id ?? 0)
                 ]
             );
 
@@ -79,13 +79,13 @@ class TestFilesGenerator
                 $FLM->insert(
                     [
                         'id'            => $id,
-                        'user_id'       => $directory['user_id'] ?? 0,
-                        'parent'        => $directory['id'],
-                        'module_id'     => $custom['module_id'] ?? ($directory['module_id'] ?? 0),
-                        'entity_id'     => $custom['entity_id'] ?? ($directory['entity_id'] ?? 0),
-                        'item_id'       => $custom['item_id'] ?? ($directory['item_id'] ?? 0),
+                        'user_id'       => $directory->user_id ?? 0,
+                        'parent'        => $directory->id,
+                        'module_id'     => $custom['module_id'] ?? ($directory->module_id ?? 0),
+                        'entity_id'     => $custom['entity_id'] ?? ($directory->entity_id ?? 0),
+                        'item_id'       => $custom['item_id'] ?? ($directory->item_id ?? 0),
                         'type'          => $fileType,
-                        'created_by_id' => $custom['user_id'] ?? ($directory['user_id'] ?? 0)
+                        'created_by_id' => $custom['user_id'] ?? ($directory->user_id ?? 0)
                     ]
                 );
             }

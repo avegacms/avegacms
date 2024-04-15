@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Models\Admin;
 
-use AvegaCms\Entities\FilesEntity;
 use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Enums\FileTypes;
 use CodeIgniter\Database\ConnectionInterface;
@@ -16,7 +15,7 @@ class FilesModel extends AvegaCmsModel
     protected $table            = 'files';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = 'object';//FilesEntity::class;
+    protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
@@ -74,10 +73,10 @@ class FilesModel extends AvegaCmsModel
     protected int    $limit             = 20;
     protected int    $maxLimit          = 100;
 
-    protected array $casts   = [
+    protected array $casts = [
         'id'            => 'int',
         'provider'      => 'int',
-        'data'          => '?json-array',
+        'data'          => 'json-array',
         'extra'         => '?json-array',
         'active'        => 'int-bool',
         'created_by_id' => 'int',
