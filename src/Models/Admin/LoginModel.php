@@ -66,7 +66,6 @@ class LoginModel extends Model
     protected array $casts   = [
         'id'            => 'int',
         'avatar'        => 'int',
-        'phone'         => 'int',
         'profile'       => '?json-array',
         'extra'         => '?json-array',
         'expires'       => 'int',
