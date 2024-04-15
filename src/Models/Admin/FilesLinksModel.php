@@ -11,6 +11,8 @@ use CodeIgniter\Validation\ValidationInterface;
 
 class FilesLinksModel extends AvegaCmsModel
 {
+    protected bool $isFM        = false;
+
     protected $DBGroup          = 'default';
     protected $table            = 'files_links';
     protected $primaryKey       = 'id';
@@ -112,9 +114,10 @@ class FilesLinksModel extends AvegaCmsModel
         'provider'      => 'int'
     ];
 
-    public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
+    public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null, bool $isFM = false)
     {
         parent::__construct($db, $validation);
+        $this->isFM                    = $isFM;
         $this->validationRules['type'] = [
             'rules' => 'if_exist|required|in_list[' . implode(',', FileTypes::get('value')) . ']'
         ];
@@ -261,9 +264,14 @@ class FilesLinksModel extends AvegaCmsModel
                             $file->data['path']['webp'] = base_url($file->data['path']['webp']);
                         }
 
-                        $file->data['thumb']['original'] = base_url($file->data['thumb']['original']);
-                        if ( ! empty($file->data['thumb']['webp'])) {
-                            $file->data['thumb']['webp'] = base_url($file->data['thumb']['webp']);
+                        // Проверяем признак запроса от файлового менеджера
+                        if ($this->isFM) {
+                            $file->data['thumb']['original'] = base_url($file->data['thumb']['original']);
+                            if ( ! empty($file->data['thumb']['webp'])) {
+                                $file->data['thumb']['webp'] = base_url($file->data['thumb']['webp']);
+                            }
+                        } else {
+                            unset($file->data['thumb']);
                         }
 
                         if ( ! empty($file->data['variants'] ?? '')) {
