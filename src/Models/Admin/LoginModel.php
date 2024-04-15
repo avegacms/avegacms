@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Utilities\CmsFileManager;
@@ -63,7 +65,7 @@ class LoginModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    protected array $casts   = [
+    protected array $casts = [
         'id'            => 'int',
         'avatar'        => 'int',
         'profile'       => '?json-array',
@@ -80,11 +82,11 @@ class LoginModel extends Model
     ];
 
     /**
-     * @param array $fields
-     * @param string|null $role
-     * @return array|object|null
+     * @param  array  $fields
+     * @param  string|null  $role
+     * @return object|null
      */
-    public function getUser(array $fields, ?string $role = null)
+    public function getUser(array $fields, ?string $role = null): object|null
     {
         $list = [];
 
