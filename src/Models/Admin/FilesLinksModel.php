@@ -122,9 +122,9 @@ class FilesLinksModel extends AvegaCmsModel
 
     /**
      * @param  array  $filter
-     * @return FilesLinksModel
+     * @return object|null
      */
-    public function getFiles(array $filter): FilesLinksModel
+    public function getFiles(array $filter): object|null
     {
         $this->builder()->select(
             [
