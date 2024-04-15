@@ -75,7 +75,8 @@ class LoginModel extends Model
         'updated_at'    => '?datetime',
         'deleted_at'    => '?datetime',
         'roleId'        => 'int',
-        'self_auth'     => 'int'
+        'moduleId'      => 'int',
+        'selfAuth'      => 'int'
     ];
 
     /**
@@ -134,6 +135,7 @@ class LoginModel extends Model
                 $this->builder()->where(['roles.role' => $role]);
             }
         }
+
         return $this->first();
     }
 

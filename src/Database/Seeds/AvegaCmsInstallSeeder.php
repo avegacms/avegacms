@@ -2176,5 +2176,4 @@ class AvegaCmsInstallSeeder extends Seeder
 
         return $distribution;
     }
-
 }

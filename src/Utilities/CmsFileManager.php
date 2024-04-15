@@ -8,7 +8,6 @@ use Config\Mimes;
 use Config\Services;
 use CodeIgniter\Files\File;
 use CodeIgniter\Images\Exceptions\ImageException;
-use AvegaCms\Entities\FilesLinksEntity;
 use AvegaCms\Enums\FileTypes;
 use AvegaCms\Utilities\Exceptions\UploaderException;
 use AvegaCms\Models\Admin\{FilesModel, FilesLinksModel};
@@ -32,7 +31,7 @@ class CmsFileManager
      * @param  array|string|null  $uploadConfig
      * @param  array  $fileConfig
      * @param  bool  $onlyUpload
-     * @return array|FilesLinksEntity|null
+     * @return object|null
      * @throws ReflectionException|UploaderException
      */
     public static function upload(
@@ -40,7 +39,7 @@ class CmsFileManager
         array|string $uploadConfig = null,
         array $fileConfig = [],
         bool $onlyUpload = false
-    ): array|FilesLinksEntity|null {
+    ): object|null {
         $request   = Services::request();
         $validator = Services::validation();
         $directory = is_array($uploadConfig) ? ($uploadConfig['directory'] ?? 'content') : (is_null($uploadConfig) ? '' : $uploadConfig);
@@ -65,7 +64,7 @@ class CmsFileManager
         if ($onlyUpload === false) {
             $FM  = model(FilesModel::class);
             $FLM = model(FilesLinksModel::class);
-            if (empty($dirData = $FLM->getDirectories($directory))) {
+            if (($dirData = $FLM->getDirectories($directory)) === null) {
                 throw UploaderException::forDirectoryNotFound($directory);
             }
         }
@@ -106,13 +105,11 @@ class CmsFileManager
             'provider'      => 0,
             'type'          => $type,
             'data'          => [
-                'provider' => 0,
-                'type'     => $type,
-                'title'    => $title,
-                'ext'      => $extension,
-                'size'     => $uploadedFile->getSize(),
-                'file'     => $fileName,
-                'path'     => $dirFile
+                'title' => $title,
+                'ext'   => $extension,
+                'size'  => $uploadedFile->getSize(),
+                'file'  => $fileName,
+                'path'  => $dirFile
             ],
             'created_by_id' => $userId
         ];
@@ -137,8 +134,6 @@ class CmsFileManager
             }
         }
 
-        $fileData['data'] = json_encode($fileData['data']);
-
         if ($onlyUpload) {
             return $fileData;
         }
@@ -150,8 +145,8 @@ class CmsFileManager
         $fileLinks = [
             'id'            => $id,
             'user_id'       => $userId,
-            'parent'        => $dirData['id'],
-            'module_id'     => $dirData['module_id'],
+            'parent'        => $dirData->id,
+            'module_id'     => $dirData->module_id,
             'entity_id'     => $entity['entity_id'] ?? 0,
             'item_id'       => $entity['item_id'] ?? 0,
             'uid'           => '',
@@ -169,12 +164,12 @@ class CmsFileManager
     /**
      * @param  array  $filter
      * @param  bool  $all
-     * @return array|FilesLinksEntity|null
+     * @return object|null
      */
     public static function getFiles(
         array $filter = [],
         bool $all = false
-    ): array|FilesLinksEntity|null {
+    ): object|null {
         $FLM = model(FilesLinksModel::class);
         $FLM->getFiles($filter);
 
@@ -195,7 +190,7 @@ class CmsFileManager
      * @param  int|null  $moduleId
      * @param  int|null  $entityId
      * @param  int|null  $itemId
-     * @return FilesLinksEntity|null
+     * @return object|null
      */
     public static function getDirectoryData(
         ?int $id,
@@ -203,7 +198,7 @@ class CmsFileManager
         ?int $moduleId,
         ?int $entityId,
         ?int $itemId
-    ): FilesLinksEntity|null {
+    ): object|null {
         return model(FilesLinksModel::class)->getDirectoryData($id, $parent, $moduleId, $entityId, $itemId);
     }
 
@@ -225,7 +220,7 @@ class CmsFileManager
 
         $directoryId = $FM->insert(
             [
-                'data'          => json_encode(['url' => $path]),
+                'data'          => ['url' => $path],
                 'provider'      => $config['provider'] ?? 0,
                 'type'          => FileTypes::Directory->value,
                 'created_by_id' => $config['user_id'] ?? 0

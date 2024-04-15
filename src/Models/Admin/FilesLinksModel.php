@@ -6,7 +6,6 @@ namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Enums\FileTypes;
 use AvegaCms\Models\AvegaCmsModel;
-use AvegaCms\Entities\FilesLinksEntity;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
 
@@ -16,7 +15,7 @@ class FilesLinksModel extends AvegaCmsModel
     protected $table            = 'files_links';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = false;
-    protected $returnType       = 'object';//FilesLinksEntity::class;
+    protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
@@ -66,7 +65,7 @@ class FilesLinksModel extends AvegaCmsModel
     protected $beforeUpdate   = [];
     protected $afterUpdate    = ['updateDirectories'];
     protected $beforeFind     = [];
-    protected $afterFind      = [];
+    protected $afterFind      = ['updateFilesLinks'];
     protected $beforeDelete   = [];
     protected $afterDelete    = ['updateDirectories'];
 
@@ -96,20 +95,21 @@ class FilesLinksModel extends AvegaCmsModel
     protected int    $limit             = 20;
     protected int    $maxLimit          = 100;
 
-    protected array $casts   = [
+    protected array $casts = [
         'id'            => 'int',
         'user_id'       => 'int',
         'parent'        => 'int',
         'module_id'     => 'int',
         'entity_id'     => 'int',
         'item_id'       => 'int',
+        'data'          => 'json-array',
+        'extra'         => '?json-array',
         'active'        => 'int-bool',
         'created_by_id' => 'int',
         'updated_by_id' => 'int',
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime',
-
-        'provider' => 'int'
+        'provider'      => 'int'
     ];
 
     public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
@@ -138,7 +138,7 @@ class FilesLinksModel extends AvegaCmsModel
                 'files_links.active',
                 'files.data',
                 'files.provider',
-                'files.created_at AS created'
+                'files.created_at'
             ]
         )->join('files', 'files.id = files_links.id')
             ->where(['files_links.type !=' => FileTypes::Directory->value]);
@@ -152,7 +152,7 @@ class FilesLinksModel extends AvegaCmsModel
      * @param  int|null  $moduleId
      * @param  int|null  $entityId
      * @param  int|null  $itemId
-     * @return array|FilesLinksEntity|null
+     * @return object|null
      */
     public function getDirectoryData(
         ?int $id,
@@ -160,7 +160,7 @@ class FilesLinksModel extends AvegaCmsModel
         ?int $moduleId,
         ?int $entityId,
         ?int $itemId
-    ): array|FilesLinksEntity|null {
+    ): object|null {
         $this->builder()->select(
             [
                 'files.id',
@@ -171,7 +171,8 @@ class FilesLinksModel extends AvegaCmsModel
                 'files_links.parent',
                 'files_links.module_id',
                 'files_links.entity_id',
-                'files_links.item_id'
+                'files_links.item_id',
+                'files.created_at'
             ]
         )->join('files', 'files.id = files_links.id')
             ->where(
@@ -190,9 +191,9 @@ class FilesLinksModel extends AvegaCmsModel
 
     /**
      * @param  string  $path
-     * @return array
+     * @return object|null
      */
-    public function getDirectories(string $path = ''): array
+    public function getDirectories(string $path = ''): object|null
     {
         $directories = cache()->remember('FileManagerDirectories', 30 * DAY, function () {
             $this->builder()->select(
@@ -200,31 +201,33 @@ class FilesLinksModel extends AvegaCmsModel
                     'files.id',
                     'files.data',
                     'files.provider',
+                    'files.type',
                     'files.active',
                     'files_links.user_id',
                     'files_links.parent',
                     'files_links.module_id',
                     'files_links.entity_id',
-                    'files_links.item_id'
+                    'files_links.item_id',
+                    'files.created_at'
                 ]
             )->join('files', 'files.id = files_links.id')
                 ->where(['files_links.type' => FileTypes::Directory->value]);
 
-            $result      = $this->asArray()->findAll();
+            $result      = $this->findAll();
             $directories = [];
             if ( ! empty($result)) {
                 foreach ($result as $item) {
-                    $url = json_decode(json_decode($item['data'], true), true);
-                    unset($item['data']);
-                    $item['url']               = $url['url'];
-                    $directories[$item['url']] = $item;
+                    $url = $item->data;
+                    unset($item->data);
+                    $item->url               = $url['url'];
+                    $directories[$item->url] = $item;
                 }
             }
 
-            return $directories;
+            return (object) $directories;
         });
 
-        return empty($directories) ? [] : (empty($path) ? $directories : ($directories[$path] ?? []));
+        return is_null($directories) ? null : (empty($path) ? $directories : ($directories->{$path} ?? null));
     }
 
     /**
@@ -237,5 +240,66 @@ class FilesLinksModel extends AvegaCmsModel
             cache()->delete('FileManagerDirectories');
             $this->getDirectories();
         }
+    }
+
+    public function updateFilesLinks(array $data)
+    {
+        if (in_array($data['method'], ['first', 'find', 'findAll'])) {
+            foreach ($data['data'] as $file) {
+                switch ($file->type) {
+                    case FileTypes::Directory->value:
+                        break;
+                    case FileTypes::File->value:
+                        $file->data['path']     = base_url($file->data['path']);
+                        $file->data['sizeText'] = $this->_getTextFileSize($file->data['size']);
+                        break;
+                    case FileTypes::Image->value:
+
+                        $file->data['sizeText']         = $this->_getTextFileSize($file->data['size']);
+                        $file->data['path']['original'] = base_url($file->data['path']['original']);
+                        if ( ! empty($file->data['path']['webp'])) {
+                            $file->data['path']['webp'] = base_url($file->data['path']['webp']);
+                        }
+
+                        $file->data['thumb']['original'] = base_url($file->data['thumb']['original']);
+                        if ( ! empty($file->data['thumb']['webp'])) {
+                            $file->data['thumb']['webp'] = base_url($file->data['thumb']['webp']);
+                        }
+
+                        if ( ! empty($file->data['variants'] ?? '')) {
+                            foreach ($file->data['variants'] as $k => $variants) {
+                                if (is_array($variants)) {
+                                    foreach ($variants as $pointer => $variant) {
+                                        $file->data['variants'][$k][$pointer] = base_url($variant);
+                                    }
+                                } else {
+                                    $file->data['variants'][$k] = base_url($file->data['variants'][$k]);
+                                }
+                            }
+                        }
+
+                        break;
+                }
+
+                $file->created_at = date('d.m.Y H:i', $file->created_at->date);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param  int  $size
+     * @return string
+     */
+    private function _getTextFileSize(int $size): string
+    {
+        if (($size = ($size / 1024)) < 1024) {
+            return round($size, 1) . ' ' . lang('Uploader.sizes.kb');
+        }
+        if (($size = (($size / 1024) / 1024)) < 1024) {
+            return round($size, 1) . ' ' . lang('Uploader.sizes.mb');
+        }
+        return round($size, 1) . ' ' . lang('Uploader.sizes.gb');
     }
 }
