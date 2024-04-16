@@ -382,7 +382,7 @@ class CmsFileManager
             $result = Services::image()
                 ->withFile($original)
                 ->resize($setting['width'], $setting['height'], $setting['maintainRatio'], $setting['masterDim'])
-                ->save(FCPATH . $url, $setting['quality']);
+                ->save(FCPATH . $url, $setting['quality'] ?? 90);
 
             if ($result) {
                 $variant['original'] = $url;
@@ -404,22 +404,30 @@ class CmsFileManager
      */
     public static function fitImage(string $filePath, array $settings): array
     {
+        $original   = FCPATH . trim($filePath, '/');
+        $fileName   = pathinfo($original, PATHINFO_BASENAME);
+        $fileUrl    = pathinfo($filePath, PATHINFO_DIRNAME);
         $createWebp = Cms::settings('filemanager.uploadConfig')['createWebp'];
-        $result     = [];
+        $variants   = [];
 
-        $fit = Services::image()
-            ->withFile(FCPATH . trim($filePath, '/'))
-            ->fit($settings['width'], $settings['height'], $settings['position'] ?? 'center')
-            ->save($filePath, $settings['quality'] ?? 90);
+        foreach ($settings as $prefix => $setting) {
+            $url = $fileUrl . '/' . $prefix . '_' . $fileName;
 
-        if ($fit) {
-            $result['original'] = $filePath;
-            if ($createWebp) {
-                $result['webp'] = self::convertToWebp($filePath, webpQuality: $setting['quality'] ?? 90);
+            $fit = Services::image()
+                ->withFile($original)
+                ->fit($setting['width'], $setting['height'], $setting['position'] ?? 'center')
+                ->save(FCPATH . $url, $setting['quality'] ?? 90);
+
+            if ($fit) {
+                $variant['original'] = $url;
+                if ($createWebp) {
+                    $variant['webp'] = self::convertToWebp($url, webpQuality: $setting['quality'] ?? 90);
+                }
+                $variants[$prefix] = $variant;
             }
         }
 
-        return $result;
+        return $variants;
     }
 
     /**
