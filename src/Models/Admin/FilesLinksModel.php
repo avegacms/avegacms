@@ -144,7 +144,9 @@ class FilesLinksModel extends AvegaCmsModel
                 'files.created_at'
             ]
         )->join('files', 'files.id = files_links.id')
-            ->where(['files_links.type !=' => FileTypes::Directory->value]);
+            ->groupStart()
+            ->where(['files_links.type !=' => FileTypes::Directory->value])
+            ->groupEnd();
 
         return $this->filter($filter);
     }
