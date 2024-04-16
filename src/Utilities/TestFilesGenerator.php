@@ -79,7 +79,7 @@ class TestFilesGenerator
                 $FLM->insert(
                     [
                         'id'            => $id,
-                        'user_id'       => $directory->user_id ?? 0,
+                        'user_id'       => $custom['user_id'] ?? ($directory->user_id ?? 0),
                         'parent'        => $directory->id,
                         'module_id'     => $custom['module_id'] ?? ($directory->module_id ?? 0),
                         'entity_id'     => $custom['entity_id'] ?? ($directory->entity_id ?? 0),
