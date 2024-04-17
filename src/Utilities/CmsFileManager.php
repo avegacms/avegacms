@@ -62,8 +62,8 @@ class CmsFileManager
         }
 
         if ($onlyUpload === false) {
-            $FM  = model(FilesModel::class);
-            $FLM = model(FilesLinksModel::class);
+            $FM  = (new FilesModel());
+            $FLM = (new FilesLinksModel());
             if (($dirData = $FLM->getDirectories($directory)) === null) {
                 throw UploaderException::forDirectoryNotFound($directory);
             }
@@ -135,7 +135,7 @@ class CmsFileManager
         }
 
         if ($onlyUpload) {
-            return $fileData;
+            return (object) $fileData;
         }
 
         if (($id = $FM->insert($fileData)) === false) {
@@ -170,7 +170,7 @@ class CmsFileManager
         array $filter = [],
         bool $all = false
     ): object|null {
-        $FLM = model(FilesLinksModel::class);
+        $FLM = (new FilesLinksModel());
         $FLM->getFiles($filter);
 
         if ($all) {
