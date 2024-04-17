@@ -199,7 +199,7 @@ class CmsFileManager
         ?int $entityId,
         ?int $itemId
     ): object|null {
-        return model(FilesLinksModel::class)->getDirectoryData($id, $parent, $moduleId, $entityId, $itemId);
+        return (new FilesLinksModel())->getDirectoryData($id, $parent, $moduleId, $entityId, $itemId);
     }
 
     /**
@@ -213,8 +213,8 @@ class CmsFileManager
      */
     public static function createDirectory(string $path, array $config): int
     {
-        $FM  = model(FilesModel::class);
-        $FLM = model(FilesLinksModel::class);
+        $FM  = (new FilesModel());
+        $FLM = (new FilesLinksModel());
 
         self::checkFilePath($path);
 
