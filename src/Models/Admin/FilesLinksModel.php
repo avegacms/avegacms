@@ -155,49 +155,6 @@ class FilesLinksModel extends AvegaCmsModel
     }
 
     /**
-     * @param  int|null  $id
-     * @param  int|null  $parent
-     * @param  int|null  $moduleId
-     * @param  int|null  $entityId
-     * @param  int|null  $itemId
-     * @return object|null
-     */
-    public function getDirectoryData(
-        ?int $id = null,
-        ?int $parent = null,
-        ?int $moduleId = null,
-        ?int $entityId = null,
-        ?int $itemId = null
-    ): object|null {
-        $this->builder()->select(
-            [
-                'files.id',
-                'files.data',
-                'files.provider',
-                'files.active',
-                'files_links.user_id',
-                'files_links.parent',
-                'files_links.module_id',
-                'files_links.entity_id',
-                'files_links.item_id',
-                'files.created_at'
-            ]
-        )->join('files', 'files.id = files_links.id')
-            ->where(
-                [
-                    'files_links.type' => FileTypes::Directory->value,
-                    ...(! is_null($id) ? ['files.id' => $id] : []),
-                    ...(! is_null($parent) ? ['files_links.parent_id' => $parent] : []),
-                    ...(! is_null($moduleId) ? ['files_links.module_id' => $moduleId] : []),
-                    ...(! is_null($entityId) ? ['files_links.entity_id' => $entityId] : []),
-                    ...(! is_null($itemId) ? ['files_links.item_id' => $itemId] : []),
-                ]
-            );
-
-        return $this->first();
-    }
-
-    /**
      * @param  string  $path
      * @return object|null
      */

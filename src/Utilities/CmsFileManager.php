@@ -181,27 +181,7 @@ class CmsFileManager
 
         return (object) $result;
     }
-
-    /**
-     * Возвращает информацию по директории
-     *
-     * @param  int|null  $id
-     * @param  int|null  $parent
-     * @param  int|null  $moduleId
-     * @param  int|null  $entityId
-     * @param  int|null  $itemId
-     * @return object|null
-     */
-    public static function getDirectoryData(
-        ?int $id = null,
-        ?int $parent = null,
-        ?int $moduleId = null,
-        ?int $entityId = null,
-        ?int $itemId = null
-    ): object|null {
-        return (new FilesLinksModel())->getDirectoryData($id, $parent, $moduleId, $entityId, $itemId);
-    }
-
+    
     /**
      * Регистрирует в файловом менеджере директорию
      * и создаёт её на сервере
