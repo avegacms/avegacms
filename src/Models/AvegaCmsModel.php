@@ -106,22 +106,22 @@ class AvegaCmsModel extends Model
                 }
             }
 
-            $this->limit = (int) (filter_var($fields['limit'] ?? false,
-                FILTER_VALIDATE_INT) && $fields['limit'] > 0 ? $fields['limit'] : $this->limit);
+            if (filter_var($fields['limit'] ?? false, FILTER_VALIDATE_INT)) {
+                $this->limit = $fields['limit'] > 0 ? (int) $fields['limit'] : $this->limit;
+                if ($this->limit > $this->maxLimit) {
+                    $this->limit = $this->maxLimit;
+                }
+            }
 
             if ( ! isset($fields['page'])) {
                 $fields['page'] = Services::request()->getGet('page');
             }
 
-            $this->page = (int) (filter_var($fields['page'] ?? false,
-                FILTER_VALIDATE_INT) && $fields['page'] > 0 ? $fields['page'] : $this->page);
-
-            if ($this->limit > $this->maxLimit) {
-                $this->limit = $this->maxLimit;
-            }
-
-            if ($this->page == 1) {
-                $this->builder()->limit($this->limit);
+            if (filter_var($fields['page'] ?? false, FILTER_VALIDATE_INT)) {
+                $this->page = $fields['page'] > 0 ? (int) $fields['page'] : $this->page;
+                if ($this->page == 1) {
+                    $this->builder()->limit($this->limit);
+                }
             }
 
             unset($fields['limit'], $fields['page']);
