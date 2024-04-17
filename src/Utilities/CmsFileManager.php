@@ -193,11 +193,11 @@ class CmsFileManager
      * @return object|null
      */
     public static function getDirectoryData(
-        ?int $id,
-        ?int $parent,
-        ?int $moduleId,
-        ?int $entityId,
-        ?int $itemId
+        ?int $id = null,
+        ?int $parent = null,
+        ?int $moduleId = null,
+        ?int $entityId = null,
+        ?int $itemId = null
     ): object|null {
         return (new FilesLinksModel())->getDirectoryData($id, $parent, $moduleId, $entityId, $itemId);
     }

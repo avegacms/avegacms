@@ -11,7 +11,7 @@ use CodeIgniter\Validation\ValidationInterface;
 
 class FilesLinksModel extends AvegaCmsModel
 {
-    protected bool $isFM        = false;
+    protected bool $isFM = false;
 
     protected $DBGroup          = 'default';
     protected $table            = 'files_links';
@@ -114,8 +114,11 @@ class FilesLinksModel extends AvegaCmsModel
         'provider'      => 'int'
     ];
 
-    public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null, bool $isFM = false)
-    {
+    public function __construct(
+        ?ConnectionInterface $db = null,
+        ?ValidationInterface $validation = null,
+        bool $isFM = false
+    ) {
         parent::__construct($db, $validation);
         $this->isFM                    = $isFM;
         $this->validationRules['type'] = [
@@ -160,11 +163,11 @@ class FilesLinksModel extends AvegaCmsModel
      * @return object|null
      */
     public function getDirectoryData(
-        ?int $id,
-        ?int $parent,
-        ?int $moduleId,
-        ?int $entityId,
-        ?int $itemId
+        ?int $id = null,
+        ?int $parent = null,
+        ?int $moduleId = null,
+        ?int $entityId = null,
+        ?int $itemId = null
     ): object|null {
         $this->builder()->select(
             [
