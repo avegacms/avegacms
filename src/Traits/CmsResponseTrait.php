@@ -189,13 +189,11 @@ trait CmsResponseTrait
     }
 
     /**
-     * Used after a resource has been successfully updated.
-     *
-     * @param  array|string|null  $data
+     * @param  int|string|array|null  $data
      * @param  string  $message
      * @return ResponseInterface
      */
-    protected function respondUpdated(array|string|null $data = null, string $message = ''): ResponseInterface
+    protected function respondUpdated(int|string|array|null $data = null, string $message = ''): ResponseInterface
     {
         return $this->respond($data, $this->codes['updated'], $message);
     }
