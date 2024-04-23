@@ -166,24 +166,22 @@ trait CmsResponseTrait
     }
 
     /**
-     * @param  array|string|null  $data
+     * @param  int|string|array|null  $data
      * @param  string  $message
      * @return ResponseInterface
      */
-    protected function respondCreated(array|string|null $data = null, string $message = ''): ResponseInterface
+    protected function respondCreated(int|string|array|null $data = null, string $message = ''): ResponseInterface
     {
         return $this->respond($data, $this->codes['created'], $message);
     }
 
 
     /**
-     * Used after a resource has been successfully deleted.
-     *
-     * @param  array|string|null  $data
+     * @param  int|string|array|null  $data
      * @param  string  $message
      * @return ResponseInterface
      */
-    protected function respondDeleted(array|string|null $data = null, string $message = ''): ResponseInterface
+    protected function respondDeleted(int|string|array|null $data = null, string $message = ''): ResponseInterface
     {
         return $this->respond($data, $this->codes['deleted'], $message);
     }
