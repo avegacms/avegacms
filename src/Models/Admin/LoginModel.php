@@ -4,11 +4,11 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Models\Admin;
 
+use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Utilities\CmsFileManager;
-use CodeIgniter\Model;
 use AvegaCms\Enums\UserStatuses;
 
-class LoginModel extends Model
+class LoginModel extends AvegaCmsModel
 {
     protected $DBGroup          = 'default';
     protected $table            = 'users';
