@@ -48,7 +48,7 @@ class AvegaCmsFrontendController extends BaseController
      * @return ResponseInterface
      * @throws ReflectionException
      */
-    public function render(array $pageData, string $view = '', array $options = []): ResponseInterface
+    public function render(array $pageData = [], string $view = '', array $options = []): ResponseInterface
     {
         $this->meta = $this->dataEntity->metaRender();
 
