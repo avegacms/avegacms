@@ -4,7 +4,7 @@ namespace AvegaCms\Utilities;
 
 use AvegaCms\Utilities\Exceptions\MailException;
 use AvegaCms\Models\Admin\EmailTemplateModel;
-use Config\Services;
+use AvegaCms\Config\Services;
 use ReflectionException;
 
 class Mail

@@ -2,7 +2,7 @@
 
 namespace AvegaCms\Validation;
 
-use Config\Database;
+use AvegaCms\Config\Database;
 
 class AvegaCmsRules
 {

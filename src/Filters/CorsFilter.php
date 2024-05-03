@@ -6,7 +6,7 @@ use AvegaCms\Utilities\Cms;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
-use Config\Services;
+use AvegaCms\Config\Services;
 use ReflectionException;
 
 class CorsFilter implements FilterInterface

@@ -5,7 +5,7 @@ namespace AvegaCms\Utilities;
 use AvegaCms\Entities\{ContentEntity, MetaDataEntity, SettingsEntity};
 use AvegaCms\Enums\{MetaDataTypes, MetaStatuses, FieldsReturnTypes};
 use AvegaCms\Models\Admin\{ContentModel, MetaDataModel, SettingsModel};
-use Config\Services;
+use AvegaCms\Config\Services;
 use RuntimeException;
 use ReflectionException;
 

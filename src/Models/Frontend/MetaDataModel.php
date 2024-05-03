@@ -1,10 +1,17 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Models\Frontend;
 
 use AvegaCms\Models\AvegaCmsModel;
-use AvegaCms\Entities\MetaDataEntity;
-use AvegaCms\Enums\{MetaStatuses, MetaDataTypes};
+
+//use AvegaCms\Entities\MetaDataEntity;
+use AvegaCms\Utilities\Cms;
+use AvegaCms\Utilities\SeoUtils;
+use CodeIgniter\Database\ConnectionInterface;
+use CodeIgniter\Validation\ValidationInterface;
+use AvegaCms\Enums\{MetaStatuses, MetaDataTypes, SitemapChangefreqs};
 
 class MetaDataModel extends AvegaCmsModel
 {
@@ -12,13 +19,13 @@ class MetaDataModel extends AvegaCmsModel
     protected $table            = 'metadata';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = MetaDataEntity::class;
+    protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [];
 
     // Dates
-    protected $useTimestamps = false;
+    protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
@@ -73,6 +80,29 @@ class MetaDataModel extends AvegaCmsModel
     protected array  $filterEnumValues  = [];
     protected int    $limit             = 20;
     protected int    $maxLimit          = 100;
+
+    protected array $casts = [
+        'id'              => 'int',
+        'post_id'         => 'int',
+        'rubric_id'       => 'int',
+        'parent'          => 'int',
+        'locale_id'       => 'int',
+        'module_id'       => 'int',
+        'creator_id'      => 'int',
+        'item_id'         => 'int',
+        'sort'            => 'int',
+        'meta'            => '?json-array',
+        'extra_data'      => '?json-array',
+        'in_sitemap'      => '?int-bool',
+        'meta_sitemap'    => '?json-array',
+        'use_url_pattern' => '?int-bool',
+        'rubrics'         => '?json-array',
+        'created_by_id'   => 'int',
+        'updated_by_id'   => 'int',
+        'publish_at'      => 'datetime',
+        'created_at'      => 'datetime',
+        'updated_at'      => 'datetime',
+    ];
 
     /**
      * @param  int  $locale
@@ -269,6 +299,33 @@ class MetaDataModel extends AvegaCmsModel
         )->groupEnd();
 
         return $this->filter($filter);
+    }
+
+    /**
+     * @param  array  $data
+     * @return array
+     */
+    protected function beforeInsert(array $data): array
+    {
+        helper(['url']);
+        $meta = $data['data'];
+
+        if ((isset($meta['slug']) && empty($meta['slug'])) && ! empty($meta['title'])) {
+            $meta['slug'] = strtolower(mb_substr(mb_url_title($meta['title']), 0, 120));
+        }
+
+        if (isset($meta['url']) && empty($meta['url'])) {
+            $url         = ! empty($meta['slug'] ?? '') ? $meta['slug'] : mb_url_title(strtolower($meta['title']));
+            $meta['url'] = match ($meta['meta_type'] ?? '') {
+                MetaDataTypes::Main->value => Cms::settings('core.env.useMultiLocales') ? SeoUtils::Locales($this->rawData['locale_id'])['slug'] : '/',
+                MetaDataTypes::Page->value => $this->getParentPageUrl($meta['parent'] ?? 0) . $url,
+                default                    => strtolower($url)
+            };
+        }
+
+        $data['data'] = $meta;
+
+        return $data;
     }
 
     /**

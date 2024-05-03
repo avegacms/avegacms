@@ -3,7 +3,7 @@
 namespace AvegaCms\Models;
 
 use CodeIgniter\Model;
-use Config\Services;
+use AvegaCms\Config\Services;
 
 class AvegaCmsModel extends Model
 {

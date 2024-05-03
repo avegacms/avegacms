@@ -6,7 +6,7 @@ use AvegaCms\Config\AvegaCms;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\CLI\GeneratorTrait;
-use Config\Autoload;
+use AvegaCms\Config\Autoload;
 
 class AvegaCmsScaffoldGenerator extends BaseCommand
 {

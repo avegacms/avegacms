@@ -4,8 +4,8 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Utilities;
 
-use Config\Mimes;
-use Config\Services;
+use AvegaCms\Config\Mimes;
+use AvegaCms\Config\Services;
 use CodeIgniter\Files\File;
 use AvegaCms\Utilities\Exceptions\UploaderException;
 

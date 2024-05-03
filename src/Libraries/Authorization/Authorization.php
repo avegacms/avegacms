@@ -17,7 +17,7 @@ use AvegaCms\Models\Admin\{LoginModel,
 use AvegaCms\Utilities\Cms;
 use CodeIgniter\Session\Session;
 use CodeIgniter\Validation\Validation;
-use Config\Services;
+use AvegaCms\Config\Services;
 use Firebase\JWT\Key;
 use Firebase\JWT\JWT;
 use Exception;
