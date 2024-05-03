@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Utilities;
 
-use AvegaCms\Enums\MetaChangefreq;
+use AvegaCms\Enums\SitemapChangefreqs;
 use AvegaCms\Models\Admin\{LocalesModel, MetaDataModel, ModulesModel};
 use RuntimeException;
 use ReflectionException;
-
-use function Symfony\Component\String\b;
 
 class SeoUtils
 {
@@ -112,7 +112,7 @@ class SeoUtils
                     $data['links'][] = [
                         'url'        => base_url('uploads/sitemaps/' . ucfirst($key) . '.xml'),
                         'priority'   => 60,
-                        'changefreq' => strtolower(MetaChangefreq::Daily->value),
+                        'changefreq' => strtolower(SitemapChangefreqs::Daily->name),
                         'date'       => $date
                     ];
                 }
@@ -134,7 +134,7 @@ class SeoUtils
                         $chunkNames['links'][] = [
                             'url'        => base_url('uploads/sitemaps/' . ucfirst($xmlName) . '.xml'),
                             'priority'   => 60,
-                            'changefreq' => strtolower(MetaChangefreq::Daily->value),
+                            'changefreq' => strtolower(SitemapChangefreqs::Daily->name),
                             'date'       => $date
                         ];
                     }

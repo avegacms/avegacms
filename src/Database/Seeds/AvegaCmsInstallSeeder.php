@@ -26,9 +26,7 @@ use AvegaCms\Entities\{
     RolesEntity,
     SettingsEntity,
     UserRolesEntity,
-    PermissionsEntity,
-    LocalesEntity,
-    EmailTemplateEntity
+    PermissionsEntity
 };
 use AvegaCms\Utilities\Exceptions\UploaderException;
 use ReflectionException;
@@ -831,8 +829,8 @@ class AvegaCmsInstallSeeder extends Seeder
                     'app_name' => 'Мой новый проект',
                     'og:image' => 'ogDefaultRu.jpg'
                 ],
-                'is_default'    => 1,
-                'active'        => 1,
+                'is_default'    => true,
+                'active'        => true,
                 'created_by_id' => $userId
             ],
             [
@@ -844,8 +842,8 @@ class AvegaCmsInstallSeeder extends Seeder
                     'app_name' => 'My new project',
                     'og:image' => 'ogDefaultEn.jpg'
                 ],
-                'is_default'    => 0,
-                'active'        => 1,
+                'is_default'    => false,
+                'active'        => true,
                 'created_by_id' => $userId
             ],
             [
@@ -857,17 +855,17 @@ class AvegaCmsInstallSeeder extends Seeder
                     'app_name' => 'Mein neues Projekt',
                     'og:image' => 'ogDefaultDe.jpg'
                 ],
-                'is_default'    => 0,
-                'active'        => 1,
+                'is_default'    => false,
+                'active'        => true,
                 'created_by_id' => $userId
             ]
         ];
 
         foreach ($locales as $locale) {
-            $localesEntity[] = (new LocalesEntity($locale));
+            if ($this->LLM->insert($locale) === false) {
+                d($this->LLM->errors());
+            }
         }
-
-        $this->LLM->insertBatch($localesEntity);
     }
 
     /**
@@ -1812,17 +1810,14 @@ class AvegaCmsInstallSeeder extends Seeder
             ]
         ];
 
-        $emailTemplate = [];
-
         $module = CmsModule::meta('settings.email_template');
 
         foreach ($templates as $template) {
             $template['module_id']     = $module['id'];
             $template['created_by_id'] = $userId;
-            $emailTemplate[]           = (new EmailTemplateEntity($template));
         }
 
-        $this->ETM->insertBatch($emailTemplate);
+        $this->ETM->insertBatch($templates);
     }
 
     /**
