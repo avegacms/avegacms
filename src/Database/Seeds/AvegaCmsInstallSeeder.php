@@ -22,11 +22,7 @@ use AvegaCms\Models\Admin\{ModulesModel,
     LocalesModel,
     EmailTemplateModel
 };
-use AvegaCms\Entities\{
-    LoginEntity,
-    SettingsEntity,
-    PermissionsEntity
-};
+use AvegaCms\Entities\LoginEntity;
 use AvegaCms\Utilities\Exceptions\UploaderException;
 use ReflectionException;
 use Exception;
@@ -525,19 +521,19 @@ class AvegaCmsInstallSeeder extends Seeder
                 'role_id'       => 0,
                 'parent'        => 0,
                 'module_id'     => 0,
-                'is_module'     => 1,
-                'is_system'     => 0,
-                'is_plugin'     => 0,
+                'is_module'     => true,
+                'is_system'     => false,
+                'is_plugin'     => false,
                 'slug'          => '',
-                'access'        => 0,
-                'self'          => 0,
-                'create'        => 0,
-                'read'          => 0,
-                'update'        => 0,
-                'delete'        => 0,
-                'moderated'     => 0,
-                'settings'      => 0,
-                'extra'         => '',
+                'access'        => false,
+                'self'          => false,
+                'create'        => false,
+                'read'          => false,
+                'update'        => false,
+                'delete'        => false,
+                'moderated'     => false,
+                'settings'      => false,
+                'extra'         => [],
                 'created_by_id' => $userId,
                 'updated_by_id' => 0
             ],
@@ -546,19 +542,19 @@ class AvegaCmsInstallSeeder extends Seeder
                 'role_id'       => 0,
                 'parent'        => 0,
                 'module_id'     => 0,
-                'is_module'     => 0,
-                'is_system'     => 1,
-                'is_plugin'     => 0,
+                'is_module'     => false,
+                'is_system'     => true,
+                'is_plugin'     => false,
                 'slug'          => '',
-                'access'        => 0,
-                'self'          => 0,
-                'create'        => 0,
-                'read'          => 0,
-                'update'        => 0,
-                'delete'        => 0,
-                'moderated'     => 0,
-                'settings'      => 0,
-                'extra'         => '',
+                'access'        => false,
+                'self'          => false,
+                'create'        => false,
+                'read'          => false,
+                'update'        => false,
+                'delete'        => false,
+                'moderated'     => false,
+                'settings'      => false,
+                'extra'         => [],
                 'created_by_id' => $userId,
                 'updated_by_id' => 0
             ],
@@ -567,19 +563,19 @@ class AvegaCmsInstallSeeder extends Seeder
                 'role_id'       => 0,
                 'parent'        => 0,
                 'module_id'     => 0,
-                'is_module'     => 0,
-                'is_system'     => 0,
-                'is_plugin'     => 1,
+                'is_module'     => false,
+                'is_system'     => false,
+                'is_plugin'     => true,
                 'slug'          => '',
-                'access'        => 0,
-                'self'          => 0,
-                'create'        => 0,
-                'read'          => 0,
-                'update'        => 0,
-                'delete'        => 0,
-                'moderated'     => 0,
-                'settings'      => 0,
-                'extra'         => '',
+                'access'        => false,
+                'self'          => false,
+                'create'        => false,
+                'read'          => false,
+                'update'        => false,
+                'delete'        => false,
+                'moderated'     => false,
+                'settings'      => false,
+                'extra'         => [],
                 'created_by_id' => $userId,
                 'updated_by_id' => 0
             ],
@@ -588,20 +584,20 @@ class AvegaCmsInstallSeeder extends Seeder
             [
                 'role_id'       => 1,
                 'parent'        => 0,
-                'module_id'     => 0,
-                'is_module'     => 1,
-                'is_system'     => 0,
-                'is_plugin'     => 0,
+                'module_id'     => false,
+                'is_module'     => true,
+                'is_system'     => false,
+                'is_plugin'     => false,
                 'slug'          => '',
-                'access'        => 1,
-                'self'          => 1,
-                'create'        => 1,
-                'read'          => 1,
-                'update'        => 1,
-                'delete'        => 1,
-                'moderated'     => 0,
-                'settings'      => 1,
-                'extra'         => '',
+                'access'        => true,
+                'self'          => true,
+                'create'        => true,
+                'read'          => true,
+                'update'        => true,
+                'delete'        => true,
+                'moderated'     => false,
+                'settings'      => true,
+                'extra'         => [],
                 'created_by_id' => $userId,
                 'updated_by_id' => 0
             ],
@@ -610,19 +606,19 @@ class AvegaCmsInstallSeeder extends Seeder
                 'role_id'       => 1,
                 'parent'        => 0,
                 'module_id'     => 0,
-                'is_module'     => 0,
-                'is_system'     => 1,
-                'is_plugin'     => 0,
+                'is_module'     => false,
+                'is_system'     => true,
+                'is_plugin'     => false,
                 'slug'          => '',
-                'access'        => 1,
-                'self'          => 1,
-                'create'        => 1,
-                'read'          => 1,
-                'update'        => 1,
-                'delete'        => 1,
-                'moderated'     => 0,
-                'settings'      => 1,
-                'extra'         => '',
+                'access'        => true,
+                'self'          => true,
+                'create'        => true,
+                'read'          => true,
+                'update'        => true,
+                'delete'        => true,
+                'moderated'     => false,
+                'settings'      => true,
+                'extra'         => [],
                 'created_by_id' => $userId,
                 'updated_by_id' => 0
             ],
@@ -631,19 +627,19 @@ class AvegaCmsInstallSeeder extends Seeder
                 'role_id'       => 1,
                 'parent'        => 0,
                 'module_id'     => 0,
-                'is_module'     => 0,
-                'is_system'     => 0,
-                'is_plugin'     => 1,
+                'is_module'     => false,
+                'is_system'     => false,
+                'is_plugin'     => true,
                 'slug'          => '',
-                'access'        => 1,
-                'self'          => 1,
-                'create'        => 1,
-                'read'          => 1,
-                'update'        => 1,
-                'delete'        => 1,
-                'moderated'     => 0,
-                'settings'      => 1,
-                'extra'         => '',
+                'access'        => true,
+                'self'          => true,
+                'create'        => true,
+                'read'          => true,
+                'update'        => true,
+                'delete'        => true,
+                'moderated'     => false,
+                'settings'      => true,
+                'extra'         => [],
                 'created_by_id' => $userId,
                 'updated_by_id' => 0
             ],
@@ -653,19 +649,19 @@ class AvegaCmsInstallSeeder extends Seeder
                 'role_id'       => 2,
                 'parent'        => 0,
                 'module_id'     => 0,
-                'is_module'     => 1,
-                'is_system'     => 0,
-                'is_plugin'     => 0,
+                'is_module'     => true,
+                'is_system'     => false,
+                'is_plugin'     => false,
                 'slug'          => '',
-                'access'        => 1,
-                'self'          => 1,
-                'create'        => 1,
-                'read'          => 1,
-                'update'        => 1,
-                'delete'        => 1,
-                'moderated'     => 0,
-                'settings'      => 1,
-                'extra'         => '',
+                'access'        => true,
+                'self'          => true,
+                'create'        => true,
+                'read'          => true,
+                'update'        => true,
+                'delete'        => true,
+                'moderated'     => false,
+                'settings'      => true,
+                'extra'         => [],
                 'created_by_id' => $userId,
                 'updated_by_id' => 0
             ],
@@ -674,19 +670,19 @@ class AvegaCmsInstallSeeder extends Seeder
                 'role_id'       => 2,
                 'parent'        => 0,
                 'module_id'     => 0,
-                'is_module'     => 0,
-                'is_system'     => 0,
-                'is_plugin'     => 1,
+                'is_module'     => false,
+                'is_system'     => false,
+                'is_plugin'     => true,
                 'slug'          => '',
-                'access'        => 1,
-                'self'          => 1,
-                'create'        => 1,
-                'read'          => 1,
-                'update'        => 1,
-                'delete'        => 1,
-                'moderated'     => 0,
-                'settings'      => 1,
-                'extra'         => '',
+                'access'        => true,
+                'self'          => true,
+                'create'        => true,
+                'read'          => true,
+                'update'        => true,
+                'delete'        => true,
+                'moderated'     => false,
+                'settings'      => true,
+                'extra'         => [],
                 'created_by_id' => $userId,
                 'updated_by_id' => 0
             ],
@@ -696,19 +692,19 @@ class AvegaCmsInstallSeeder extends Seeder
                 'role_id'       => 3,
                 'parent'        => 0,
                 'module_id'     => 0,
-                'is_module'     => 1,
-                'is_system'     => 0,
-                'is_plugin'     => 0,
+                'is_module'     => true,
+                'is_system'     => false,
+                'is_plugin'     => false,
                 'slug'          => '',
-                'access'        => 1,
-                'self'          => 1,
-                'create'        => 1,
-                'read'          => 1,
-                'update'        => 1,
-                'delete'        => 1,
-                'moderated'     => 0,
-                'settings'      => 0,
-                'extra'         => '',
+                'access'        => true,
+                'self'          => true,
+                'create'        => true,
+                'read'          => true,
+                'update'        => true,
+                'delete'        => true,
+                'moderated'     => false,
+                'settings'      => false,
+                'extra'         => [],
                 'created_by_id' => $userId,
                 'updated_by_id' => 0
             ],
@@ -717,19 +713,19 @@ class AvegaCmsInstallSeeder extends Seeder
                 'role_id'       => 3,
                 'parent'        => 0,
                 'module_id'     => 0,
-                'is_module'     => 0,
-                'is_system'     => 0,
-                'is_plugin'     => 1,
+                'is_module'     => false,
+                'is_system'     => false,
+                'is_plugin'     => true,
                 'slug'          => '',
-                'access'        => 1,
-                'self'          => 1,
-                'create'        => 1,
-                'read'          => 1,
-                'update'        => 1,
-                'delete'        => 1,
-                'moderated'     => 0,
-                'settings'      => 0,
-                'extra'         => '',
+                'access'        => true,
+                'self'          => true,
+                'create'        => true,
+                'read'          => true,
+                'update'        => true,
+                'delete'        => true,
+                'moderated'     => false,
+                'settings'      => false,
+                'extra'         => [],
                 'created_by_id' => $userId,
                 'updated_by_id' => 0
             ],
@@ -739,19 +735,19 @@ class AvegaCmsInstallSeeder extends Seeder
                 'role_id'       => 4,
                 'parent'        => 0,
                 'module_id'     => 0,
-                'is_module'     => 0,
-                'is_system'     => 0,
-                'is_plugin'     => 0,
+                'is_module'     => false,
+                'is_system'     => false,
+                'is_plugin'     => false,
                 'slug'          => '',
-                'access'        => 1,
-                'self'          => 1,
-                'create'        => 0,
-                'read'          => 0,
-                'update'        => 0,
-                'delete'        => 0,
-                'moderated'     => 0,
-                'settings'      => 0,
-                'extra'         => '',
+                'access'        => true,
+                'self'          => true,
+                'create'        => false,
+                'read'          => false,
+                'update'        => false,
+                'delete'        => false,
+                'moderated'     => false,
+                'settings'      => false,
+                'extra'         => [],
                 'created_by_id' => $userId,
                 'updated_by_id' => 0
             ],
@@ -760,29 +756,29 @@ class AvegaCmsInstallSeeder extends Seeder
                 'role_id'       => 4,
                 'parent'        => 0,
                 'module_id'     => 0,
-                'is_module'     => 0,
-                'is_system'     => 0,
-                'is_plugin'     => 1,
+                'is_module'     => false,
+                'is_system'     => false,
+                'is_plugin'     => true,
                 'slug'          => '',
-                'access'        => 1,
-                'self'          => 0,
-                'create'        => 0,
-                'read'          => 0,
-                'update'        => 0,
-                'delete'        => 0,
-                'moderated'     => 0,
-                'settings'      => 0,
-                'extra'         => '',
+                'access'        => true,
+                'self'          => false,
+                'create'        => false,
+                'read'          => false,
+                'update'        => false,
+                'delete'        => false,
+                'moderated'     => false,
+                'settings'      => false,
+                'extra'         => [],
                 'created_by_id' => $userId,
                 'updated_by_id' => 0
             ]
         ];
 
         foreach ($permissions as $permission) {
-            $defPermissions[] = (new PermissionsEntity($permission));
+            if ($this->PM->insert($permission) === false) {
+                d($this->PM->errors());
+            }
         }
-
-        $this->PM->insertBatch($defPermissions);
 
         $modules = $this->MM->select(['id', 'parent', 'is_system', 'is_plugin', 'slug'])->findAll();
         $roles   = $this->RM->select(['id', 'role'])->findAll();
@@ -796,13 +792,13 @@ class AvegaCmsInstallSeeder extends Seeder
                         $perm['module_id'] = $module->id;
                         $perm['slug']      = $module->slug;
 
-                        $moduleRolePermission[] = (new PermissionsEntity($perm));
+                        if ($this->PM->insert($perm) === false) {
+                            d($this->PM->errors());
+                        }
                     }
                 }
             }
         }
-
-        $this->PM->insertBatch($moduleRolePermission ?? null);
     }
 
     /**
@@ -871,7 +867,7 @@ class AvegaCmsInstallSeeder extends Seeder
             // .Env
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'env',
                 'key'           => 'timezone',
@@ -883,7 +879,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'env',
                 'key'           => 'secretKey',
@@ -895,7 +891,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'env',
                 'key'           => 'defLocale',
@@ -907,7 +903,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'env',
                 'key'           => 'useMultiLocales',
@@ -919,7 +915,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'env',
                 'key'           => 'useFrontend',
@@ -931,7 +927,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'env',
                 'key'           => 'useViewData',
@@ -945,7 +941,7 @@ class AvegaCmsInstallSeeder extends Seeder
             // Auth
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'useCors',
@@ -957,7 +953,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'useSession',
@@ -969,7 +965,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'allowPreRegistration',
@@ -981,7 +977,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 0,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'useToken',
@@ -993,7 +989,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'useJwt',
@@ -1005,7 +1001,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'jwtSecretKey',
@@ -1017,7 +1013,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'jwtSessionsLimit',
@@ -1029,7 +1025,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'jwtLiveTime',
@@ -1041,7 +1037,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'jwtRefreshTime',
@@ -1053,7 +1049,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'jwtAlg',
@@ -1065,7 +1061,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'useWhiteIpList',
@@ -1077,7 +1073,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'whiteIpList',
@@ -1089,7 +1085,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'loginTypeList',
@@ -1119,7 +1115,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'loginType',
@@ -1131,7 +1127,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'use2fa',
@@ -1143,7 +1139,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => '2faField',
@@ -1155,7 +1151,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'verifyCodeLength',
@@ -1167,7 +1163,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'verifyCodeTime',
@@ -1179,7 +1175,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'useRecovery',
@@ -1191,7 +1187,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'recoveryField',
@@ -1203,7 +1199,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'recoveryCodeTime',
@@ -1215,7 +1211,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'auth',
                 'key'           => 'authSmsMessage',
@@ -1229,7 +1225,7 @@ class AvegaCmsInstallSeeder extends Seeder
             // Seo
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'seo',
                 'key'           => 'useSitemap',
@@ -1241,7 +1237,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'seo',
                 'key'           => 'allowSiteIndexing',
@@ -1253,7 +1249,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'seo',
                 'key'           => 'sitemapBatchQty',
@@ -1265,7 +1261,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'seo',
                 'key'           => 'useRobotsTxt',
@@ -1277,7 +1273,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'seo',
                 'key'           => 'defRobotsTxt',
@@ -1291,7 +1287,7 @@ class AvegaCmsInstallSeeder extends Seeder
             // Email
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'email',
                 'key'           => 'fromEmail',
@@ -1303,7 +1299,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'email',
                 'key'           => 'fromName',
@@ -1315,7 +1311,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'email',
                 'key'           => 'replyEmail',
@@ -1327,7 +1323,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'email',
                 'key'           => 'replyName',
@@ -1339,7 +1335,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'email',
                 'key'           => 'returnEmail',
@@ -1351,7 +1347,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'email',
                 'key'           => 'userAgent',
@@ -1363,7 +1359,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'email',
                 'key'           => 'charset',
@@ -1375,7 +1371,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'email',
                 'key'           => 'mailPath',
@@ -1387,7 +1383,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'email',
                 'key'           => 'protocol',
@@ -1399,7 +1395,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'email',
                 'key'           => 'priority',
@@ -1411,7 +1407,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'email',
                 'key'           => 'mailType',
@@ -1423,7 +1419,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'email',
                 'key'           => 'smtpHost',
@@ -1435,7 +1431,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'email',
                 'key'           => 'smtpUser',
@@ -1447,7 +1443,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'email',
                 'key'           => 'smtpPass',
@@ -1459,7 +1455,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'email',
                 'key'           => 'smtpPort',
@@ -1471,7 +1467,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'email',
                 'key'           => 'smtpTimeout',
@@ -1483,7 +1479,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'email',
                 'key'           => 'smtpKeepalive',
@@ -1495,7 +1491,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'core',
                 'slug'          => 'email',
                 'key'           => 'smtpCrypto',
@@ -1509,7 +1505,7 @@ class AvegaCmsInstallSeeder extends Seeder
             // FileManager
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'filemanager',
                 'slug'          => 'uploadConfig',
                 'key'           => 'field',
@@ -1521,7 +1517,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'filemanager',
                 'slug'          => 'uploadConfig',
                 'key'           => 'maxSize',
@@ -1533,7 +1529,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'filemanager',
                 'slug'          => 'uploadConfig',
                 'key'           => 'extInImages',
@@ -1561,7 +1557,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'filemanager',
                 'slug'          => 'uploadConfig',
                 'key'           => 'extInFiles',
@@ -1613,7 +1609,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'filemanager',
                 'slug'          => 'uploadConfig',
                 'key'           => 'createWebp',
@@ -1625,7 +1621,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'filemanager',
                 'slug'          => 'uploadConfig',
                 'key'           => 'webpQuality',
@@ -1637,7 +1633,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'filemanager',
                 'slug'          => 'uploadConfig',
                 'key'           => 'thumbPrefix',
@@ -1649,7 +1645,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'filemanager',
                 'slug'          => 'uploadConfig',
                 'key'           => 'thumbQuality',
@@ -1661,7 +1657,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'filemanager',
                 'slug'          => 'uploadConfig',
                 'key'           => 'thumbMaintainRatio',
@@ -1673,7 +1669,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'filemanager',
                 'slug'          => 'uploadConfig',
                 'key'           => 'thumbMasterDim',
@@ -1685,7 +1681,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'filemanager',
                 'slug'          => 'uploadConfig',
                 'key'           => 'thumbWidth',
@@ -1697,7 +1693,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'filemanager',
                 'slug'          => 'uploadConfig',
                 'key'           => 'thumbHeight',
@@ -1711,7 +1707,7 @@ class AvegaCmsInstallSeeder extends Seeder
             // Content
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'content',
                 'slug'          => 'posts',
                 'key'           => 'postsPerPage',
@@ -1723,7 +1719,7 @@ class AvegaCmsInstallSeeder extends Seeder
             ],
             [
                 'module_id'     => 0,
-                'is_core'       => 1,
+                'is_core'       => true,
                 'entity'        => 'content',
                 'slug'          => 'posts',
                 'key'           => 'showAuthorPost',
@@ -1734,12 +1730,12 @@ class AvegaCmsInstallSeeder extends Seeder
                 'context'       => 'Settings.context.posts.showAuthorPost'
             ],
         ];
-        $list         = [];
 
         foreach ($settingsList as $item) {
-            $list[] = (new SettingsEntity($item));
+            if ($this->SM->insert($item) === false) {
+                d($this->SM->errors());
+            }
         }
-        $this->SM->insertBatch($list);
     }
 
     /**
