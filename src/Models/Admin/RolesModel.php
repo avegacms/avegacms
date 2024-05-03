@@ -68,8 +68,8 @@ class RolesModel extends AvegaCmsModel
 
     protected array $casts = [
         'self_auth'     => '?int-bool',
-        'module_id'     => 'int',
-        'role_entity'   => 'int',
+        'module_id'     => '?int',
+        //'role_entity'   => 'int',
         'active'        => '?int-bool',
         'priority'      => 'int',
         'created_by_id' => 'int',
