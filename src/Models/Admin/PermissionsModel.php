@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Models\Admin;
 
 use CodeIgniter\Model;
-use AvegaCms\Entities\PermissionsEntity;
 
 class PermissionsModel extends Model
 {
@@ -11,7 +12,7 @@ class PermissionsModel extends Model
     protected $table            = 'permissions';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = PermissionsEntity::class;
+    protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
@@ -43,7 +44,7 @@ class PermissionsModel extends Model
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
-    
+
     // Validation
     protected $validationRules      = [
         'id'            => ['rules' => 'if_exist|is_natural_no_zero'],
@@ -79,6 +80,29 @@ class PermissionsModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    protected array $casts = [
+        'id'            => 'int',
+        'role_id'       => 'int',
+        'parent'        => 'int',
+        'module_id'     => 'int',
+        'is_module'     => 'int',
+        'is_system'     => 'int',
+        'is_plugin'     => 'int',
+        'access'        => 'int',
+        'self'          => 'int',
+        'create'        => 'int',
+        'read'          => 'int',
+        'update'        => 'int',
+        'delete'        => 'int',
+        'moderated'     => 'int',
+        'settings'      => 'int',
+        'extra'         => '?json-array',
+        'created_by_id' => 'int',
+        'updated_by_id' => 'int',
+        'created_at'    => 'datetime',
+        'updated_at'    => 'datetime'
+    ];
 
     /**
      * @param  int  $roleId

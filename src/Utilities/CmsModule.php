@@ -4,7 +4,6 @@ namespace AvegaCms\Utilities;
 
 use AvegaCms\Config\AvegaCms;
 use AvegaCms\Enums\{MetaDataTypes, MetaStatuses};
-use AvegaCms\Entities\{MetaDataEntity, ContentEntity, ModulesEntity, PermissionsEntity};
 use AvegaCms\Models\Admin\{MetaDataModel, ContentModel, ModulesModel, PermissionsModel, RolesModel};
 use ReflectionException;
 use RuntimeException;
@@ -52,13 +51,13 @@ class CmsModule
             'updated_by_id' => 0
         ];
 
-        $parentId = $MM->insert((new ModulesEntity($module)));
+        $parentId = $MM->insert($module);
 
         if ( ! empty($moduleData['subModules'] ?? [])) {
             $subModules = [];
             foreach ($moduleData['subModules'] as $group) {
                 $subName      = self::prepName($group);
-                $subModules[] = (new ModulesEntity([
+                $subModules[] = [
                     'parent'        => $parentId,
                     'is_core'       => 0,
                     'is_plugin'     => 0,
@@ -75,7 +74,7 @@ class CmsModule
                     'active'        => 1,
                     'created_by_id' => 1,
                     'updated_by_id' => 0
-                ]));
+                ];
             }
 
             $MM->insertBatch($subModules);
@@ -91,7 +90,7 @@ class CmsModule
 
         foreach ($roles as $role) {
             foreach ($modules as $module) {
-                $permissions[] = (new PermissionsEntity([
+                $permissions[] = [
                     'role_id'       => $role,
                     'parent'        => $module->parent,
                     'module_id'     => $module->id,
@@ -110,7 +109,7 @@ class CmsModule
                     'extra'         => '',
                     'created_by_id' => 1,
                     'updated_by_id' => 0
-                ]));
+                ];
             }
         }
 
@@ -178,28 +177,26 @@ class CmsModule
         $meta = self::meta($key);
 
         $metaId = model(MetaDataModel::class)->insert(
-            (new MetaDataEntity(
-                [
-                    'parent'          => $parent ?? (($meta['parent'] != 0) ? $meta['parent'] : 1),
-                    'locale_id'       => 1, // TODO сделать настраиваемой
-                    'module_id'       => $meta['id'] ?? $parent,
-                    'slug'            => $slug ?? $meta['slug'],
-                    'creator_id'      => 1,
-                    'item_id'         => 0,
-                    'title'           => $title ?? $meta['name'],
-                    'url'             => $url ?? $meta['url'],
-                    'meta'            => '',
-                    'status'          => MetaStatuses::Publish->value,
-                    'meta_type'       => MetaDataTypes::Module->value,
-                    'in_sitemap'      => $meta['inSitemap'] ?? 0,
-                    'use_url_pattern' => 0,
-                    'created_by_id'   => 1
-                ]
-            ))
+            [
+                'parent'          => $parent ?? (($meta['parent'] != 0) ? $meta['parent'] : 1),
+                'locale_id'       => 1, // TODO сделать настраиваемой
+                'module_id'       => $meta['id'] ?? $parent,
+                'slug'            => $slug ?? $meta['slug'],
+                'creator_id'      => 1,
+                'item_id'         => 0,
+                'title'           => $title ?? $meta['name'],
+                'url'             => $url ?? $meta['url'],
+                'meta'            => '',
+                'status'          => MetaStatuses::Publish->value,
+                'meta_type'       => MetaDataTypes::Module->value,
+                'in_sitemap'      => $meta['inSitemap'] ?? 0,
+                'use_url_pattern' => 0,
+                'created_by_id'   => 1
+            ]
         );
 
         if ($metaId) {
-            model(ContentModel::class)->insert((new ContentEntity(['id' => $metaId])));
+            model(ContentModel::class)->insert(['id' => $metaId]);
         }
 
         return $metaId;

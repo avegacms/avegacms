@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Models\Admin;
 
 use CodeIgniter\Model;
-use AvegaCms\Entities\ModulesEntity;
 
 class ModulesModel extends Model
 {
@@ -11,7 +12,7 @@ class ModulesModel extends Model
     protected $table            = 'modules';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = ModulesEntity::class;
+    protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
@@ -76,6 +77,30 @@ class ModulesModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = ['clearCache'];
+
+    protected array $casts = [
+        'id'            => 'int',
+        'meta_id'       => '?int',
+        'parent'        => 'int',
+        'is_core'       => 'int',
+        'is_plugin'     => 'int',
+        'is_system'     => 'int',
+        'key'           => 'string',
+        'slug'          => 'string',
+        'class_name'    => 'string',
+        'name'          => 'string',
+        'version'       => 'string',
+        'description'   => 'string',
+        'extra'         => '?json-array',
+        'url_pattern'   => 'string',
+        'in_sitemap'    => '?int-bool',
+        'active'        => '?int-bool',
+        'created_by_id' => 'int',
+        'updated_by_id' => 'int',
+        'created_at'    => 'datetime',
+        'updated_at'    => 'datetime',
+        'num'           => 'int'
+    ];
 
     /**
      * @param  int  $parent

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Database\Seeds;
 
 use AvegaCms\Database\Factories\{MetaDataFactory, MetaContentFactory};
@@ -21,11 +23,8 @@ use AvegaCms\Models\Admin\{ModulesModel,
     EmailTemplateModel
 };
 use AvegaCms\Entities\{
-    ModulesEntity,
     LoginEntity,
-    RolesEntity,
     SettingsEntity,
-    UserRolesEntity,
     PermissionsEntity
 };
 use AvegaCms\Utilities\Exceptions\UploaderException;
@@ -119,7 +118,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'color'         => '#',
                 'path'          => '/',
                 'priority'      => 1,
-                'active'        => 1,
+                'active'        => true,
                 'created_by_id' => $userId,
                 'updated_by_id' => 0
             ],
@@ -129,7 +128,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'color'         => '#',
                 'path'          => '/',
                 'priority'      => 2,
-                'active'        => 1,
+                'active'        => true,
                 'created_by_id' => $userId,
                 'updated_by_id' => 0
             ],
@@ -139,7 +138,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'color'         => '#',
                 'path'          => '/',
                 'priority'      => 3,
-                'active'        => 1,
+                'active'        => true,
                 'created_by_id' => $userId,
                 'updated_by_id' => 0
             ],
@@ -149,16 +148,16 @@ class AvegaCmsInstallSeeder extends Seeder
                 'color'         => '#',
                 'path'          => '/',
                 'priority'      => 4,
-                'active'        => 1,
+                'active'        => true,
                 'created_by_id' => $userId,
                 'updated_by_id' => 0
             ]
         ];
 
-        $rolesEntity = new RolesEntity();
-
         foreach ($roles as $role) {
-            $this->RM->insert($rolesEntity->fill($role));
+            if ($this->RM->insert($role) === false) {
+                d($this->RM->errors());
+            }
         }
     }
 
@@ -170,13 +169,11 @@ class AvegaCmsInstallSeeder extends Seeder
     private function _createUserRoles(int $userId): void
     {
         $this->URM->insert(
-            (new UserRolesEntity())->fill(
-                [
-                    'role_id'       => 1,
-                    'user_id'       => $userId,
-                    'created_by_id' => $userId,
-                ]
-            )
+            [
+                'role_id'       => 1,
+                'user_id'       => $userId,
+                'created_by_id' => $userId,
+            ]
         );
     }
 
@@ -200,8 +197,8 @@ class AvegaCmsInstallSeeder extends Seeder
                 'version'       => $this->version,
                 'description'   => 'Cms.modules.description.settings',
                 'extra'         => '',
-                'in_sitemap'    => 0,
-                'active'        => 1,
+                'in_sitemap'    => false,
+                'active'        => true,
                 'created_by_id' => $userId,
                 'updated_by_id' => 0
             ],
@@ -217,8 +214,8 @@ class AvegaCmsInstallSeeder extends Seeder
                 'version'       => $this->version,
                 'description'   => 'Cms.modules.description.content',
                 'extra'         => '',
-                'in_sitemap'    => 1,
-                'active'        => 1,
+                'in_sitemap'    => false,
+                'active'        => true,
                 'created_by_id' => $userId,
                 'updated_by_id' => 0
             ],
@@ -234,8 +231,8 @@ class AvegaCmsInstallSeeder extends Seeder
                 'version'       => $this->version,
                 'description'   => 'Cms.modules.description.content_builder',
                 'extra'         => '',
-                'in_sitemap'    => 0,
-                'active'        => 1,
+                'in_sitemap'    => false,
+                'active'        => true,
                 'created_by_id' => $userId,
                 'updated_by_id' => 0
             ],
@@ -251,18 +248,14 @@ class AvegaCmsInstallSeeder extends Seeder
                 'version'       => $this->version,
                 'description'   => 'Cms.modules.description.uploader',
                 'extra'         => '',
-                'in_sitemap'    => 0,
-                'active'        => 1,
+                'in_sitemap'    => false,
+                'active'        => true,
                 'created_by_id' => $userId,
                 'updated_by_id' => 0
             ]
         ];
 
-        foreach ($modules as $module) {
-            $modulesEntity[] = (new ModulesEntity($module));
-        }
-
-        $this->MM->insertBatch($modulesEntity);
+        $this->MM->insertBatch($modules);
 
         unset($modulesEntity);
 
@@ -289,8 +282,8 @@ class AvegaCmsInstallSeeder extends Seeder
                     'version'       => $this->version,
                     'description'   => 'Cms.modules.description.roles',
                     'extra'         => '',
-                    'in_sitemap'    => 0,
-                    'active'        => 1,
+                    'in_sitemap'    => false,
+                    'active'        => true,
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
                 ],
@@ -306,8 +299,8 @@ class AvegaCmsInstallSeeder extends Seeder
                     'version'       => $this->version,
                     'description'   => 'Cms.modules.description.permissions',
                     'extra'         => '',
-                    'in_sitemap'    => 0,
-                    'active'        => 1,
+                    'in_sitemap'    => false,
+                    'active'        => true,
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
                 ],
@@ -323,8 +316,8 @@ class AvegaCmsInstallSeeder extends Seeder
                     'version'       => $this->version,
                     'description'   => 'Cms.modules.description.users',
                     'extra'         => '',
-                    'in_sitemap'    => 0,
-                    'active'        => 1,
+                    'in_sitemap'    => false,
+                    'active'        => true,
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
                 ],
@@ -340,8 +333,8 @@ class AvegaCmsInstallSeeder extends Seeder
                     'version'       => $this->version,
                     'description'   => 'Cms.modules.description.modules',
                     'extra'         => '',
-                    'in_sitemap'    => 0,
-                    'active'        => 1,
+                    'in_sitemap'    => false,
+                    'active'        => true,
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
                 ],
@@ -357,8 +350,8 @@ class AvegaCmsInstallSeeder extends Seeder
                     'version'       => $this->version,
                     'description'   => 'Cms.modules.description.locales',
                     'extra'         => '',
-                    'in_sitemap'    => 0,
-                    'active'        => 1,
+                    'in_sitemap'    => false,
+                    'active'        => true,
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
                 ],
@@ -374,8 +367,8 @@ class AvegaCmsInstallSeeder extends Seeder
                     'version'       => $this->version,
                     'description'   => 'Cms.modules.description.seo',
                     'extra'         => '',
-                    'in_sitemap'    => 0,
-                    'active'        => 1,
+                    'in_sitemap'    => false,
+                    'active'        => true,
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
                 ],
@@ -391,8 +384,8 @@ class AvegaCmsInstallSeeder extends Seeder
                     'version'       => $this->version,
                     'description'   => 'Cms.modules.description.settings',
                     'extra'         => '',
-                    'in_sitemap'    => 0,
-                    'active'        => 1,
+                    'in_sitemap'    => false,
+                    'active'        => true,
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
                 ],
@@ -408,8 +401,8 @@ class AvegaCmsInstallSeeder extends Seeder
                     'version'       => $this->version,
                     'description'   => 'Cms.modules.description.navigations',
                     'extra'         => '',
-                    'in_sitemap'    => 0,
-                    'active'        => 1,
+                    'in_sitemap'    => false,
+                    'active'        => true,
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
                 ],
@@ -425,8 +418,8 @@ class AvegaCmsInstallSeeder extends Seeder
                     'version'       => $this->version,
                     'description'   => 'Cms.modules.description.email_template',
                     'extra'         => '',
-                    'in_sitemap'    => 0,
-                    'active'        => 1,
+                    'in_sitemap'    => false,
+                    'active'        => true,
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
                 ]
@@ -444,8 +437,8 @@ class AvegaCmsInstallSeeder extends Seeder
                     'version'       => $this->version,
                     'description'   => 'Cms.modules.description.rubrics',
                     'extra'         => '',
-                    'in_sitemap'    => 1,
-                    'active'        => 1,
+                    'in_sitemap'    => true,
+                    'active'        => true,
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
                 ],
@@ -461,8 +454,8 @@ class AvegaCmsInstallSeeder extends Seeder
                     'version'       => $this->version,
                     'description'   => 'Cms.modules.description.pages',
                     'extra'         => '',
-                    'in_sitemap'    => 1,
-                    'active'        => 1,
+                    'in_sitemap'    => true,
+                    'active'        => true,
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
                 ],
@@ -478,8 +471,8 @@ class AvegaCmsInstallSeeder extends Seeder
                     'version'       => $this->version,
                     'description'   => 'Cms.modules.description.posts',
                     'extra'         => '',
-                    'in_sitemap'    => 1,
-                    'active'        => 1,
+                    'in_sitemap'    => true,
+                    'active'        => true,
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
                 ],
@@ -495,8 +488,8 @@ class AvegaCmsInstallSeeder extends Seeder
                     'version'       => $this->version,
                     'description'   => 'Cms.modules.description.tags',
                     'extra'         => '',
-                    'in_sitemap'    => 0,
-                    'active'        => 1,
+                    'in_sitemap'    => false,
+                    'active'        => true,
                     'created_by_id' => $userId,
                     'updated_by_id' => 0
                 ]
@@ -510,7 +503,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 foreach ($list as $item) {
                     if ($slug === $subModule->slug) {
                         $item['parent']  = $subModule->id;
-                        $modulesEntity[] = (new ModulesEntity($item));
+                        $modulesEntity[] = $item;
                     }
                 }
             }
