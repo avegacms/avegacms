@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace AvegaCms\Controllers;
 
 use CodeIgniter\Events\Events;
-use Config\Services;
+use AvegaCms\Config\Services;
 use AvegaCms\Enums\{EntityTypes, MetaDataTypes};
 use AvegaCms\Utilities\{Cms, CmsModule};
 use AvegaCms\Entities\Seo\MetaEntity;
@@ -22,7 +22,7 @@ class AvegaCmsFrontendController extends BaseController
 {
     protected string          $metaType        = 'module';
     protected bool            $useTemplateMeta = false; // Флаг использования кастомных метаданных
-    protected ?string         $moduleKey       = null;
+    protected ?string         $moduleKey       = null; // Уникальный ключ модуля исп. в таблице modules
     protected array           $metaParams      = []; // Массив для мета-параметров поиска в metadata
     protected array           $breadCrumbs     = [];
     protected MetaDataModel   $MDM;

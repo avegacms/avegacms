@@ -6,7 +6,7 @@ use CodeIgniter\Test\Fabricator;
 use AvegaCms\Enums\{FieldsReturnTypes, MetaDataTypes, MetaStatuses, UserStatuses};
 use AvegaCms\Utilities\{Cms, CmsModule, CmsFileManager};
 use CodeIgniter\Database\{BaseConnection, Seeder};
-use Config\Database;
+use AvegaCms\Config\Database;
 use CodeIgniter\CLI\CLI;
 use AvegaCms\Config\AvegaCms;
 use AvegaCms\Models\Admin\{ModulesModel,

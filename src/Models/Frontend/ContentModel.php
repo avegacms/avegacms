@@ -1,15 +1,16 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Models\Frontend;
 
-use AvegaCms\Entities\ContentEntity;
 use AvegaCms\Models\AvegaCmsModel;
 
 class ContentModel extends AvegaCmsModel
 {
     protected $DBGroup        = 'default';
     protected $table          = 'content';
-    protected $returnType     = ContentEntity::class;
+    protected $returnType     = 'object';
     protected $useSoftDeletes = false;
     protected $protectFields  = true;
     protected $allowedFields  = [];
@@ -48,6 +49,11 @@ class ContentModel extends AvegaCmsModel
     protected array  $filterEnumValues  = [];
     protected int    $limit             = 20;
     protected int    $maxLimit          = 100;
+
+    protected array $casts = [
+        'id'    => 'int',
+        'extra' => '?json-array'
+    ];
 
     /**
      * @param  int  $id

@@ -7,7 +7,7 @@ namespace AvegaCms\Traits;
 use CodeIgniter\Format\FormatterInterface;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\ResponseInterface;
-use Config\Services;
+use AvegaCms\Config\Services;
 
 trait CmsResponseTrait
 {

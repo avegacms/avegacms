@@ -6,7 +6,7 @@ use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\HTTP\RedirectResponse;
-use Config\Services;
+use AvegaCms\Config\Services;
 use AvegaCms\Utilities\{SeoUtils, Cms};
 use ReflectionException;
 

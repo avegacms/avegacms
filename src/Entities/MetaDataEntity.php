@@ -7,7 +7,7 @@ namespace AvegaCms\Entities;
 use AvegaCms\Models\Admin\MetaDataModel;
 use AvegaCms\Enums\{MetaDataTypes, MetaChangefreq};
 use AvegaCms\Utilities\{Cms, SeoUtils};
-use Config\Services;
+use AvegaCms\Config\Services;
 use AvegaCms\Entities\Seo\{BreadCrumbsEntity, MetaEntity, OpenGraphEntity, SiteMapEntity};
 use ReflectionException;
 

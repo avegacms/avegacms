@@ -4,8 +4,8 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Utilities;
 
-use Config\Mimes;
-use Config\Services;
+use AvegaCms\Config\Mimes;
+use AvegaCms\Config\Services;
 use CodeIgniter\Files\File;
 use CodeIgniter\Images\Exceptions\ImageException;
 use AvegaCms\Enums\FileTypes;
@@ -181,7 +181,7 @@ class CmsFileManager
 
         return (object) $result;
     }
-    
+
     /**
      * Регистрирует в файловом менеджере директорию
      * и создаёт её на сервере

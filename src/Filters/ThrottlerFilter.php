@@ -5,7 +5,7 @@ namespace AvegaCms\Filters;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
-use Config\Services;
+use AvegaCms\Config\Services;
 
 class ThrottlerFilter implements FilterInterface
 {
