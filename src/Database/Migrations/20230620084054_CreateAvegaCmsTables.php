@@ -39,7 +39,7 @@ class CreateAvegaCmsTables extends Migration
         'navigations'     => 'navigations',
         'email_templates' => 'email_templates',
     ];
-    
+
     /**
      * @return void
      */
@@ -322,14 +322,14 @@ class CreateAvegaCmsTables extends Migration
             // объект, содержащий информацию о доп. данных
             'status'          => [
                 'type'       => 'enum',
-                'constraint' => MetaStatuses::get('value'),
-                'default'    => MetaStatuses::Publish->value
+                'constraint' => MetaStatuses::get('name'),
+                'default'    => MetaStatuses::Publish->name
             ],
             // статус страницы
             'meta_type'       => [
                 'type'       => 'enum',
-                'constraint' => MetaDataTypes::get('value'),
-                'default'    => MetaDataTypes::Undefined->value
+                'constraint' => MetaDataTypes::get('name'),
+                'default'    => MetaDataTypes::Undefined->name
             ],
             // флаг добавления в карту сайта
             'in_sitemap'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],

@@ -2,6 +2,7 @@
 
 namespace AvegaCms\Database\Seeds;
 
+use AvegaCms\Database\Factories\{MetaDataFactory, MetaContentFactory};
 use CodeIgniter\Test\Fabricator;
 use AvegaCms\Enums\{FieldsReturnTypes, MetaDataTypes, MetaStatuses, UserStatuses};
 use AvegaCms\Utilities\{Cms, CmsModule, CmsFileManager};
@@ -20,7 +21,6 @@ use AvegaCms\Models\Admin\{ModulesModel,
     EmailTemplateModel
 };
 use AvegaCms\Entities\{
-    MetaDataEntity,
     ModulesEntity,
     LoginEntity,
     RolesEntity,
@@ -1831,7 +1831,7 @@ class AvegaCmsInstallSeeder extends Seeder
      */
     private function _setLocales(): void
     {
-        if (CLI::prompt('Use multi locales?', ['y', 'n']) === 'y') {
+        if (CLI::prompt('Use multi locales?', ['y', 'n']) === 'n') {
             Cms::settings('core.env.useMultiLocales', 1);
         }
         CLI::newLine();
@@ -1852,17 +1852,17 @@ class AvegaCmsInstallSeeder extends Seeder
         foreach ($locales as $locale) {
             // Создание главной страницы
             $mainId = $this->_createMetaData(
-                type: MetaDataTypes::Main->value,
+                type: MetaDataTypes::Main->name,
                 locale: $locale,
-                status: MetaStatuses::Publish->value
+                status: MetaStatuses::Publish->name
             );
 
             // Создание 404 страницы
             $this->_createMetaData(
-                type: MetaDataTypes::Page404->value,
+                type: MetaDataTypes::Page404->name,
                 locale: $locale,
                 parent: $mainId,
-                status: MetaStatuses::Publish->value
+                status: MetaStatuses::Publish->name
             );
         }
 
@@ -1893,7 +1893,7 @@ class AvegaCmsInstallSeeder extends Seeder
 
             $this->numPages = $num;
 
-            $mainIds = $this->MDM->where(['meta_type' => MetaDataTypes::Main->value])->findColumn('id');
+            $mainIds = $this->MDM->where(['meta_type' => MetaDataTypes::Main->name])->findColumn('id');
 
             foreach ($locales as $key => $locale) {
                 $this->_createSubPages($num, $nesting, $locale, $mainIds[$key]);
@@ -1922,7 +1922,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 ])->findColumn('id');
                 $mainPages       = array_column(
                     $this->MDM->select(['id', 'parent', 'locale_id', 'slug', 'use_url_pattern', 'url'])
-                        ->where(['meta_type' => MetaDataTypes::Main->value])->asArray()->findAll(),
+                        ->where(['meta_type' => MetaDataTypes::Main->name])->asArray()->findAll(),
                     null,
                     'locale_id'
                 );
@@ -1931,7 +1931,7 @@ class AvegaCmsInstallSeeder extends Seeder
                     $mainPage = $mainPages[$locale];
                     for ($i = 0; $rubrics > $i; $i++) {
                         $this->_createMetaData(
-                            type: MetaDataTypes::Rubric->value,
+                            type: MetaDataTypes::Rubric->name,
                             locale: $locale,
                             parent: $mainPage['id']
                         );
@@ -1962,7 +1962,7 @@ class AvegaCmsInstallSeeder extends Seeder
                     'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
                 ])->findColumn('id');
 
-                if ($this->MDM->where(['meta_type' => MetaDataTypes::Rubric->value])->findColumn('id') === null) {
+                if ($this->MDM->where(['meta_type' => MetaDataTypes::Rubric->name])->findColumn('id') === null) {
                     return;
                 }
 
@@ -1972,7 +1972,7 @@ class AvegaCmsInstallSeeder extends Seeder
                             ->where(
                                 [
                                     'locale_id' => $locale,
-                                    'meta_type' => MetaDataTypes::Rubric->value
+                                    'meta_type' => MetaDataTypes::Rubric->name
                                 ]
                             )->asArray()->findAll(),
                         'url',
@@ -1983,7 +1983,7 @@ class AvegaCmsInstallSeeder extends Seeder
                         CLI::showProgress($j++, $num);
                         $rubricId = array_rand($rubricsId);
                         $this->_createMetaData(
-                            type: MetaDataTypes::Post->value,
+                            type: MetaDataTypes::Post->name,
                             locale: $locale,
                             parent: $rubricId,
                             url: $rubricsId[$rubricId]
@@ -2075,31 +2075,30 @@ class AvegaCmsInstallSeeder extends Seeder
         ?string $status = null,
         ?string $url = null
     ): int {
-        $meta = (new Fabricator($this->MDM, null))->makeArray();
+        $meta = (new Fabricator(MetaDataFactory::class, null))->makeArray();
 
-        $meta['meta_type']       = $type;
-        $meta['locale_id']       = $locale;
-        $meta['creator_id']      = $creator;
-        $meta['module_id']       = $module;
-        $meta['parent']          = $parent;
-        $meta['item_id']         = $item_id;
-        $meta['use_url_pattern'] = 0;
+        $meta['meta_type']  = $type;
+        $meta['locale_id']  = $locale;
+        $meta['creator_id'] = $creator;
+        $meta['module_id']  = $module;
+        $meta['parent']     = $parent;
+        $meta['item_id']    = $item_id;
 
         switch ($type) {
-            case MetaDataTypes::Main->value:
+            case MetaDataTypes::Main->name:
                 $meta['url']        = '';
                 $meta['slug']       = 'main';
-                $meta['in_sitemap'] = 1;
+                $meta['in_sitemap'] = true;
                 break;
-            case MetaDataTypes::Rubric->value:
+            case MetaDataTypes::Rubric->name:
                 $meta['url'] = $meta['slug'];
                 break;
-            case MetaDataTypes::Post->value:
+            case MetaDataTypes::Post->name:
                 $meta['url'] = $url . '/' . $meta['slug'];
                 break;
-            case MetaDataTypes::Page404->value:
+            case MetaDataTypes::Page404->name:
                 $meta['url']        = $meta['slug'] = 'page-not-found';
-                $meta['in_sitemap'] = 0;
+                $meta['in_sitemap'] = false;
                 break;
         }
 
@@ -2108,11 +2107,14 @@ class AvegaCmsInstallSeeder extends Seeder
         }
 
         $meta['meta_sitemap'] = '';
-
-        if ($metaId = $this->MDM->insert((new MetaDataEntity($meta)))) {
-            $content       = (new Fabricator($this->CM, null))->makeArray();
+        if ($metaId = $this->MDM->insert($meta)) {
+            $content       = (new Fabricator(MetaContentFactory::class, null))->makeArray();
             $content['id'] = $metaId;
-            $this->CM->insert((new ContentEntity($content)));
+            if ($this->CM->insert($content) === false) {
+                d($this->CM->errors());
+            }
+        } else {
+            d($this->MDM->errors());
         }
 
         return $metaId;
@@ -2136,7 +2138,7 @@ class AvegaCmsInstallSeeder extends Seeder
                     for ($i = 1; $i <= $level; $i++) {
                         $key         = ($k > 1) ? $k - 1 : $k;
                         $pages[$k][] = $this->_createMetaData(
-                            type: MetaDataTypes::Page->value,
+                            type: MetaDataTypes::Page->name,
                             locale: $locale,
                             parent: ($k == 1) ? $parent : $pages[$key][array_rand($pages[$key])]
                         );

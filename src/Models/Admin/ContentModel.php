@@ -10,7 +10,7 @@ class ContentModel extends Model
 {
     protected $DBGroup        = 'default';
     protected $table          = 'content';
-    protected $returnType     = ContentEntity::class;
+    protected $returnType     = 'object';
     protected $useSoftDeletes = false;
     protected $protectFields  = true;
     protected $allowedFields  = [
@@ -42,12 +42,8 @@ class ContentModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    public function fake(Generator &$faker): array
-    {
-        return [
-            'id'      => 0,
-            'anons'   => $faker->paragraph(1),
-            'content' => $faker->paragraph(rand(6, 36))
-        ];
-    }
+    protected array $casts = [
+        'id'    => 'int',
+        'extra' => '?json-array'
+    ];
 }
