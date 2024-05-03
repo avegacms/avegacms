@@ -1,0 +1,149 @@
+#-------------------------
+# Operating Specific Junk Files
+#-------------------------
+
+# OS X
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# OS X Thumbnails
+._*
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# Linux
+*~
+# KDE directory preferences
+.directory
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
+
+#-------------------------
+# Environment Files
+#-------------------------
+# These should never be under version control,
+# as it poses a security risk.
+.env
+.vagrant
+Vagrantfile
+
+#-------------------------
+# AvegaCMS API
+#-------------------------
+app/
+public/
+writable/
+
+spark
+
+src/Config/App.php
+src/Config/Autoload.php
+src/Config/Cache.php
+src/Config/Constants.php
+src/Config/ContentSecurityPolicy.php
+src/Config/Cookie.php
+src/Config/CURLRequest.php
+src/Config/Database.php
+src/Config/DocTypes.php
+src/Config/Email.php
+src/Config/Encryption.php
+src/Config/Exceptions.php
+src/Config/Feature.php
+src/Config/Filters.php
+src/Config/ForeignCharacters.php
+src/Config/Format.php
+src/Config/Generators.php
+src/Config/Honeypot.php
+src/Config/Images.php
+src/Config/Kint.php
+src/Config/Logger.php
+src/Config/Migrations.php
+src/Config/Mimes.php
+src/Config/Modules.php
+src/Config/Pager.php
+src/Config/Paths.php
+src/Config/Publisher.php
+src/Config/Routing.php
+src/Config/Security.php
+src/Config/Session.php
+src/Config/Toolbar.php
+src/Config/UserAgents.php
+src/Config/Validation.php
+src/Config/View.php
+
+src/Views/template
+src/Views/template/*
+modules
+modules/*
+#-------------------------
+# Test Files
+#-------------------------
+tests/coverage*
+
+# Don't save phpunit under version control.
+phpunit
+
+#-------------------------
+# Composer
+#-------------------------
+vendor/
+
+#-------------------------
+# IDE / Development Files
+#-------------------------
+
+# Modules Testing
+_modules/*
+
+# phpenv local config
+.php-version
+
+# Jetbrains editors (PHPStorm, etc)
+../.idea/
+*.iml
+
+# Netbeans
+nbproject/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+.nb-gradle/
+
+# Sublime Text
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
+.phpintel
+/api/
+
+# Visual Studio Code
+.vscode/
+
+/results/
+/phpunit*.xml
+/.phpunit.*.cache
+
+/writable/
+/htdocs
+/.php-cs-fixer.dist.php
