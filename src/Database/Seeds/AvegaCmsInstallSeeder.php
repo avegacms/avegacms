@@ -2083,7 +2083,7 @@ class AvegaCmsInstallSeeder extends Seeder
         $meta->module_id  = $module;
         $meta->parent     = $parent;
         $meta->item_id    = $item_id;
-        $meta->status     = ! is_null($status) ? $meta->status : $status;
+        $meta->status     = is_null($status) ? $meta->status : $status;
 
         switch ($type) {
             case MetaDataTypes::Main->name:
@@ -2104,7 +2104,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 $meta->in_sitemap = false;
                 break;
         }
-        
+
         if ($metaId = $this->MDM->insert($meta)) {
             $content     = (new Fabricator(MetaContentFactory::class, null))->makeObject();
             $content->id = $metaId;

@@ -240,6 +240,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.url',
                 'metadata.slug',
                 'metadata.locale_id',
+                'metadata.meta_type',
                 'metadata.parent'
             ]
         )->whereIn('metadata.meta_type', [MetaDataTypes::Main->value, MetaDataTypes::Page->value]);
@@ -248,7 +249,7 @@ class MetaDataModel extends AvegaCmsModel
             return '';
         }
 
-        return match ($parent->metaType) {
+        return match ($parent->meta_type) {
             MetaDataTypes::Main->value,
             MetaDataTypes::Page404->value => '',
             default                       => ($parent->url === '/') ? '' : $parent->url . '/',
