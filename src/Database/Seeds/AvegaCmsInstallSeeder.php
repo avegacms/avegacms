@@ -5,8 +5,7 @@ namespace AvegaCms\Database\Seeds;
 use CodeIgniter\Test\Fabricator;
 use AvegaCms\Enums\{FieldsReturnTypes, MetaDataTypes, MetaStatuses, UserStatuses};
 use AvegaCms\Utilities\{Cms, CmsModule, CmsFileManager};
-use CodeIgniter\Database\{BaseConnection, Seeder};
-use AvegaCms\Config\Database;
+use CodeIgniter\Database\Seeder;
 use CodeIgniter\CLI\CLI;
 use AvegaCms\Config\AvegaCms;
 use AvegaCms\Models\Admin\{ModulesModel,
@@ -20,7 +19,7 @@ use AvegaCms\Models\Admin\{ModulesModel,
     LocalesModel,
     EmailTemplateModel
 };
-use AvegaCms\Entities\{ContentEntity,
+use AvegaCms\Entities\{
     MetaDataEntity,
     ModulesEntity,
     LoginEntity,
@@ -50,10 +49,13 @@ class AvegaCmsInstallSeeder extends Seeder
     protected MetaDataModel      $MDM;
     protected int                $numPages = 0;
 
-    public function __construct(Database $config, ?BaseConnection $db = null)
+    /**
+     * @return void
+     * @throws ReflectionException
+     * @throws UploaderException
+     */
+    public function run(): void
     {
-        parent::__construct($config, $db);
-
         $this->MM  = model(ModulesModel::class);
         $this->LM  = model(LoginModel::class);
         $this->SM  = model(SettingsModel::class);
@@ -64,15 +66,7 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->LLM = model(LocalesModel::class);
         $this->ETM = model(EmailTemplateModel::class);
         $this->MDM = model(MetaDataModel::class);
-    }
 
-    /**
-     * @return void
-     * @throws ReflectionException
-     * @throws UploaderException
-     */
-    public function run(): void
-    {
         cache()->clean();
 
         $this->_createSettings();

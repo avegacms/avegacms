@@ -39,18 +39,14 @@ class CreateAvegaCmsTables extends Migration
         'navigations'     => 'navigations',
         'email_templates' => 'email_templates',
     ];
-
-    public function __construct(?Forge $forge = null)
-    {
-        parent::__construct($forge);
-        $this->attributes = ($this->db->getPlatform() === 'MySQLi') ? Migrator::$attributes : [];
-    }
-
+    
     /**
      * @return void
      */
     public function up(): void
     {
+        $this->attributes = ($this->db->getPlatform() === 'MySQLi') ? Migrator::$attributes : [];
+
         /**
          * Таблица пользователей
          */
