@@ -15,7 +15,7 @@ class MetaDataFactory extends MetaDataModel
     /**
      * @throws Exception
      */
-    public function fake(Generator &$faker): array
+    public function fake(Generator &$faker)
     {
         // Test example
         $status = MetaStatuses::get('name');

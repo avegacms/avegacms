@@ -2075,41 +2075,39 @@ class AvegaCmsInstallSeeder extends Seeder
         ?string $status = null,
         ?string $url = null
     ): int {
-        $meta = (new Fabricator(MetaDataFactory::class, null))->makeArray();
+        $meta = (new Fabricator(MetaDataFactory::class, null))->makeObject();
 
-        $meta['meta_type']  = $type;
-        $meta['locale_id']  = $locale;
-        $meta['creator_id'] = $creator;
-        $meta['module_id']  = $module;
-        $meta['parent']     = $parent;
-        $meta['item_id']    = $item_id;
+        $meta->meta_type  = $type;
+        $meta->locale_id  = $locale;
+        $meta->creator_id = $creator;
+        $meta->module_id  = $module;
+        $meta->parent     = $parent;
+        $meta->item_id    = $item_id;
+        $meta->status     = ! is_null($status) ? $meta->status : $status;
 
         switch ($type) {
             case MetaDataTypes::Main->name:
-                $meta['url']        = '';
-                $meta['slug']       = 'main';
-                $meta['in_sitemap'] = true;
+                $meta->url        = '';
+                $meta->slug       = 'main';
+                $meta->in_sitemap = true;
+                $meta->status     = MetaStatuses::Publish->name;
+                $meta->sort       = 1;
                 break;
             case MetaDataTypes::Rubric->name:
-                $meta['url'] = $meta['slug'];
+                $meta->url = $meta->slug;
                 break;
             case MetaDataTypes::Post->name:
-                $meta['url'] = $url . '/' . $meta['slug'];
+                $meta->url = $url . '/' . $meta->slug;
                 break;
             case MetaDataTypes::Page404->name:
-                $meta['url']        = $meta['slug'] = 'page-not-found';
-                $meta['in_sitemap'] = false;
+                $meta->url        = $meta->slug = 'page-not-found';
+                $meta->in_sitemap = false;
                 break;
         }
-
-        if ( ! is_null($status)) {
-            $meta['status'] = $status;
-        }
-
-        $meta['meta_sitemap'] = '';
+        
         if ($metaId = $this->MDM->insert($meta)) {
-            $content       = (new Fabricator(MetaContentFactory::class, null))->makeArray();
-            $content['id'] = $metaId;
+            $content     = (new Fabricator(MetaContentFactory::class, null))->makeObject();
+            $content->id = $metaId;
             if ($this->CM->insert($content) === false) {
                 d($this->CM->errors());
             }
