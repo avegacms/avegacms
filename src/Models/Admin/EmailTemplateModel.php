@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Models\AvegaCmsModel;
-use AvegaCms\Entities\EmailTemplateEntity;
 
 class EmailTemplateModel extends AvegaCmsModel
 {
@@ -11,7 +12,7 @@ class EmailTemplateModel extends AvegaCmsModel
     protected $table            = 'email_templates';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = EmailTemplateEntity::class;
+    protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
@@ -89,6 +90,20 @@ class EmailTemplateModel extends AvegaCmsModel
     protected array  $filterEnumValues  = [];
     protected int    $limit             = 20;
     protected int    $maxLimit          = 100;
+
+    protected array $casts = [
+        'id'            => 'int',
+        'module_id'     => 'int',
+        'is_system'     => 'int',
+        'subject'       => 'json-array',
+        'content'       => 'json-array',
+        'variables'     => 'json-array',
+        'active'        => '?int-bool',
+        'created_by_id' => 'int',
+        'updated_by_id' => 'int',
+        'created_at'    => 'datetime',
+        'updated_at'    => 'datetime'
+    ];
 
     /**
      * @return $this
