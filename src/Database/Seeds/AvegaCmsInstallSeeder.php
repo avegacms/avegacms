@@ -74,7 +74,6 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->_createMainPages();
         $this->_createPages();
         $this->_createRubrics();
-        $this->_createPosts();
         $this->_createDefaultActions();
         $this->_fileManagerRegistration();
         $this->_createPublicFolders();
@@ -1926,6 +1925,8 @@ class AvegaCmsInstallSeeder extends Seeder
                         );
                     }
                 }
+
+                $this->_createPosts();
             }
         }
     }
@@ -2098,6 +2099,9 @@ class AvegaCmsInstallSeeder extends Seeder
         if ($metaId = $this->MDM->insert($meta)) {
             $content     = (new Fabricator(MetaContentFactory::class, null))->makeObject();
             $content->id = $metaId;
+            if ($meta->meta_type === MetaDataTypes::Page404->name) {
+                $content->anons = $content->content = '';
+            }
             if ($this->CM->insert($content) === false) {
                 d($this->CM->errors());
             }
