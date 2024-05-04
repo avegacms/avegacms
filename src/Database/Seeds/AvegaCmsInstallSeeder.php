@@ -192,7 +192,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'name'          => 'Cms.modules.name.settings',
                 'version'       => $this->version,
                 'description'   => 'Cms.modules.description.settings',
-                'extra'         => '',
+                'extra'         => [],
                 'in_sitemap'    => false,
                 'active'        => true,
                 'created_by_id' => $userId,
@@ -209,7 +209,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'name'          => 'Cms.modules.name.content',
                 'version'       => $this->version,
                 'description'   => 'Cms.modules.description.content',
-                'extra'         => '',
+                'extra'         => [],
                 'in_sitemap'    => false,
                 'active'        => true,
                 'created_by_id' => $userId,
@@ -226,7 +226,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'name'          => 'Cms.modules.name.content_builder',
                 'version'       => $this->version,
                 'description'   => 'Cms.modules.description.content_builder',
-                'extra'         => '',
+                'extra'         => [],
                 'in_sitemap'    => false,
                 'active'        => true,
                 'created_by_id' => $userId,
@@ -243,7 +243,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'name'          => 'Cms.modules.name.uploader',
                 'version'       => $this->version,
                 'description'   => 'Cms.modules.description.uploader',
-                'extra'         => '',
+                'extra'         => [],
                 'in_sitemap'    => false,
                 'active'        => true,
                 'created_by_id' => $userId,
@@ -251,7 +251,13 @@ class AvegaCmsInstallSeeder extends Seeder
             ]
         ];
 
-        $this->MM->insertBatch($modules);
+        foreach ($modules as $module) {
+            if ($this->MM->insert($module) === false) {
+                d($this->MM->errors());
+            }
+        }
+
+        //$this->MM->insertBatch($modules);
 
         unset($modulesEntity);
 
@@ -492,20 +498,18 @@ class AvegaCmsInstallSeeder extends Seeder
             ]
         ];
 
-        $modulesEntity = [];
-
         foreach ($subModules as $subModule) {
             foreach ($modules as $slug => $list) {
                 foreach ($list as $item) {
                     if ($slug === $subModule->slug) {
-                        $item['parent']  = $subModule->id;
-                        $modulesEntity[] = $item;
+                        $item['parent'] = $subModule->id;
+                        if ($this->MM->insert($item) === false) {
+                            d($this->MM->errors());
+                        }
                     }
                 }
             }
         }
-
-        $this->MM->insertBatch($modulesEntity);
     }
 
     /**
@@ -584,7 +588,7 @@ class AvegaCmsInstallSeeder extends Seeder
             [
                 'role_id'       => 1,
                 'parent'        => 0,
-                'module_id'     => false,
+                'module_id'     => 0,
                 'is_module'     => true,
                 'is_system'     => false,
                 'is_plugin'     => false,
@@ -1875,12 +1879,13 @@ class AvegaCmsInstallSeeder extends Seeder
                 'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
             ])->findColumn('id');
 
+            $num            = (int) $num;
             $this->numPages = $num;
 
             $mainIds = $this->MDM->where(['meta_type' => MetaDataTypes::Main->name])->findColumn('id');
 
             foreach ($locales as $key => $locale) {
-                $this->_createSubPages($num, $nesting, $locale, $mainIds[$key]);
+                $this->_createSubPages($num, (int) $nesting, $locale, $mainIds[$key]);
             }
 
             CLI::newLine();
@@ -1939,6 +1944,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 ['required', 'is_natural']
             ))
         ) {
+            $num = (int) $num;
             if ($num > 0) {
                 $useMultiLocales = Cms::settings('core.env.useMultiLocales');
 

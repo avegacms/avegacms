@@ -85,14 +85,7 @@ class ModulesModel extends Model
         'is_core'       => 'int',
         'is_plugin'     => 'int',
         'is_system'     => 'int',
-        'key'           => 'string',
-        'slug'          => 'string',
-        'class_name'    => 'string',
-        'name'          => 'string',
-        'version'       => 'string',
-        'description'   => 'string',
         'extra'         => '?json-array',
-        'url_pattern'   => 'string',
         'in_sitemap'    => '?int-bool',
         'active'        => '?int-bool',
         'created_by_id' => 'int',
@@ -190,7 +183,7 @@ class ModulesModel extends Model
 
             if (($all = $this->findAll()) !== null) {
                 foreach ($all as $item) {
-                    $modules[$item->key] = $item->toArray();
+                    $modules[$item->key] = (array) $item;
                 }
             }
 

@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Utilities;
 
-use AvegaCms\Entities\{ContentEntity, MetaDataEntity, SettingsEntity};
 use AvegaCms\Enums\{MetaDataTypes, MetaStatuses, FieldsReturnTypes};
 use AvegaCms\Models\Admin\{ContentModel, MetaDataModel, SettingsModel};
 use AvegaCms\Config\Services;
@@ -33,28 +34,26 @@ class Cms
         ?int $inSitemap = null
     ): mixed {
         $metaId = model(MetaDataModel::class)->insert(
-            (new MetaDataEntity(
-                [
-                    'parent'          => $parent ?? 1,
-                    'locale_id'       => $localeId ?? 1,
-                    'module_id'       => 0,
-                    'slug'            => $slug ?? '',
-                    'creator_id'      => 1,
-                    'item_id'         => 0,
-                    'title'           => $title,
-                    'url'             => $url ?? '',
-                    'meta'            => '',
-                    'status'          => MetaStatuses::Publish->value,
-                    'meta_type'       => MetaDataTypes::Page->value,
-                    'in_sitemap'      => $inSitemap ?? 1,
-                    'use_url_pattern' => 0,
-                    'created_by_id'   => 1
-                ]
-            ))
+            [
+                'parent'          => $parent ?? 1,
+                'locale_id'       => $localeId ?? 1,
+                'module_id'       => 0,
+                'slug'            => $slug ?? '',
+                'creator_id'      => 1,
+                'item_id'         => 0,
+                'title'           => $title,
+                'url'             => $url ?? '',
+                'meta'            => '',
+                'status'          => MetaStatuses::Publish->value,
+                'meta_type'       => MetaDataTypes::Page->value,
+                'in_sitemap'      => $inSitemap ?? 1,
+                'use_url_pattern' => 0,
+                'created_by_id'   => 1
+            ]
         );
 
         if ($metaId) {
-            model(ContentModel::class)->insert((new ContentEntity(['id' => $metaId])));
+            model(ContentModel::class)->insert(['id' => $metaId]);
         }
 
         return $metaId;
@@ -171,24 +170,22 @@ class Cms
             return $settings;
         } else {
             if (($id = $SM->getId($entity, $slug, $property)) > 0) {
-                return $SM->update($id, (new SettingsEntity(['value' => $value])));
+                return $SM->update($id, ['value' => $value]);
             } else {
                 return $SM->insert(
-                    (new SettingsEntity(
-                        [
-                            'module_id'     => $config['module_id'] ?? 0,
-                            'is_core'       => $config['is_core'] ?? 0,
-                            'entity'        => $entity,
-                            'slug'          => $slug ?? '',
-                            'key'           => $property ?? '',
-                            'value'         => $value,
-                            'default_value' => $config['default_value'] ?? '',
-                            'return_type'   => $config['return_type'] ?? FieldsReturnTypes::String->value,
-                            'label'         => $config['label'] ?? '',
-                            'context'       => $config['context'] ?? '',
-                            'sort'          => $config['sort'] ?? 100
-                        ]
-                    ))
+                    [
+                        'module_id'     => $config['module_id'] ?? 0,
+                        'is_core'       => $config['is_core'] ?? 0,
+                        'entity'        => $entity,
+                        'slug'          => $slug ?? '',
+                        'key'           => $property ?? '',
+                        'value'         => $value,
+                        'default_value' => $config['default_value'] ?? '',
+                        'return_type'   => $config['return_type'] ?? FieldsReturnTypes::String->value,
+                        'label'         => $config['label'] ?? '',
+                        'context'       => $config['context'] ?? '',
+                        'sort'          => $config['sort'] ?? 100
+                    ]
                 );
             }
         }
