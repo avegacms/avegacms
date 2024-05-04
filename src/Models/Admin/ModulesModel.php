@@ -209,7 +209,7 @@ class ModulesModel extends Model
                 $ids = [];
                 foreach ($all as $item) {
                     $ids[]              = $item->id;
-                    $schema[$item->key] = $item->toArray();
+                    $schema[$item->key] = (array) $item;
                 }
                 if (($sub = $this->_getModulesSiteMapSchema($ids)) !== null) {
                     foreach ($schema as $k => $list) {
