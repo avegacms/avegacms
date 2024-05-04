@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace AvegaCms\Controllers\Api\Admin\Settings;
 
@@ -9,7 +9,6 @@ use CodeIgniter\Database\Exceptions\DatabaseException;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\{SettingsModel, ModulesModel};
 use ReflectionException;
-use AvegaCms\Entities\SettingsEntity;
 use AvegaCms\Enums\FieldsReturnTypes;
 
 class Settings extends AvegaCmsAdminAPI
@@ -56,7 +55,7 @@ class Settings extends AvegaCmsAdminAPI
 
             $data['created_by_id'] = $this->userData->userId;
 
-            if ( ! $id = $this->SM->insert((new SettingsEntity($data)))) {
+            if ( ! $id = $this->SM->insert($data)) {
                 return $this->failValidationErrors($this->SM->errors());
             }
 

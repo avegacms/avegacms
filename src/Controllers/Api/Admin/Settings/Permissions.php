@@ -1,13 +1,12 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace AvegaCms\Controllers\Api\Admin\Settings;
 
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\{PermissionsModel, RolesModel};
-use AvegaCms\Entities\PermissionsEntity;
 use ReflectionException;
 
 class Permissions extends AvegaCmsAdminAPI

@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Models\AvegaCmsModel;
-use AvegaCms\Entities\SettingsEntity;
 use AvegaCms\Enums\FieldsReturnTypes;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
@@ -14,7 +15,7 @@ class SettingsModel extends AvegaCmsModel
     protected $table            = 'settings';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = SettingsEntity::class;
+    protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
@@ -91,6 +92,17 @@ class SettingsModel extends AvegaCmsModel
     public string $sortFieldAlias    = 's';
     public int    $limit             = 20;
     public int    $maxLimit          = 100;
+
+    protected array $casts = [
+        'id'            => 'int',
+        'module_id'     => 'int',
+        'is_core'       => '?int-bool',
+        'sort'          => 'int',
+        'created_by_id' => 'int',
+        'updated_by_id' => 'int',
+        'created_at'    => 'datetime',
+        'updated_at'    => 'datetime'
+    ];
 
     public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
     {

@@ -1,7 +1,8 @@
 <?php
 
-namespace AvegaCms\Enums;
+declare(strict_types = 1);
 
+namespace AvegaCms\Enums;
 
 enum EntityTypes: string
 {

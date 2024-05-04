@@ -4,8 +4,7 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Utilities;
 
-use AvegaCms\Config\Mimes;
-use AvegaCms\Config\Services;
+use Config\{Mimes, Services};
 use CodeIgniter\Files\File;
 use CodeIgniter\Images\Exceptions\ImageException;
 use AvegaCms\Enums\FileTypes;

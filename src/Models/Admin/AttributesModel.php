@@ -11,7 +11,7 @@ class AttributesModel extends AvegaCmsModel
     protected $table            = 'attributes';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = AttributesEntity::class;
+    protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [];

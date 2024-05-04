@@ -28,7 +28,7 @@ class MetaDataModel extends AvegaCmsModel
         'slug',
         'creator_id',
         'title',
-        'title',
+        'url',
         'sort',
         'meta',
         'extra_data',
@@ -59,6 +59,7 @@ class MetaDataModel extends AvegaCmsModel
         'module_id'             => ['rules' => 'if_exist|required|is_natural'],
         'item_id'               => ['rules' => 'if_exist|required|is_natural'],
         'slug'                  => ['rules' => 'if_exist|permit_empty'],
+        'url'                   => ['rules' => 'if_exist|permit_empty'],
         'creator_id'            => ['rules' => 'if_exist|required|is_natural'],
         'title'                 => [
             'label' => 'Название',
@@ -86,7 +87,7 @@ class MetaDataModel extends AvegaCmsModel
 
     // Callbacks
     protected $allowCallbacks = true;
-    protected $beforeInsert   = ['beforeInsert'];
+    protected $beforeInsert   = ['beforeMetaDataInsert'];
     protected $afterInsert    = [];
     protected $beforeUpdate   = [];
     protected $afterUpdate    = [];
@@ -139,9 +140,9 @@ class MetaDataModel extends AvegaCmsModel
         'item_id'         => 'int',
         'sort'            => 'int',
         'meta'            => '?json-array',
+        'meta_sitemap'    => '?json-array',
         'extra_data'      => '?json-array',
         'in_sitemap'      => '?int-bool',
-        'meta_sitemap'    => '?json-array',
         'use_url_pattern' => '?int-bool',
         'rubrics'         => '?json-array',
         'created_by_id'   => 'int',
@@ -179,7 +180,7 @@ class MetaDataModel extends AvegaCmsModel
      * @return array
      * @throws ReflectionException
      */
-    protected function beforeInsert(array $data): array
+    protected function beforeMetaDataInsert(array $data): array
     {
         helper(['url']);
         $meta = $data['data'];
@@ -191,27 +192,34 @@ class MetaDataModel extends AvegaCmsModel
         if (isset($meta['url']) && empty($meta['url'])) {
             $url         = ! empty($meta['slug'] ?? '') ? $meta['slug'] : mb_url_title(strtolower($meta['title']));
             $meta['url'] = match ($meta['meta_type'] ?? '') {
-                MetaDataTypes::Main->value => Cms::settings('core.env.useMultiLocales') ? SeoUtils::Locales($meta['locale_id'])['slug'] : '/',
-                MetaDataTypes::Page->value => $this->getParentUrl($meta['parent'] ?? 0) . $url,
-                default                    => strtolower($url)
+                MetaDataTypes::Main->name => Cms::settings('core.env.useMultiLocales') ? SeoUtils::Locales($meta['locale_id'])['slug'] : '/',
+                MetaDataTypes::Page->name => $this->getParentUrl($meta['parent'] ?? 0) . $url,
+                default                   => strtolower($url)
             };
         }
 
-        if (isset($meta['meta']) && empty($meta['meta'])) {
+        if (isset($meta['meta'])) {
+            $meta['meta']                = is_array($meta['meta']) ? $meta['meta'] : [];
             $meta['meta']['title']       = ! empty($meta['meta']['title'] ?? '') ? $meta['meta']['title'] : $meta['title'];
             $meta['meta']['keywords']    = ! empty($meta['meta']['keywords'] ?? '') ? $meta['meta']['keywords'] : '';
             $meta['meta']['description'] = ! empty($meta['meta']['description'] ?? '') ? $meta['meta']['description'] : '';
-            $meta['meta']['breadcrumb']  = $meta['meta']['breadcrumb'] ?? '';
 
-            $meta['meta']['og:title'] = ! empty($meta['meta']['og:title'] ?? '') ?? $meta['title'];
-            $meta['meta']['og:type']  = ! empty($meta['meta']['og:type'] ?? '') ?? 'website';
+            $meta['meta']['breadcrumb'] = $meta['meta']['breadcrumb'] ?? '';
+
+            $meta['meta']['og:title'] = ! empty($meta['meta']['og:title'] ?? '') ? $meta['meta']['og:title'] : $meta['title'];
+            $meta['meta']['og:type']  = ! empty($meta['meta']['og:type'] ?? '') ? $meta['meta']['og:type'] : 'website';
             $meta['meta']['og:url']   = $meta['meta']['og:url'] ?? $meta['url'];
             $meta['meta']['og:image'] = $meta['meta']['og:image'] ?? 0;
+
+            $meta['meta'] = json_encode($meta['meta']);
         }
 
-        if (isset($meta['meta_sitemap']) && empty($meta['meta_sitemap'])) {
+        if (isset($meta['meta_sitemap'])) {
+            $meta['meta_sitemap']               = is_array($meta['meta_sitemap']) ? $meta['meta_sitemap'] : [];
             $meta['meta_sitemap']['priority']   = $meta['meta_sitemap']['priority'] ?? 50;
             $meta['meta_sitemap']['changefreq'] = $meta['meta_sitemap']['changefreq'] ?? SitemapChangefreqs::Monthly->value;
+
+            $meta['meta_sitemap'] = json_encode($meta['meta_sitemap']);
         }
 
         $data['data'] = $meta;
@@ -232,6 +240,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.url',
                 'metadata.slug',
                 'metadata.locale_id',
+                'metadata.meta_type',
                 'metadata.parent'
             ]
         )->whereIn('metadata.meta_type', [MetaDataTypes::Main->value, MetaDataTypes::Page->value]);
@@ -240,7 +249,7 @@ class MetaDataModel extends AvegaCmsModel
             return '';
         }
 
-        return match ($parent->metaType) {
+        return match ($parent->meta_type) {
             MetaDataTypes::Main->value,
             MetaDataTypes::Page404->value => '',
             default                       => ($parent->url === '/') ? '' : $parent->url . '/',

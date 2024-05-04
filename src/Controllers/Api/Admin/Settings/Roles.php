@@ -1,13 +1,12 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace AvegaCms\Controllers\Api\Admin\Settings;
 
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\{RolesModel, PermissionsModel, UserRolesModel};
-use AvegaCms\Entities\PermissionsEntity;
 use ReflectionException;
 
 class Roles extends AvegaCmsAdminAPI
@@ -53,7 +52,7 @@ class Roles extends AvegaCmsAdminAPI
         foreach ($defaultPermissions as $permission) {
             $permission['role_id']       = $id;
             $permission['created_by_id'] = $this->userData->userId;
-            $rolePermissions[]           = (new PermissionsEntity($permission));
+            $rolePermissions[]           = $permission;
         }
 
         if ( ! $this->PM->insertBatch($rolePermissions)) {

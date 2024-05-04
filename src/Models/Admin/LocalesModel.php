@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Models\AvegaCmsModel;
-use AvegaCms\Entities\LocalesEntity;
 
 class LocalesModel extends AvegaCmsModel
 {
@@ -11,7 +12,7 @@ class LocalesModel extends AvegaCmsModel
     protected $table            = 'locales';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = LocalesEntity::class;
+    protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
@@ -65,6 +66,18 @@ class LocalesModel extends AvegaCmsModel
     protected $beforeDelete   = [];
     protected $afterDelete    = ['clearCacheLocales'];
 
+    protected array $casts = [
+        'id'            => 'int',
+        'parent'        => 'int',
+        'extra'         => '?json-array',
+        'is_default'    => '?int-bool',
+        'active'        => '?int-bool',
+        'created_by_id' => 'int',
+        'updated_by_id' => 'int',
+        'created_at'    => 'datetime',
+        'updated_at'    => 'datetime'
+    ];
+
     /**
      * @param  int  $id
      * @return array|object|null
@@ -99,7 +112,7 @@ class LocalesModel extends AvegaCmsModel
             }
             $locales = [];
             foreach ($this->findAll() as $locale) {
-                $locales[] = $locale->toArray();
+                $locales[] = (array) $locale;
             }
             return $locales;
         });

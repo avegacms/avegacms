@@ -46,12 +46,4 @@ class UserRolesEntity extends Entity
         'extra'     => 'json-array',
         'self_auth' => 'integer'
     ];
-
-    /**
-     * @return string|null
-     */
-    public function getAvatar(): string|null
-    {
-        return ( ! empty($this->attributes['avatar'])) ? base_url('/uploads/users/' . $this->attributes['avatar']) : null;
-    }
 }
