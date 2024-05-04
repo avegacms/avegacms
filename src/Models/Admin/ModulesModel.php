@@ -215,7 +215,7 @@ class ModulesModel extends Model
                     foreach ($schema as $k => $list) {
                         foreach ($sub as $item) {
                             if ($list['id'] === $item->parent) {
-                                $schema[$k]['sub'][$item->slug] = $item->toArray();
+                                $schema[$k]['sub'][$item->slug] = (array) $item;
                             }
                         }
                     }
