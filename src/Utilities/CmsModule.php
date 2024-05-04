@@ -115,9 +115,7 @@ class CmsModule
             }
         }
 
-        if ($PM->insertBatch($permissions) === false) {
-            d($PM->errors());
-        }
+        $PM->insertBatch($permissions);
 
         cache()->delete('ModulesMetaData');
     }
