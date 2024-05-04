@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Models\Admin;
 
-use CodeIgniter\Model;
-use AvegaCms\Entities\ContentEntity;
-use Faker\Generator;
+use AvegaCms\Models\AvegaCmsModel;
 
-class ContentModel extends Model
+class ContentModel extends AvegaCmsModel
 {
     protected $DBGroup        = 'default';
     protected $table          = 'content';
