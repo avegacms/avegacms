@@ -57,9 +57,9 @@ class ContentModel extends AvegaCmsModel
 
     /**
      * @param  int  $id
-     * @return array|object|null
+     * @return array|null
      */
-    public function getContent(int $id): array|object|null
+    public function getContent(int $id): array|null
     {
         $this->builder()->select(
             [
@@ -71,6 +71,6 @@ class ContentModel extends AvegaCmsModel
             ]
         )->join('metadata', 'metadata.id = content.id');
 
-        return $this->find($id);
+        return $this->asArray()->find($id);
     }
 }

@@ -5,12 +5,7 @@ declare(strict_types = 1);
 namespace AvegaCms\Models\Frontend;
 
 use AvegaCms\Models\AvegaCmsModel;
-
-//use AvegaCms\Entities\MetaDataEntity;
-use AvegaCms\Utilities\Cms;
-use AvegaCms\Utilities\SeoUtils;
-use CodeIgniter\Database\ConnectionInterface;
-use CodeIgniter\Validation\ValidationInterface;
+use AvegaCms\Utilities\{Cms, SeoUtils};
 use AvegaCms\Enums\{MetaStatuses, MetaDataTypes, SitemapChangefreqs};
 
 class MetaDataModel extends AvegaCmsModel
@@ -115,10 +110,10 @@ class MetaDataModel extends AvegaCmsModel
 
         $this->builder()->whereIn('metadata.meta_type',
             [
-                MetaDataTypes::Main->value,
-                MetaDataTypes::Page->value,
-                MetaDataTypes::Rubric->value,
-                MetaDataTypes::Post->value
+                MetaDataTypes::Main->name,
+                MetaDataTypes::Page->name,
+                MetaDataTypes::Rubric->name,
+                MetaDataTypes::Post->name
             ]
         )->where(
             [
@@ -142,7 +137,7 @@ class MetaDataModel extends AvegaCmsModel
 
         $this->builder()->where(
             [
-                'metadata.meta_type' => MetaDataTypes::Page404->value,
+                'metadata.meta_type' => MetaDataTypes::Page404->name,
                 'metadata.locale_id' => $locale
             ]
         );
@@ -155,7 +150,7 @@ class MetaDataModel extends AvegaCmsModel
      * @param  int|null  $clearLast
      * @return array
      */
-    public function getMetaMap(int $id, ?int $clearLast = null): array
+    public function getMetaMap(int $id, ?int $clearLast = null): array|object|null
     {
         $level = 7;
         $this->builder()->from('metadata AS md_' . $level)->where(['md_' . $level . '.id' => $id]);
@@ -192,8 +187,8 @@ class MetaDataModel extends AvegaCmsModel
         )->whereIn('metadata.id', $list)
             ->whereNotIn('metadata.meta_type',
                 [
-                    MetaDataTypes::Page404->value,
-                    MetaDataTypes::Undefined->value
+                    MetaDataTypes::Page404->name,
+                    MetaDataTypes::Undefined->name
                 ]
             )->orderBy('metadata.parent', 'DESC');
 
@@ -232,7 +227,7 @@ class MetaDataModel extends AvegaCmsModel
             ->where(
                 [
                     'metadata.module_id' => $moduleId,
-                    'metadata.meta_type' => MetaDataTypes::Module->value,
+                    'metadata.meta_type' => MetaDataTypes::Module->name,
                     ...$filter
                 ]
             )->groupEnd();
@@ -293,39 +288,12 @@ class MetaDataModel extends AvegaCmsModel
 
         $this->builder()->where(
             [
-                'metadata.meta_type' => MetaDataTypes::Post->value,
+                'metadata.meta_type' => MetaDataTypes::Post->name,
                 'metadata.module_id' => 0
             ]
         )->groupEnd();
 
         return $this->filter($filter);
-    }
-
-    /**
-     * @param  array  $data
-     * @return array
-     */
-    protected function beforeInsert(array $data): array
-    {
-        helper(['url']);
-        $meta = $data['data'];
-
-        if ((isset($meta['slug']) && empty($meta['slug'])) && ! empty($meta['title'])) {
-            $meta['slug'] = strtolower(mb_substr(mb_url_title($meta['title']), 0, 120));
-        }
-
-        if (isset($meta['url']) && empty($meta['url'])) {
-            $url         = ! empty($meta['slug'] ?? '') ? $meta['slug'] : mb_url_title(strtolower($meta['title']));
-            $meta['url'] = match ($meta['meta_type'] ?? '') {
-                MetaDataTypes::Main->value => Cms::settings('core.env.useMultiLocales') ? SeoUtils::Locales($this->rawData['locale_id'])['slug'] : '/',
-                MetaDataTypes::Page->value => $this->getParentPageUrl($meta['parent'] ?? 0) . $url,
-                default                    => strtolower($url)
-            };
-        }
-
-        $data['data'] = $meta;
-
-        return $data;
     }
 
     /**
@@ -335,11 +303,11 @@ class MetaDataModel extends AvegaCmsModel
     {
         $this->builder()
             ->groupStart()
-            ->where(['metadata.status' => MetaStatuses::Publish->value])
+            ->where(['metadata.status' => MetaStatuses::Publish->name])
             ->orGroupStart()
             ->where(
                 [
-                    'metadata.status'        => MetaStatuses::Future->value,
+                    'metadata.status'        => MetaStatuses::Future->name,
                     'metadata.publish_at <=' => date('Y-m-d H:i:s')
                 ]
             )->groupEnd()
