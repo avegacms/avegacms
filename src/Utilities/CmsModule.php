@@ -47,7 +47,7 @@ class CmsModule
                     ($moduleData['urlPatterns'][$slug] ?? '') :
                     $moduleData['urlPatterns']) :
                 $slug,
-            'in_sitemap'    => $moduleData['inSitemap'] ?? 0,
+            'in_sitemap'    => boolval($moduleData['inSitemap'] ?? 0),
             'active'        => true,
             'created_by_id' => 1,
             'updated_by_id' => 0
@@ -72,7 +72,7 @@ class CmsModule
                     'description'   => $name . '.module.title.' . $subName,
                     'extra'         => [],
                     'url_pattern'   => $moduleData['urlPatterns'][$group] ?? '',
-                    'in_sitemap'    => $moduleData['inSitemap'] ?? 0,
+                    'in_sitemap'    => boolval($moduleData['inSitemap'] ?? 0),
                     'active'        => true,
                     'created_by_id' => 1,
                     'updated_by_id' => 0
