@@ -168,6 +168,8 @@ class CmsModule
      * @param  string|null  $url
      * @param  int|null  $parent
      * @param  string|null  $slug
+     * @param  array|null  $meta
+     * @param  array|null  $meta_sitemap
      * @return mixed
      * @throws ReflectionException
      */
@@ -176,25 +178,28 @@ class CmsModule
         ?string $title = null,
         ?string $url = null,
         ?int $parent = null,
-        ?string $slug = null
+        ?string $slug = null,
+        ?array $meta = null,
+        ?array $meta_sitemap = null
     ): mixed {
-        $meta = self::meta($key);
+        $metaData = self::meta($key);
 
         $MDM = new MetaDataModel();
 
         $page = [
-            'parent'          => $parent ?? (($meta['parent'] != 0) ? $meta['parent'] : 1),
+            'parent'          => $parent ?? (($metaData['parent'] != 0) ? $metaData['parent'] : 1),
             'locale_id'       => 1, // TODO сделать настраиваемой
-            'module_id'       => $meta['id'] ?? $parent,
-            'slug'            => $slug ?? $meta['slug'],
+            'module_id'       => $metaData['id'] ?? $parent,
+            'slug'            => $slug ?? $metaData['slug'],
             'creator_id'      => 1,
             'item_id'         => 0,
-            'title'           => $title ?? $meta['name'],
-            'url'             => $url ?? $meta['url'],
-            'meta'            => [],
+            'title'           => $title ?? $metaData['name'],
+            'url'             => $url ?? $metaData['url'],
+            'meta'            => is_array($meta) ? $meta : [],
+            'meta_sitemap'    => is_array($meta_sitemap) ? $meta_sitemap : [],
             'status'          => MetaStatuses::Publish->name,
             'meta_type'       => MetaDataTypes::Module->name,
-            'in_sitemap'      => boolval($meta['inSitemap'] ?? 0),
+            'in_sitemap'      => boolval($metaData['inSitemap'] ?? 0),
             'use_url_pattern' => false,
             'created_by_id'   => 1
         ];
@@ -204,7 +209,7 @@ class CmsModule
         } else {
             d($MDM->errors());
         }
-        
+
         return $metaId;
     }
 }
