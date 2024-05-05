@@ -180,29 +180,31 @@ class CmsModule
     ): mixed {
         $meta = self::meta($key);
 
-        $metaId = (new MetaDataModel())->insert(
-            [
-                'parent'          => $parent ?? (($meta['parent'] != 0) ? $meta['parent'] : 1),
-                'locale_id'       => 1, // TODO сделать настраиваемой
-                'module_id'       => $meta['id'] ?? $parent,
-                'slug'            => $slug ?? $meta['slug'],
-                'creator_id'      => 1,
-                'item_id'         => 0,
-                'title'           => $title ?? $meta['name'],
-                'url'             => $url ?? $meta['url'],
-                'meta'            => [],
-                'status'          => MetaStatuses::Publish->value,
-                'meta_type'       => MetaDataTypes::Module->value,
-                'in_sitemap'      => boolval($meta['inSitemap'] ?? 0),
-                'use_url_pattern' => false,
-                'created_by_id'   => 1
-            ]
-        );
+        $MDM = new MetaDataModel();
 
-        if ($metaId) {
+        $page = [
+            'parent'          => $parent ?? (($meta['parent'] != 0) ? $meta['parent'] : 1),
+            'locale_id'       => 1, // TODO сделать настраиваемой
+            'module_id'       => $meta['id'] ?? $parent,
+            'slug'            => $slug ?? $meta['slug'],
+            'creator_id'      => 1,
+            'item_id'         => 0,
+            'title'           => $title ?? $meta['name'],
+            'url'             => $url ?? $meta['url'],
+            'meta'            => [],
+            'status'          => MetaStatuses::Publish->name,
+            'meta_type'       => MetaDataTypes::Module->name,
+            'in_sitemap'      => boolval($meta['inSitemap'] ?? 0),
+            'use_url_pattern' => false,
+            'created_by_id'   => 1
+        ];
+
+        if ($metaId = $MDM->insert($page)) {
             (new ContentModel())->insert(['id' => $metaId]);
+        } else {
+            d($MDM->errors());
         }
-
+        
         return $metaId;
     }
 }
