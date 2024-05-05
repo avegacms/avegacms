@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Database\Seeds;
 
+use CodeIgniter\I18n\Time;
 use AvegaCms\Database\Factories\{MetaDataFactory, MetaContentFactory};
 use CodeIgniter\Test\Fabricator;
 use AvegaCms\Enums\{FieldsReturnTypes, MetaDataTypes, MetaStatuses, UserStatuses};
@@ -2052,7 +2053,7 @@ class AvegaCmsInstallSeeder extends Seeder
      * @param  string|null  $status
      * @param  string|null  $url
      * @return int
-     * @throws ReflectionException
+     * @throws ReflectionException|Exception
      */
     private function _createMetaData(
         string $type,
@@ -2064,8 +2065,9 @@ class AvegaCmsInstallSeeder extends Seeder
         ?string $status = null,
         ?string $url = null
     ): int {
-        $meta = (new Fabricator(MetaDataFactory::class, null))->makeObject();
+        helper(['date']);
 
+        $meta             = (new Fabricator(MetaDataFactory::class, null))->makeObject();
         $meta->meta_type  = $type;
         $meta->locale_id  = $locale;
         $meta->creator_id = $creator;
@@ -2081,6 +2083,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 $meta->in_sitemap = true;
                 $meta->status     = MetaStatuses::Publish->name;
                 $meta->sort       = 1;
+                $meta->publish_at = new Time(date('Y-m-d H:i:s', now()));
                 break;
             case MetaDataTypes::Rubric->name:
                 $meta->url = $meta->slug;
@@ -2091,6 +2094,7 @@ class AvegaCmsInstallSeeder extends Seeder
             case MetaDataTypes::Page404->name:
                 $meta->url        = $meta->slug = 'page-not-found';
                 $meta->in_sitemap = false;
+                $meta->publish_at = new Time(date('Y-m-d H:i:s', now()));
                 break;
         }
 
