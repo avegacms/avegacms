@@ -35,6 +35,9 @@ class PageSeoBuilder
      */
     public function meta(): object
     {
+        $locales = SeoUtils::Locales();
+        $data    = SeoUtils::LocaleData($this->data->locale_id);
+
         $meta['title']       = esc($this->data->meta['title']);
         $meta['og:title']    = esc($this->data->meta['og:title']);
         $meta['keywords']    = esc($this->data->meta['keywords']);
@@ -45,9 +48,6 @@ class PageSeoBuilder
             $meta['keywords']    = esc(strtr($this->data->meta['keywords'], $this->dictionary));
             $meta['description'] = esc(strtr($this->data->meta['description'], $this->dictionary));
         }
-
-        $locales = SeoUtils::Locales();
-        $data    = SeoUtils::LocaleData($this->data->locale_id);
 
         $meta['slug'] = $this->data->slug;
         $meta['lang'] = $locales[$this->data->locale_id]['locale'];

@@ -182,7 +182,8 @@ class CmsModule
         ?int $parent = null,
         ?string $slug = null,
         ?array $meta = null,
-        ?array $meta_sitemap = null
+        ?array $meta_sitemap = null,
+        ?bool $in_sitemap = false
     ): mixed {
         helper(['date']);
 
@@ -201,7 +202,7 @@ class CmsModule
             'meta_sitemap'    => is_array($meta_sitemap) ? $meta_sitemap : [],
             'status'          => MetaStatuses::Publish->name,
             'meta_type'       => MetaDataTypes::Module->name,
-            'in_sitemap'      => boolval($metaData['inSitemap'] ?? 0),
+            'in_sitemap'      => boolval($in_sitemap ?? ($metaData['inSitemap'] ?? 0)),
             'use_url_pattern' => false,
             'publish_at'      => new Time(date('Y-m-d H:i:s', now())),
             'created_by_id'   => 1
