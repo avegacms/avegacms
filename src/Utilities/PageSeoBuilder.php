@@ -22,10 +22,12 @@ class PageSeoBuilder
      */
     public array|null $dictionary;
 
-    public function __construct(object $data, ?array $dictionary = null)
+    public function __construct(object $data)
     {
-        $this->data       = $data;
-        $this->dictionary = $dictionary;
+        $this->dictionary = $data->MetaDictionary ?? null;
+        unset($data->MetaDictionary);
+
+        $this->data = $data;
     }
 
     /**
