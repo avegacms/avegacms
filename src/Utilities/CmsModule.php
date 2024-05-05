@@ -180,7 +180,7 @@ class CmsModule
     ): mixed {
         $meta = self::meta($key);
 
-        $metaId = model(MetaDataModel::class)->insert(
+        $metaId = (new MetaDataModel())->insert(
             [
                 'parent'          => $parent ?? (($meta['parent'] != 0) ? $meta['parent'] : 1),
                 'locale_id'       => 1, // TODO сделать настраиваемой
@@ -193,14 +193,14 @@ class CmsModule
                 'meta'            => [],
                 'status'          => MetaStatuses::Publish->value,
                 'meta_type'       => MetaDataTypes::Module->value,
-                'in_sitemap'      => $meta['inSitemap'] ?? 0,
-                'use_url_pattern' => 0,
+                'in_sitemap'      => boolval($meta['inSitemap'] ?? 0),
+                'use_url_pattern' => false,
                 'created_by_id'   => 1
             ]
         );
 
         if ($metaId) {
-            model(ContentModel::class)->insert(['id' => $metaId]);
+            (new ContentModel())->insert(['id' => $metaId]);
         }
 
         return $metaId;
