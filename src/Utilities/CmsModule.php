@@ -5,10 +5,12 @@ declare(strict_types = 1);
 namespace AvegaCms\Utilities;
 
 use AvegaCms\Config\AvegaCms;
+use CodeIgniter\I18n\Time;
 use AvegaCms\Enums\{MetaDataTypes, MetaStatuses};
 use AvegaCms\Models\Admin\{MetaDataModel, ContentModel, ModulesModel, PermissionsModel, RolesModel};
 use ReflectionException;
 use RuntimeException;
+use Exception;
 
 class CmsModule
 {
@@ -171,7 +173,7 @@ class CmsModule
      * @param  array|null  $meta
      * @param  array|null  $meta_sitemap
      * @return mixed
-     * @throws ReflectionException
+     * @throws ReflectionException|Exception
      */
     public static function createModulePage(
         string $key,
@@ -182,11 +184,11 @@ class CmsModule
         ?array $meta = null,
         ?array $meta_sitemap = null
     ): mixed {
+        helper(['date']);
+
         $metaData = self::meta($key);
-
-        $MDM = new MetaDataModel();
-
-        $page = [
+        $MDM      = new MetaDataModel();
+        $page     = [
             'parent'          => $parent ?? (($metaData['parent'] != 0) ? $metaData['parent'] : 1),
             'locale_id'       => 1, // TODO сделать настраиваемой
             'module_id'       => $metaData['id'] ?? $parent,
@@ -201,6 +203,7 @@ class CmsModule
             'meta_type'       => MetaDataTypes::Module->name,
             'in_sitemap'      => boolval($metaData['inSitemap'] ?? 0),
             'use_url_pattern' => false,
+            'publish_at'      => new Time(date('Y-m-d H:i:s', now())),
             'created_by_id'   => 1
         ];
 
