@@ -174,7 +174,7 @@ class CmsModule
      * @param  array|null  $meta_sitemap
      * @param  bool|null  $in_sitemap
      * @return mixed
-     * @throws ReflectionException
+     * @throws ReflectionException|Exception
      */
     public static function createModulePage(
         string $key,

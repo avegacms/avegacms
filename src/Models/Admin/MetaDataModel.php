@@ -199,7 +199,7 @@ class MetaDataModel extends AvegaCmsModel
         }
 
         if (isset($meta['meta'])) {
-            $meta['meta']                = is_array($meta['meta']) ? $meta['meta'] : [];
+            $meta['meta']                = json_decode($meta['meta'], true);
             $meta['meta']['title']       = ! empty($meta['meta']['title'] ?? '') ? $meta['meta']['title'] : $meta['title'];
             $meta['meta']['keywords']    = ! empty($meta['meta']['keywords'] ?? '') ? $meta['meta']['keywords'] : '';
             $meta['meta']['description'] = ! empty($meta['meta']['description'] ?? '') ? $meta['meta']['description'] : '';
@@ -215,7 +215,7 @@ class MetaDataModel extends AvegaCmsModel
         }
 
         if (isset($meta['meta_sitemap'])) {
-            $meta['meta_sitemap']               = is_array($meta['meta_sitemap']) ? $meta['meta_sitemap'] : [];
+            $meta['meta_sitemap']               = json_decode($meta['meta_sitemap'], true);
             $meta['meta_sitemap']['priority']   = $meta['meta_sitemap']['priority'] ?? 50;
             $meta['meta_sitemap']['changefreq'] = $meta['meta_sitemap']['changefreq'] ?? SitemapChangefreqs::Monthly->value;
 
