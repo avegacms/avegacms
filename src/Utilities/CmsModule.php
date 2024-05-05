@@ -53,13 +53,14 @@ class CmsModule
             'updated_by_id' => 0
         ];
 
-        $parentId = $MM->insert($module);
+        if (($parentId = $MM->insert($module) === false)) {
+            d($MM->errors());
+        }
 
         if ( ! empty($moduleData['subModules'] ?? [])) {
-            $subModules = [];
             foreach ($moduleData['subModules'] as $group) {
-                $subName      = self::prepName($group);
-                $subModules[] = [
+                $subName    = self::prepName($group);
+                $subModules = [
                     'parent'        => $parentId,
                     'is_core'       => false,
                     'is_plugin'     => false,
@@ -77,9 +78,10 @@ class CmsModule
                     'created_by_id' => 1,
                     'updated_by_id' => 0
                 ];
+                if ($MM->insert($subModules) === false) {
+                    d($MM->errors());
+                }
             }
-
-            $MM->insertBatch($subModules);
         }
 
         array_unshift($moduleData['subModules'], $slug);
@@ -88,11 +90,9 @@ class CmsModule
 
         $roles = $RM->whereIn('role', $moduleData['roles'])->findColumn('id');
 
-        $permissions = [];
-
         foreach ($roles as $role) {
             foreach ($modules as $module) {
-                $permissions[] = [
+                $permissions = [
                     'role_id'       => $role,
                     'parent'        => $module->parent,
                     'module_id'     => $module->id,
@@ -112,11 +112,11 @@ class CmsModule
                     'created_by_id' => 1,
                     'updated_by_id' => 0
                 ];
-            }
-        }
 
-        if ($PM->insertBatch($permissions) === false) {
-            d($PM->errors());
+                if ($PM->insert($permissions) === false) {
+                    d($PM->errors());
+                }
+            }
         }
 
         cache()->delete('ModulesMetaData');
@@ -180,7 +180,7 @@ class CmsModule
     ): mixed {
         $meta = self::meta($key);
 
-        $metaId = model(MetaDataModel::class)->insert(
+        $metaId = (new MetaDataModel())->insert(
             [
                 'parent'          => $parent ?? (($meta['parent'] != 0) ? $meta['parent'] : 1),
                 'locale_id'       => 1, // TODO сделать настраиваемой
@@ -193,14 +193,14 @@ class CmsModule
                 'meta'            => [],
                 'status'          => MetaStatuses::Publish->value,
                 'meta_type'       => MetaDataTypes::Module->value,
-                'in_sitemap'      => $meta['inSitemap'] ?? 0,
-                'use_url_pattern' => 0,
+                'in_sitemap'      => boolval($meta['inSitemap'] ?? 0),
+                'use_url_pattern' => false,
                 'created_by_id'   => 1
             ]
         );
 
         if ($metaId) {
-            model(ContentModel::class)->insert(['id' => $metaId]);
+            (new ContentModel())->insert(['id' => $metaId]);
         }
 
         return $metaId;

@@ -10,7 +10,6 @@ use AvegaCms\Enums\MetaStatuses;
 use AvegaCms\Utilities\SeoUtils;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\{ContentModel, MetaDataModel};
-use AvegaCms\Entities\{MetaDataEntity, ContentEntity};
 use ReflectionException;
 
 class Pages extends AvegaCmsAdminAPI
@@ -68,13 +67,13 @@ class Pages extends AvegaCmsAdminAPI
 
         unset($data['anons'], $data['content'], $data['extra']);
 
-        if ( ! $id = $this->MDM->insert((new MetaDataEntity($data)))) {
+        if ( ! $id = $this->MDM->insert($data)) {
             return $this->failValidationErrors($this->MDM->errors());
         }
 
         $content['meta_id'] = $id;
 
-        if ($this->CM->insert((new ContentEntity($content))) === false) {
+        if ($this->CM->insert($content) === false) {
             return $this->failValidationErrors($this->CM->errors());
         }
 
@@ -120,11 +119,11 @@ class Pages extends AvegaCmsAdminAPI
 
         unset($data['creator_id'], $data['anons'], $data['content'], $data['extra']);
 
-        if ($this->MDM->save((new MetaDataEntity($data))) === false) {
+        if ($this->MDM->save($data) === false) {
             return $this->failValidationErrors($this->MDM->errors());
         }
 
-        if ($this->CM->where(['meta_id' => $id])->update(null, (new ContentEntity($content))) === false) {
+        if ($this->CM->where(['meta_id' => $id])->update(null, $content) === false) {
             return $this->failValidationErrors($this->CM->errors());
         }
 
@@ -148,7 +147,7 @@ class Pages extends AvegaCmsAdminAPI
 
         $data['updated_by_id'] = $this->userData->userId;
 
-        if ($this->MDM->save((new MetaDataEntity($data))) === false) {
+        if ($this->MDM->save($data) === false) {
             return $this->failValidationErrors($this->MDM->errors());
         }
 
