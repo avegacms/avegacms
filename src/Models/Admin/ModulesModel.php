@@ -4,9 +4,9 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Models\Admin;
 
-use CodeIgniter\Model;
+use AvegaCms\Models\AvegaCmsModel;
 
-class ModulesModel extends Model
+class ModulesModel extends AvegaCmsModel
 {
     protected $DBGroup          = 'default';
     protected $table            = 'modules';
