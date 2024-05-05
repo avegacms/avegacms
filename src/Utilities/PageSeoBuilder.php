@@ -51,14 +51,24 @@ class PageSeoBuilder
 
         $meta['slug'] = $this->data->slug;
         $meta['lang'] = $locales[$this->data->locale_id]['locale'];
-        $meta['url']  = $this->data->url;
+        $meta['url']  = base_url(
+            strtolower(
+                $this->data->use_url_pattern ?
+                    str_ireplace(
+                        ['{id}', '{slug}', '{locale_id}', '{parent}'],
+                        [$this->data->id, $this->data->slug, $this->data->locale_id, $this->data->parent],
+                        $this->data->url
+                    ) :
+                    $this->data->url
+            )
+        );
 
         $meta['openGraph'] = (object) [
             'locale'   => $meta['lang'],
             'siteName' => esc($data['app_name']),
             'title'    => $meta['og:title'],
             'type'     => esc($this->data->meta['og:type']),
-            'url'      => base_url($meta['url']),
+            'url'      => $meta['url'],
             'image'    => $this->data->meta['og:image'] //TODO подумать как лучше получать картинку для OG
         ];
 
