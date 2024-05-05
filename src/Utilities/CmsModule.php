@@ -173,8 +173,9 @@ class CmsModule
      * @param  array|null  $meta
      * @param  array|null  $meta_sitemap
      * @param  bool|null  $in_sitemap
+     * @param  bool|null  $use_url_pattern
      * @return mixed
-     * @throws ReflectionException|Exception
+     * @throws ReflectionException
      */
     public static function createModulePage(
         string $key,
@@ -184,7 +185,8 @@ class CmsModule
         ?string $slug = null,
         ?array $meta = null,
         ?array $meta_sitemap = null,
-        ?bool $in_sitemap = false
+        ?bool $in_sitemap = false,
+        ?bool $use_url_pattern = false
     ): mixed {
         helper(['date']);
 
@@ -204,7 +206,7 @@ class CmsModule
             'status'          => MetaStatuses::Publish->name,
             'meta_type'       => MetaDataTypes::Module->name,
             'in_sitemap'      => boolval($in_sitemap ?? ($metaData['inSitemap'] ?? 0)),
-            'use_url_pattern' => false,
+            'use_url_pattern' => $use_url_pattern,
             'publish_at'      => new Time(date('Y-m-d H:i:s', now())),
             'created_by_id'   => 1
         ];
