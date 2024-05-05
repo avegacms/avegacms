@@ -172,8 +172,8 @@ class CmsModule
      * @param  string|null  $slug
      * @param  array|null  $meta
      * @param  array|null  $meta_sitemap
-     * @param  bool|null  $in_sitemap
-     * @param  bool|null  $use_url_pattern
+     * @param  bool  $in_sitemap
+     * @param  bool  $use_url_pattern
      * @return mixed
      * @throws ReflectionException
      */
@@ -185,8 +185,8 @@ class CmsModule
         ?string $slug = null,
         ?array $meta = null,
         ?array $meta_sitemap = null,
-        ?bool $in_sitemap = false,
-        ?bool $use_url_pattern = false
+        bool $in_sitemap = false,
+        bool $use_url_pattern = false
     ): mixed {
         helper(['date']);
 
