@@ -53,7 +53,7 @@ class CmsModule
             'updated_by_id' => 0
         ];
 
-        if (($parentId = $MM->insert($module) === false)) {
+        if (($parentId = $MM->insert($module)) === false) {
             d($MM->errors());
         }
 
