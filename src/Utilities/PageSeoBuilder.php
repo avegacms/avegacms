@@ -63,12 +63,12 @@ class PageSeoBuilder
         );
 
         $meta['open_graph'] = (object) [
-            'locale'   => $meta['lang'],
-            'siteName' => esc($data['app_name']),
-            'title'    => $meta['title'],
-            'type'     => esc($this->data->meta['og:type']),
-            'url'      => $meta['url'],
-            'image'    => $this->data->meta['og:image'] //TODO подумать как лучше получать картинку для OG
+            'locale'    => $meta['lang'],
+            'site_name' => esc($data['app_name']),
+            'title'     => $meta['title'],
+            'type'      => esc($this->data->meta['og:type']),
+            'url'       => $meta['url'],
+            'image'     => $this->data->meta['og:image'] //TODO подумать как лучше получать картинку для OG
         ];
 
 
