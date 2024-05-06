@@ -39,12 +39,11 @@ class PageSeoBuilder
         $data    = SeoUtils::LocaleData($this->data->locale_id);
 
         $meta['title']       = esc($this->data->meta['title']);
-        $meta['og:title']    = esc($this->data->meta['og:title']);
         $meta['keywords']    = esc($this->data->meta['keywords']);
         $meta['description'] = esc($this->data->meta['description']);
 
         if ($this->dictionary !== null) {
-            $meta['title']       = $meta['og:title'] = esc(strtr($this->data->meta['title'], $this->dictionary));
+            $meta['title']       = esc(strtr($this->data->meta['title'], $this->dictionary));
             $meta['keywords']    = esc(strtr($this->data->meta['keywords'], $this->dictionary));
             $meta['description'] = esc(strtr($this->data->meta['description'], $this->dictionary));
         }
@@ -63,16 +62,17 @@ class PageSeoBuilder
             )
         );
 
-        $meta['openGraph'] = (object) [
+        $meta['open_graph'] = (object) [
             'locale'   => $meta['lang'],
             'siteName' => esc($data['app_name']),
-            'title'    => $meta['og:title'],
+            'title'    => $meta['title'],
             'type'     => esc($this->data->meta['og:type']),
             'url'      => $meta['url'],
             'image'    => $this->data->meta['og:image'] //TODO подумать как лучше получать картинку для OG
         ];
 
-        if ($meta['useMultiLocales'] = Cms::settings('core.env.useMultiLocales')) {
+
+        if ($meta['use_multi_locales'] = Cms::settings('core.env.useMultiLocales')) {
             foreach ($locales as $locale) {
                 $meta['alternate'][] = [
                     'hreflang' => ($this->data->locale_id === $locale['id']) ? 'x-default' : $locale['slug'],
