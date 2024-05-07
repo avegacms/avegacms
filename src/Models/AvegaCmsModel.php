@@ -220,11 +220,13 @@ class AvegaCmsModel extends Model
                     case 'search':
                     case 'where':
 
+                        $fieldMapFlag = '';
+                        
                         if ($type === 'where') {
                             foreach ($this->filterWhereSings as $sign) {
                                 if (str_starts_with($k, $sign)) {
-                                    $this->fieldMapFlag = $sign;
-                                    $k                  = str_ireplace($sign, '', $k);
+                                    $fieldMapFlag = $sign;
+                                    $k            = str_ireplace($sign, '', $k);
                                     break;
                                 }
                             }
@@ -239,7 +241,7 @@ class AvegaCmsModel extends Model
                             $this->filterFieldsMap[$type][$key] = [
                                 'field' => $field,
                                 'value' => $value,
-                                'flag'  => $this->fieldMapFlag
+                                'flag'  => $fieldMapFlag
                             ];
                             break;
                         }
