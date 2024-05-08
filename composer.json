@@ -11,8 +11,8 @@
   ],
   "require": {
     "php": "^8.1",
-    "codeigniter4/framework": "^4.3",
-    "codeigniter4/translations": "^4.3",
+    "codeigniter4/framework": "^v4.5.1",
+    "codeigniter4/translations": "^v4.5.0",
     "firebase/php-jwt": "^6.8",
     "ext-gd": "*",
     "ext-zip": "*",
