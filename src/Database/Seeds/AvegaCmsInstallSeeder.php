@@ -71,7 +71,7 @@ class AvegaCmsInstallSeeder extends Seeder
         $this->_createPermissions($userId);
         $this->_createLocales($userId);
         $this->_createEmailSystemTemplate($userId);
-        $this->_setLocales();
+        //$this->_setLocales();
         $this->_createMainPages();
         $this->_createPages();
         $this->_createRubrics();
@@ -1817,7 +1817,7 @@ class AvegaCmsInstallSeeder extends Seeder
      */
     private function _setLocales(): void
     {
-        if (CLI::prompt('Use multi locales?', ['y', 'n']) === 'n') {
+        if (CLI::prompt('Use multi locales?', ['y', 'n']) === 'y') {
             Cms::settings('core.env.useMultiLocales', 1);
         }
         CLI::newLine();
