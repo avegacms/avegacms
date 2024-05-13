@@ -150,9 +150,9 @@ class MetaDataModel extends AvegaCmsModel
     /**
      * @param  int  $id
      * @param  int|null  $clearLast
-     * @return object|null
+     * @return array
      */
-    public function getMetaMap(int $id, ?int $clearLast = null): object|null
+    public function getMetaMap(int $id, ?int $clearLast = null): array
     {
         $this->builder()->from('metadata AS md_' . $this->level)->where(['md_' . $this->level . '.id' => $id]);
         for ($i = $this->level; $i > 0; $i--) {
@@ -169,7 +169,7 @@ class MetaDataModel extends AvegaCmsModel
         }
 
         if (empty($list)) {
-            return null;
+            return [];
         }
 
         $this->builder()->select(
@@ -195,7 +195,7 @@ class MetaDataModel extends AvegaCmsModel
 
         $this->checkStatus();
 
-        return (object) $this->findAll();
+        return $this->findAll();
     }
 
     /**

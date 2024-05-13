@@ -16,17 +16,17 @@ use ReflectionException;
 
 class AvegaCmsFrontendController extends BaseController
 {
-    protected string        $metaType        = 'Module';
-    protected bool          $useTemplateMeta = false; // Флаг использования кастомных метаданных
-    protected ?string       $moduleKey       = null; // Уникальный ключ модуля исп. в таблице modules
-    protected array         $metaParams      = []; // Массив для мета-параметров поиска в metadata
-    protected array         $breadCrumbs     = [];
-    protected MetaDataModel $MDM;
-    protected object|null   $dataEntity      = null;
-    protected object|null   $parentMeta      = null;
-    protected ?array        $customerContent = null; // Массив пользовательского контента
-    protected ?array        $content         = null;
-    protected ?Pager        $pager           = null;
+    protected string            $metaType        = 'Module';
+    protected bool              $useTemplateMeta = false; // Флаг использования кастомных метаданных
+    protected ?string           $moduleKey       = null; // Уникальный ключ модуля исп. в таблице modules
+    protected array             $metaParams      = []; // Массив для мета-параметров поиска в metadata
+    protected array             $breadCrumbs     = [];
+    protected MetaDataModel     $MDM;
+    protected object|null       $dataEntity      = null;
+    protected array|object|null $parentMeta      = null;
+    protected ?array            $customerContent = null; // Массив пользовательского контента
+    protected ?array            $content         = null;
+    protected ?Pager            $pager           = null;
 
     /**
      * @throws ReflectionException
@@ -147,7 +147,7 @@ class AvegaCmsFrontendController extends BaseController
         }
 
         if ($this->dataEntity->meta_type !== MetaDataTypes::Main->name
-            && is_null($this->parentMeta = $this->MDM->getMetaMap($this->dataEntity->parent ?? $this->dataEntity->id,
+            && empty($this->parentMeta = $this->MDM->getMetaMap($this->dataEntity->parent ?? $this->dataEntity->id,
                 $this->dataEntity->id))) {
             $this->error404();
         }
