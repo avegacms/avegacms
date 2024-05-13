@@ -162,12 +162,6 @@ class AvegaCmsFrontendController extends BaseController
     public function error404(): void
     {
         $this->dataEntity = $this->MDM->getContentMetaData404(session('avegacms.client.locale.id') ?? 1);
-
-        //$PSB = new PageSeoBuilder($this->dataEntity);
-
-        //$this->meta        = $this->dataEntity->metaRender();
-        //$this->breadCrumbs = $this->dataEntity->breadCrumbs($this->dataEntity->metaType);
-
         response()->setStatusCode(404);
         $this->render([], 'content/404')->send();
         exit();
