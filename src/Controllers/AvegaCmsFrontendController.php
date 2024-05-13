@@ -23,6 +23,7 @@ class AvegaCmsFrontendController extends BaseController
     protected array         $breadCrumbs     = [];
     protected MetaDataModel $MDM;
     protected object|null   $dataEntity      = null;
+    protected object|null   $parentMeta      = null;
     protected ?array        $customerContent = null; // Массив пользовательского контента
     protected ?array        $content         = null;
     protected ?Pager        $pager           = null;
@@ -46,15 +47,9 @@ class AvegaCmsFrontendController extends BaseController
      */
     public function render(array $pageData = [], string $view = '', array $options = []): ResponseInterface
     {
-        if ($this->dataEntity->meta_type !== MetaDataTypes::Main->name
-            && empty($parentMeta = $this->MDM->getMetaMap($this->dataEntity->parent ?? $this->dataEntity->id,
-                $this->dataEntity->id))) {
-            $this->error404();
-        }
-
         $PSB = new PageSeoBuilder($this->dataEntity);
 
-        $this->breadCrumbs = $PSB->breadCrumbs($this->dataEntity->meta_type, $parentMeta ?? null);
+        $this->breadCrumbs = $PSB->breadCrumbs($this->dataEntity->meta_type, $this->parentMeta);
 
         if ($this->content === null) {
             $this->content = ($this->customerContent === null) ? (new ContentModel())->getContent($this->dataEntity->id) : $this->customerContent;
@@ -148,6 +143,12 @@ class AvegaCmsFrontendController extends BaseController
         };
 
         if ($this->dataEntity === null) {
+            $this->error404();
+        }
+
+        if ($this->dataEntity->meta_type !== MetaDataTypes::Main->name
+            && empty($this->parentMeta = $this->MDM->getMetaMap($this->dataEntity->parent ?? $this->dataEntity->id,
+                $this->dataEntity->id))) {
             $this->error404();
         }
 
