@@ -148,7 +148,7 @@ class MetaDataModel extends AvegaCmsModel
     /**
      * @param  int  $id
      * @param  int|null  $clearLast
-     * @return array
+     * @return array|object|null
      */
     public function getMetaMap(int $id, ?int $clearLast = null): array|object|null
     {
