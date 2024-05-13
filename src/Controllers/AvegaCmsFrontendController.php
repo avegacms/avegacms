@@ -147,7 +147,7 @@ class AvegaCmsFrontendController extends BaseController
         }
 
         if ($this->dataEntity->meta_type !== MetaDataTypes::Main->name
-            && empty($this->parentMeta = $this->MDM->getMetaMap($this->dataEntity->parent ?? $this->dataEntity->id,
+            && is_null($this->parentMeta = $this->MDM->getMetaMap($this->dataEntity->parent ?? $this->dataEntity->id,
                 $this->dataEntity->id))) {
             $this->error404();
         }
