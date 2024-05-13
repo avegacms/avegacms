@@ -148,9 +148,9 @@ class MetaDataModel extends AvegaCmsModel
     /**
      * @param  int  $id
      * @param  int|null  $clearLast
-     * @return object|null
+     * @return array|object|null
      */
-    public function getMetaMap(int $id, ?int $clearLast = null): object|null
+    public function getMetaMap(int $id, ?int $clearLast = null): array|object|null
     {
         $level = 7;
         $this->builder()->from('metadata AS md_' . $level)->where(['md_' . $level . '.id' => $id]);
