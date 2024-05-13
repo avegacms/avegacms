@@ -99,6 +99,8 @@ class MetaDataModel extends AvegaCmsModel
         'updated_at'      => 'datetime',
     ];
 
+    protected int $level = 7;
+
     /**
      * @param  int  $locale
      * @param  string  $slug
@@ -148,13 +150,12 @@ class MetaDataModel extends AvegaCmsModel
     /**
      * @param  int  $id
      * @param  int|null  $clearLast
-     * @return array|object|null
+     * @return object|null
      */
-    public function getMetaMap(int $id, ?int $clearLast = null): array|object|null
+    public function getMetaMap(int $id, ?int $clearLast = null): object|null
     {
-        $level = 7;
-        $this->builder()->from('metadata AS md_' . $level)->where(['md_' . $level . '.id' => $id]);
-        for ($i = $level; $i > 0; $i--) {
+        $this->builder()->from('metadata AS md_' . $this->level)->where(['md_' . $this->level . '.id' => $id]);
+        for ($i = $this->level; $i > 0; $i--) {
             $this->builder()->select(['md_' . $i . '.id AS id' . $i]);
             if (($p = $i - 1)) {
                 $this->builder()->join('metadata AS md_' . $p, 'md_' . $p . '.id = md_' . $i . '.parent', 'left');
@@ -164,7 +165,7 @@ class MetaDataModel extends AvegaCmsModel
         $list = array_filter($this->asArray()->first());
 
         if ($clearLast === null) {
-            unset($list['id' . $level]);
+            unset($list['id' . $this->level]);
         }
 
         if (empty($list)) {
@@ -194,7 +195,7 @@ class MetaDataModel extends AvegaCmsModel
 
         $this->checkStatus();
 
-        return $this->findAll();
+        return (object) $this->findAll();
     }
 
     /**
