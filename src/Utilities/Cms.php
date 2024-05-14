@@ -175,7 +175,7 @@ class Cms
                 return $SM->insert(
                     [
                         'module_id'     => $config['module_id'] ?? 0,
-                        'is_core'       => $config['is_core'] ?? 0,
+                        'is_core'       => boolval($config['is_core'] ?? 0),
                         'entity'        => $entity,
                         'slug'          => $slug ?? '',
                         'key'           => $property ?? '',
