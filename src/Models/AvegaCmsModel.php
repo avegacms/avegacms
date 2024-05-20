@@ -221,7 +221,7 @@ class AvegaCmsModel extends Model
                     case 'where':
 
                         $fieldMapFlag = '';
-                        
+
                         if ($type === 'where') {
                             foreach ($this->filterWhereSings as $sign) {
                                 if (str_starts_with($k, $sign)) {
@@ -260,7 +260,7 @@ class AvegaCmsModel extends Model
      */
     protected function castAs($value, string $attribute, string $fieldName): mixed
     {
-        return match ($attribute) {
+        return match (strtolower($attribute)) {
             'int',
             'integer'       => (int) $value,
             'double',

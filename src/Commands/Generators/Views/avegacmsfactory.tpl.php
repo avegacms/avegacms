@@ -13,7 +13,7 @@ class {class} extends {modelName}
         // Test example
         return [
             'name'       => $faker->firstName,
-            'email'      => $faker->email,
+            'email'      => $faker->email(),
             'phone'      => $faker->phoneNumber,
             'title'      => $faker->word(),
             'code'       => $faker->numberBetween(1000, 9999),
