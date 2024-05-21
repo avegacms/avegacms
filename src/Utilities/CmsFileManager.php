@@ -228,6 +228,10 @@ class CmsFileManager
     }
 
 
+    /**
+     * @param  int|array  $filesId
+     * @return bool
+     */
     public static function delete(int|array $filesId): bool
     {
         if (empty(($filesId = ! is_array($filesId) ? [$filesId] : $filesId))) {
@@ -244,7 +248,19 @@ class CmsFileManager
         foreach ($files as $file) {
             $filesId[] = $file->id;
             if ($file->type === FileTypes::Image->value) {
+                self::deleteFile($file->data->path->original);
+                if ( ! empty($file->data->path->webp ?? '')) {
+                    self::deleteFile($file->data->path->webp);
+                }
+                if ( ! empty($file->data->variants ?? '')) {
+                    foreach ($file->data->variants as $variant) {
+                        foreach ($variant as $item) {
+                            self::deleteFile($item);
+                        }
+                    }
+                }
             } else {
+                self::deleteFile($file->data->path);
             }
         }
 
@@ -525,5 +541,19 @@ class CmsFileManager
                 'rules' => $uploadRule
             ]
         ];
+    }
+
+    /**
+     * @param $file
+     * @return void
+     */
+    private static function deleteFile($file): void
+    {
+        if ((@unlink(FCPATH . $file)) === false) {
+            log_message(
+                'warning',
+                'AvegaCms[CmsFileManager] ::  File ' . $file . ' could not be deleted'
+            );
+        }
     }
 }
