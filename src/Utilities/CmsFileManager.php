@@ -360,8 +360,12 @@ class CmsFileManager
 
             $result = Services::image()
                 ->withFile($original)
-                ->resize($setting['width'], $setting['height'], $setting['maintainRatio'], $setting['masterDim'])
-                ->save(FCPATH . $url, $setting['quality'] ?? 90);
+                ->resize(
+                    $setting['width'],
+                    $setting['height'],
+                    $setting['maintainRatio'] ?? true,
+                    $setting['masterDim'] ?? 'height'
+                )->save(FCPATH . $url, $setting['quality'] ?? 90);
 
             if ($result) {
                 $variant['original'] = $url;
