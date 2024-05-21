@@ -227,6 +227,30 @@ class CmsFileManager
         return $directoryId;
     }
 
+
+    public static function delete(int|array $filesId): bool
+    {
+        if (empty(($filesId = ! is_array($filesId) ? [$filesId] : $filesId))) {
+            return false;
+        }
+
+        $FM = new FilesModel();
+
+        if (empty($files = $FM->getFilesForDelete($filesId))) {
+            return true;
+        }
+
+        $filesId = [];
+        foreach ($files as $file) {
+            $filesId[] = $file->id;
+            if ($file->type === FileTypes::Image->value) {
+            } else {
+            }
+        }
+
+        return $FM->delete($filesId);
+    }
+
     /**
      * @param  string  $filePath
      * @param  array  $config

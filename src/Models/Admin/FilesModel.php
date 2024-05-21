@@ -93,4 +93,20 @@ class FilesModel extends AvegaCmsModel
             'rules' => 'if_exist|required|in_list[' . implode(',', FileTypes::get('value')) . ']'
         ];
     }
+
+    /**
+     * @param  array  $filesId
+     * @return array
+     */
+    public function getFilesForDelete(array $filesId): array
+    {
+        $this->builder()
+            ->select(['id', 'type', 'data'])
+            ->groupStart()
+            ->whereIn('type', [FileTypes::File->value, FileTypes::Image->value])
+            ->whereIn('id', $filesId)
+            ->groupEnd();
+
+        return $this->findAll();
+    }
 }
