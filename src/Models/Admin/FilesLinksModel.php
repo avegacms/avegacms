@@ -151,6 +151,12 @@ class FilesLinksModel extends AvegaCmsModel
             ->where(['files_links.type !=' => FileTypes::Directory->value])
             ->groupEnd();
 
+        if (empty($filter['id'] ?? '') && is_array($filter['id'])) {
+            $this->builder()->orderBy(
+                sprintf('FIELD (files_links.id, %s)', implode(',', $filter['id']))
+            );
+        }
+
         return $this->filter($filter);
     }
 
