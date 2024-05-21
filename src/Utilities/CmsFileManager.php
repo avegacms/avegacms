@@ -60,9 +60,11 @@ class CmsFileManager
             throw UploaderException::forEmptyPath();
         }
 
+        $FM      = (new FilesModel());
+        $FLM     = (new FilesLinksModel());
+        $dirData = null;
+
         if ($onlyUpload === false) {
-            $FM  = (new FilesModel());
-            $FLM = (new FilesLinksModel());
             if (($dirData = $FLM->getDirectories($directory)) === null) {
                 throw UploaderException::forDirectoryNotFound($directory);
             }
