@@ -254,9 +254,7 @@ class CmsFileManager
                 }
                 if ( ! empty($file->data['thumb'] ?? '')) {
                     foreach ($file->data['thumb'] as $thumb) {
-                        foreach ($thumb as $item) {
-                            self::deleteFile($item);
-                        }
+                        self::deleteFile($thumb);
                     }
                 }
                 if ( ! empty($file->data['variants'] ?? '')) {
