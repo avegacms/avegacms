@@ -248,19 +248,19 @@ class CmsFileManager
         foreach ($files as $file) {
             $filesId[] = $file->id;
             if ($file->type === FileTypes::Image->value) {
-                self::deleteFile($file->data->path->original);
-                if ( ! empty($file->data->path->webp ?? '')) {
-                    self::deleteFile($file->data->path->webp);
+                self::deleteFile($file->data['path']['original']);
+                if ( ! empty($file->data['path']['webp'] ?? '')) {
+                    self::deleteFile($file->data['path']['webp']);
                 }
-                if ( ! empty($file->data->variants ?? '')) {
-                    foreach ($file->data->variants as $variant) {
+                if ( ! empty($file->data['variants'] ?? '')) {
+                    foreach ($file->data['variants'] as $variant) {
                         foreach ($variant as $item) {
                             self::deleteFile($item);
                         }
                     }
                 }
             } else {
-                self::deleteFile($file->data->path);
+                self::deleteFile($file->data['path']);
             }
         }
 
