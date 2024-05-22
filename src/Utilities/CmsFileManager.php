@@ -252,6 +252,13 @@ class CmsFileManager
                 if ( ! empty($file->data['path']['webp'] ?? '')) {
                     self::deleteFile($file->data['path']['webp']);
                 }
+                if ( ! empty($file->data['thumb'] ?? '')) {
+                    foreach ($file->data['thumb'] as $thumb) {
+                        foreach ($thumb as $item) {
+                            self::deleteFile($item);
+                        }
+                    }
+                }
                 if ( ! empty($file->data['variants'] ?? '')) {
                     foreach ($file->data['variants'] as $variant) {
                         foreach ($variant as $item) {
