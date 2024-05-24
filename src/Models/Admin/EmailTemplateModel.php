@@ -170,7 +170,7 @@ class EmailTemplateModel extends AvegaCmsModel
                     ]
                 );
 
-                return $this->first();
+                return $this->first() ?? [];
             });
     }
 
