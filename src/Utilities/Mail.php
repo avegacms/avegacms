@@ -12,9 +12,20 @@ use ReflectionException;
 class Mail
 {
     /**
-     * @param  string  $template
+     * Метод отправки Email
+     *
+     *  Варианты отправки Email:
+     *  1. По предустановленному шаблону (без view): в таблице указывается шаблон контента с вставками, которые потом
+     *  заполняются пользовательскими данными
+     *
+     *  2. По предустановленной view-шаблону: в таблице есть специальная запись об настройках, которые применяются для
+     *  формирования письма
+     *
+     *  3. По предоставленной информации, без использования данных таблицы
+     *
      * @param  string|array  $recipient
-     * @param  array  $data
+     * @param  string|null  $template
+     * @param  string|array|null  $data
      * @param  string|null  $locale
      * @param  array|null  $attached
      * @param  array|null  $myConfig
@@ -23,9 +34,9 @@ class Mail
      * @throws ReflectionException
      */
     public static function send(
-        string $template,
         string|array $recipient,
-        array $data = [],
+        ?string $template = null,
+        string|array $data = null,
         ?string $locale = null,
         ?array $attached = null,
         ?array $myConfig = null
@@ -54,19 +65,6 @@ class Mail
             throw MailException::forNoEmailFolder();
         }
 
-        if (empty($eTemplate = model(EmailTemplateModel::class)->getEmailTemplate($template))) {
-            throw MailException::forTemplateNotFound();
-        }
-
-        if ( ! empty($eTemplate->view)) {
-            if ( ! file_exists(APPPATH . 'Views/' . ($view = 'template/email/blocks/' . $eTemplate->view) . '.php')) {
-                throw MailException::forNoViewTemplate($view);
-            }
-            $emailData['content'] = view($view, [...$data, ...['locale' => $locale]], ['debug' => false]);
-        } else {
-            $emailData['content'] = strtr($eTemplate->content[$locale], self::prepData($data));
-        }
-
         $config = self::getConfig($myConfig);
         $email  = Services::email($config);
 
@@ -74,9 +72,25 @@ class Mail
             $config['fromEmail'],
             $config['fromName'] ?? '',
             $config['protocol'] === 'smtp' ? null : ($config['returnEmail'] ?? null)
-        )
-            ->setSubject($eTemplate->subject[$locale] ?? '')
-            ->setTo($recipient['to']);
+        )->setTo($recipient['to']);
+
+        if (is_null($template)) {
+            $emailData['content'] = is_string($data) ? $data : '';
+        } else {
+            if (empty($eTemplate = (new EmailTemplateModel())->getEmailTemplate($template))) {
+                throw MailException::forTemplateNotFound();
+            }
+
+            if ( ! empty($eTemplate->view)) {
+                if ( ! file_exists(APPPATH . 'Views/' . ($view = 'template/email/blocks/' . $eTemplate->view) . '.php')) {
+                    throw MailException::forNoViewTemplate($view);
+                }
+                $emailData['content'] = view($view, [...$data, ...['locale' => $locale]], ['debug' => false]);
+            } else {
+                $emailData['content'] = strtr($eTemplate->content[$locale], self::prepData($data));
+            }
+            $email->setSubject($eTemplate->subject[$locale] ?? '');
+        }
 
         if ( ! empty($recipient['cc'])) {
             $email->setCC($recipient['cc']);
