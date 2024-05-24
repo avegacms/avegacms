@@ -69,7 +69,7 @@ class Mail
             if ( ! file_exists(APPPATH . 'Views/' . ($view = 'template/email/blocks/' . $eTemplate->view) . '.php')) {
                 throw MailException::forNoViewTemplate($view);
             }
-            $emailData['content'] = view($view, [$data, ...['locale' => $locale]], ['debug' => false]);
+            $emailData['content'] = view($view, [...$data, ...['locale' => $locale]], ['debug' => false]);
         } else {
             $emailData['content'] = strtr($eTemplate->content[$locale], self::prepData($data));
         }
