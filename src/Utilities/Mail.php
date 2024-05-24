@@ -41,17 +41,10 @@ class Mail
             }
         }
 
-        if (isset($recipient['cc'])) {
-            $recipient['cc'] = self::toArray($recipient['cc']);
-        }
+        $recipient['to']  = isset($recipient['to']) ? self::toArray($recipient['to']) : [];
+        $recipient['cc']  = isset($recipient['cc']) ? self::toArray($recipient['cc']) : [];
+        $recipient['bcc'] = isset($recipient['bcc']) ? self::toArray($recipient['bcc']) : [];
 
-        if (isset($recipient['bcc'])) {
-            $recipient['bcc'] = self::toArray($recipient['bcc']);
-        }
-
-        if (isset($recipient['to'])) {
-            $recipient['to'] = self::toArray($recipient['to']);
-        }
 
         if (is_null($locale)) {
             $locale = Cms::settings('core.env.defLocale');
@@ -85,11 +78,11 @@ class Mail
             ->setSubject($eTemplate->subject[$locale] ?? '')
             ->setTo($recipient['to']);
 
-        if ( ! empty($recipient['cc'] ?? '')) {
+        if ( ! empty($recipient['cc'])) {
             $email->setCC($recipient['cc']);
         }
 
-        if ( ! empty($recipient['bcc'] ?? '')) {
+        if ( ! empty($recipient['bcc'])) {
             $email->setBCC($recipient['bcc']);
         }
 
