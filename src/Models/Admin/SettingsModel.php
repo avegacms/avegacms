@@ -19,6 +19,7 @@ class SettingsModel extends AvegaCmsModel
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
+        'locale_id',
         'module_id',
         'is_core',
         'entity',
@@ -44,6 +45,7 @@ class SettingsModel extends AvegaCmsModel
     // Validation
     protected $validationRules      = [
         'id'            => ['rules' => 'if_exist|is_natural_no_zero'],
+        'locale_id'     => ['rules' => 'if_exist|is_natural'],
         'module_id'     => ['rules' => 'if_exist|is_natural'],
         'entity'        => ['rules' => 'if_exist|required|alpha_numeric|max_length[36]'],
         'slug'          => ['rules' => 'if_exist|required|alpha_numeric|max_length[36]|unique_db_key[settings.module_id+entity+slug+key,id,{id}]'],
@@ -71,6 +73,7 @@ class SettingsModel extends AvegaCmsModel
 
     public array $filterFields = [
         'id'     => 'settings.id',
+        'locale' => 'settings.locale_id',
         'entity' => 'settings.entity',
         'slug'   => 'settings.slug',
         'key'    => 'settings.key',
@@ -82,6 +85,7 @@ class SettingsModel extends AvegaCmsModel
 
     public array  $filterCastsFields = [
         'id'     => 'int|array',
+        'locale' => 'int',
         'entity' => 'string',
         'slug'   => 'string',
         'key'    => 'string',
@@ -94,6 +98,7 @@ class SettingsModel extends AvegaCmsModel
 
     protected array $casts = [
         'id'            => 'int',
+        'locale'        => 'int',
         'module_id'     => 'int',
         'is_core'       => '?int-bool',
         'sort'          => 'int',
@@ -119,6 +124,7 @@ class SettingsModel extends AvegaCmsModel
         $this->builder()->select(
             [
                 'settings.id',
+                'settings.locale_id',
                 'settings.module_id',
                 'settings.is_core',
                 'settings.entity',
@@ -135,12 +141,14 @@ class SettingsModel extends AvegaCmsModel
 
     /**
      * @param  string  $entity
+     * @param  int  $localeId
      * @return array
      */
-    public function getSettings(string $entity): array
+    public function getSettings(string $entity, int $localeId = 0): array
     {
         $this->builder()->select(
             [
+                'locale_id',
                 'slug',
                 'key',
                 'value',
@@ -199,6 +207,7 @@ class SettingsModel extends AvegaCmsModel
     {
         $this->builder()->select([
             'id',
+            'locale_id',
             'module_id',
             'is_core',
             'entity',
@@ -216,7 +225,6 @@ class SettingsModel extends AvegaCmsModel
     }
 
     /**
-     * @param  array  $data
      * @return void
      */
     protected function dropSettingsCache(): void

@@ -164,33 +164,6 @@ class CreateAvegaCmsTables extends Migration
         $this->createTable($this->tables['modules']);
 
         /**
-         * Таблица настроек, где будут храниться настройки приложения
-         */
-        $this->forge->addField([
-            'id'            => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
-            'module_id'     => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
-            'is_core'       => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
-            'entity'        => ['type' => 'varchar', 'constraint' => 36, 'null' => true],
-            'slug'          => ['type' => 'varchar', 'constraint' => 36, 'null' => true],
-            'key'           => ['type' => 'varchar', 'constraint' => 36, 'null' => true],
-            'value'         => ['type' => 'text', 'null' => true],
-            'default_value' => ['type' => 'text', 'null' => true],
-            'return_type'   => [
-                'type'       => 'enum',
-                'constraint' => FieldsReturnTypes::get('value'),
-                'default'    => FieldsReturnTypes::String->value
-            ],
-            'label'         => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
-            'context'       => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
-            'sort'          => ['type' => 'tinyint', 'constraint' => 3, 'null' => 0, 'default' => 100],
-            ...Migrator::byId(),
-            ...Migrator::dateFields(['deleted_at'])
-        ]);
-        $this->forge->addPrimaryKey('id');
-        $this->forge->addUniqueKey(['module_id', 'entity', 'slug', 'key']);
-        $this->createTable($this->tables['settings']);
-
-        /**
          * Таблица "местоположения" используется как для мультязычных, так и для мультирегиональных приложений/сайтов
          */
         $this->forge->addField([
@@ -213,6 +186,34 @@ class CreateAvegaCmsTables extends Migration
         ]);
         $this->forge->addPrimaryKey('id');
         $this->createTable($this->tables['locales']);
+
+        /**
+         * Таблица настроек, где будут храниться настройки приложения
+         */
+        $this->forge->addField([
+            'id'            => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'locale_id'     => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
+            'module_id'     => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
+            'is_core'       => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'entity'        => ['type' => 'varchar', 'constraint' => 36, 'null' => true],
+            'slug'          => ['type' => 'varchar', 'constraint' => 36, 'null' => true],
+            'key'           => ['type' => 'varchar', 'constraint' => 36, 'null' => true],
+            'value'         => ['type' => 'text', 'null' => true],
+            'default_value' => ['type' => 'text', 'null' => true],
+            'return_type'   => [
+                'type'       => 'enum',
+                'constraint' => FieldsReturnTypes::get('value'),
+                'default'    => FieldsReturnTypes::String->value
+            ],
+            'label'         => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
+            'context'       => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
+            'sort'          => ['type' => 'tinyint', 'constraint' => 3, 'null' => 0, 'default' => 100],
+            ...Migrator::byId(),
+            ...Migrator::dateFields(['deleted_at'])
+        ]);
+        $this->forge->addPrimaryKey('id');
+        $this->forge->addUniqueKey(['locale_id', 'module_id', 'entity', 'slug', 'key']);
+        $this->createTable($this->tables['settings']);
 
         /**
          * Таблица "местоположения" используется как для мультязычных, так и для мультирегиональных приложений/сайтов
