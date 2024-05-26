@@ -174,6 +174,7 @@ class Cms
             } else {
                 return $SM->insert(
                     [
+                        'locale_id'     => $config['locale_id'] ?? 0,
                         'module_id'     => $config['module_id'] ?? 0,
                         'is_core'       => boolval($config['is_core'] ?? 0),
                         'entity'        => $entity,
