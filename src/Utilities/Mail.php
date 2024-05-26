@@ -14,18 +14,19 @@ class Mail
     /**
      * Метод отправки Email
      *
-     *  Варианты отправки Email:
-     *  1. По предустановленному шаблону (без view): в таблице указывается шаблон контента с вставками, которые потом
-     *  заполняются пользовательскими данными
+     *   Варианты отправки Email:
+     *   1. По предустановленному шаблону (без view): в таблице указывается шаблон контента с вставками, которые потом
+     *   заполняются пользовательскими данными
      *
-     *  2. По предустановленной view-шаблону: в таблице есть специальная запись об настройках, которые применяются для
-     *  формирования письма
+     *   2. По предустановленной view-шаблону: в таблице есть специальная запись об настройках, которые применяются для
+     *   формирования письма
      *
-     *  3. По предоставленной информации, без использования данных таблицы
+     *   3. По предоставленной информации, без использования данных таблицы
      *
      * @param  string|array  $recipient
      * @param  string|null  $template
      * @param  string|array|null  $data
+     * @param  string|null  $subject
      * @param  string|null  $locale
      * @param  array|null  $attached
      * @param  array|null  $myConfig
@@ -37,6 +38,7 @@ class Mail
         string|array $recipient,
         ?string $template = null,
         string|array $data = null,
+        ?string $subject = null,
         ?string $locale = null,
         ?array $attached = null,
         ?array $myConfig = null
@@ -89,8 +91,9 @@ class Mail
             } else {
                 $emailData['content'] = strtr($eTemplate->content[$locale], self::prepData($data));
             }
-            $email->setSubject($eTemplate->subject[$locale] ?? '');
         }
+
+        $email->setSubject($subject ?? ($eTemplate->subject[$locale] ?? ''));
 
         if ( ! empty($recipient['cc'])) {
             $email->setCC($recipient['cc']);
