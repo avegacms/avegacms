@@ -93,7 +93,7 @@ class Mail
             }
         }
 
-        $email->setSubject($subject ?? ($eTemplate->subject[$locale] ?? ''));
+        $email->setSubject($subject ?? ($eTemplate->subject[$locale] ?? lang('Mail.default.subject')));
 
         if ( ! empty($recipient['cc'])) {
             $email->setCC($recipient['cc']);
