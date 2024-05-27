@@ -23,7 +23,6 @@ use AvegaCms\Models\Admin\{ModulesModel,
     LocalesModel,
     EmailTemplateModel
 };
-use AvegaCms\Entities\LoginEntity;
 use AvegaCms\Utilities\Exceptions\UploaderException;
 use ReflectionException;
 use Exception;
