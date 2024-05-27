@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Utilities\Cms;
-use AvegaCms\Entities\UserAuthenticationEntity;
 use CodeIgniter\Model;
 
 class UserAuthenticationModel extends Model
@@ -12,10 +13,31 @@ class UserAuthenticationModel extends Model
     protected $table            = 'permissions';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = UserAuthenticationEntity::class;
+    protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = [];
+    protected $allowedFields    = [
+        'role_id',
+        'module_id',
+        'is_module',
+        'is_system',
+        'is_plugin',
+        'parent',
+        'slug',
+        'access',
+        'self',
+        'create',
+        'read',
+        'update',
+        'delete',
+        'moderated',
+        'settings',
+        'extra',
+        'created_by_id',
+        'updated_by_id',
+        'created_at',
+        'updated_at',
+    ];
 
     // Dates
     protected $useTimestamps = false;
@@ -40,6 +62,29 @@ class UserAuthenticationModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    protected array $casts = [
+        'id'            => 'int',
+        'role_id'       => 'int',
+        'module_id'     => 'int',
+        'is_module'     => '?int-bool',
+        'is_system'     => '?int-bool',
+        'is_plugin'     => '?int-bool',
+        'parent'        => '?int-bool',
+        'access'        => '?int-bool',
+        'self'          => '?bool-bool',
+        'create'        => '?int-bool',
+        'read'          => '?bool-bool',
+        'update'        => '?bool-bool',
+        'delete'        => '?bool-bool',
+        'moderated'     => '?bool-bool',
+        'settings'      => '?array-bool',
+        'extra'         => '?json-array',
+        'created_by_id' => 'int',
+        'updated_by_id' => 'int',
+        'created_at'    => 'datetime',
+        'updated_at'    => 'datetime'
+    ];
 
     /**
      * @param  string  $role

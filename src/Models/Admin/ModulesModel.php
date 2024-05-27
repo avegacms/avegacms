@@ -238,9 +238,9 @@ class ModulesModel extends AvegaCmsModel
     }
 
     /**
-     * @return Model
+     * @return ModulesModel
      */
-    private function _getSelect(): Model
+    private function _getSelect(): ModulesModel
     {
         $this->builder()->select([
             'id',

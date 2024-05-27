@@ -1,23 +1,27 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Models\Admin;
 
 use CodeIgniter\Model;
-use AvegaCms\Entities\TagsLinksEntity;
 
 class TagsLinksModel extends Model
 {
     protected $DBGroup          = 'default';
     protected $table            = 'tags_links';
     protected $useAutoIncrement = false;
-    protected $returnType       = TagsLinksEntity::class;
+    protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'tag_id',
-        'seo_id',
+        'name',
+        'slug',
+        'active',
         'created_by_id',
-        'created_at'
+        'updated_by_id',
+        'created_at',
+        'updated_at'
     ];
 
     // Dates
@@ -43,4 +47,13 @@ class TagsLinksModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    protected array $casts = [
+        'id'            => 'int',
+        'active'        => '?int-bool',
+        'created_by_id' => 'int',
+        'updated_by_id' => 'int',
+        'created_at'    => 'datetime',
+        'updated_at'    => 'datetime'
+    ];
 }
