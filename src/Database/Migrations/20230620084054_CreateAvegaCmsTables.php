@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Database\Migrations;
 
-use CodeIgniter\Database\Forge;
 use CodeIgniter\Database\Migration;
 use CodeIgniter\Database\RawSql;
 use AvegaCms\Enums\{
@@ -64,7 +65,7 @@ class CreateAvegaCmsTables extends Migration
             'is_verified' => ['type' => 'tinyint', 'constraint' => 1, 'null' => true, 'default' => 0],
             'profile'     => ['type' => 'text', 'null' => true],
             'extra'       => ['type' => 'text', 'null' => true],
-            // Доп. поля
+            // Дополнительные поля
             'status'      => [
                 'type'       => 'enum',
                 'constraint' => UserStatuses::get('value'),
@@ -321,7 +322,7 @@ class CreateAvegaCmsTables extends Migration
             'meta'            => ['type' => 'text', 'null' => true],
             // объект, содержащий информацию о метаданных
             'extra_data'      => ['type' => 'text', 'null' => true],
-            // объект, содержащий информацию о доп. данных
+            // объект, содержащий информацию о дополнительных данных
             'status'          => [
                 'type'       => 'enum',
                 'constraint' => MetaStatuses::get('name'),
@@ -354,7 +355,7 @@ class CreateAvegaCmsTables extends Migration
             'id'      => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
             'anons'   => ['type' => 'text', 'null' => true], // краткая информация
             'content' => ['type' => 'longtext', 'null' => true], // остальная информация
-            'extra'   => ['type' => 'longtext', 'null' => true] // объект, содержащий информацию о доп. данных
+            'extra'   => ['type' => 'longtext', 'null' => true] // объект, содержащий информацию о дополнительных данных
         ]);
         $this->forge->addUniqueKey(['id']);
         $this->createTable($this->tables['content']);
