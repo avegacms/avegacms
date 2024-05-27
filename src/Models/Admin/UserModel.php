@@ -32,6 +32,7 @@ class UserModel extends AvegaCmsModel
         'secret',
         'path',
         'expires',
+        'is_verified',
         'profile',
         'extra',
         'status',
@@ -111,6 +112,7 @@ class UserModel extends AvegaCmsModel
         'id'            => 'int',
         'avatar'        => 'int',
         'expires'       => 'int',
+        'is_verified'   => '?int-bool',
         'profile'       => '?json-array',
         'extra'         => '?json-array',
         'created_by_id' => 'int',
@@ -148,6 +150,7 @@ class UserModel extends AvegaCmsModel
                 'timezone',
                 'password',
                 'path',
+                'is_verified',
                 'profile',
                 'extra',
                 'status'

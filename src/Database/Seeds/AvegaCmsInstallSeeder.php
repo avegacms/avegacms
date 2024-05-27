@@ -88,14 +88,12 @@ class AvegaCmsInstallSeeder extends Seeder
     private function _createUser(): int
     {
         return $this->LM->insert(
-            (new LoginEntity(
-                [
-                    'login'    => 'admin',
-                    'email'    => 'admin@avegacms.ru',
-                    'password' => '123Qwe$78',
-                    'status'   => UserStatuses::Active->value
-                ]
-            ))
+            [
+                'login'    => 'admin',
+                'email'    => 'admin@avegacms.ru',
+                'password' => '123Qwe$78',
+                'status'   => UserStatuses::Active->value
+            ]
         );
     }
 

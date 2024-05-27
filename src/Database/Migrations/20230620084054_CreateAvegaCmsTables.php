@@ -51,32 +51,33 @@ class CreateAvegaCmsTables extends Migration
          * Таблица пользователей
          */
         $this->forge->addField([
-            'id'         => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
-            'login'      => ['type' => 'varchar', 'constraint' => 36, 'null' => true],
-            'avatar'     => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
-            'phone'      => ['type' => 'decimal', 'constraint' => 11, 'null' => true],
-            'email'      => ['type' => 'varchar', 'constraint' => 255, 'unique' => true, 'null' => true],
-            'timezone'   => ['type' => 'varchar', 'constraint' => 144, 'default' => 'Europe/Moscow'],
-            'password'   => ['type' => 'varchar', 'constraint' => 255],
-            'secret'     => ['type' => 'varchar', 'constraint' => 255],
-            'path'       => ['type' => 'varchar', 'constraint' => 512], // Будет храниться хэш
-            'expires'    => ['type' => 'int', 'null' => true, 'default' => 0], // Срок действия хэша
-            'profile'    => ['type' => 'text', 'null' => true],
-            'extra'      => ['type' => 'text', 'null' => true],
+            'id'          => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'login'       => ['type' => 'varchar', 'constraint' => 36, 'null' => true],
+            'avatar'      => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
+            'phone'       => ['type' => 'decimal', 'constraint' => 11, 'null' => true],
+            'email'       => ['type' => 'varchar', 'constraint' => 255, 'unique' => true, 'null' => true],
+            'timezone'    => ['type' => 'varchar', 'constraint' => 144, 'default' => 'Europe/Moscow'],
+            'password'    => ['type' => 'varchar', 'constraint' => 255],
+            'secret'      => ['type' => 'varchar', 'constraint' => 255],
+            'path'        => ['type' => 'varchar', 'constraint' => 512], // Будет храниться хэш
+            'expires'     => ['type' => 'int', 'null' => true, 'default' => 0], // Срок действия хэша
+            'is_verified' => ['type' => 'tinyint', 'constraint' => 1, 'null' => true, 'default' => 0],
+            'profile'     => ['type' => 'text', 'null' => true],
+            'extra'       => ['type' => 'text', 'null' => true],
             // Доп. поля
-            'status'     => [
+            'status'      => [
                 'type'       => 'enum',
                 'constraint' => UserStatuses::get('value'),
                 'default'    => UserStatuses::NotDefined->value
             ],
-            'condition'  => [
+            'condition'   => [
                 'type'       => 'enum',
                 'constraint' => UserConditions::get('value'),
                 'default'    => UserConditions::None->value
             ],
-            'last_ip'    => ['type' => 'varchar', 'constraint' => 45],
-            'last_agent' => ['type' => 'varchar', 'constraint' => 512],
-            'active_at'  => ['type' => 'datetime', 'null' => true],
+            'last_ip'     => ['type' => 'varchar', 'constraint' => 45],
+            'last_agent'  => ['type' => 'varchar', 'constraint' => 512],
+            'active_at'   => ['type' => 'datetime', 'null' => true],
             ...Migrator::byId(),
             ...Migrator::dateFields()
         ]);
