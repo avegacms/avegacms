@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Models\AvegaCmsModel;
-use AvegaCms\Entities\UserEntity;
 use AvegaCms\Utilities\Auth;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
@@ -18,7 +19,7 @@ class UserModel extends AvegaCmsModel
     protected $table            = 'users';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = UserEntity::class;
+    protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
@@ -31,6 +32,7 @@ class UserModel extends AvegaCmsModel
         'secret',
         'path',
         'expires',
+        'is_verified',
         'profile',
         'extra',
         'status',
@@ -106,6 +108,21 @@ class UserModel extends AvegaCmsModel
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
+    protected array $casts = [
+        'id'            => 'int',
+        'avatar'        => 'int',
+        'expires'       => 'int',
+        'is_verified'   => '?int-bool',
+        'profile'       => '?json-array',
+        'extra'         => '?json-array',
+        'created_by_id' => 'int',
+        'updated_by_id' => 'int',
+        'active_at'     => 'datetime',
+        'created_at'    => 'datetime',
+        'updated_at'    => 'datetime',
+        'deleted_at'    => 'datetime'
+    ];
+
     /**
      * @param  ConnectionInterface|null  $db
      * @param  ValidationInterface|null  $validation
@@ -133,6 +150,7 @@ class UserModel extends AvegaCmsModel
                 'timezone',
                 'password',
                 'path',
+                'is_verified',
                 'profile',
                 'extra',
                 'status'

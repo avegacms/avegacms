@@ -1,17 +1,18 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Models\Admin;
 
-use CodeIgniter\Model;
-use AvegaCms\Entities\UserTokensEntity;
+use AvegaCms\Models\AvegaCmsModel;
 
-class UserTokensModel extends Model
+class UserTokensModel extends AvegaCmsModel
 {
     protected $DBGroup          = 'default';
     protected $table            = 'user_tokens';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = false;
-    protected $returnType       = UserTokensEntity::class;
+    protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
@@ -58,7 +59,18 @@ class UserTokensModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    public function getUserTokens(int $userId)
+    protected array $casts = [
+        'user_id'    => 'int',
+        'expires'    => 'int',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime'
+    ];
+
+    /**
+     * @param  int  $userId
+     * @return UserTokensModel
+     */
+    public function getUserTokens(int $userId): UserTokensModel
     {
         $this->builder()->where(['user_id' => $userId])
             ->orderBy('created_at', 'ASC');

@@ -3,7 +3,6 @@
 namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Models\AvegaCmsModel;
-use AvegaCms\Entities\AttributesEntity;
 
 class AttributesModel extends AvegaCmsModel
 {

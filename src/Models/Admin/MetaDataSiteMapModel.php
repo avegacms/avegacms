@@ -4,8 +4,7 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Models\Admin;
 
-use AvegaCms\Enums\{MetaChangefreq, MetaStatuses, MetaDataTypes};
-use AvegaCms\Entities\MetaDataSiteMapEntity;
+use AvegaCms\Enums\{SitemapChangefreqs, MetaStatuses, MetaDataTypes};
 use AvegaCms\Models\AvegaCmsModel;
 
 class MetaDataSiteMapModel extends AvegaCmsModel
@@ -14,7 +13,16 @@ class MetaDataSiteMapModel extends AvegaCmsModel
     protected $table            = 'metadata';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = MetaDataSiteMapEntity::class;
+    protected $returnType       = 'object';
+
+    protected array $casts = [
+        'id'           => 'int',
+        'parent'       => 'int',
+        'locale_id'    => 'int',
+        'module_id'    => 'int',
+        'meta_sitemap' => '?json-array',
+        'publish_at'   => 'datetime'
+    ];
 
     /**
      * @param  string  $type
@@ -81,8 +89,8 @@ class MetaDataSiteMapModel extends AvegaCmsModel
         foreach ($data as $item) {
             $list[] = [
                 'url'        => base_url($item->url),
-                'priority'   => $item->metaSitemap['priority'] ?? 50,
-                'changefreq' => strtolower($item->metaSitemap['changefreq'] ?? MetaChangefreq::Monthly->value),
+                'priority'   => $item->meta_sitemap['priority'] ?? 50,
+                'changefreq' => strtolower($item->meta_sitemap['changefreq'] ?? SitemapChangefreqs::Monthly->value),
                 'date'       => $item->publishAt->toDateString()
             ];
         }

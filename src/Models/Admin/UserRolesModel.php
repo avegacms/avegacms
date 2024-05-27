@@ -1,17 +1,18 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Enums\UserStatuses;
 use AvegaCms\Models\AvegaCmsModel;
 use CodeIgniter\Model;
-use AvegaCms\Entities\UserRolesEntity;
 
 class UserRolesModel extends AvegaCmsModel
 {
     protected $DBGroup        = 'default';
     protected $table          = 'user_roles';
-    protected $returnType     = UserRolesEntity::class;
+    protected $returnType     = 'object';
     protected $useSoftDeletes = false;
     protected $protectFields  = true;
     protected $allowedFields  = [
@@ -77,6 +78,13 @@ class UserRolesModel extends AvegaCmsModel
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    protected array $casts = [
+        'role_id'       => 'int',
+        'user_id'       => 'int',
+        'created_by_id' => 'int',
+        'created_at'    => 'datetime'
+    ];
 
     public function getUsers()
     {

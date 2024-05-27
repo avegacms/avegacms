@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Models\AvegaCmsModel;
-use AvegaCms\Entities\NavigationsEntity;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
 use Faker\Generator;
@@ -15,7 +16,7 @@ class NavigationsModel extends AvegaCmsModel
     protected $table            = 'navigations';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = NavigationsEntity::class;
+    protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
@@ -73,6 +74,20 @@ class NavigationsModel extends AvegaCmsModel
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    protected array $casts = [
+        'id'            => 'int',
+        'parent'        => 'int',
+        'is_admin'      => '?int-bool',
+        'object_id'     => 'int',
+        'locale_id'     => 'int',
+        'meta'          => '?json-array',
+        'active'        => '?int-bool',
+        'created_by_id' => 'int',
+        'updated_by_id' => 'int',
+        'created_at'    => 'datetime',
+        'updated_at'    => 'datetime'
+    ];
 
     public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
     {

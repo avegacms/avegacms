@@ -7,7 +7,6 @@ namespace AvegaCms\Controllers\Api\Admin\Settings;
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\{UserModel, UserRolesModel, RolesModel, UserTokensModel};
-use AvegaCms\Entities\{UserEntity, UserRolesEntity};
 use AvegaCms\Utilities\{Cms, Uploader};
 use AvegaCms\Utilities\Exceptions\UploaderException;
 use ReflectionException;
@@ -73,7 +72,7 @@ class Users extends AvegaCmsAdminAPI
         $roles = $data['roles'];
         unset($data['roles']);
 
-        if ( ! $id = $this->UM->insert((new UserEntity($data)))) {
+        if ( ! $id = $this->UM->insert($data)) {
             return $this->failValidationErrors($this->UM->errors());
         }
 
@@ -128,7 +127,7 @@ class Users extends AvegaCmsAdminAPI
             $this->_setRoles((int) $id, $roles);
         }
 
-        if ($this->UM->save((new UserEntity($data))) === false) {
+        if ($this->UM->save($data) === false) {
             return $this->failValidationErrors($this->UM->errors());
         }
 
@@ -164,7 +163,7 @@ class Users extends AvegaCmsAdminAPI
                 ]
             );
 
-            if ( ! $this->UM->save((new UserEntity(['id' => $id, 'avatar' => $avatar['fileName']])))) {
+            if ( ! $this->UM->save(['id' => $id, 'avatar' => $avatar['fileName']])) {
                 return $this->failValidationErrors($this->UM->errors());
             }
 
@@ -217,13 +216,12 @@ class Users extends AvegaCmsAdminAPI
     private function _setRoles(int $userId, array $roles): void
     {
         $this->URM->where(['user_id' => $userId])->delete();
-        $URE = new UserRolesEntity();
         foreach ($roles as $role) {
-            $setRoles[] = $URE->fill([
+            $setRoles[] = [
                 'role_id'       => $role,
                 'user_id'       => $userId,
                 'created_by_id' => $this->userData->userId,
-            ]);
+            ];
         }
         $this->URM->insertBatch($setRoles ?? null);
     }
