@@ -38,7 +38,7 @@ class CmsFileManager
         array|string $uploadConfig = null,
         array $fileConfig = [],
         bool $onlyUpload = false
-    ): object|null {
+    ): array|null {
         $request   = Services::request();
         $validator = Services::validation();
         $directory = is_array($uploadConfig) ? ($uploadConfig['directory'] ?? 'content') : (is_null($uploadConfig) ? '' : $uploadConfig);
