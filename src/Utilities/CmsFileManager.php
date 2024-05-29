@@ -165,12 +165,12 @@ class CmsFileManager
     /**
      * @param  array  $filter
      * @param  bool  $all
-     * @return object|null
+     * @return array
      */
     public static function getFiles(
         array $filter = [],
         bool $all = false
-    ): array|null {
+    ): array {
         $FLM = (new FilesLinksModel());
         $FLM->getFiles($filter);
 
