@@ -131,7 +131,24 @@ class UserModel extends AvegaCmsModel
     public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
     {
         parent::__construct($db, $validation);
-        $this->initUserValidationRules();
+        
+        $this->validationRules['status'] = 'if_exist|in_list[' . implode(',', UserStatuses::get('value')) . ']';
+
+        $settings = Cms::settings('core.auth.loginType');
+
+        $loginType = explode(':', $settings);
+
+        foreach ($loginType as $type) {
+            if (isset($this->validationRules[$type])) {
+                $this->validationRules[$type]['rules'] = match ($type) {
+                    'login' => $this->validationRules[$type]['rules'] . '|required|is_unique[users.login,id,{id}]',
+                    'email' => $this->validationRules[$type]['rules'] . '|required|is_unique[users.email,id,{id}]',
+                    'phone' => $this->validationRules[$type]['rules'] . '|required|is_unique[users.phone,id,{id}]'
+                };
+            }
+        }
+
+        unset($settings, $loginType);
     }
 
     /**
@@ -158,31 +175,6 @@ class UserModel extends AvegaCmsModel
         );
 
         return $this->find($id);
-    }
-
-    /**
-     * @return void
-     * @throws ReflectionException
-     */
-    protected function initUserValidationRules(): void
-    {
-        $this->validationRules['status'] = 'if_exist|in_list[' . implode(',', UserStatuses::get('value')) . ']';
-
-        $settings = Cms::settings('core.auth.loginType');
-
-        $loginType = explode(':', $settings);
-
-        foreach ($loginType as $type) {
-            if (isset($this->validationRules[$type])) {
-                $this->validationRules[$type]['rules'] = match ($type) {
-                    'login' => $this->validationRules[$type]['rules'] . '|required|is_unique[users.login,id,{id}]',
-                    'email' => $this->validationRules[$type]['rules'] . '|required|is_unique[users.email,id,{id}]',
-                    'phone' => $this->validationRules[$type]['rules'] . '|required|is_unique[users.phone,id,{id}]'
-                };
-            }
-        }
-
-        unset($settings, $loginType);
     }
 
     /**
