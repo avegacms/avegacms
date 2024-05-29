@@ -78,7 +78,7 @@ class UserAuthenticationModel extends Model
         'update'        => '?int-bool',
         'delete'        => '?int-bool',
         'moderated'     => '?int-bool',
-        'settings'      => '?array-bool',
+        'settings'      => '?int-bool',
         'extra'         => '?json-array',
         'created_by_id' => 'int',
         'updated_by_id' => 'int',
