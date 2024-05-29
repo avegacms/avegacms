@@ -6,7 +6,6 @@ namespace AvegaCms\Database\Factories;
 
 use AvegaCms\Enums\MetaStatuses;
 use AvegaCms\Models\Admin\MetaDataModel;
-use CodeIgniter\I18n\Time;
 use Faker\Generator;
 use Exception;
 
@@ -37,9 +36,7 @@ class MetaDataFactory extends MetaDataModel
             'in_sitemap'      => true,
             'use_url_pattern' => false,
             'created_by_id'   => 0,
-            'publish_at'      => new Time(
-                $faker->dateTimeBetween('-1 year', 'now', 'Asia/Omsk')->format('Y-m-d H:i:s')
-            )
+            'publish_at'      => $faker->dateTimeBetween('-1 year', 'now', 'Asia/Omsk')->format('Y-m-d H:i:s')
         ];
     }
 }

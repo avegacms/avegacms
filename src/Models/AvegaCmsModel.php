@@ -4,6 +4,7 @@ namespace AvegaCms\Models;
 
 use CodeIgniter\Model;
 use AvegaCms\Config\Services;
+use AvegaCms\Models\Cast\CmsDatetimeCast;
 
 class AvegaCmsModel extends Model
 {
@@ -33,6 +34,10 @@ class AvegaCmsModel extends Model
     private string   $fieldMapFlag      = '';
     private array    $filterWhereSings  = ['!', '>=', '<=', '>', '<'];
     private array    $filterSortSings   = ['+' => 'ASC', '-' => 'DESC', '~' => 'RANDOM'];
+
+    protected array $castHandlers = [
+        'cmsdatetime' => CmsDatetimeCast::class,
+    ];
 
     /**
      * @param  array|null  $fields

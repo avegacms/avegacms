@@ -147,7 +147,7 @@ class MetaDataModel extends AvegaCmsModel
         'rubrics'         => '?json-array',
         'created_by_id'   => 'int',
         'updated_by_id'   => 'int',
-        'publish_at'      => 'datetime',
+        'publish_at'      => 'cmsdatetime',
         'created_at'      => 'datetime',
         'updated_at'      => 'datetime',
     ];

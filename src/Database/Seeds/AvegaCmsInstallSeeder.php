@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Database\Seeds;
 
-use CodeIgniter\I18n\Time;
 use AvegaCms\Database\Factories\{MetaDataFactory, MetaContentFactory};
 use CodeIgniter\Test\Fabricator;
 use AvegaCms\Enums\{FieldsReturnTypes, MetaDataTypes, MetaStatuses, UserStatuses};
@@ -2083,7 +2082,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 $meta->in_sitemap = true;
                 $meta->status     = MetaStatuses::Publish->name;
                 $meta->sort       = 1;
-                $meta->publish_at = new Time(date('Y-m-d H:i:s', now()));
+                $meta->publish_at = date('Y-m-d H:i:s', now());
                 break;
             case MetaDataTypes::Rubric->name:
                 $meta->url = $meta->slug;
@@ -2094,7 +2093,7 @@ class AvegaCmsInstallSeeder extends Seeder
             case MetaDataTypes::Page404->name:
                 $meta->url        = $meta->slug = 'page-not-found';
                 $meta->in_sitemap = false;
-                $meta->publish_at = new Time(date('Y-m-d H:i:s', now()));
+                $meta->publish_at = date('Y-m-d H:i:s', now());
                 break;
         }
 
