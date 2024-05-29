@@ -16,6 +16,7 @@ use AvegaCms\Models\Admin\{ModulesModel,
     MetaDataModel,
     ContentModel,
     SettingsModel,
+    UserModel,
     LoginModel,
     RolesModel,
     UserRolesModel,
@@ -34,6 +35,7 @@ class AvegaCmsInstallSeeder extends Seeder
     protected ContentModel       $CM;
     protected LoginModel         $LM;
     protected SettingsModel      $SM;
+    protected UserModel          $UM;
     protected RolesModel         $RM;
     protected UserRolesModel     $URM;
     protected PermissionsModel   $PM;
@@ -87,7 +89,7 @@ class AvegaCmsInstallSeeder extends Seeder
      */
     private function _createUser(): int
     {
-        return $this->LM->insert(
+        return (new UserModel())->insert(
             [
                 'login'    => 'admin',
                 'email'    => 'admin@avegacms.ru',
@@ -1965,7 +1967,8 @@ class AvegaCmsInstallSeeder extends Seeder
                         'url',
                         'id'
                     );
-                    $j         = 1;
+
+                    $j = 1;
                     for ($i = 0; $num > $i; $i++) {
                         CLI::showProgress($j++, $num);
                         $rubricId = array_rand($rubricsId);
