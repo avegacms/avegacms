@@ -170,7 +170,7 @@ class CmsFileManager
     public static function getFiles(
         array $filter = [],
         bool $all = false
-    ): object|null {
+    ): array|null {
         $FLM = (new FilesLinksModel());
         $FLM->getFiles($filter);
 
@@ -180,7 +180,7 @@ class CmsFileManager
             $result = $FLM->apiPagination();
         }
 
-        return (object) $result;
+        return $result;
     }
 
     /**
