@@ -16,7 +16,8 @@
     "firebase/php-jwt": "^v6.10.0",
     "ext-gd": "*",
     "ext-zip": "*",
-    "ext-mbstring": "*"
+    "ext-mbstring": "*",
+    "ext-simplexml": "*"
   },
   "require-dev": {
     "codeigniter/coding-standard": "^1.7",
