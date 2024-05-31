@@ -65,7 +65,7 @@ class CmsFileManager
         $dirData = null;
 
         if ($onlyUpload === false) {
-            if (($dirData = $FLM->getDirectories($directory)) === null) {
+            if (empty($dirData = $FLM->getDirectories($directory))) {
                 throw UploaderException::forDirectoryNotFound($directory);
             }
         }
@@ -222,6 +222,8 @@ class CmsFileManager
                     'created_by_id' => $config['user_id'] ?? 0
                 ]
             );
+        } else {
+            d($FM->errors());
         }
 
         return $directoryId;

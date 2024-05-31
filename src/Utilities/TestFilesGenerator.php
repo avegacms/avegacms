@@ -21,9 +21,13 @@ class TestFilesGenerator
      */
     public static function run(string $path, string $type = 'mixed', int $num = 1, array $custom = []): bool
     {
-        if (($directory = model(FilesLinksModel::class)->getDirectories($path)) === null) {
+        $FLM = new FilesLinksModel();
+
+        if (empty($directory = $FLM->getDirectories($path))) {
             return false;
         }
+
+        $directory = (object) $directory;
 
         $fileTypes = [
             'images' => ['jpg', 'jpeg', 'png', 'gif'],
@@ -32,8 +36,7 @@ class TestFilesGenerator
 
         helper(['file', 'text']);
 
-        $FM  = model(FilesModel::class);
-        $FLM = model(FilesLinksModel::class);
+        $FM = model(FilesModel::class);
 
         for ($i = 0; $i < $num; $i++) {
             $ft       = $type === 'mixed' ? array_rand($fileTypes) : $type;

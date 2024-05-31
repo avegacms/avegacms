@@ -162,9 +162,9 @@ class FilesLinksModel extends AvegaCmsModel
 
     /**
      * @param  string  $path
-     * @return object|null
+     * @return array
      */
-    public function getDirectories(string $path = ''): object|null
+    public function getDirectories(string $path = ''): array
     {
         $directories = cache()->remember('FileManagerDirectories', 30 * DAY, function () {
             $this->builder()->select(
@@ -186,6 +186,7 @@ class FilesLinksModel extends AvegaCmsModel
 
             $result      = $this->findAll();
             $directories = [];
+
             if ( ! empty($result)) {
                 foreach ($result as $item) {
                     $url = $item->data;
@@ -195,10 +196,10 @@ class FilesLinksModel extends AvegaCmsModel
                 }
             }
 
-            return (object) $directories;
+            return $directories;
         });
 
-        return is_null($directories) ? null : (empty($path) ? $directories : ($directories->{$path} ?? null));
+        return empty($directories) ? [] : (empty($path) ? $directories : ($directories[$path] ?? []));
     }
 
     /**
@@ -213,7 +214,11 @@ class FilesLinksModel extends AvegaCmsModel
         }
     }
 
-    public function updateFilesLinks(array $data)
+    /**
+     * @param  array  $data
+     * @return array
+     */
+    public function updateFilesLinks(array $data): array
     {
         if (in_array($data['method'], ['first', 'find', 'findAll'])) {
             foreach ($data['data'] as $file) {
@@ -256,8 +261,8 @@ class FilesLinksModel extends AvegaCmsModel
 
                         break;
                 }
-
-                $file->created_at = date('d.m.Y H:i', $file->created_at->date);
+                
+                $file->created_at = date('d.m.Y H:i', strtotime($file->created_at));
             }
         }
 
