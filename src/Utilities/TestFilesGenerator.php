@@ -45,7 +45,6 @@ class TestFilesGenerator
             $ext      = $fileTypes[$ft][array_rand($fileTypes[$ft])];
             $title    = random_string('alnum', 64);
             $fileType = FileTypes::File->value;
-
             $original = $name . '.' . $ext;
             $urlPath  = 'uploads/' . $directory->url;
 
