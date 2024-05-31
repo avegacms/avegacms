@@ -148,8 +148,8 @@ class MetaDataModel extends AvegaCmsModel
         'created_by_id'   => 'int',
         'updated_by_id'   => 'int',
         'publish_at'      => 'cmsdatetime',
-        'created_at'      => 'datetime',
-        'updated_at'      => 'datetime',
+        'created_at'      => 'cmsdatetime',
+        'updated_at'      => 'cmsdatetime',
     ];
 
     public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)

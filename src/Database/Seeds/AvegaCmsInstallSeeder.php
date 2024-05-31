@@ -34,7 +34,6 @@ class AvegaCmsInstallSeeder extends Seeder
     protected ContentModel       $CM;
     protected LoginModel         $LM;
     protected SettingsModel      $SM;
-    protected UserModel          $UM;
     protected RolesModel         $RM;
     protected UserRolesModel     $URM;
     protected PermissionsModel   $PM;

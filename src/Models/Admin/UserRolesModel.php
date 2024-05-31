@@ -83,7 +83,7 @@ class UserRolesModel extends AvegaCmsModel
         'role_id'       => 'int',
         'user_id'       => 'int',
         'created_by_id' => 'int',
-        'created_at'    => 'datetime'
+        'created_at'    => 'cmsdatetime'
     ];
 
     public function getUsers()

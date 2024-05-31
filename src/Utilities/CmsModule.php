@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace AvegaCms\Utilities;
 
 use AvegaCms\Config\AvegaCms;
-use CodeIgniter\I18n\Time;
 use AvegaCms\Enums\{MetaDataTypes, MetaStatuses};
 use AvegaCms\Models\Admin\{MetaDataModel, ContentModel, ModulesModel, PermissionsModel, RolesModel};
 use ReflectionException;
@@ -207,7 +206,7 @@ class CmsModule
             'meta_type'       => MetaDataTypes::Module->name,
             'in_sitemap'      => boolval($in_sitemap ?? ($metaData['inSitemap'] ?? 0)),
             'use_url_pattern' => $use_url_pattern,
-            'publish_at'      => new Time(date('Y-m-d H:i:s', now())),
+            'publish_at'      => date('Y-m-d H:i:s', now()),
             'created_by_id'   => 1
         ];
 

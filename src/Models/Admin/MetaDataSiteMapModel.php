@@ -21,7 +21,7 @@ class MetaDataSiteMapModel extends AvegaCmsModel
         'locale_id'    => 'int',
         'module_id'    => 'int',
         'meta_sitemap' => '?json-array',
-        'publish_at'   => 'datetime'
+        'publish_at'   => 'cmsdatetime'
     ];
 
     /**
