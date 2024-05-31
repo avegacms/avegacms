@@ -192,7 +192,7 @@ class FilesLinksModel extends AvegaCmsModel
                     $url = $item->data;
                     unset($item->data);
                     $item->url               = $url['url'];
-                    $directories[$item->url] = $item;
+                    $directories[$item->url] = (array) $item;
                 }
             }
 
@@ -261,7 +261,7 @@ class FilesLinksModel extends AvegaCmsModel
 
                         break;
                 }
-                
+
                 $file->created_at = date('d.m.Y H:i', strtotime($file->created_at));
             }
         }
