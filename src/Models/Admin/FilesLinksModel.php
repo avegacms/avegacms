@@ -221,6 +221,7 @@ class FilesLinksModel extends AvegaCmsModel
     public function updateFilesLinks(array $data): array
     {
         if (in_array($data['method'], ['first', 'find', 'findAll'])) {
+            $data['data'] = (object) $data['data'];
             foreach ($data['data'] as $file) {
                 switch ($file->type) {
                     case FileTypes::Directory->value:
