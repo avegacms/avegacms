@@ -62,8 +62,8 @@ class UserTokensModel extends AvegaCmsModel
     protected array $casts = [
         'user_id'    => 'int',
         'expires'    => 'int',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'created_at' => 'cmsdatetime',
+        'updated_at' => 'cmsdatetime'
     ];
 
     /**

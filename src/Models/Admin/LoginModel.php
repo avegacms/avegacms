@@ -73,9 +73,9 @@ class LoginModel extends AvegaCmsModel
         'expires'       => 'int',
         'created_by_id' => 'int',
         'updated_by_id' => 'int',
-        'created_at'    => '?datetime',
-        'updated_at'    => '?datetime',
-        'deleted_at'    => '?datetime',
+        'created_at'    => '?cmsdatetime',
+        'updated_at'    => '?cmsdatetime',
+        'deleted_at'    => '?cmsdatetime',
         'roleId'        => 'int',
         'moduleId'      => 'int',
         'selfAuth'      => 'int'

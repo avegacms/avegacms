@@ -101,8 +101,8 @@ class EmailTemplateModel extends AvegaCmsModel
         'active'        => '?int-bool',
         'created_by_id' => 'int',
         'updated_by_id' => 'int',
-        'created_at'    => 'datetime',
-        'updated_at'    => 'datetime'
+        'created_at'    => 'cmsdatetime',
+        'updated_at'    => 'cmsdatetime'
     ];
 
     /**

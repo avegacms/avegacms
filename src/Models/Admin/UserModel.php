@@ -117,10 +117,10 @@ class UserModel extends AvegaCmsModel
         'extra'         => '?json-array',
         'created_by_id' => 'int',
         'updated_by_id' => 'int',
-        'active_at'     => 'datetime',
-        'created_at'    => 'datetime',
-        'updated_at'    => 'datetime',
-        'deleted_at'    => 'datetime'
+        'active_at'     => 'cmsdatetime',
+        'created_at'    => 'cmsdatetime',
+        'updated_at'    => 'cmsdatetime',
+        'deleted_at'    => 'cmsdatetime'
     ];
 
     /**
@@ -131,7 +131,7 @@ class UserModel extends AvegaCmsModel
     public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
     {
         parent::__construct($db, $validation);
-        
+
         $this->validationRules['status'] = 'if_exist|in_list[' . implode(',', UserStatuses::get('value')) . ']';
 
         $settings = Cms::settings('core.auth.loginType');
