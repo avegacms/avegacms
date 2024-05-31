@@ -21,8 +21,8 @@ class CmsDatetimeCast extends BaseCast
         if ( ! is_string($value)) {
             self::invalidTypeValueError($value);
         }
-
-        return date('DATE_W3C', strtotime($value));
+       
+        return date(DATE_W3C, strtotime($value));
     }
 
     /**
