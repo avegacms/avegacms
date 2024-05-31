@@ -184,15 +184,15 @@ class FilesLinksModel extends AvegaCmsModel
             )->join('files', 'files.id = files_links.id')
                 ->where(['files_links.type' => FileTypes::Directory->value]);
 
-            $result      = $this->findAll();
+            $result      = $this->asArray()->findAll();
             $directories = [];
 
             if ( ! empty($result)) {
                 foreach ($result as $item) {
-                    $url = $item->data;
-                    unset($item->data);
-                    $item->url               = $url['url'];
-                    $directories[$item->url] = (array) $item;
+                    $url = $item['data'];
+                    unset($item['data']);
+                    $item['url']               = $url['url'];
+                    $directories[$item['url']] = $item;
                 }
             }
 
