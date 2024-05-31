@@ -162,9 +162,9 @@ class FilesLinksModel extends AvegaCmsModel
 
     /**
      * @param  string  $path
-     * @return array
+     * @return object|null
      */
-    public function getDirectories(string $path = ''): array
+    public function getDirectories(string $path = ''): object|null
     {
         $directories = cache()->remember('FileManagerDirectories', 30 * DAY, function () {
             $this->builder()->select(
@@ -184,22 +184,22 @@ class FilesLinksModel extends AvegaCmsModel
             )->join('files', 'files.id = files_links.id')
                 ->where(['files_links.type' => FileTypes::Directory->value]);
 
-            $result      = $this->asArray()->findAll();
+            $result      = $this->findAll();
             $directories = [];
 
             if ( ! empty($result)) {
                 foreach ($result as $item) {
-                    $url = $item['data'];
-                    unset($item['data']);
-                    $item['url']               = $url['url'];
-                    $directories[$item['url']] = $item;
+                    $url = $item->data;
+                    unset($item->data);
+                    $item->url               = $url['url'];
+                    $directories[$item->url] = $item;
                 }
             }
 
-            return $directories;
+            return (object) $directories;
         });
 
-        return empty($directories) ? [] : (empty($path) ? $directories : ($directories[$path] ?? []));
+        return is_null($directories) ? null : (empty($path) ? $directories : ($directories->{$path} ?? null));
     }
 
     /**
