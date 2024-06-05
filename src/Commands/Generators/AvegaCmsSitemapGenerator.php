@@ -9,6 +9,7 @@ use AvegaCms\Libraries\Sitemap\Sitemap;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\CLI\GeneratorTrait;
+use Exception;
 
 class AvegaCmsSitemapGenerator extends BaseCommand
 {
@@ -56,6 +57,7 @@ class AvegaCmsSitemapGenerator extends BaseCommand
      * Actually execute a command.
      *
      * @param  array  $params
+     * @throws Exception
      */
     public function run(array $params): void
     {

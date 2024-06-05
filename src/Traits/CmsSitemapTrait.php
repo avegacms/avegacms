@@ -37,10 +37,15 @@ trait CmsSitemapTrait
             if (empty($list)) {
                 return;
             }
+
+            $lastmod = now();
+            if ($config['lastmod'] ?? false) {
+                $lastmod = strtotime($config['lastmod']);
+            }
             foreach ($list as $item) {
                 $url = $xml->addChild('sitemap');
-                $url->addChild('loc', htmlspecialchars(site_url($item->url)));
-                $url->addChild('lastmod', date(DATE_W3C, strtotime($config['lastmod'] ?? now())));
+                $url->addChild('loc', htmlspecialchars(site_url($this->path . $group . '_' . $item . '.xml')));
+                $url->addChild('lastmod', date(DATE_W3C, $lastmod));
                 $url->addChild('priority', strtolower($config['priority'] ?? SitemapChangefreqs::Monthly->name));
             }
             $path .= '_' . $group . '.xml';
@@ -49,10 +54,9 @@ trait CmsSitemapTrait
             if ($config['lastmod'] ?? false) {
                 $lastmod = strtotime($config['lastmod']);
             }
-
             foreach ($group as $item) {
                 $url = $xml->addChild('sitemap');
-                $url->addChild('loc', htmlspecialchars(site_url($this->path . $item . '.xml')));
+                $url->addChild('loc', htmlspecialchars(site_url($this->path . strtolower($item) . '.xml')));
                 $url->addChild('lastmod', date(DATE_W3C, $lastmod));
                 $url->addChild('priority', strtolower($config['priority'] ?? SitemapChangefreqs::Monthly->name));
             }
@@ -64,7 +68,7 @@ trait CmsSitemapTrait
             }
         }
 
-        $xml->asXML($path);
+        $xml->asXML(strtolower($path));
     }
 
 

@@ -61,12 +61,12 @@ class MetaDataSiteMapModel extends AvegaCmsModel
 
 
         match ($type) {
-            'pages'   => $this->builder()->whereIn('metadata.meta_type', [
+            'Pages'   => $this->builder()->whereIn('metadata.meta_type', [
                 MetaDataTypes::Main->value,
                 MetaDataTypes::Page->value
             ]),
-            'rubrics' => $this->builder()->where(['metadata.meta_type' => MetaDataTypes::Rubric->value]),
-            'posts'   => $this->builder()->where(['metadata.meta_type' => MetaDataTypes::Post->value])
+            'Rubrics' => $this->builder()->where(['metadata.meta_type' => MetaDataTypes::Rubric->value]),
+            'Posts'   => $this->builder()->where(['metadata.meta_type' => MetaDataTypes::Post->value])
         };
 
         return $this->findAll();

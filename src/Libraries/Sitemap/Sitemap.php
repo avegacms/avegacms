@@ -4,16 +4,20 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Libraries\Sitemap;
 
+use AvegaCms\Traits\CmsSitemapTrait;
 use AvegaCms\Models\Admin\ModulesModel;
+use Exception;
 
 class Sitemap
 {
-    protected ?string $moduleName;
+    use CmsSitemapTrait;
+
+    protected ?string $module;
     protected ?string $moduleSlug;
 
     public function __construct(?string $moduleName = null, ?string $moduleSlug = null)
     {
-        $this->moduleName = $moduleName;
+        $this->module     = $moduleName;
         $this->moduleSlug = $moduleSlug;
     }
 
@@ -24,21 +28,31 @@ class Sitemap
      * 3. Обновления карты сайта группы модуля
      *
      * @return void
+     * @throws Exception
      */
     public function run(): void
     {
         $modules = (new ModulesModel())->getModulesMeta();
 
-        if ( ! is_null($this->moduleName) && array_key_exists($key = strtolower($this->moduleName), $modules)) {
+        if ( ! is_null($this->module) && array_key_exists($key = strtolower($this->module), $modules)) {
             $module = $modules[$key];
             if ($module['in_sitemap'] === true && $module['parent'] === 0) {
                 $this->generate($module['class_name']);
             }
         } else {
+            $sitemapGlobal = [];
             foreach ($modules as $module) {
                 if ($module['in_sitemap'] === true && $module['parent'] === 0) {
-                    $this->generate($module['class_name']);
+                    // Собираем общий список основных модулей
+                    $sitemapGlobal[] = $module['class_name'];
                 }
+            }
+            $this->moduleName = null;
+            // Создаём sitemap.xml
+            $this->setModule($sitemapGlobal);
+
+            foreach ($sitemapGlobal as $item) {
+                $this->generate($item);
             }
         }
     }
