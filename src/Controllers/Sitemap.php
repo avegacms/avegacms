@@ -15,14 +15,23 @@ class Sitemap extends Controller
     use CmsSitemapTrait;
 
     /**
-     * @param  string  $pointer
+     * @param  string|null  $pointer
      * @return void
-     * @throws ReflectionException|Exception
+     * @throws Exception
      */
-    public function run(string $pointer = ''): void
+    public function generate(?string $pointer = null): void
     {
-        if (in_array($pointer, ['pages', 'rubrics', 'posts'])) {
-            $this->setModule(group: $pointer, list: (new MetaDataSiteMapModel())->getContentSitemap($pointer));
+        $MDSM = new MetaDataSiteMapModel();
+
+        $list = ['pages', 'rubrics', 'posts'];
+
+        if (is_null($pointer)) {
+            $this->setModule(group: 'Content', list: $list);
+            foreach ($list as $item) {
+                $this->setModule(group: 'Content', list: $MDSM->getContentSitemap($item));
+            }
+        } elseif (in_array($pointer, $list)) {
+            $this->setModule(group: $pointer, list: $MDSM->getContentSitemap($pointer));
         }
     }
 }

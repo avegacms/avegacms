@@ -16,12 +16,13 @@ class MetaDataSiteMapModel extends AvegaCmsModel
     protected $returnType       = 'object';
 
     protected array $casts = [
-        'id'           => 'int',
-        'parent'       => 'int',
-        'locale_id'    => 'int',
-        'module_id'    => 'int',
-        'meta_sitemap' => '?json-array',
-        'publish_at'   => 'cmsdatetime'
+        'id'              => 'int',
+        'parent'          => 'int',
+        'locale_id'       => 'int',
+        'module_id'       => 'int',
+        'meta_sitemap'    => '?json-array',
+        'use_url_pattern' => 'int-bool',
+        'publish_at'      => 'cmsdatetime'
     ];
 
     /**
@@ -39,7 +40,7 @@ class MetaDataSiteMapModel extends AvegaCmsModel
                 'metadata.url',
                 'metadata.use_url_pattern',
                 'metadata.meta_sitemap',
-                'metadata.publish_at'
+                'metadata.publish_at AS lastmod'
             ]
         )->groupStart()
             ->where(['metadata.status' => MetaStatuses::Publish->value])

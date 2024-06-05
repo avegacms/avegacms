@@ -29,8 +29,8 @@ class Sitemap
     {
         $modules = (new ModulesModel())->getModulesMeta();
 
-        if ( ! is_null($this->moduleName) && array_key_exists($this->moduleName, $modules)) {
-            $module = $modules[$this->moduleName];
+        if ( ! is_null($this->moduleName) && array_key_exists($key = strtolower($this->moduleName), $modules)) {
+            $module = $modules[$key];
             if ($module['in_sitemap'] === true && $module['parent'] === 0) {
                 $this->generate($module['class_name']);
             }
@@ -51,15 +51,14 @@ class Sitemap
     {
         if ( ! is_null($className)) {
             if ($className === 'Content') {
-                $className = "AvegaCms\\Controllers\\Content\\Sitemap";
+                $classNamespace = "AvegaCms\\Controllers\\Sitemap";
             } else {
-                $className = "Modules\\{$className}\\Controllers\\Sitemap";
+                $classNamespace = "Modules\\{$className}\\Controllers\\Sitemap";
             }
-
-            if (class_exists($className)) {
-                $sitemap = new $className();
+            if (class_exists($classNamespace)) {
+                $sitemap = new $classNamespace();
                 if (method_exists($sitemap, 'generate')) {
-                    $sitemap->generate($className, $this->moduleSlug);
+                    $sitemap->generate($this->moduleSlug);
                 }
             }
         }
