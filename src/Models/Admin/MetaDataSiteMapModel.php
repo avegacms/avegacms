@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Models\Admin;
 
-use AvegaCms\Enums\{SitemapChangefreqs, MetaStatuses, MetaDataTypes};
+use AvegaCms\Enums\{MetaStatuses, MetaDataTypes};
 use AvegaCms\Models\AvegaCmsModel;
 
 class MetaDataSiteMapModel extends AvegaCmsModel
@@ -16,12 +16,13 @@ class MetaDataSiteMapModel extends AvegaCmsModel
     protected $returnType       = 'object';
 
     protected array $casts = [
-        'id'           => 'int',
-        'parent'       => 'int',
-        'locale_id'    => 'int',
-        'module_id'    => 'int',
-        'meta_sitemap' => '?json-array',
-        'publish_at'   => 'cmsdatetime'
+        'id'              => 'int',
+        'parent'          => 'int',
+        'locale_id'       => 'int',
+        'module_id'       => 'int',
+        'meta_sitemap'    => '?json-array',
+        'use_url_pattern' => 'int-bool',
+        'publish_at'      => 'cmsdatetime'
     ];
 
     /**
@@ -30,29 +31,8 @@ class MetaDataSiteMapModel extends AvegaCmsModel
      */
     public function getContentSitemap(string $type): array
     {
-        $this->metaSiteMap();
+        $list = [];
 
-        $this->builder()->where(
-            [
-                'metadata.in_sitemap' => 1,
-                'metadata.module_id'  => 0
-            ]
-        );
-
-        match ($type) {
-            'pages'   => $this->builder()->whereIn('metadata.meta_type', [
-                MetaDataTypes::Main->value,
-                MetaDataTypes::Page->value
-            ]),
-            'rubrics' => $this->builder()->where(['metadata.meta_type' => MetaDataTypes::Rubric->value]),
-            'posts'   => $this->builder()->where(['metadata.meta_type' => MetaDataTypes::Post->value])
-        };
-
-        return $this->prepData($this->findAll());
-    }
-
-    protected function metaSiteMap(): MetaDataSiteMapModel
-    {
         $this->builder()->select(
             [
                 'metadata.id',
@@ -62,7 +42,7 @@ class MetaDataSiteMapModel extends AvegaCmsModel
                 'metadata.url',
                 'metadata.use_url_pattern',
                 'metadata.meta_sitemap',
-                'metadata.publish_at'
+                'metadata.publish_at AS lastmod'
             ]
         )->groupStart()
             ->where(['metadata.status' => MetaStatuses::Publish->value])
@@ -74,26 +54,31 @@ class MetaDataSiteMapModel extends AvegaCmsModel
                 ]
             )->groupEnd()
             ->groupEnd()
-            ->orderBy('metadata.publish_at', 'ASC');
+            ->where(
+                [
+                    'metadata.in_sitemap' => 1,
+                    'metadata.module_id'  => 0
+                ]
+            )->orderBy('metadata.publish_at', 'DESC');
 
-        return $this;
-    }
 
-    /**
-     * @param $data
-     * @return array
-     */
-    protected function prepData($data): array
-    {
-        $list = [];
-        foreach ($data as $item) {
-            $list[] = [
-                'url'        => base_url($item->url),
-                'priority'   => $item->meta_sitemap['priority'] ?? 50,
-                'changefreq' => strtolower($item->meta_sitemap['changefreq'] ?? SitemapChangefreqs::Monthly->value),
-                'date'       => $item->publishAt->toDateString()
-            ];
+        match ($type) {
+            'Pages'   => $this->builder()->whereIn('metadata.meta_type', [
+                MetaDataTypes::Main->value,
+                MetaDataTypes::Page->value
+            ]),
+            'Rubrics' => $this->builder()->where(['metadata.meta_type' => MetaDataTypes::Rubric->value]),
+            'Posts'   => $this->builder()->where(['metadata.meta_type' => MetaDataTypes::Post->value])
+        };
+
+        if ( ! empty($list = $this->findAll())) {
+            foreach ($list as $item) {
+                $item->changefreq = $item->meta_sitemap['changefreq'];
+                $item->priority   = $item->meta_sitemap['priority'];
+                unset($item->meta_sitemap);
+            }
         }
+
         return $list;
     }
 }

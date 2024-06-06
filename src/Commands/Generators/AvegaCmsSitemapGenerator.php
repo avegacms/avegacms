@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Commands\Generators;
 
 use AvegaCms\Config\AvegaCms;
+use AvegaCms\Libraries\Sitemap\Sitemap;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\CLI\GeneratorTrait;
+use Exception;
 
 class AvegaCmsSitemapGenerator extends BaseCommand
 {
@@ -37,50 +41,35 @@ class AvegaCmsSitemapGenerator extends BaseCommand
      *
      * @var string
      */
-    protected $usage = 'avegacms:sitemap <module name> [options]';
+    protected $usage = 'avegacms:sitemap [module] [options]';
 
     /**
      * The Command's Arguments
      *
      * @var array
      */
-    protected $arguments = [];
-
-    /**
-     * The Command's Options
-     *
-     * @var array
-     */
-    protected $options = [
-        '--namespace' => 'Set root namespace. Default: "Modules".',
-        '--force'     => 'Force overwrite existing file.',
+    protected $arguments = [
+        'moduleName' => 'Название модуля',
+        'parameter'  => 'Параметр для генератора Sitemap'
     ];
 
     /**
      * Actually execute a command.
      *
      * @param  array  $params
+     * @throws Exception
      */
-    public function run(array $params)
+    public function run(array $params): void
     {
-        $this->component = 'Controller';
-        $this->directory = 'Controllers';
-        $this->template  = 'avegacmssitemapcontroller.tpl.php';
+        $moduleName = $params[0] ?? null;
+        $parameter  = $params[1] ?? null;
 
-        $this->classNameLang = 'CLI.generator.className.controller';
-
-        $this->generateClass($params);
-    }
-
-    protected function prepare(string $module): string
-    {
-        if (empty($module)) {
-            CLI::error(lang('Generator.error.controller.sitemap'), 'light_gray', 'red');
-            CLI::newLine();
-            exit();
+        if (is_null($moduleName)) {
+            CLI::write("Глобальная генерация Sitemap", 'green');
+        } else {
+            CLI::write("Генерация Sitemap для модуля: {$moduleName}", 'green');
         }
-        return $this->parseTemplate('Sitemap',
-            []
-        );
+
+        (new Sitemap($moduleName, $parameter))->run();
     }
 }

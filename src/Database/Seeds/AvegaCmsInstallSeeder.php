@@ -207,7 +207,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'version'       => $this->version,
                 'description'   => 'Cms.modules.description.content',
                 'extra'         => [],
-                'in_sitemap'    => false,
+                'in_sitemap'    => true,
                 'active'        => true,
                 'created_by_id' => $userId,
                 'updated_by_id' => 0

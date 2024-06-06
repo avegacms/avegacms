@@ -5,34 +5,34 @@ declare(strict_types = 1);
 namespace AvegaCms\Controllers;
 
 use AvegaCms\Models\Admin\MetaDataSiteMapModel;
-use AvegaCms\Utilities\SeoUtils;
+use AvegaCms\Traits\CmsSitemapTrait;
 use CodeIgniter\Controller;
 use ReflectionException;
+use Exception;
 
 class Sitemap extends Controller
 {
+    use CmsSitemapTrait;
+
     /**
-     * @param  string  $pointer
+     * @param  string|null  $pointer
      * @return void
-     * @throws ReflectionException
+     * @throws Exception
      */
-    public static function run(string $pointer = ''): void
+    public function generate(?string $pointer = null): void
     {
-        $MDSMM = model(MetaDataSiteMapModel::class);
+        $MDSM = new MetaDataSiteMapModel();
 
-        $sitemap = [
-            'content'         => [],
-            'content.pages'   => $MDSMM->getContentSitemap('pages'),
-            'content.rubrics' => $MDSMM->getContentSitemap('rubrics'),
-            'content.posts'   => $MDSMM->getContentSitemap('posts')
-        ];
+        $this->moduleName = 'Content';
+        $list             = ['Pages', 'Rubrics', 'Posts'];
 
-        if (empty($pointer)) {
-            foreach ($sitemap as $key => $data) {
-                SeoUtils::sitemap($key, $data);
+        if (is_null($pointer)) {
+            $this->setModule(group: $list);
+            foreach ($list as $item) {
+                $this->setGroup(group: $item, list: $MDSM->getContentSitemap($item));
             }
-        } elseif (array_key_exists($pointer, $sitemap)) {
-            SeoUtils::sitemap($pointer, $sitemap[$pointer]);
+        } elseif (in_array($pointer, $list)) {
+            $this->setGroup(group: $pointer, list: $MDSM->getContentSitemap($pointer));
         }
     }
 }
