@@ -30,6 +30,7 @@ class Sitemap extends Controller
             $this->setModule(group: $list);
             foreach ($list as $item) {
                 $this->setGroup(group: $item, list: $MDSM->getContentSitemap($item));
+                d((string) $MDSM->getLastQuery());
             }
         } elseif (in_array($pointer, $list)) {
             $this->setGroup(group: $pointer, list: $MDSM->getContentSitemap($pointer));

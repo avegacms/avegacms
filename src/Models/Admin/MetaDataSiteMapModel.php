@@ -31,15 +31,12 @@ class MetaDataSiteMapModel extends AvegaCmsModel
      */
     public function getContentSitemap(string $type): array
     {
-        $list = [];
-
         $this->builder()->select(
             [
                 'metadata.id',
                 'metadata.parent',
                 'metadata.locale_id',
                 'metadata.module_id',
-                'metadata.url',
                 'metadata.use_url_pattern',
                 'metadata.meta_sitemap',
                 'metadata.publish_at AS lastmod'
@@ -70,6 +67,14 @@ class MetaDataSiteMapModel extends AvegaCmsModel
             'Rubrics' => $this->builder()->where(['metadata.meta_type' => MetaDataTypes::Rubric->value]),
             'Posts'   => $this->builder()->where(['metadata.meta_type' => MetaDataTypes::Post->value])
         };
+
+        if ($type === 'Posts') {
+            $this->builder()
+                ->select(['CONCAT(TRIM(TRAILING "/" FROM CONCAT_WS("/", m2.url, metadata.url)), "_", metadata.id) AS url'])
+                ->join('metadata AS m2', 'm2.id = metadata.parent');
+        } else {
+            $this->builder()->select(['metadata.url']);
+        }
 
         if ( ! empty($list = $this->findAll())) {
             foreach ($list as $item) {
