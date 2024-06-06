@@ -31,44 +31,41 @@ trait CmsSitemapTrait
         }
 
         $xml  = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="https://www.sitemaps.org/schemas/sitemap/0.9"></sitemapindex>');
-        $path = FCPATH . $this->path . $this->moduleName;
+        $data = [];
+        $path = $this->path . $this->moduleName;
 
         if (is_string($group)) {
             if (empty($list)) {
                 return;
             }
-
-            $lastmod = now();
-            if ($config['lastmod'] ?? false) {
-                $lastmod = strtotime($config['lastmod']);
-            }
-            foreach ($list as $item) {
-                $url = $xml->addChild('sitemap');
-                $url->addChild('loc', htmlspecialchars(site_url($this->path . $group . '_' . $item . '.xml')));
-                $url->addChild('lastmod', date(DATE_W3C, $lastmod));
-                $url->addChild('priority', strtolower($config['priority'] ?? SitemapChangefreqs::Monthly->name));
-            }
+            $data = $list;
             $path .= '_' . $group . '.xml';
-        } else {
-            $lastmod = now();
-            if ($config['lastmod'] ?? false) {
-                $lastmod = strtotime($config['lastmod']);
-            }
+        } elseif (is_array($group)) {
             foreach ($group as $item) {
-                $url = $xml->addChild('sitemap');
-                $url->addChild('loc', htmlspecialchars(site_url($this->path . strtolower($item) . '.xml')));
-                $url->addChild('lastmod', date(DATE_W3C, $lastmod));
-                $url->addChild('priority', strtolower($config['priority'] ?? SitemapChangefreqs::Monthly->name));
+                $data[]['url'] = strtolower($path . (is_null($this->moduleName) ? '' : '_') . $item . '.xml');
             }
-
             $path .= '.xml';
-
-            if ($this->moduleName === null && empty($list)) {
-                $path = 'sitemap.xml';
-            }
+        } else {
+            return;
         }
 
-        $xml->asXML(strtolower($path));
+        $lastmod = now();
+        if ($config['lastmod'] ?? false) {
+            $lastmod = strtotime($config['lastmod']);
+        }
+
+        foreach ($data as $item) {
+            $url = $xml->addChild('sitemap');
+            $url->addChild('loc', htmlspecialchars(site_url($item['url'])));
+            $url->addChild('lastmod', date(DATE_W3C, $lastmod));
+            $url->addChild('priority', strtolower($config['priority'] ?? SitemapChangefreqs::Monthly->name));
+        }
+
+        if ($this->moduleName === null && $list === null) {
+            $path = 'sitemap.xml';
+        }
+
+        $xml->asXML(FCPATH . strtolower($path));
     }
 
 
@@ -86,30 +83,59 @@ trait CmsSitemapTrait
             return;
         }
 
-        if (is_numeric($qtyElements)) {
+        if ( ! is_numeric($qtyElements)) {
             $qtyElements = Cms::settings('core.seo.sitemapBatchQty');
         }
 
-        $groupUrl = (object) [];
-        $list     = array_chunk($list, $qtyElements);
-        $xml      = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9"></urlset>');
-        $i        = 0;
-
-        foreach ($list as $chunk) {
-            $i++;
-            foreach ($chunk as $item) {
-                $url = $xml->addChild('url');
-                $url->addChild('loc', site_url($item->url));
-                $url->addChild('lastmod', date(DATE_W3C, strtotime($item->lastmod)));
-                $url->addChild('changefreq', $item->changefreq);
-                $url->addChild('priority', $item->priority);
+        if (count($list) > $qtyElements) {
+            $groupUrl = [];
+            $i        = 0;
+            $list     = array_chunk($list, $qtyElements);
+            foreach ($list as $chunk) {
+                $i++;
+                $groupUrl[]['url'] = $this->_createUrlSet($chunk, $group, $i);
             }
-            $groupUrl[]->url = $itemUrl = $this->path . $this->moduleName . '_' . $group . $i . '.xml';
-            $xml->asXML(FCPATH . $itemUrl);
+
+            if ( ! empty($groupUrl)) {
+                $this->setModule($group, $groupUrl, $groupConfig);
+            }
+        } else {
+            $this->_createUrlSet($list, $group);
+        }
+    }
+
+    /**
+     * @param  array  $list
+     * @param  string  $group
+     * @param  int  $step
+     * @return string
+     */
+    private function _createUrlSet(array $list, string $group, int $step = 0): string
+    {
+        $xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9"></urlset>');
+
+        foreach ($list as $item) {
+            $url = $xml->addChild('url');
+            $url->addChild('loc', site_url($item->url));
+            $url->addChild('lastmod', date(DATE_W3C, strtotime($item->lastmod)));
+            $url->addChild('changefreq', $item->changefreq);
+            $url->addChild('priority', (string) $item->priority);
         }
 
-        if ( ! empty($groupUrl)) {
-            $this->setModule($group, (array) $groupUrl, $groupConfig);
+        $sitemapFile = $this->path . $this->moduleName . '_' . $group;
+
+        if ($step > 0) {
+            $sitemapFile .= '_' . $step;
         }
+
+        $sitemapFile .= '.xml';
+
+        $sitemapFile = strtolower($sitemapFile);
+
+        if ($xml->asXML(FCPATH . $sitemapFile) !== true) {
+            $sitemapFile = '';
+        }
+
+        return $sitemapFile;
     }
 }

@@ -23,16 +23,16 @@ class Sitemap extends Controller
     {
         $MDSM = new MetaDataSiteMapModel();
 
-        $list = ['Pages', 'Rubrics', 'Posts'];
+        $this->moduleName = 'Content';
+        $list             = ['Pages', 'Rubrics', 'Posts'];
 
         if (is_null($pointer)) {
-            $this->moduleName = 'Content';
             $this->setModule(group: $list);
             foreach ($list as $item) {
-                $this->setModule(group: $item, list: $MDSM->getContentSitemap($item));
+                $this->setGroup(group: $item, list: $MDSM->getContentSitemap($item));
             }
         } elseif (in_array($pointer, $list)) {
-            $this->setModule(group: $pointer, list: $MDSM->getContentSitemap($pointer));
+            $this->setGroup(group: $pointer, list: $MDSM->getContentSitemap($pointer));
         }
     }
 }

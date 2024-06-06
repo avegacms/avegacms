@@ -31,6 +31,8 @@ class MetaDataSiteMapModel extends AvegaCmsModel
      */
     public function getContentSitemap(string $type): array
     {
+        $list = [];
+
         $this->builder()->select(
             [
                 'metadata.id',
@@ -57,7 +59,7 @@ class MetaDataSiteMapModel extends AvegaCmsModel
                     'metadata.in_sitemap' => 1,
                     'metadata.module_id'  => 0
                 ]
-            )->orderBy('metadata.publish_at', 'ASC');
+            )->orderBy('metadata.publish_at', 'DESC');
 
 
         match ($type) {
@@ -69,6 +71,14 @@ class MetaDataSiteMapModel extends AvegaCmsModel
             'Posts'   => $this->builder()->where(['metadata.meta_type' => MetaDataTypes::Post->value])
         };
 
-        return $this->findAll();
+        if ( ! empty($list = $this->findAll())) {
+            foreach ($list as $item) {
+                $item->changefreq = $item->meta_sitemap['changefreq'];
+                $item->priority   = $item->meta_sitemap['priority'];
+                unset($item->meta_sitemap);
+            }
+        }
+
+        return $list;
     }
 }
