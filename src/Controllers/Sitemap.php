@@ -7,7 +7,6 @@ namespace AvegaCms\Controllers;
 use AvegaCms\Models\Admin\MetaDataSiteMapModel;
 use AvegaCms\Traits\CmsSitemapTrait;
 use CodeIgniter\Controller;
-use ReflectionException;
 use Exception;
 
 class Sitemap extends Controller
