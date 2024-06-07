@@ -118,8 +118,8 @@ trait CmsSitemapTrait
             $url = $xml->addChild('url');
             $url->addChild('loc', site_url($item->url));
             $url->addChild('lastmod', date(DATE_W3C, strtotime($item->lastmod)));
-            $url->addChild('changefreq', $item->changefreq);
-            $url->addChild('priority', (string) $item->priority);
+            $url->addChild('changefreq', $item->changefreq ?? SitemapChangefreqs::Monthly->name);
+            $url->addChild('priority', (string) ($item->priority ?? 50));
         }
 
         $sitemapFile = $this->path . $this->moduleName . '_' . $group;
