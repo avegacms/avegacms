@@ -65,9 +65,10 @@ trait CmsSitemapTrait
             $path = 'sitemap.xml';
         }
 
+        $this->_checkFolder();
+
         $xml->asXML(FCPATH . strtolower($path));
     }
-
 
     /**
      * @param  string  $group
@@ -137,5 +138,17 @@ trait CmsSitemapTrait
         }
 
         return $sitemapFile;
+    }
+
+    /**
+     * @return void
+     */
+    private function _checkFolder(): void
+    {
+        $path = substr_replace(FCPATH . $this->path, '', -1);
+
+        if ( ! is_dir($path)) {
+            mkdir($path, 0755, true);
+        }
     }
 }
