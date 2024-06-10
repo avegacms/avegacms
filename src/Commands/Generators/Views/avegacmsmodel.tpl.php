@@ -14,7 +14,22 @@ class {class} extends AvegaCmsModel
     protected $returnType       = {return};
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = [];
+    protected $allowedFields    = [
+        'id',
+        'active',
+        'created_by_id',
+        'updated_by_id',
+        'created_at',
+        'updated_at'
+    ];
+    protected array $casts    = [
+        'id'            => 'int',
+        'active'        => 'int-bool',
+        'created_by_id' => 'int',
+        'updated_by_id' => 'int',
+        'created_at'    => 'cmsdatetime',
+        'updated_at'    => 'cmsdatetime'
+    ];
     
     // Dates
     protected $useTimestamps = false;

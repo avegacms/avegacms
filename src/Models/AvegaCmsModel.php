@@ -31,7 +31,6 @@ class AvegaCmsModel extends Model
     protected int    $maxLimit          = 100;
     protected int    $page              = 1;
     private array    $filterFieldsMap   = [];
-    private string   $fieldMapFlag      = '';
     private array    $filterWhereSings  = ['!', '>=', '<=', '>', '<'];
     private array    $filterSortSings   = ['+' => 'ASC', '-' => 'DESC', '~' => 'RANDOM'];
 
@@ -292,75 +291,5 @@ class AvegaCmsModel extends Model
                 (is_array($value) && ! empty($value) ? $this->castAs($value, 'array', $fieldName) : null),
             default         => null
         };
-    }
-
-    // TODO Удалить после того как пофиксят эти методы
-
-    protected function doFirst()
-    {
-        $builder = $this->builder();
-
-        $useCast = $this->useCasts();
-        if ($useCast) {
-            $returnType = $this->tempReturnType;
-            $this->asArray();
-        }
-
-        if ($this->tempUseSoftDeletes) {
-            $builder->where($this->table . '.' . $this->deletedField, null);
-        } elseif ($this->useSoftDeletes && ($builder->QBGroupBy === []) && $this->primaryKey) {
-            $builder->groupBy($this->table . '.' . $this->primaryKey);
-        }
-
-        // Some databases, like PostgreSQL, need order
-        // information to consistently return correct results.
-        if ($builder->QBGroupBy && ($builder->QBOrderBy === []) && $this->primaryKey) {
-            $builder->orderBy($this->table . '.' . $this->primaryKey, 'asc');
-        }
-
-        $row = $builder->limit(1, 0)->get()->getFirstRow($this->tempReturnType);
-
-        if ($useCast && $row !== null) {
-            $row = $this->convertToReturnType($row, $returnType);
-
-            $this->tempReturnType = $returnType;
-        }
-
-        return $row;
-    }
-
-    protected function doFind(bool $singleton, $id = null)
-    {
-        $builder = $this->builder();
-
-        $useCast = $this->useCasts();
-        if ($useCast) {
-            $returnType = $this->tempReturnType;
-            $this->asArray();
-        }
-
-        if ($this->tempUseSoftDeletes) {
-            $builder->where($this->table . '.' . $this->deletedField, null);
-        }
-
-        if (is_array($id)) {
-            $row = $builder->whereIn($this->table . '.' . $this->primaryKey, $id)
-                ->get()
-                ->getResult($this->tempReturnType);
-        } elseif ($singleton) {
-            $row = $builder->where($this->table . '.' . $this->primaryKey, $id)
-                ->get()
-                ->getFirstRow($this->tempReturnType);
-        } else {
-            $row = $builder->get()->getResult($this->tempReturnType);
-        }
-
-        if ($useCast && $row !== null) {
-            $row = $this->convertToReturnType($row, $returnType);
-
-            $this->tempReturnType = $returnType;
-        }
-
-        return $row;
     }
 }
