@@ -269,6 +269,18 @@ class MetaDataModel extends AvegaCmsModel
     }
 
     /**
+     * @param  int  $id
+     * @return object|null
+     */
+    public function editMetadata(int $id): object|null
+    {
+        $this->builder()->select(['metadata.*', 'content.*'])
+            ->join('content', 'content.id = metadata.id');
+
+        return $this->find($id);
+    }
+
+    /**
      * @param  int  $moduleId
      * @param  string  $slug
      * @param  int  $localeId
