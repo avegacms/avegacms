@@ -175,6 +175,96 @@ class MetaDataModel extends AvegaCmsModel
         ];
     }
 
+    /**
+     * @param  string  $type
+     * @param  array  $filter
+     * @return AvegaCmsModel
+     */
+    public function selectMetaDataList(string $type, array $filter = []): AvegaCmsModel
+    {
+        $this->builder()->select(
+            [
+                'metadata.id',
+                'metadata.parent',
+                'metadata.locale_id',
+                'metadata.module_id',
+                'metadata.slug',
+                'metadata.creator_id',
+                'metadata.title',
+                'metadata.url',
+                'metadata.status',
+                'metadata.meta_type',
+                'metadata.in_sitemap',
+                'metadata.use_url_pattern',
+                'metadata.publish_at',
+                'metadata.created_at',
+                'metadata.updated_at',
+                'l.locale_name',
+                'u.login AS author'
+            ]
+        )->join('locales AS l', 'l.id = metadata.locale_id')
+            ->join('users AS u', 'u.id = metadata.creator_id', 'left');
+
+        switch (strtoupper($type)) {
+            case MetaDataTypes::Main->value:
+            case MetaDataTypes::Page->value:
+
+                $this->builder()
+                    ->select(['pm.title AS parent_title'])
+                    ->join('metadata AS pm', 'pm.id = metadata.parent', 'left')
+                    ->groupStart()
+                    ->whereIn(
+                        'metadata.meta_type',
+                        [
+                            MetaDataTypes::Main->value,
+                            MetaDataTypes::Page->value
+                        ]
+                    )->where(['metadata.module_id' => 0])
+                    ->groupEnd();
+
+                break;
+
+            case MetaDataTypes::Rubric->value:
+
+                $this->builder()
+                    ->groupStart()
+                    ->where(
+                        [
+                            'metadata.meta_type' => MetaDataTypes::Rubric->value,
+                            'metadata.module_id' => 0
+                        ]
+                    )->groupEnd();
+
+                break;
+
+            case MetaDataTypes::Post->value:
+
+                $this->builder()
+                    ->groupStart()
+                    ->where(
+                        [
+                            'metadata.meta_type' => MetaDataTypes::Post->value,
+                            'metadata.module_id' => 0
+                        ]
+                    )->groupEnd();
+
+                break;
+            case MetaDataTypes::Module->value:
+
+                $this->builder()
+                    ->groupStart()
+                    ->where(
+                        [
+                            'metadata.meta_type' => MetaDataTypes::Module->value,
+                            'metadata.module_id' => $filter['module_id'] ?? 0
+                        ]
+                    )->groupEnd();
+
+                break;
+        }
+
+        return $this->filter($filter);
+    }
 
     /**
      * @param  array  $data
