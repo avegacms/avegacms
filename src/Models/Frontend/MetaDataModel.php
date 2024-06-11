@@ -39,7 +39,7 @@ class MetaDataModel extends AvegaCmsModel
     protected $beforeUpdate   = [];
     protected $afterUpdate    = [];
     protected $beforeFind     = [];
-    protected $afterFind      = ['prepMetaData'];
+    protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
@@ -244,6 +244,8 @@ class MetaDataModel extends AvegaCmsModel
      */
     public function getSubPages(int $id): array
     {
+        $this->afterFind = ['prepMetaData'];
+
         $this->builder()->select(
             [
                 'metadata.id',
@@ -349,6 +351,15 @@ class MetaDataModel extends AvegaCmsModel
 
     protected function prepMetaData(array $data): array
     {
-        dd($data);
+        if ( ! is_null($data['data'])) {
+            if ($data['singleton']) {
+                $data['data']->url = base_url($data['data']->url);
+            } else {
+                foreach ($data['data'] as $item) {
+                    $item->url = base_url($item->url);
+                }
+            }
+        }
+        return $data;
     }
 }
