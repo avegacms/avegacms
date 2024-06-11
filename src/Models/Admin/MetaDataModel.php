@@ -269,6 +269,38 @@ class MetaDataModel extends AvegaCmsModel
     }
 
     /**
+     * @param  int  $moduleId
+     * @param  string  $slug
+     * @param  int  $localeId
+     * @return object|null
+     */
+    public function pageModuleMeta(int $moduleId, string $slug, int $localeId = 1): object|null
+    {
+        $this->builder()->select(
+            [
+                'metadata.id',
+                'metadata.parent',
+                'metadata.locale_id',
+                'metadata.module_id',
+                'metadata.slug',
+                'metadata.title',
+                'metadata.url',
+                'metadata.in_sitemap',
+                'metadata.use_url_pattern'
+            ]
+        )->where(
+            [
+                'metadata.meta_type' => MetaDataTypes::Module->name,
+                'metadata.slug'      => $slug,
+                'metadata.module_id' => $moduleId,
+                'metadata.locale_id' => $localeId
+            ]
+        );
+
+        return $this->first();
+    }
+
+    /**
      * @param  array  $data
      * @return array
      * @throws ReflectionException

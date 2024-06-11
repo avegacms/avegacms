@@ -146,6 +146,16 @@ class CmsModule
     }
 
     /**
+     * @param  int  $moduleId
+     * @param  string  $slug
+     * @return object|null
+     */
+    protected static function pageMeta(int $moduleId, string $slug): object|null
+    {
+        return (new MetaDataModel())->pageModuleMeta($moduleId, $slug);
+    }
+
+    /**
      * @param  string  $key
      * @return array
      */
