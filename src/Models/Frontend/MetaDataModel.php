@@ -39,7 +39,7 @@ class MetaDataModel extends AvegaCmsModel
     protected $beforeUpdate   = [];
     protected $afterUpdate    = [];
     protected $beforeFind     = [];
-    protected $afterFind      = [];
+    protected $afterFind      = ['prepMetaData'];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
@@ -94,9 +94,9 @@ class MetaDataModel extends AvegaCmsModel
         'rubrics'         => '?json-array',
         'created_by_id'   => 'int',
         'updated_by_id'   => 'int',
-        'publish_at'      => 'datetime',
-        'created_at'      => 'datetime',
-        'updated_at'      => 'datetime',
+        'publish_at'      => 'cmsdatetime',
+        'created_at'      => 'cmsdatetime',
+        'updated_at'      => 'cmsdatetime',
     ];
 
     protected int $level = 7;
@@ -345,5 +345,10 @@ class MetaDataModel extends AvegaCmsModel
         );
 
         return $this;
+    }
+
+    protected function prepMetaData(array $data): array
+    {
+        dd($data);
     }
 }
