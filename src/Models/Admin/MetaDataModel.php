@@ -205,9 +205,9 @@ class MetaDataModel extends AvegaCmsModel
         )->join('locales AS l', 'l.id = metadata.locale_id')
             ->join('users AS u', 'u.id = metadata.creator_id', 'left');
 
-        switch (strtoupper($type)) {
-            case MetaDataTypes::Main->value:
-            case MetaDataTypes::Page->value:
+        switch (ucfirst($type)) {
+            case MetaDataTypes::Main->name:
+            case MetaDataTypes::Page->name:
 
                 $this->builder()
                     ->select(['pm.title AS parent_title'])
@@ -216,46 +216,46 @@ class MetaDataModel extends AvegaCmsModel
                     ->whereIn(
                         'metadata.meta_type',
                         [
-                            MetaDataTypes::Main->value,
-                            MetaDataTypes::Page->value
+                            MetaDataTypes::Main->name,
+                            MetaDataTypes::Page->name
                         ]
                     )->where(['metadata.module_id' => 0])
                     ->groupEnd();
 
                 break;
 
-            case MetaDataTypes::Rubric->value:
+            case MetaDataTypes::Rubric->name:
 
                 $this->builder()
                     ->groupStart()
                     ->where(
                         [
-                            'metadata.meta_type' => MetaDataTypes::Rubric->value,
+                            'metadata.meta_type' => MetaDataTypes::Rubric->name,
                             'metadata.module_id' => 0
                         ]
                     )->groupEnd();
 
                 break;
 
-            case MetaDataTypes::Post->value:
+            case MetaDataTypes::Post->name:
 
                 $this->builder()
                     ->groupStart()
                     ->where(
                         [
-                            'metadata.meta_type' => MetaDataTypes::Post->value,
+                            'metadata.meta_type' => MetaDataTypes::Post->name,
                             'metadata.module_id' => 0
                         ]
                     )->groupEnd();
 
                 break;
-            case MetaDataTypes::Module->value:
+            case MetaDataTypes::Module->name:
 
                 $this->builder()
                     ->groupStart()
                     ->where(
                         [
-                            'metadata.meta_type' => MetaDataTypes::Module->value,
+                            'metadata.meta_type' => MetaDataTypes::Module->name,
                             'metadata.module_id' => $filter['module_id'] ?? 0
                         ]
                     )->groupEnd();
