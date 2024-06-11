@@ -150,7 +150,7 @@ class CmsModule
      * @param  string  $slug
      * @return object|null
      */
-    protected static function pageMeta(int $moduleId, string $slug): object|null
+    public static function pageMeta(int $moduleId, string $slug): object|null
     {
         return (new MetaDataModel())->pageModuleMeta($moduleId, $slug);
     }
