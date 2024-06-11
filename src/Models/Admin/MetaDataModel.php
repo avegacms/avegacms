@@ -260,6 +260,8 @@ class MetaDataModel extends AvegaCmsModel
                         ]
                     )->groupEnd();
 
+                unset($filter['module_id']);
+
                 break;
         }
 
