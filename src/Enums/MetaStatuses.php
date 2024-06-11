@@ -27,7 +27,7 @@ enum MetaStatuses: string
     {
         $list = [];
         foreach (MetaStatuses::cases() as $enum) {
-            $list[] = ['label' => lang('Rent.enums.orderStatus.' . $enum->name), 'value' => $enum->value];
+            $list[] = ['label' => lang('Enums.MetaStatuses.' . $enum->name), 'value' => $enum->value];
         }
         return $list;
     }
