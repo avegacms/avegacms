@@ -73,4 +73,35 @@ class Content
     {
         return $this->MDM->getMetaData($id, $this->moduleId);
     }
+
+    /**
+     * @param  int  $id
+     * @param  array  $data
+     * @return bool
+     * @throws ContentExceptions|ReflectionException
+     */
+    public function updateMetaData(int $id, array $data): bool
+    {
+        if ($id < 0 || empty($data)) {
+            throw ContentExceptions::forNoData();
+        }
+
+        $content = [
+            'anons'   => $data['anons'] ?? '',
+            'content' => $data['content'] ?? '',
+            'extra'   => $data['extra'] ?? null
+        ];
+
+        unset($data['anons'], $data['content'], $data['extra']);
+
+        if ($this->MDM->update($id, $data) === false) {
+            throw new ContentExceptions($this->MDM->errors());
+        }
+
+        if ($this->CM->update($id, $content) === false) {
+            throw new ContentExceptions($this->CM->errors());
+        }
+        
+        return true;
+    }
 }
