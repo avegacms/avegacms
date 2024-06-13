@@ -22,6 +22,14 @@ class ContentExceptions extends Exception
     }
 
     /**
+     * @return array|array[]|string[]
+     */
+    public function getMessages(): array
+    {
+        return ! is_array($this->messages) ? [$this->messages] : $this->messages;
+    }
+
+    /**
      * @return ContentExceptions
      */
     public static function forNoData(): ContentExceptions
