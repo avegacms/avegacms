@@ -27,15 +27,15 @@ class Content
     /**
      * @throws ContentExceptions|ReflectionException
      */
-    public function createMetaData(array $data): int|false
+    public function createMetaData(array $data): int
     {
         if (empty($data)) {
             throw ContentExceptions::forNoData();
         }
 
         $content = [
-            'anons'   => $data['anons'],
-            'content' => $data['content'],
+            'anons'   => $data['anons'] ?? '',
+            'content' => $data['content'] ?? '',
             'extra'   => $data['extra']
         ];
 
