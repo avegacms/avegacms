@@ -38,7 +38,7 @@ class Content
         $content = [
             'anons'   => $data['anons'] ?? '',
             'content' => $data['content'] ?? '',
-            'extra'   => $data['extra'] ?? ''
+            'extra'   => $data['extra'] ?? null
         ];
 
         unset($data['anons'], $data['content'], $data['extra']);
@@ -69,14 +69,8 @@ class Content
      * @param  int  $id
      * @return object|null
      */
-    public function getMetaData(int $id): array|null
+    public function getMetaData(int $id): object|null
     {
-        if (is_null($content = $this->MDM->getMetaData($id, $this->moduleId))) {
-            return null;
-        }
-
-        $content['content'] = $this->CM->find($id);
-
-        return $content;
+        return $this->MDM->getMetaData($id, $this->moduleId);
     }
 }

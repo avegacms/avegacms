@@ -33,7 +33,7 @@ class ContentModel extends AvegaCmsModel
 
     // Callbacks
     protected $allowCallbacks = true;
-    protected $beforeInsert   = ['beforeInsertContent'];
+    protected $beforeInsert   = [];
     protected $afterInsert    = [];
     protected $beforeUpdate   = [];
     protected $afterUpdate    = [];
@@ -46,11 +46,4 @@ class ContentModel extends AvegaCmsModel
         'id'    => 'int',
         'extra' => '?json-array'
     ];
-
-    /*protected function beforeInsertContent(array $data): array
-    {
-        $data['data']['extra'] = json_encode($data['data']['extra'] ?? '');
-
-        return $data;
-    }*/
 }
