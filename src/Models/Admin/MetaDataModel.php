@@ -281,6 +281,36 @@ class MetaDataModel extends AvegaCmsModel
     }
 
     /**
+     * @param  int  $id
+     * @return object|null
+     */
+    public function getMetadata(int $id): object|null
+    {
+        $this->builder()->select(
+            [
+                'metadata.id',
+                'metadata.parent',
+                'metadata.locale_id',
+                'metadata.module_id',
+                'metadata.item_id',
+                'metadata.creator_id',
+                'metadata.slug',
+                'metadata.title',
+                'metadata.sort',
+                'metadata.url',
+                'metadata.extra_data',
+                'metadata.status',
+                'metadata.in_sitemap',
+                'metadata.publish_at',
+                'metadata.created_at',
+                'metadata.updated_at'
+            ]
+        );
+
+        return $this->find($id);
+    }
+
+    /**
      * @param  int  $moduleId
      * @param  string  $slug
      * @param  int  $localeId
