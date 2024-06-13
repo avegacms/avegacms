@@ -86,6 +86,7 @@ class Content
             throw ContentExceptions::forNoData();
         }
 
+        $data['id']              = $id;
         $data['use_url_pattern'] = boolval($data['use_url_pattern'] ?? 0);
 
         $content = [
