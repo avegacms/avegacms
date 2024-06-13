@@ -150,6 +150,7 @@ class MetaDataModel extends AvegaCmsModel
         'publish_at'      => 'cmsdatetime',
         'created_at'      => 'cmsdatetime',
         'updated_at'      => 'cmsdatetime',
+        'extra'           => '?int-bool'
     ];
 
     public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
@@ -304,13 +305,17 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.in_sitemap',
                 'metadata.publish_at',
                 'metadata.created_at',
-                'metadata.updated_at'
+                'metadata.updated_at',
+                'content.anons',
+                'content.content',
+                'content.extra'
             ]
-        )->where(
-            [
-                'metadata.module_id' => $moduleId
-            ]
-        );
+        )->join('content', 'content.id = metadata.id', 'left')
+            ->where(
+                [
+                    'metadata.module_id' => $moduleId
+                ]
+            );
 
         return $this->find($id);
     }
