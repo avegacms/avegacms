@@ -38,7 +38,7 @@ class Content
         $content = [
             'anons'   => $data['anons'] ?? '',
             'content' => $data['content'] ?? '',
-            'extra'   => $data['extra']
+            'extra'   => $data['extra'] ?? ''
         ];
 
         unset($data['anons'], $data['content'], $data['extra']);
