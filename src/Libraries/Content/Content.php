@@ -25,6 +25,8 @@ class Content
     }
 
     /**
+     * @param  array  $data
+     * @return int
      * @throws ContentExceptions|ReflectionException
      */
     public function createMetaData(array $data): int
