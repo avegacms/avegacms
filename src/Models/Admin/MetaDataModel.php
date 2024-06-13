@@ -184,7 +184,7 @@ class MetaDataModel extends AvegaCmsModel
      * @param  array  $filter
      * @return AvegaCmsModel
      */
-    public function selectMetaDataList(string $type, array $filter = []): AvegaCmsModel
+    public function getMetaDataList(string $type, array $filter = []): AvegaCmsModel
     {
         $this->builder()->select(
             [
