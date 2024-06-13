@@ -16,12 +16,24 @@ class Content
     protected MetaDataModel $MDM;
     protected ContentModel  $CM;
 
-    public function __construct(int $moduleId = 0, ?string $type = null)
+    public function __construct(string $type, int $moduleId = 0)
     {
         $this->moduleId = $moduleId;
         $this->type     = $type;
         $this->MDM      = new MetaDataModel();
         $this->CM       = new ContentModel();
+    }
+
+    /**
+     * @param  array  $filter
+     * @param  bool  $all
+     * @return array
+     */
+    public function getMetaDataList(array $filter, bool $all = false): array
+    {
+        $list = $this->MDM->getMetaDataList($this->type, $filter);
+
+        return ($all) ? $list->findAll() : $list->apiPagination();
     }
 
     /**
