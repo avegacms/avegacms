@@ -282,9 +282,10 @@ class MetaDataModel extends AvegaCmsModel
 
     /**
      * @param  int  $id
+     * @param  int  $moduleId
      * @return object|null
      */
-    public function getMetadata(int $id): object|null
+    public function getMetadata(int $id, int $moduleId = 0): object|null
     {
         $this->builder()->select(
             [
@@ -304,6 +305,10 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.publish_at',
                 'metadata.created_at',
                 'metadata.updated_at'
+            ]
+        )->where(
+            [
+                'metadata.module_id' => $moduleId
             ]
         );
 

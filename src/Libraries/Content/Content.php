@@ -26,7 +26,7 @@ class Content
      */
     public function getMetaData(int $id): array|null
     {
-        if (is_null($content['metadata'] = $this->MDM->getMetaData($id))) {
+        if (is_null($content['metadata'] = $this->MDM->getMetaData($id, $this->moduleId))) {
             return null;
         }
 
