@@ -58,7 +58,6 @@ class MetaDataModel extends AvegaCmsModel
         'locale_id'             => ['rules' => 'if_exist|required|is_natural_no_zero'],
         'module_id'             => ['rules' => 'if_exist|required|is_natural'],
         'item_id'               => ['rules' => 'if_exist|required|is_natural'],
-        'slug'                  => ['rules' => 'if_exist|permit_empty'],
         'url'                   => ['rules' => 'if_exist|permit_empty'],
         'creator_id'            => ['rules' => 'if_exist|required|is_natural'],
         'title'                 => [
@@ -157,18 +156,22 @@ class MetaDataModel extends AvegaCmsModel
     {
         parent::__construct($db, $validation);
 
-        $this->validationRules['status'] = [
+        $this->validationRules['slug']                    = [
+            'rules'  => 'if_exist|permit_empty|unique_db_key[metadata.parent+module_id+item_id+use_url_pattern+slug,id,{id}]',
+            'errors' => [
+                'unique_db_key' => lang('Validation.uniqueDbKey.notUnique'),
+            ]
+        ];
+        $this->validationRules['status']                  = [
             'label' => 'Статус',
             'rules' => 'if_exist|required|in_list[' . implode(',',
                     MetaStatuses::get('name')) . ']'
         ];
-
-        $this->validationRules['meta_type'] = [
+        $this->validationRules['meta_type']               = [
             'label' => 'Тип страницы',
             'rules' => 'if_exist|required|in_list[' . implode(',',
                     MetaDataTypes::get('name')) . ']'
         ];
-
         $this->validationRules['meta_sitemap.changefreq'] = [
             'label' => 'Тип страницы',
             'rules' => 'if_exist|required|in_list[' . implode(',',
