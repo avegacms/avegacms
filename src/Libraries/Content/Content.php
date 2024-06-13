@@ -38,7 +38,7 @@ class Content
         $content = [
             'anons'   => $data['anons'] ?? '',
             'content' => $data['content'] ?? '',
-            'extra'   => $data['extra'] ?? ''
+            'extra'   => $data['extra'] ?? null
         ];
 
         unset($data['anons'], $data['content'], $data['extra']);
@@ -69,14 +69,39 @@ class Content
      * @param  int  $id
      * @return object|null
      */
-    public function getMetaData(int $id): array|null
+    public function getMetaData(int $id): object|null
     {
-        if (is_null($content = $this->MDM->getMetaData($id, $this->moduleId))) {
-            return null;
+        return $this->MDM->getMetaData($id, $this->moduleId);
+    }
+
+    /**
+     * @param  int  $id
+     * @param  array  $data
+     * @return bool
+     * @throws ContentExceptions|ReflectionException
+     */
+    public function updateMetaData(int $id, array $data): bool
+    {
+        if ($id < 0 || empty($data)) {
+            throw ContentExceptions::forNoData();
         }
 
-        $content['content'] = $this->CM->find($id);
+        $content = [
+            'anons'   => $data['anons'] ?? '',
+            'content' => $data['content'] ?? '',
+            'extra'   => $data['extra'] ?? null
+        ];
 
-        return $content;
+        unset($data['anons'], $data['content'], $data['extra']);
+
+        if ($this->MDM->update($id, $data) === false) {
+            throw new ContentExceptions($this->MDM->errors());
+        }
+
+        if ($this->CM->update($id, $content) === false) {
+            throw new ContentExceptions($this->CM->errors());
+        }
+        
+        return true;
     }
 }
