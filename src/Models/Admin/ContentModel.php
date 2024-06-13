@@ -47,10 +47,10 @@ class ContentModel extends AvegaCmsModel
         'extra' => '?json-array'
     ];
 
-    protected function beforeInsertContent(array $data): array
+    /*protected function beforeInsertContent(array $data): array
     {
         $data['data']['extra'] = json_encode($data['data']['extra'] ?? '');
 
         return $data;
-    }
+    }*/
 }
