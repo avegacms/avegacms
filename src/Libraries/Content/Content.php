@@ -86,6 +86,8 @@ class Content
             throw ContentExceptions::forNoData();
         }
 
+        $data['use_url_pattern'] = boolval($data['use_url_pattern'] ?? 0);
+
         $content = [
             'anons'   => $data['anons'] ?? '',
             'content' => $data['content'] ?? '',
@@ -101,7 +103,7 @@ class Content
         if ($this->CM->update($id, $content) === false) {
             throw new ContentExceptions($this->CM->errors());
         }
-        
+
         return true;
     }
 }
