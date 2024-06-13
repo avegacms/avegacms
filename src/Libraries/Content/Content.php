@@ -44,8 +44,7 @@ class Content
         unset($data['anons'], $data['content'], $data['extra']);
 
         $data['use_url_pattern'] = boolval($data['use_url_pattern'] ?? 0);
-
-        $data['meta_type'] = match (ucfirst($this->type)) {
+        $data['meta_type']       = match (ucfirst($this->type)) {
             MetaDataTypes::Main->name,
             MetaDataTypes::Page->name,
             MetaDataTypes::Page404->name,
