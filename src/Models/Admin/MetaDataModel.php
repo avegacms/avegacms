@@ -10,6 +10,7 @@ use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
 use AvegaCms\Enums\{MetaStatuses, MetaDataTypes, SitemapChangefreqs};
 use ReflectionException;
+use Exception;
 
 class MetaDataModel extends AvegaCmsModel
 {
@@ -360,18 +361,18 @@ class MetaDataModel extends AvegaCmsModel
     /**
      * @param  array  $data
      * @return array
-     * @throws ReflectionException
+     * @throws ReflectionException|Exception
      */
     protected function beforeMetaDataInsert(array $data): array
     {
-        helper(['url']);
+        helper(['url', 'date']);
         $meta = $data['data'];
 
-        if ((isset($meta['slug']) && empty($meta['slug'])) && ! empty($meta['title'])) {
+        if (empty($meta['slug'] ?? '') && ! empty($meta['title'])) {
             $meta['slug'] = strtolower(mb_substr(mb_url_title($meta['title']), 0, 120));
         }
 
-        if (isset($meta['url']) && empty($meta['url'])) {
+        if (empty($meta['url'] ?? '')) {
             $url         = ! empty($meta['slug'] ?? '') ? $meta['slug'] : mb_url_title(strtolower($meta['title']));
             $meta['url'] = match ($meta['meta_type'] ?? '') {
                 MetaDataTypes::Main->name => Cms::settings('core.env.useMultiLocales') ? SeoUtils::Locales($meta['locale_id'])['slug'] : '/',
@@ -380,7 +381,7 @@ class MetaDataModel extends AvegaCmsModel
             };
         }
 
-        if (isset($meta['meta'])) {
+        if (empty($meta['meta'] ?? '')) {
             $meta['meta']                = json_decode($meta['meta'], true);
             $meta['meta']['title']       = ! empty($meta['meta']['title'] ?? '') ? $meta['meta']['title'] : $meta['title'];
             $meta['meta']['keywords']    = ! empty($meta['meta']['keywords'] ?? '') ? $meta['meta']['keywords'] : '';
@@ -396,12 +397,16 @@ class MetaDataModel extends AvegaCmsModel
             $meta['meta'] = json_encode($meta['meta']);
         }
 
-        if (isset($meta['meta_sitemap'])) {
+        if (empty($meta['meta_sitemap'] ?? '')) {
             $meta['meta_sitemap']               = json_decode($meta['meta_sitemap'], true);
             $meta['meta_sitemap']['priority']   = $meta['meta_sitemap']['priority'] ?? 50;
             $meta['meta_sitemap']['changefreq'] = $meta['meta_sitemap']['changefreq'] ?? SitemapChangefreqs::Monthly->value;
 
             $meta['meta_sitemap'] = json_encode($meta['meta_sitemap']);
+        }
+
+        if (empty($meta['publish_at'] ?? '')) {
+            $meta['publish_at'] = date('Y-m-d H:i:s', now());
         }
 
         $data['data'] = $meta;
