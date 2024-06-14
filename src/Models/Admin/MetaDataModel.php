@@ -369,7 +369,7 @@ class MetaDataModel extends AvegaCmsModel
         $meta = $data['data'];
 
         if (empty($meta['slug'] ?? '')) {
-            $meta['slug'] = strtolower(mb_substr(mb_url_title($meta['title']), 0, 120));
+            $meta['slug'] = strtolower(mb_substr(mb_url_title($meta['title']), 0, 100)) . '-' . random_int(0, 1000);
         }
 
         if (empty($meta['url'] ?? '')) {
