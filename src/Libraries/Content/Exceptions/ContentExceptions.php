@@ -17,7 +17,7 @@ class ContentExceptions extends Exception
     public function __construct(array|string $messages, int $code = 400)
     {
         $this->messages = $messages;
-        
+
         parent::__construct(message: lang('Api.errors.validationError'), code: $code);
     }
 
@@ -53,4 +53,11 @@ class ContentExceptions extends Exception
         return new static(lang('Api.errors.content.unknownType'));
     }
 
+    /**
+     * @return ContentExceptions
+     */
+    public static function unknownPatchMethod(): ContentExceptions
+    {
+        return new static(lang('Api.errors.content.unknownPatchMethod'));
+    }
 }
