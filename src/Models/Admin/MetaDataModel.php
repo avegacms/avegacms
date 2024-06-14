@@ -368,7 +368,7 @@ class MetaDataModel extends AvegaCmsModel
         helper(['url', 'date']);
         $meta = $data['data'];
 
-        if ((isset($meta['slug']) && empty($meta['slug'])) && ! empty($meta['title'])) {
+        if (empty($meta['slug'] ?? '')) {
             $meta['slug'] = strtolower(mb_substr(mb_url_title($meta['title']), 0, 120));
         }
 
