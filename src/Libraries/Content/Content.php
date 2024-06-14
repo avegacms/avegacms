@@ -119,4 +119,28 @@ class Content
 
         return true;
     }
+
+    /**
+     * @param  int  $id
+     * @param  array  $data
+     * @return bool
+     * @throws ContentExceptions|ReflectionException
+     */
+    public function patchMetaData(int $id, array $data): bool
+    {
+        if ($id < 0 || empty($data)) {
+            throw ContentExceptions::forNoData();
+        }
+
+        $update = [];
+
+        if ( ! in_array(key($data), ['status'])) {
+            return throw ContentExceptions::unknownPatchMethod();
+        }
+        if ($this->MDM->update($id, $update) === false) {
+            throw new ContentExceptions($this->MDM->errors());
+        }
+
+        return true;
+    }
 }
