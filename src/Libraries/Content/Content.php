@@ -132,12 +132,10 @@ class Content
             throw ContentExceptions::forNoData();
         }
 
-        $update = [];
-
-        if ( ! in_array(key($data), ['status'])) {
+        if (key($data) != 'status') {
             return throw ContentExceptions::unknownPatchMethod();
         }
-        if ($this->MDM->update($id, $update) === false) {
+        if ($this->MDM->update($id, $data) === false) {
             throw new ContentExceptions($this->MDM->errors());
         }
 
