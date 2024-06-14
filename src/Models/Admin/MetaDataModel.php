@@ -368,7 +368,7 @@ class MetaDataModel extends AvegaCmsModel
         helper(['url', 'date']);
         $meta = $data['data'];
 
-        if (empty($meta['slug'] ?? '') && ! empty($meta['title'])) {
+        if ((isset($meta['slug']) && empty($meta['slug'])) && ! empty($meta['title'])) {
             $meta['slug'] = strtolower(mb_substr(mb_url_title($meta['title']), 0, 120));
         }
 
@@ -381,7 +381,7 @@ class MetaDataModel extends AvegaCmsModel
             };
         }
 
-        if (empty($meta['meta'] ?? '')) {
+        if (isset($meta['meta'])) {
             $meta['meta']                = json_decode($meta['meta'], true);
             $meta['meta']['title']       = ! empty($meta['meta']['title'] ?? '') ? $meta['meta']['title'] : $meta['title'];
             $meta['meta']['keywords']    = ! empty($meta['meta']['keywords'] ?? '') ? $meta['meta']['keywords'] : '';
@@ -395,14 +395,34 @@ class MetaDataModel extends AvegaCmsModel
             $meta['meta']['og:image'] = $meta['meta']['og:image'] ?? 0;
 
             $meta['meta'] = json_encode($meta['meta']);
+        } else {
+            $meta['meta'] = json_encode(
+                [
+                    'title'       => $meta['title'],
+                    'keywords'    => '',
+                    'description' => '',
+                    'breadcrumb'  => '',
+                    'og:title'    => $meta['title'],
+                    'og:type'     => 'website',
+                    'og:url'      => $meta['url'],
+                    'og:image'    => 0
+                ]
+            );
         }
 
-        if (empty($meta['meta_sitemap'] ?? '')) {
+        if (isset($meta['meta_sitemap'])) {
             $meta['meta_sitemap']               = json_decode($meta['meta_sitemap'], true);
             $meta['meta_sitemap']['priority']   = $meta['meta_sitemap']['priority'] ?? 50;
             $meta['meta_sitemap']['changefreq'] = $meta['meta_sitemap']['changefreq'] ?? SitemapChangefreqs::Monthly->value;
 
             $meta['meta_sitemap'] = json_encode($meta['meta_sitemap']);
+        } else {
+            $meta['meta_sitemap'] = json_encode(
+                [
+                    'priority'   => 50,
+                    'changefreq' => SitemapChangefreqs::Monthly->value
+                ]
+            );
         }
 
         if (empty($meta['publish_at'] ?? '')) {
