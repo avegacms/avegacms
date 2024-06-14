@@ -141,4 +141,18 @@ class Content
 
         return true;
     }
+
+    /**
+     * @param  int  $id
+     * @return bool
+     * @throws ContentExceptions
+     */
+    public function deleteMetaData(int $id): bool
+    {
+        if ($id < 0 || $this->MDM->delete($id) === false) {
+            throw new ContentExceptions($this->MDM->errors());
+        }
+
+        return true;
+    }
 }
