@@ -2,6 +2,7 @@
 
 namespace AvegaCms\Controllers\Api\Admin;
 
+use AvegaCms\Config\Services;
 use AvegaCms\Controllers\Api\CmsResourceController;
 use AvegaCms\Utilities\Cms;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -33,7 +34,7 @@ class AvegaCmsAdminAPI extends CmsResourceController
      */
     public function apiNoAdminData(): ResponseInterface
     {
-        return $this->failValidationErrors(lang('Api.errors.noData'));
+        return Services::response()->setStatusCode(400, lang('Api.errors.noData'));
     }
 
 }
