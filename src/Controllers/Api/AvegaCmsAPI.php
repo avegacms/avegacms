@@ -31,15 +31,14 @@ class AvegaCmsAPI extends AvegaCmsController
      */
     protected function getApiData(): void
     {
-        $request = Services::request();
-        if (in_array($request->getMethod(), ['POST', 'PUT', 'PATCH'], true)) {
-            if ($request->getBody() === null) {
-                Services::response()->setStatusCode(400, lang('Api.errors.noData'))->send();
+        if (in_array($this->request->getMethod(), ['POST', 'PUT', 'PATCH'], true)) {
+            if ($this->request->getBody() === null) {
+                $this->response->setStatusCode(400, lang('Api.errors.noData'))->send();
                 exit();
             }
 
-            if ($request->getBody() !== 'php://input' && empty($this->apiData = $request->getJSON(true))) {
-                Services::response()->setStatusCode(400, lang('Api.errors.noData'))->send();
+            if ($this->request->getBody() !== 'php://input' && empty($this->apiData = $this->request->getJSON(true))) {
+                $this->response->setStatusCode(400, lang('Api.errors.noData'))->send();
                 exit();
             }
         }
