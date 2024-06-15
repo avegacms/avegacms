@@ -5,8 +5,7 @@ declare(strict_types = 1);
 namespace AvegaCms\Models\Frontend;
 
 use AvegaCms\Models\AvegaCmsModel;
-use AvegaCms\Utilities\{Cms, SeoUtils};
-use AvegaCms\Enums\{MetaStatuses, MetaDataTypes, SitemapChangefreqs};
+use AvegaCms\Enums\{MetaStatuses, MetaDataTypes};
 
 class MetaDataModel extends AvegaCmsModel
 {

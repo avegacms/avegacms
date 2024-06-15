@@ -27,9 +27,10 @@ class MetaDataSiteMapModel extends AvegaCmsModel
 
     /**
      * @param  string  $type
+     * @param  int  $moduleId
      * @return array
      */
-    public function getContentSitemap(string $type): array
+    public function getContentSitemap(string $type, int $moduleId = 0): array
     {
         $this->builder()->select(
             [
@@ -42,11 +43,11 @@ class MetaDataSiteMapModel extends AvegaCmsModel
                 'metadata.publish_at AS lastmod'
             ]
         )->groupStart()
-            ->where(['metadata.status' => MetaStatuses::Publish->value])
+            ->where(['metadata.status' => MetaStatuses::Publish->name])
             ->orGroupStart()
             ->where(
                 [
-                    'metadata.status'        => MetaStatuses::Future->value,
+                    'metadata.status'        => MetaStatuses::Future->name,
                     'metadata.publish_at <=' => date('Y-m-d H:i:s')
                 ]
             )->groupEnd()
@@ -54,18 +55,19 @@ class MetaDataSiteMapModel extends AvegaCmsModel
             ->where(
                 [
                     'metadata.in_sitemap' => 1,
-                    'metadata.module_id'  => 0
+                    'metadata.module_id'  => $moduleId
                 ]
             )->orderBy('metadata.publish_at', 'DESC');
 
 
         match ($type) {
             'Pages'   => $this->builder()->whereIn('metadata.meta_type', [
-                MetaDataTypes::Main->value,
-                MetaDataTypes::Page->value
+                MetaDataTypes::Main->name,
+                MetaDataTypes::Page->name
             ]),
-            'Rubrics' => $this->builder()->where(['metadata.meta_type' => MetaDataTypes::Rubric->value]),
-            'Posts'   => $this->builder()->where(['metadata.meta_type' => MetaDataTypes::Post->value])
+            'Rubrics' => $this->builder()->where(['metadata.meta_type' => MetaDataTypes::Rubric->name]),
+            'Posts'   => $this->builder()->where(['metadata.meta_type' => MetaDataTypes::Post->name]),
+            'Module'  => $this->builder()->where(['metadata.meta_type' => MetaDataTypes::Module->name]),
         };
 
         if ($type === 'Posts') {

@@ -39,8 +39,8 @@ class Pages extends AvegaCmsAdminAPI
     {
         return $this->cmsRespond(
             [
-                'statuses'  => MetaStatuses::get('value'),
-                'defStatus' => MetaStatuses::Draft->value,
+                'statuses'  => MetaStatuses::get('name'),
+                'defStatus' => MetaStatuses::Draft->name,
                 'locales'   => array_column(SeoUtils::Locales(), 'locale_name', 'id')
             ]
         );
@@ -159,7 +159,7 @@ class Pages extends AvegaCmsAdminAPI
             return $this->failNotFound();
         }
 
-        if ($data->meta_type === MetaDataTypes::Main->value) {
+        if ($data->meta_type === MetaDataTypes::Main->name) {
             return $this->failValidationErrors(lang('Content.errors.deleteIsDefault'));
         }
 
@@ -172,7 +172,7 @@ class Pages extends AvegaCmsAdminAPI
         }
 
         if ($this->MDM->where(['parent' => $id])->update(null,
-                ['parent' => $data->parent, 'status' => MetaStatuses::Draft->value]) === false) {
+                ['parent' => $data->parent, 'status' => MetaStatuses::Draft->name]) === false) {
             return $this->failValidationErrors(lang('Api.errors.update', ['Metadata']));
         }
 
