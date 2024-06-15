@@ -39,8 +39,8 @@ class Posts extends AvegaCmsAdminAPI
     {
         return $this->cmsRespond(
             [
-                'statuses'  => MetaStatuses::get('value'),
-                'defStatus' => MetaStatuses::Draft->value,
+                'statuses'  => MetaStatuses::get('name'),
+                'defStatus' => MetaStatuses::Draft->name,
                 'locales'   => array_column(SeoUtils::Locales(), 'locale_name', 'id'),
                 'rubrics'   => SeoUtils::rubricsList(key: 'id', value: 'title')
             ]
@@ -56,7 +56,7 @@ class Posts extends AvegaCmsAdminAPI
         $data = $this->apiData;
 
         $data['module_id']  = $data['parent'] = $data['item_id'] = 0;
-        $data['meta_type']  = MetaDataTypes::Post->value;
+        $data['meta_type']  = MetaDataTypes::Post->name;
         $data['creator_id'] = $data['created_by_id'] = $this->userData->userId;
 
         $content = [
