@@ -4,37 +4,45 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Controllers\Api;
 
+use AvegaCms\Config\Services;
+use AvegaCms\Controllers\AvegaCmsController;
+use AvegaCms\Traits\AvegaCmsApiResponseTrait;
 use AvegaCms\Utilities\Cms;
 use CodeIgniter\HTTP\ResponseInterface;
-use stdClass;
 
-class AvegaCmsAPI extends CmsResourceController
+class AvegaCmsAPI extends AvegaCmsController
 {
-    protected object|null                        $userData       = null;
-    protected object|null                        $userPermission = null;
-    protected array|bool|float|int|stdClass|null $apiData        = null;
+    use AvegaCmsApiResponseTrait;
+
+    protected object|null $userData       = null;
+    protected object|null $userPermission = null;
+    protected array|null  $apiData        = null;
 
     public function __construct()
     {
         helper(['date']);
         $this->userData       = Cms::userData();
         $this->userPermission = Cms::userPermission();
-
-        $request = Request();
-
-        if (in_array($request->getMethod(), ['POST', 'PUT', 'PATCH'], true)) {
-            if (($this->apiData = $request->getJSON(true)) === null) {
-                $this->apiNoData();
-            }
-        }
+        $this->getApiData();
     }
 
     /**
-     * @return ResponseInterface
+     * @return void
      */
-    public function apiNoData(): ResponseInterface
+    protected function getApiData(): void
     {
-        return $this->failValidationErrors(lang('Api.errors.noData'));
+        $request = Services::request();
+        if (in_array($request->getMethod(), ['POST', 'PUT', 'PATCH'], true)) {
+            if ($request->getBody() === null) {
+                Services::response()->setStatusCode(400, lang('Api.errors.noData'))->send();
+                exit();
+            }
+
+            if ($request->getBody() !== 'php://input' && empty($this->apiData = $request->getJSON(true))) {
+                Services::response()->setStatusCode(400, lang('Api.errors.noData'))->send();
+                exit();
+            }
+        }
     }
 
     /**

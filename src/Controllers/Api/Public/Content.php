@@ -1,29 +1,37 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Controllers\Api\Public;
 
-use CodeIgniter\RESTful\ResourceController;
+use AvegaCms\Controllers\Api\AvegaCmsAPI;
+use CodeIgniter\HTTP\ResponseInterface;
+use ReflectionException;
 
-class Content extends ResourceController
+class Content extends AvegaCmsAPI
 {
-    /**
-     * @return \CodeIgniter\HTTP\ResponseInterface|string|void
-     */
-    public function index()
+    public function __construct()
     {
-        return $this->respond(
-            [
-                'data' => '!!!'
-            ]
-        );
+        parent::__construct();
+    }
+
+    /**
+     * Return an array of resource objects, themselves in array format
+     *
+     * @return ResponseInterface
+     */
+    public function index(): ResponseInterface
+    {
+        return $this->cmsRespond(['hello' => 'world']);
     }
 
     /**
      * Return the properties of a resource object
      *
-     * @return void
+     * @param $id
+     * @return ResponseInterface
      */
-    public function show($id = null)
+    public function show($id = null): ResponseInterface
     {
         //
     }
@@ -31,9 +39,9 @@ class Content extends ResourceController
     /**
      * Return a new resource object, with default properties
      *
-     * @return void
+     * @return ResponseInterface
      */
-    public function new()
+    public function new(): ResponseInterface
     {
         //
     }
@@ -41,9 +49,9 @@ class Content extends ResourceController
     /**
      * Create a new resource object, from "posted" parameters
      *
-     * @return void
+     * @return ResponseInterface
      */
-    public function create()
+    public function create(): ResponseInterface
     {
         //
     }
@@ -51,9 +59,10 @@ class Content extends ResourceController
     /**
      * Return the editable properties of a resource object
      *
-     * @return void
+     * @param $id
+     * @return ResponseInterface
      */
-    public function edit($id = null)
+    public function edit($id = null): ResponseInterface
     {
         //
     }
@@ -61,9 +70,10 @@ class Content extends ResourceController
     /**
      * Add or update a model resource, from "posted" properties
      *
-     * @return void
+     * @param $id
+     * @return ResponseInterface
      */
-    public function update($id = null)
+    public function update($id = null): ResponseInterface
     {
         //
     }
@@ -71,9 +81,10 @@ class Content extends ResourceController
     /**
      * Delete the designated resource object from the model
      *
-     * @return void
+     * @param $id
+     * @return ResponseInterface
      */
-    public function delete($id = null)
+    public function delete($id = null): ResponseInterface
     {
         //
     }

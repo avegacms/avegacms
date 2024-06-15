@@ -14,7 +14,7 @@ use JetBrains\PhpStorm\NoReturn;
 use RuntimeException;
 use ReflectionException;
 
-class AvegaCmsFrontendController extends BaseController
+class AvegaCmsFrontendController extends AvegaCmsController
 {
     protected string            $metaType        = 'Module';
     protected bool              $useTemplateMeta = false; // Флаг использования кастомных метаданных

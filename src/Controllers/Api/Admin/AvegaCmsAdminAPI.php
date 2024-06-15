@@ -22,26 +22,5 @@ class AvegaCmsAdminAPI extends CmsResourceController
         helper(['date']);
         $this->userData       = Cms::userData();
         $this->userPermission = Cms::userPermission();
-
-        $this->getApiData();
-    }
-
-    /**
-     * @return void
-     */
-    protected function getApiData(): void
-    {
-        $request = Services::request();
-        if (in_array($request->getMethod(), ['POST', 'PUT', 'PATCH'], true)) {
-            if ($request->getBody() === null) {
-                Services::response()->setStatusCode(400, lang('Api.errors.noData'))->send();
-                exit();
-            }
-
-            if ($request->getBody() !== 'php://input' && empty($this->apiData = $request->getJSON(true))) {
-                Services::response()->setStatusCode(400, lang('Api.errors.noData'))->send();
-                exit();
-            }
-        }
     }
 }

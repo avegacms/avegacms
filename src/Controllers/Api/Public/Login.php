@@ -6,7 +6,6 @@ use AvegaCms\Controllers\Api\CmsResourceController;
 use AvegaCms\Enums\UserConditions;
 use AvegaCms\Libraries\Authorization\Authorization;
 use AvegaCms\Libraries\Authorization\Exceptions\AuthorizationException;
-use AvegaCms\Utilities\Auth;
 use CodeIgniter\Events\Events;
 use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Utilities\Cms;
