@@ -37,7 +37,7 @@ abstract class AvegaCmsController extends Controller
      *
      * @var list<string>
      */
-    protected $helpers = [];
+    protected $helpers = ['date'];
 
     /**
      * Be sure to declare properties for any property fetch you initialized.
