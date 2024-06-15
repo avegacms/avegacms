@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Models\Admin;
 
-use AvegaCms\Enums\{MetaStatuses, MetaDataTypes};
+use AvegaCms\Enums\{MetaStatuses, MetaDataTypes, SitemapChangefreqs};
 use AvegaCms\Models\AvegaCmsModel;
 
 class MetaDataSiteMapModel extends AvegaCmsModel
@@ -80,8 +80,8 @@ class MetaDataSiteMapModel extends AvegaCmsModel
 
         if ( ! empty($list = $this->findAll())) {
             foreach ($list as $item) {
-                $item->changefreq = $item->meta_sitemap['changefreq'];
-                $item->priority   = $item->meta_sitemap['priority'];
+                $item->changefreq = $item->meta_sitemap['changefreq'] ?? SitemapChangefreqs::Monthly->value;
+                $item->priority   = $item->meta_sitemap['priority'] ?? 50;
                 unset($item->meta_sitemap);
             }
         }
