@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace AvegaCms\Controllers\Api\Admin\Settings;
 
@@ -33,9 +33,7 @@ class EmailTemplate extends AvegaCmsAdminAPI
      */
     public function create(): ResponseInterface
     {
-        if (empty($data = $this->request->getJSON(true))) {
-            return $this->failValidationErrors(lang('Api.errors.noData'));
-        }
+        $data = $this->apiData;
 
         $data['created_by_id'] = $this->userData->userId;
 
@@ -66,9 +64,7 @@ class EmailTemplate extends AvegaCmsAdminAPI
      */
     public function update($id = null): ResponseInterface
     {
-        if (empty($data = $this->request->getJSON(true))) {
-            return $this->failValidationErrors(lang('Api.errors.noData'));
-        }
+        $data = $this->apiData;
 
         if ($this->ETM->forEdit((int) $id) === null) {
             return $this->failNotFound();

@@ -43,9 +43,7 @@ class Navigations extends AvegaCmsAdminAPI
      */
     public function create(): ResponseInterface
     {
-        if (empty($data = $this->request->getJSON(true))) {
-            return $this->failValidationErrors(lang('Api.errors.noData'));
-        }
+        $data = $this->apiData;
 
         $data['is_admin']      = 0;
         $data['icon']          = '';
@@ -80,9 +78,7 @@ class Navigations extends AvegaCmsAdminAPI
      */
     public function update($id = null): ResponseInterface
     {
-        if (empty($data = $this->request->getJSON(true))) {
-            return $this->failValidationErrors(lang('Api.errors.noData'));
-        }
+        $data = $this->apiData;
 
         if ($this->NM->forEdit((int) $id) === null) {
             return $this->failNotFound();

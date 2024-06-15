@@ -4,23 +4,13 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Controllers\Api\Admin;
 
-use AvegaCms\Config\Services;
-use AvegaCms\Controllers\Api\CmsResourceController;
-use AvegaCms\Traits\CmsResponseTrait;
-use AvegaCms\Utilities\Cms;
+use AvegaCms\Controllers\Api\AvegaCmsAPI;
 
-class AvegaCmsAdminAPI extends CmsResourceController
+class AvegaCmsAdminAPI extends AvegaCmsAPI
 {
-    use CmsResponseTrait;
-
-    protected object|null $userData       = null;
-    protected object|null $userPermission = null;
-    protected array|null  $apiData        = null;
-
+    // TODO Контроллер сделан на будущее в случае необходимости добавления специальных методов для API администратора
     public function __construct()
     {
-        helper(['date']);
-        $this->userData       = Cms::userData();
-        $this->userPermission = Cms::userPermission();
+        parent::__construct();
     }
 }

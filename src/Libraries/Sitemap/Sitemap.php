@@ -4,13 +4,13 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Libraries\Sitemap;
 
-use AvegaCms\Traits\CmsSitemapTrait;
+use AvegaCms\Traits\AvegaCmsSitemapTrait;
 use AvegaCms\Models\Admin\ModulesModel;
 use Exception;
 
 class Sitemap
 {
-    use CmsSitemapTrait;
+    use AvegaCmsSitemapTrait;
 
     protected ?string $module;
     protected ?string $moduleSlug;

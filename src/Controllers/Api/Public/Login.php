@@ -2,7 +2,7 @@
 
 namespace AvegaCms\Controllers\Api\Public;
 
-use AvegaCms\Controllers\Api\CmsResourceController;
+use AvegaCms\Controllers\Api\AvegaCmsAPI;
 use AvegaCms\Enums\UserConditions;
 use AvegaCms\Libraries\Authorization\Authorization;
 use AvegaCms\Libraries\Authorization\Exceptions\AuthorizationException;
@@ -13,7 +13,7 @@ use Exception;
 use ReflectionException;
 
 
-class Login extends CmsResourceController
+class Login extends AvegaCmsAPI
 {
     protected array         $settings = [];
     protected Authorization $Authorization;
@@ -23,6 +23,7 @@ class Login extends CmsResourceController
      */
     public function __construct()
     {
+        parent::__construct();
         helper(['date']);
         $this->settings      = Cms::settings('core');
         $this->Authorization = new Authorization($this->settings);
@@ -34,31 +35,27 @@ class Login extends CmsResourceController
      */
     public function index(?string $action = null): ResponseInterface
     {
-        if (empty($data = $this->request->getJSON(true))) {
-            return $this->failValidationErrors(lang('Authorization.errors.noData'));
-        }
-
         try {
             $result = [];
             switch ($action) {
                 case 'authorization':
-                    $result = $this->_authProcess($this->Authorization->auth($data));
+                    $result = $this->_authProcess($this->Authorization->auth($this->apiData));
                     break;
 
                 case 'check':
-                    $result = $this->_authProcess($this->Authorization->checkCode($data));
+                    $result = $this->_authProcess($this->Authorization->checkCode($this->apiData));
                     break;
 
                 case 'refresh':
-                    $result = $this->Authorization->refresh($data);
+                    $result = $this->Authorization->refresh($this->apiData);
                     break;
 
                 case 'recovery':
-                    $result = $this->_authProcess($this->Authorization->recovery($data));
+                    $result = $this->_authProcess($this->Authorization->recovery($this->apiData));
                     break;
 
                 case 'password':
-                    $result = $this->Authorization->setPassword($data);
+                    $result = $this->Authorization->setPassword($this->apiData);
                     unset($result['userdata']);
                     break;
 

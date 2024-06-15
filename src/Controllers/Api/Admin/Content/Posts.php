@@ -53,9 +53,7 @@ class Posts extends AvegaCmsAdminAPI
      */
     public function create(): ResponseInterface
     {
-        if (empty($data = $this->request->getJSON(true))) {
-            return $this->failValidationErrors(lang('Api.errors.noData'));
-        }
+        $data = $this->apiData;
 
         $data['module_id']  = $data['parent'] = $data['item_id'] = 0;
         $data['meta_type']  = MetaDataTypes::Post->value;
@@ -102,9 +100,7 @@ class Posts extends AvegaCmsAdminAPI
      */
     public function update($id = null): ResponseInterface
     {
-        if (empty($data = $this->request->getJSON(true))) {
-            return $this->failValidationErrors(lang('Api.errors.noData'));
-        }
+        $data = $this->apiData;
 
         if ($this->MDM->postEdit((int) $id) === null) {
             return $this->failNotFound();
@@ -137,9 +133,7 @@ class Posts extends AvegaCmsAdminAPI
      */
     public function patch($id = null): ResponseInterface
     {
-        if (empty($data = $this->request->getJSON(true))) {
-            return $this->failValidationErrors(lang('Api.errors.noData'));
-        }
+        $data = $this->apiData;
 
         if ($this->MDM->postEdit((int) $id) === null) {
             return $this->failNotFound();

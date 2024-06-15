@@ -5,13 +5,13 @@ declare(strict_types = 1);
 namespace AvegaCms\Controllers;
 
 use AvegaCms\Models\Admin\MetaDataSiteMapModel;
-use AvegaCms\Traits\CmsSitemapTrait;
+use AvegaCms\Traits\AvegaCmsSitemapTrait;
 use CodeIgniter\Controller;
 use Exception;
 
 class Sitemap extends Controller
 {
-    use CmsSitemapTrait;
+    use AvegaCmsSitemapTrait;
 
     /**
      * @param  string|null  $pointer

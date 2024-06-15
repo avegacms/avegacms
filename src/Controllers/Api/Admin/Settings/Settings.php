@@ -49,9 +49,7 @@ class Settings extends AvegaCmsAdminAPI
     public function create(): ResponseInterface
     {
         try {
-            if (empty($data = $this->request->getJSON(true))) {
-                return $this->failValidationErrors(lang('Api.errors.noData'));
-            }
+            $data = $this->apiData;
 
             $data['created_by_id'] = $this->userData->userId;
 
@@ -88,9 +86,7 @@ class Settings extends AvegaCmsAdminAPI
     public function update($id = null): ResponseInterface
     {
         try {
-            if (empty($data = $this->request->getJSON(true))) {
-                return $this->failValidationErrors(lang('Api.errors.noData'));
-            }
+            $data = $this->apiData;
 
             if (($settings = $this->SM->find($id)) === null) {
                 return $this->failNotFound();
