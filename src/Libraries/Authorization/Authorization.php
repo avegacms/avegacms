@@ -584,7 +584,7 @@ class Authorization
                 $permission['read'] = 1;
             }
 
-            $action = (bool) match ($request->getMethod(true)) {
+            $action = (bool) match ($request->getMethod()) {
                 'GET'    => ($permission['read'] ?? 0),
                 'POST'   => ($permission['create'] ?? 0),
                 'PUT',

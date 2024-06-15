@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Controllers;
 
 use CodeIgniter\Controller;
@@ -19,7 +21,7 @@ use Psr\Log\LoggerInterface;
  *
  * For security be sure to declare any new methods as protected or private.
  */
-abstract class BaseController extends Controller
+abstract class AvegaCmsController extends Controller
 {
     /**
      * Instance of the main Request object.
@@ -33,7 +35,7 @@ abstract class BaseController extends Controller
      * class instantiation. These helpers will be available
      * to all other controllers that extend BaseController.
      *
-     * @var array
+     * @var list<string>
      */
     protected $helpers = [];
 

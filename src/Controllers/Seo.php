@@ -7,13 +7,13 @@ namespace AvegaCms\Controllers;
 use AvegaCms\Models\Admin\ModulesModel;
 use AvegaCms\Utilities\Cms;
 use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Traits\CmsSitemapTrait;
+use AvegaCms\Traits\AvegaCmsSitemapTrait;
 use ReflectionException;
 use Exception;
 
-class Seo extends BaseController
+class Seo extends AvegaCmsController
 {
-    use CmsSitemapTrait;
+    use AvegaCmsSitemapTrait;
 
     /**
      * @throws ReflectionException

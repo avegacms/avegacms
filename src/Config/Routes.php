@@ -4,7 +4,7 @@ use CodeIgniter\Router\RouteCollection;
 
 use AvegaCms\Controllers\{Content, Seo};
 use AvegaCms\Controllers\Api\AvegaCmsAPI;
-use AvegaCms\Controllers\Api\Public\Login;
+use AvegaCms\Controllers\Api\Public\{Login, Content as ContentApi};
 use AvegaCms\Controllers\Api\Admin\Profile;
 use AvegaCms\Controllers\Api\Admin\Content\{Pages, Rubrics, Posts};
 use AvegaCms\Controllers\Api\Admin\Settings\{Locales,
@@ -24,7 +24,7 @@ use AvegaCms\Controllers\Api\Admin\Settings\{Locales,
 $routes->group('api', function (RouteCollection $routes) {
     $routes->group('public', ['namespace' => 'AvegaCms\Controllers\Api\Public'], function (RouteCollection $routes) {
         $routes->group('content', function (RouteCollection $routes) {
-            $routes->get('/', 'Content::index');
+            $routes->get('/', [ContentApi::class, 'index']);
         });
         $routes->get('logout', [Login::class, 'logout']);
         $routes->post('login/(:segment)', [Login::class, 'index/$1']);

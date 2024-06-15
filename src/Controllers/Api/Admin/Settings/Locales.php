@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace AvegaCms\Controllers\Api\Admin\Settings;
 
@@ -47,9 +47,7 @@ class Locales extends AvegaCmsAdminAPI
      */
     public function create(): ResponseInterface
     {
-        if (empty($data = $this->request->getJSON(true))) {
-            return $this->failValidationErrors(lang('Api.errors.noData'));
-        }
+        $data = $this->apiData;
 
         $data['created_by_id'] = $this->userData->userId;
 
@@ -67,9 +65,7 @@ class Locales extends AvegaCmsAdminAPI
      */
     public function update($id = null): ResponseInterface
     {
-        if (empty($data = $this->request->getJSON(true))) {
-            return $this->failValidationErrors(lang('Api.errors.noData'));
-        }
+        $data = $this->apiData;
 
         if ($this->LM->find($id) === null) {
             return $this->failNotFound();

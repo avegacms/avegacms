@@ -55,9 +55,7 @@ class Permissions extends AvegaCmsAdminAPI
      */
     public function update($id = null): ResponseInterface
     {
-        if (empty($data = $this->request->getJSON(true))) {
-            return $this->failValidationErrors(lang('Api.errors.noData'));
-        }
+        $data = $this->apiData;
 
         if (($permissions = $this->PM->forEdit((int) $id)) === null) {
             return $this->failNotFound();

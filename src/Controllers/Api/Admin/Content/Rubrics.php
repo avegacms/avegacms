@@ -54,9 +54,7 @@ class Rubrics extends AvegaCmsAdminAPI
      */
     public function create(): ResponseInterface
     {
-        if (empty($data = $this->request->getJSON(true))) {
-            return $this->failValidationErrors(lang('Api.errors.noData'));
-        }
+        $data = $this->apiData;
 
         $data['parent']     = SeoUtils::mainPages($data['locale_id']);
         $data['creator_id'] = $data['created_by_id'] = $this->userData->userId;
@@ -102,9 +100,7 @@ class Rubrics extends AvegaCmsAdminAPI
      */
     public function update($id = null): ResponseInterface
     {
-        if (empty($data = $this->request->getJSON(true))) {
-            return $this->failValidationErrors(lang('Api.errors.noData'));
-        }
+        $data = $this->apiData;
 
         if ($this->MDM->rubricEdit((int) $id) === null) {
             return $this->failNotFound();
@@ -137,9 +133,7 @@ class Rubrics extends AvegaCmsAdminAPI
      */
     public function patch($id = null): ResponseInterface
     {
-        if (empty($data = $this->request->getJSON(true))) {
-            return $this->failValidationErrors(lang('Api.errors.noData'));
-        }
+        $data = $this->apiData;
 
         if ($this->MDM->rubricEdit((int) $id) === null) {
             return $this->failNotFound();

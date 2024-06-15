@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace AvegaCms\Commands\Generators;
 
@@ -8,7 +8,7 @@ use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\CLI\GeneratorTrait;
 use AvegaCms\Controllers\AvegaCmsFrontendController;
-use AvegaCms\Controllers\Api\CmsResourceController;
+use AvegaCms\Controllers\Api\AvegaCmsAPI;
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use AvegaCms\Config\AvegaCms;
 
@@ -108,8 +108,8 @@ class AvegaCmsControllerGenerator extends BaseCommand
                 $useStatement = AvegaCmsAdminAPI::class;
                 $extends      = 'AvegaCmsAdminAPI';
             } else {
-                $useStatement = CmsResourceController::class;
-                $extends      = 'CmsResourceController';
+                $useStatement = AvegaCmsAPI::class;
+                $extends      = 'AvegaCmsAPI';
             }
         }
 

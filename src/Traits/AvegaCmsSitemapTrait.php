@@ -10,7 +10,7 @@ use SimpleXMLElement;
 use ReflectionException;
 use Exception;
 
-trait CmsSitemapTrait
+trait AvegaCmsSitemapTrait
 {
     protected string $path       = 'uploads/sitemaps/';
     private ?string  $moduleName = null;
