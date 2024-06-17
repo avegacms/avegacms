@@ -439,6 +439,7 @@ class Authorization
     }
 
     /**
+     * @param  string  $slug
      * @return void
      * @throws AuthorizationException
      * @throws ReflectionException
