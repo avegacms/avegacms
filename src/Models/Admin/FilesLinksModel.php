@@ -79,6 +79,7 @@ class FilesLinksModel extends AvegaCmsModel
         'entity' => 'files_links.entity_id',
         'item'   => 'files_links.item_id',
         'active' => 'files_links.active',
+        'type'   => 'files_links.type',
     ];
     protected array  $searchFields      = [];
     protected array  $sortableFields    = [];
@@ -88,7 +89,8 @@ class FilesLinksModel extends AvegaCmsModel
         'module' => 'int',
         'entity' => 'int',
         'item'   => 'int|array',
-        'active' => 'int'
+        'active' => 'int',
+        'type'   => 'string',
     ];
     protected string $searchFieldAlias  = 'q';
     protected string $sortFieldAlias    = 's';
