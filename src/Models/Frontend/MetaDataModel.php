@@ -275,7 +275,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.parent',
                 'metadata.locale_id',
                 'metadata.title',
-                'metadata.url',
+                'CONCAT(TRIM(TRAILING "_" FROM metadata.url), "_", metadata.id) AS url',
                 'metadata.use_url_pattern',
                 'c.anons',
                 'c.extra',
