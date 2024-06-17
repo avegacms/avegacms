@@ -79,7 +79,7 @@ class CmsFileManager
 
         return self::_setFile($uploadedFile->getPathname(), $dirData, $entity, $fileConfig);
     }
-    
+
     /**
      * @param  string  $filePath
      * @param  array  $entity
@@ -532,7 +532,7 @@ class CmsFileManager
             'id'            => $id,
             'user_id'       => $userId,
             'parent'        => $dirData->id,
-            'module_id'     => $dirData->module_id,
+            'module_id'     => $entity['module_id'] ?? $dirData->module_id,
             'entity_id'     => $entity['entity_id'] ?? 0,
             'item_id'       => $entity['item_id'] ?? 0,
             'uid'           => '',

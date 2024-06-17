@@ -5,9 +5,8 @@ declare(strict_types = 1);
 namespace AvegaCms\Models\Frontend;
 
 use AvegaCms\Models\AvegaCmsModel;
-use AvegaCms\Utilities\CmsFileManager;
-use AvegaCms\Utilities\CmsModule;
-use AvegaCms\Enums\{MetaStatuses, MetaDataTypes};
+use AvegaCms\Utilities\{CmsFileManager, CmsModule};
+use AvegaCms\Enums\{MetaStatuses, MetaDataTypes, FileTypes};
 
 class MetaDataModel extends AvegaCmsModel
 {
@@ -383,7 +382,14 @@ class MetaDataModel extends AvegaCmsModel
                 $item->url = base_url($item->url);
             }
 
-            $previews = CmsFileManager::getFiles(['item' => $ids, 'module' => $moduleId], true);
+            $previews = CmsFileManager::getFiles(
+                [
+                    'item'   => $ids,
+                    'module' => $moduleId,
+                    'type'   => FileTypes::Image->value
+                ],
+                true
+            );
 
             foreach ($data['data'] as $item) {
                 foreach ($previews as $preview) {
