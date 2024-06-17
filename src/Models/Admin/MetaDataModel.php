@@ -158,7 +158,7 @@ class MetaDataModel extends AvegaCmsModel
         parent::__construct($db, $validation);
 
         $this->validationRules['slug']                    = [
-            'rules'  => 'if_exist|permit_empty|unique_db_key[metadata.parent+module_id+item_id+use_url_pattern+slug,id,{id}]',
+            'rules'  => 'if_exist|required|unique_db_key[metadata.parent+module_id+item_id+use_url_pattern+slug,id,{id}]',
             'errors' => [
                 'unique_db_key' => lang('Validation.uniqueDbKey.notUnique'),
             ]
