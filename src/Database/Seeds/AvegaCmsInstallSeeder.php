@@ -1758,7 +1758,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'entity'        => 'content',
                 'slug'          => 'posts',
                 'key'           => 'preViewFileConfig',
-                'value'         => [
+                'value'         => serialize([
                     'big'    => [
                         'width'         => 1000,
                         'height'        => 700,
@@ -1780,8 +1780,8 @@ class AvegaCmsInstallSeeder extends Seeder
                         'masterDim'     => 'width',
                         'quality'       => 100
                     ]
-                ],
-                'default_value' => [
+                ]),
+                'default_value' => serialize([
                     'big'    => [
                         'width'         => 1000,
                         'height'        => 700,
@@ -1803,7 +1803,7 @@ class AvegaCmsInstallSeeder extends Seeder
                         'masterDim'     => 'width',
                         'quality'       => 100
                     ]
-                ],
+                ]),
                 'return_type'   => FieldsReturnTypes::Array->value,
                 'label'         => 'Settings.label.posts.showAuthorPost',
                 'context'       => 'Settings.context.posts.showAuthorPost'
