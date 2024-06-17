@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Utilities;
 
+use CodeIgniter\HTTP\Files\UploadedFile;
 use Config\{Mimes, Services};
 use CodeIgniter\Files\File;
 use CodeIgniter\Images\Exceptions\ImageException;
@@ -29,15 +30,60 @@ class CmsFileManager
      * @param  array  $entity
      * @param  array|string|null  $uploadConfig
      * @param  array  $fileConfig
-     * @param  bool  $onlyUpload
      * @return object|null
      * @throws ReflectionException|UploaderException
      */
     public static function upload(
         array $entity,
         array|string $uploadConfig = null,
-        array $fileConfig = [],
-        bool $onlyUpload = false
+        array $fileConfig = []
+    ): array|null {
+        $request   = Services::request();
+        $validator = Services::validation();
+        $directory = is_array($uploadConfig) ? ($uploadConfig['directory'] ?? 'content') : (is_null($uploadConfig) ? '' : $uploadConfig);
+
+        if ($validator->setRules(self::entityRules)->run($entity) === false) {
+            throw new UploaderException($validator->getErrors());
+        }
+
+        foreach (self::excludedDirs as $dir) {
+            if (str_starts_with($directory, $dir)) {
+                $directory = trim(substr($directory, strlen($dir)), '/');
+                break;
+            }
+        }
+
+        if (empty($directory)) {
+            throw UploaderException::forEmptyPath();
+        }
+
+        if (empty($dirData = (new FilesLinksModel())->getDirectories($directory))) {
+            throw UploaderException::forDirectoryNotFound($directory);
+        }
+
+        $field = $uploadConfig['field'] ?? 'file';
+
+        if ( ! is_array($uploadConfig)) {
+            $uploadConfig = ['directory' => $directory];
+        }
+
+        if ( ! $validator->setRules(self::uploadSettings($uploadConfig))->withRequest($request)->run()) {
+            throw new UploaderException($validator->getErrors());
+        }
+
+        $uploadedFile = $request->getFile($field);
+
+        if ( ! $uploadedFile->isValid()) {
+            throw new UploaderException($uploadedFile->getErrorString() . '(' . $uploadedFile->getError() . ')');
+        }
+
+        return self::_setFile($uploadedFile->getPath(), $dirData, $entity, $fileConfig);
+    }
+
+    public static function upload_old(
+        array $entity,
+        array|string $uploadConfig = null,
+        array $fileConfig = []
     ): array|null {
         $request   = Services::request();
         $validator = Services::validation();
@@ -64,10 +110,8 @@ class CmsFileManager
         $FLM     = (new FilesLinksModel());
         $dirData = null;
 
-        if ($onlyUpload === false) {
-            if (empty($dirData = $FLM->getDirectories($directory))) {
-                throw UploaderException::forDirectoryNotFound($directory);
-            }
+        if (empty($dirData = $FLM->getDirectories($directory))) {
+            throw UploaderException::forDirectoryNotFound($directory);
         }
 
         $field = $uploadConfig['field'] ?? 'file';
@@ -116,7 +160,7 @@ class CmsFileManager
         ];
 
         if ($type === FileTypes::Image->value) {
-            if ($onlyUpload === false || ($onlyUpload && empty($fileConfig))) {
+            if (empty($fileConfig)) {
                 $fileData['data']['thumb'] = self::createThumb($dirFile);
                 $fileData['data']['path']  = ['original' => $dirFile];
 
@@ -133,10 +177,6 @@ class CmsFileManager
                     default  => ''
                 };
             }
-        }
-
-        if ($onlyUpload) {
-            return (object) $fileData;
         }
 
         if (($id = $FM->insert($fileData)) === false) {
@@ -160,6 +200,50 @@ class CmsFileManager
         }
 
         return self::getFiles(['id' => $id], true);
+    }
+
+    /**
+     * @param  string  $filePath
+     * @param  array  $entity
+     * @param  array|string|null  $uploadConfig
+     * @param  array  $fileConfig
+     * @return array|null
+     * @throws UploaderException|ReflectionException
+     */
+    public static function setFile(
+        string $filePath,
+        array $entity,
+        array|string $uploadConfig = null,
+        array $fileConfig = []
+    ): array|null {
+        $FLM       = (new FilesLinksModel());
+        $validator = Services::validation();
+        $directory = is_array($uploadConfig) ? ($uploadConfig['directory'] ?? 'content') : (is_null($uploadConfig) ? '' : $uploadConfig);
+
+        if (file_exists($filePath) === false) {
+            throw UploaderException::forFileNotFound($filePath);
+        }
+
+        if ($validator->setRules(self::entityRules)->run($entity) === false) {
+            throw new UploaderException($validator->getErrors());
+        }
+
+        foreach (self::excludedDirs as $dir) {
+            if (str_starts_with($directory, $dir)) {
+                $directory = trim(substr($directory, strlen($dir)), '/');
+                break;
+            }
+        }
+
+        if (empty($directory)) {
+            throw UploaderException::forEmptyPath();
+        }
+
+        if (empty($dirData = $FLM->getDirectories($directory))) {
+            throw UploaderException::forDirectoryNotFound($directory);
+        }
+
+        return self::_setFile($filePath, $dirData, $entity, $fileConfig);
     }
 
     /**
@@ -493,6 +577,96 @@ class CmsFileManager
                 }
             }
         }
+    }
+
+    /**
+     * @param  string  $filePath
+     * @param  object  $dirData
+     * @param  array  $entity
+     * @param  array  $fileConfig
+     * @return array|null
+     * @throws ReflectionException|UploaderException
+     */
+    private static function _setFile(string $filePath, object $dirData, array $entity, array $fileConfig): array|null
+    {
+        $FM        = (new FilesModel());
+        $FLM       = (new FilesLinksModel());
+        $userId    = ($entity['user_id'] ?? 0);
+        $defConfig = Cms::settings('filemanager.uploadConfig');
+
+        $uploadedFile = new UploadedFile($filePath, basename($filePath), error: 0);
+
+        if ($uploadedFile->hasMoved()) {
+            throw UploaderException::forHasMoved($uploadedFile->getName());
+        }
+
+        $uploadPath = FCPATH . ($directory = ('uploads/' . $dirData->url)) . '/';
+        $fileName   = $uploadedFile->getRandomName();
+        $size       = $uploadedFile->getSize();
+        $title      = pathinfo($uploadedFile->getName(), PATHINFO_FILENAME);
+
+        // Переносим файл в нужную директорию
+        if ( ! rename($filePath, $uploadPath . $fileName)) {
+            throw UploaderException::forNotMovedFile($filePath);
+        }
+
+        // Получаем информацию по файлу
+        $file     = new File($uploadPath . $fileName);
+        $isImage  = mb_strpos(Mimes::guessTypeFromExtension($extension = $file->getExtension()) ?? '', 'image') === 0;
+        $type     = ($isImage) ? FileTypes::Image->value : FileTypes::File->value;
+        $dirFile  = $directory . '/' . $fileName;
+        $fileData = [
+            'provider'      => 0,
+            'type'          => $type,
+            'data'          => [
+                'title' => $title,
+                'ext'   => $extension,
+                'size'  => $size,
+                'file'  => $fileName,
+                'path'  => $dirFile
+            ],
+            'created_by_id' => $userId
+        ];
+
+        if ($type === FileTypes::Image->value) {
+            $fileData['data']['thumb'] = self::createThumb($dirFile);
+            $fileData['data']['path']  = ['original' => $dirFile];
+
+            if ($defConfig['createWebp']) {
+                $fileData['data']['path']['webp'] = self::convertToWebp($dirFile,
+                    webpQuality: $defConfig['webpQuality']);
+            }
+
+            if ( ! empty($fileConfig)) {
+                $fileData['data']['variants'] = match (($action = array_key_first($fileConfig))) {
+                    'resize' => self::resizeImage($dirFile, $fileConfig[$action]),
+                    'fit'    => self::fitImage($dirFile, $fileConfig[$action]),
+                    default  => ''
+                };
+            }
+        }
+
+        if (($id = $FM->insert($fileData)) === false) {
+            throw new UploaderException($FM->errors());
+        }
+
+        $fileLinks = [
+            'id'            => $id,
+            'user_id'       => $userId,
+            'parent'        => $dirData->id,
+            'module_id'     => $dirData->module_id,
+            'entity_id'     => $entity['entity_id'] ?? 0,
+            'item_id'       => $entity['item_id'] ?? 0,
+            'uid'           => '',
+            'type'          => $type,
+            'created_by_id' => $userId
+        ];
+
+        if ( ! $FLM->insert($fileLinks)) {
+            throw new UploaderException($FLM->errors());
+        }
+
+        return self::getFiles(['id' => $id], true);
     }
 
     /**
