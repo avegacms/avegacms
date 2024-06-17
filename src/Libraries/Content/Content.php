@@ -66,6 +66,9 @@ class Content
             default                     => throw ContentExceptions::forUnknownType()
         };
 
+        $data['item_id']   ??= 0;
+        $data['module_id'] = $this->moduleId;
+
         if ( ! ($content['id'] = $this->MDM->insert($data))) {
             throw new ContentExceptions($this->MDM->errors());
         }
