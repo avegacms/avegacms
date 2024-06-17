@@ -344,12 +344,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.meta_type',
                 'metadata.publish_at'
             ]
-        )->where(
-            [
-                'metadata.module_id' => 0,
-                'metadata.item_id'   => 0
-            ]
-        );
+        )->where(['metadata.item_id' => 0]);
 
         return $this;
     }
