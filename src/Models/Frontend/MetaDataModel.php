@@ -6,7 +6,7 @@ namespace AvegaCms\Models\Frontend;
 
 use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Utilities\{CmsFileManager, CmsModule};
-use AvegaCms\Enums\{MetaStatuses, MetaDataTypes, FileTypes};
+use AvegaCms\Enums\{FileTargets, MetaStatuses, MetaDataTypes, FileTypes};
 
 class MetaDataModel extends AvegaCmsModel
 {
@@ -386,7 +386,8 @@ class MetaDataModel extends AvegaCmsModel
                 [
                     'item'   => $ids,
                     'module' => $moduleId,
-                    'type'   => FileTypes::Image->value
+                    'type'   => FileTypes::Image->value,
+                    'target' => FileTargets::Preview->value
                 ],
                 true
             );
