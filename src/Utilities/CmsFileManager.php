@@ -77,7 +77,7 @@ class CmsFileManager
             throw new UploaderException($uploadedFile->getErrorString() . '(' . $uploadedFile->getError() . ')');
         }
 
-        return self::_setFile($uploadedFile->getPath(), $dirData, $entity, $fileConfig);
+        return self::_setFile($uploadedFile->getPathname(), $dirData, $entity, $fileConfig);
     }
 
     public static function upload_old(
