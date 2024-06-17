@@ -76,10 +76,12 @@ class Login extends AvegaCmsAPI
         }
     }
 
-    public function logout(): ResponseInterface
+    public function logout(?string $slug = null): ResponseInterface
     {
         try {
-            $this->Authorization->logout();
+            $slug ??= 'admin';
+
+            $this->Authorization->logout(strtolower($slug));
             return $this->respondNoContent();
         } catch (AuthorizationException|Exception $e) {
             return match ($e->getCode()) {
