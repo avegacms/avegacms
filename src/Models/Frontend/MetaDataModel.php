@@ -299,12 +299,8 @@ class MetaDataModel extends AvegaCmsModel
 
         $this->checkStatus();
 
-        $this->builder()->where(
-            [
-                'metadata.meta_type' => MetaDataTypes::Post->name,
-                'metadata.module_id' => 0
-            ]
-        )->groupEnd();
+        $this->builder()->where(['metadata.meta_type' => MetaDataTypes::Post->name])
+            ->groupEnd();
 
         return $this->filter($filter);
     }
