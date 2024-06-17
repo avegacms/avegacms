@@ -107,21 +107,28 @@ class MetaDataModel extends AvegaCmsModel
      */
     public function getContentMetaData(int $locale, string $slug = ''): array|object|null
     {
+        $postSegments = explode('_', $slug);
+
         $this->contentMetaDataSelect();
 
-        $this->builder()->whereIn('metadata.meta_type',
-            [
-                MetaDataTypes::Main->name,
-                MetaDataTypes::Page->name,
-                MetaDataTypes::Rubric->name,
-                MetaDataTypes::Post->name
-            ]
-        )->where(
-            [
-                'metadata.slug'      => ! empty($slug) ? $slug : 'main',
-                'metadata.locale_id' => $locale
-            ]
-        );
+        if (count($postSegments) == 2) {
+            $this->builder()->where(
+                [
+                    'metadata.id'        => (int) $postSegments[1],
+                    'metadata.meta_type' => MetaDataTypes::Post->name,
+                ]
+            );
+        } else {
+            $this->builder()->whereIn('metadata.meta_type',
+                [
+                    MetaDataTypes::Main->name,
+                    MetaDataTypes::Page->name,
+                    MetaDataTypes::Rubric->name,
+                ]
+            )->where(['metadata.slug' => ! empty($slug) ? $slug : 'main']);
+        }
+
+        $this->builder()->where(['metadata.locale_id' => $locale]);
 
         $this->checkStatus();
 
