@@ -276,6 +276,8 @@ class MetaDataModel extends AvegaCmsModel
      */
     public function getRubricPosts(array $filter = []): MetaDataModel
     {
+        $this->afterFind = ['prepMetaData'];
+
         $this->builder()->select(
             [
                 'metadata.id',
