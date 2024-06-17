@@ -11,6 +11,7 @@ use AvegaCms\Enums\{
     UserConditions,
     FieldsReturnTypes,
     FileTypes,
+    FileTargets,
     MetaStatuses,
     NavigationTypes,
     MetaDataTypes
@@ -235,6 +236,11 @@ class CreateAvegaCmsTables extends Migration
                 'constraint' => FileTypes::get('value'),
                 'default'    => FileTypes::File->value
             ],
+            'target'   => [
+                'type'       => 'enum',
+                'constraint' => FileTargets::get('value'),
+                'default'    => FileTargets::Other->value
+            ],
             'active'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 1],
             ...Migrator::byId(),
             ...Migrator::dateFields(['deleted_at'])
@@ -267,6 +273,11 @@ class CreateAvegaCmsTables extends Migration
                     'type'       => 'enum',
                     'constraint' => FileTypes::get('value'),
                     'default'    => FileTypes::File->value
+                ],
+                'target'    => [
+                    'type'       => 'enum',
+                    'constraint' => FileTargets::get('value'),
+                    'default'    => FileTargets::Other->value
                 ],
                 ...Migrator::byId(),
                 ...Migrator::dateFields(['deleted_at'])

@@ -8,19 +8,13 @@ use CodeIgniter\HTTP\Files\UploadedFile;
 use Config\{Mimes, Services};
 use CodeIgniter\Files\File;
 use CodeIgniter\Images\Exceptions\ImageException;
-use AvegaCms\Enums\FileTypes;
+use AvegaCms\Enums\{FileTypes, FileTargets};
 use AvegaCms\Utilities\Exceptions\UploaderException;
 use AvegaCms\Models\Admin\{FilesModel, FilesLinksModel};
 use ReflectionException;
 
 class CmsFileManager
 {
-    const entityRules = [
-        'entity_id' => ['rules' => 'if_exist|is_natural'],
-        'item_id'   => ['rules' => 'if_exist|is_natural'],
-        'user_id'   => ['rules' => 'if_exist|is_natural']
-    ];
-
     const excludedDirs = [
         FCPATH . 'uploads',
         'uploads'
@@ -42,7 +36,7 @@ class CmsFileManager
         $validator = Services::validation();
         $directory = is_array($uploadConfig) ? ($uploadConfig['directory'] ?? 'content') : (is_null($uploadConfig) ? '' : $uploadConfig);
 
-        if ($validator->setRules(self::entityRules)->run($entity) === false) {
+        if ($validator->setRules(self::_entityRules())->run($entity) === false) {
             throw new UploaderException($validator->getErrors());
         }
 
@@ -102,7 +96,7 @@ class CmsFileManager
             throw UploaderException::forFileNotFound($filePath);
         }
 
-        if ($validator->setRules(self::entityRules)->run($entity) === false) {
+        if ($validator->setRules(self::_entityRules())->run($entity) === false) {
             throw new UploaderException($validator->getErrors());
         }
 
@@ -457,6 +451,17 @@ class CmsFileManager
         }
     }
 
+    private static function _entityRules(): array
+    {
+        return [
+            'module_id' => ['rules' => 'if_exist|is_natural'],
+            'entity_id' => ['rules' => 'if_exist|is_natural'],
+            'item_id'   => ['rules' => 'if_exist|is_natural'],
+            'user_id'   => ['rules' => 'if_exist|is_natural'],
+            'target'    => ['rules' => 'if_exist|required|in_list[' . implode(',', FileTargets::get('value')) . ']'],
+        ];
+    }
+
     /**
      * @param  string  $filePath
      * @param  object  $dirData
@@ -492,10 +497,12 @@ class CmsFileManager
         $file     = new File($uploadPath . $fileName);
         $isImage  = mb_strpos(Mimes::guessTypeFromExtension($extension = $file->getExtension()) ?? '', 'image') === 0;
         $type     = ($isImage) ? FileTypes::Image->value : FileTypes::File->value;
+        $target   = $entity['target'] ?? FileTargets::Other->value;
         $dirFile  = $directory . '/' . $fileName;
         $fileData = [
             'provider'      => 0,
             'type'          => $type,
+            'target'        => $target,
             'data'          => [
                 'title' => $title,
                 'ext'   => $extension,
@@ -537,6 +544,7 @@ class CmsFileManager
             'item_id'       => $entity['item_id'] ?? 0,
             'uid'           => '',
             'type'          => $type,
+            'target'        => $target,
             'created_by_id' => $userId
         ];
 
