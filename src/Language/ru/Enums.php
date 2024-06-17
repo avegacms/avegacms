@@ -7,5 +7,11 @@ return [
         'Moderated' => 'На модерации',
         'Draft'     => 'Черновик',
         'Trash'     => 'В корзине'
+    ],
+    'FileTargets'  => [
+        'Preview'    => 'Обложка',
+        'OpenGraph'  => 'OpenGraph',
+        'Attributes' => 'Атрибуты',
+        'Other'      => 'Другое'
     ]
 ];
