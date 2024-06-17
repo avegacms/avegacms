@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace AvegaCms\Models\Frontend;
 
 use AvegaCms\Models\AvegaCmsModel;
-use AvegaCms\Utilities\Cms;
 use AvegaCms\Utilities\CmsFileManager;
 use AvegaCms\Utilities\CmsModule;
 use AvegaCms\Enums\{MetaStatuses, MetaDataTypes};
