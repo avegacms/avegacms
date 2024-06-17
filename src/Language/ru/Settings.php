@@ -77,7 +77,9 @@ return [
         ],
         'posts'       => [
             'postsPerPage'   => 'Количество записей на странице',
-            'showAuthorPost' => 'Показывать автора поста'
+            'showAuthorPost' => 'Показывать автора поста',
+            'showDatePost'   => 'Показывать дату поста',
+            'dateFormatPost' => 'Формат даты поста'
         ]
     ],
     'context' => [
@@ -155,7 +157,9 @@ return [
         ],
         'posts'       => [
             'postsPerPage'   => 'Количество записей на странице',
-            'showAuthorPost' => 'Показывать автора поста'
+            'showAuthorPost' => 'Показывать автора поста',
+            'showDatePost'   => 'Показывать дату поста',
+            'dateFormatPost' => 'Формат даты поста'
         ]
     ],
     'errors'  => [

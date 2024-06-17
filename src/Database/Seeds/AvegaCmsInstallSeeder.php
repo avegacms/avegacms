@@ -1728,6 +1728,86 @@ class AvegaCmsInstallSeeder extends Seeder
                 'label'         => 'Settings.label.posts.showAuthorPost',
                 'context'       => 'Settings.context.posts.showAuthorPost'
             ],
+            [
+                'module_id'     => 0,
+                'is_core'       => true,
+                'entity'        => 'content',
+                'slug'          => 'posts',
+                'key'           => 'showDatePost',
+                'value'         => 1,
+                'default_value' => 1,
+                'return_type'   => FieldsReturnTypes::Boolean->value,
+                'label'         => 'Settings.label.posts.showDatePost',
+                'context'       => 'Settings.context.posts.showDatePost'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => true,
+                'entity'        => 'content',
+                'slug'          => 'posts',
+                'key'           => 'dateFormatPost',
+                'value'         => 'd.m.Y H:i',
+                'default_value' => 'd.m.Y H:i',
+                'return_type'   => FieldsReturnTypes::String->value,
+                'label'         => 'Settings.label.posts.dateFormatPost',
+                'context'       => 'Settings.context.posts.dateFormatPost'
+            ],
+            [
+                'module_id'     => 0,
+                'is_core'       => true,
+                'entity'        => 'content',
+                'slug'          => 'posts',
+                'key'           => 'preViewFileConfig',
+                'value'         => [
+                    'big'    => [
+                        'width'         => 1000,
+                        'height'        => 700,
+                        'maintainRatio' => true,
+                        'masterDim'     => 'width',
+                        'quality'       => 100
+                    ],
+                    'middle' => [
+                        'width'         => 510,
+                        'height'        => 510,
+                        'maintainRatio' => true,
+                        'masterDim'     => 'width',
+                        'quality'       => 100
+                    ],
+                    'small'  => [
+                        'width'         => 360,
+                        'height'        => 256,
+                        'maintainRatio' => true,
+                        'masterDim'     => 'width',
+                        'quality'       => 100
+                    ]
+                ],
+                'default_value' => [
+                    'big'    => [
+                        'width'         => 1000,
+                        'height'        => 700,
+                        'maintainRatio' => true,
+                        'masterDim'     => 'width',
+                        'quality'       => 100
+                    ],
+                    'middle' => [
+                        'width'         => 510,
+                        'height'        => 510,
+                        'maintainRatio' => true,
+                        'masterDim'     => 'width',
+                        'quality'       => 100
+                    ],
+                    'small'  => [
+                        'width'         => 360,
+                        'height'        => 256,
+                        'maintainRatio' => true,
+                        'masterDim'     => 'width',
+                        'quality'       => 100
+                    ]
+                ],
+                'return_type'   => FieldsReturnTypes::Array->value,
+                'label'         => 'Settings.label.posts.showAuthorPost',
+                'context'       => 'Settings.context.posts.showAuthorPost'
+            ],
         ];
 
         foreach ($settingsList as $item) {
@@ -2163,5 +2243,11 @@ class AvegaCmsInstallSeeder extends Seeder
         }
 
         return $distribution;
+    }
+
+    private function _createPostsConfig(): void
+    {
+        // TODO 1. Создать PostImageConfig
+        // TODO 2. Создать PostSettingsConfig
     }
 }
