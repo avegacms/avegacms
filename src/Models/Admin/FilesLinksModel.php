@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Models\Admin;
 
-use AvegaCms\Enums\{FileTypes, FileTargets};
+use AvegaCms\Enums\FileTypes;
 use AvegaCms\Models\AvegaCmsModel;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
@@ -29,7 +29,6 @@ class FilesLinksModel extends AvegaCmsModel
         'item_id',
         'uid',
         'type',
-        'target',
         'active',
         'created_by_id',
         'updated_by_id',
@@ -80,8 +79,7 @@ class FilesLinksModel extends AvegaCmsModel
         'entity' => 'files_links.entity_id',
         'item'   => 'files_links.item_id',
         'active' => 'files_links.active',
-        'type'   => 'files_links.type',
-        'target' => 'files_links.target',
+        'type'   => 'files_links.type'
     ];
     protected array  $searchFields      = [];
     protected array  $sortableFields    = [];
@@ -92,8 +90,7 @@ class FilesLinksModel extends AvegaCmsModel
         'entity' => 'int',
         'item'   => 'int|array',
         'active' => 'int',
-        'type'   => 'string',
-        'target' => 'string',
+        'type'   => 'string'
     ];
     protected string $searchFieldAlias  = 'q';
     protected string $sortFieldAlias    = 's';
@@ -125,12 +122,9 @@ class FilesLinksModel extends AvegaCmsModel
         bool $isFM = false
     ) {
         parent::__construct($db, $validation);
-        $this->isFM                      = $isFM;
-        $this->validationRules['type']   = [
+        $this->isFM                    = $isFM;
+        $this->validationRules['type'] = [
             'rules' => 'if_exist|required|in_list[' . implode(',', FileTypes::get('value')) . ']'
-        ];
-        $this->validationRules['target'] = [
-            'rules' => 'if_exist|required|in_list[' . implode(',', FileTargets::get('value')) . ']'
         ];
     }
 
@@ -149,7 +143,6 @@ class FilesLinksModel extends AvegaCmsModel
                 'files_links.entity_id',
                 'files_links.item_id',
                 'files_links.type',
-                'files_links.target',
                 'files_links.active',
                 'files.data',
                 'files.provider',

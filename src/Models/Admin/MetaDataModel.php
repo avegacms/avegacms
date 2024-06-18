@@ -26,6 +26,7 @@ class MetaDataModel extends AvegaCmsModel
         'locale_id',
         'module_id',
         'item_id',
+        'preview_id',
         'slug',
         'creator_id',
         'title',
@@ -59,6 +60,7 @@ class MetaDataModel extends AvegaCmsModel
         'locale_id'             => ['rules' => 'if_exist|required|is_natural_no_zero'],
         'module_id'             => ['rules' => 'if_exist|required|is_natural'],
         'item_id'               => ['rules' => 'if_exist|required|is_natural'],
+        'preview_id'            => ['rules' => 'if_exist|required|is_natural'],
         'url'                   => ['rules' => 'if_exist|permit_empty'],
         'creator_id'            => ['rules' => 'if_exist|required|is_natural'],
         'title'                 => [
@@ -138,6 +140,7 @@ class MetaDataModel extends AvegaCmsModel
         'module_id'       => 'int',
         'creator_id'      => 'int',
         'item_id'         => 'int',
+        'preview_id'      => 'int',
         'sort'            => 'int',
         'meta'            => '?json-array',
         'meta_sitemap'    => '?json-array',

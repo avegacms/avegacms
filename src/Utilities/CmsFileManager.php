@@ -8,7 +8,7 @@ use CodeIgniter\HTTP\Files\UploadedFile;
 use Config\{Mimes, Services};
 use CodeIgniter\Files\File;
 use CodeIgniter\Images\Exceptions\ImageException;
-use AvegaCms\Enums\{FileTypes, FileTargets};
+use AvegaCms\Enums\FileTypes;
 use AvegaCms\Utilities\Exceptions\UploaderException;
 use AvegaCms\Models\Admin\{FilesModel, FilesLinksModel};
 use ReflectionException;
@@ -457,8 +457,7 @@ class CmsFileManager
             'module_id' => ['rules' => 'if_exist|is_natural'],
             'entity_id' => ['rules' => 'if_exist|is_natural'],
             'item_id'   => ['rules' => 'if_exist|is_natural'],
-            'user_id'   => ['rules' => 'if_exist|is_natural'],
-            'target'    => ['rules' => 'if_exist|required|in_list[' . implode(',', FileTargets::get('value')) . ']'],
+            'user_id'   => ['rules' => 'if_exist|is_natural']
         ];
     }
 
@@ -497,12 +496,10 @@ class CmsFileManager
         $file     = new File($uploadPath . $fileName);
         $isImage  = mb_strpos(Mimes::guessTypeFromExtension($extension = $file->getExtension()) ?? '', 'image') === 0;
         $type     = ($isImage) ? FileTypes::Image->value : FileTypes::File->value;
-        $target   = $entity['target'] ?? FileTargets::Other->value;
         $dirFile  = $directory . '/' . $fileName;
         $fileData = [
             'provider'      => 0,
             'type'          => $type,
-            'target'        => $target,
             'data'          => [
                 'title' => $title,
                 'ext'   => $extension,
@@ -544,7 +541,6 @@ class CmsFileManager
             'item_id'       => $entity['item_id'] ?? 0,
             'uid'           => '',
             'type'          => $type,
-            'target'        => $target,
             'created_by_id' => $userId
         ];
 

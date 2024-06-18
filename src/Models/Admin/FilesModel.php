@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Models\AvegaCmsModel;
-use AvegaCms\Enums\{FileTypes, FileTargets};
+use AvegaCms\Enums\FileTypes;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
 
@@ -23,7 +23,6 @@ class FilesModel extends AvegaCmsModel
         'data',
         'extra',
         'type',
-        'target',
         'active',
         'created_by_id',
         'updated_by_id',
@@ -92,10 +91,6 @@ class FilesModel extends AvegaCmsModel
 
         $this->validationRules['type'] = [
             'rules' => 'if_exist|required|in_list[' . implode(',', FileTypes::get('value')) . ']'
-        ];
-
-        $this->validationRules['target'] = [
-            'rules' => 'if_exist|required|in_list[' . implode(',', FileTargets::get('value')) . ']'
         ];
     }
 
