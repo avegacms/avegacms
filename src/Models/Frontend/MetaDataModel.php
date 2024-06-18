@@ -6,7 +6,7 @@ namespace AvegaCms\Models\Frontend;
 
 use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Utilities\{CmsFileManager, CmsModule};
-use AvegaCms\Enums\{FileTargets, MetaStatuses, MetaDataTypes, FileTypes};
+use AvegaCms\Enums\{MetaStatuses, MetaDataTypes, FileTypes};
 
 class MetaDataModel extends AvegaCmsModel
 {
@@ -85,6 +85,7 @@ class MetaDataModel extends AvegaCmsModel
         'module_id'       => 'int',
         'creator_id'      => 'int',
         'item_id'         => 'int',
+        'preview_id'      => 'int',
         'sort'            => 'int',
         'meta'            => '?json-array',
         'extra_data'      => '?json-array',
@@ -258,6 +259,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.id',
                 'metadata.parent',
                 'metadata.locale_id',
+                'metadata.preview_id',
                 'metadata.title',
                 'metadata.slug',
                 'metadata.url',
@@ -284,6 +286,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.id',
                 'metadata.parent',
                 'metadata.locale_id',
+                'metadata.preview_id',
                 'metadata.title',
                 'CONCAT(TRIM(TRAILING "_" FROM metadata.url), "_", metadata.id) AS url',
                 'metadata.use_url_pattern',
@@ -334,6 +337,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.id',
                 'metadata.parent',
                 'metadata.locale_id',
+                'metadata.preview_id',
                 'metadata.url',
                 'metadata.slug',
                 'metadata.in_sitemap',
@@ -373,7 +377,7 @@ class MetaDataModel extends AvegaCmsModel
             $moduleId = CmsModule::meta('content.posts')['id'];
             $ids      = [];
             foreach ($data['data'] as $item) {
-                $ids[]     = $item->id;
+                $ids[]     = $item->preview_id;
                 $item->url = base_url($item->url);
             }
 
@@ -381,8 +385,7 @@ class MetaDataModel extends AvegaCmsModel
                 [
                     'item'   => $ids,
                     'module' => $moduleId,
-                    'type'   => FileTypes::Image->value,
-                    'target' => FileTargets::Preview->value
+                    'type'   => FileTypes::Image->value
                 ],
                 true
             );
