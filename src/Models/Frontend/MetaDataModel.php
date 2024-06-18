@@ -85,7 +85,7 @@ class MetaDataModel extends AvegaCmsModel
         'module_id'       => 'int',
         'creator_id'      => 'int',
         'item_id'         => 'int',
-        'preview_id'      => 'int',
+        'preview_id'      => 'cmsfile',
         'sort'            => 'int',
         'meta'            => '?json-array',
         'extra_data'      => '?json-array',
