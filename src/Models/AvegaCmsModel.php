@@ -4,7 +4,7 @@ namespace AvegaCms\Models;
 
 use CodeIgniter\Model;
 use AvegaCms\Config\Services;
-use AvegaCms\Models\Cast\CmsDatetimeCast;
+use AvegaCms\Models\Cast\{CmsDatetimeCast, CmsFileCast};
 
 class AvegaCmsModel extends Model
 {
@@ -36,6 +36,7 @@ class AvegaCmsModel extends Model
 
     protected array $castHandlers = [
         'cmsdatetime' => CmsDatetimeCast::class,
+        'cmsfile'     => CmsFileCast::class,
     ];
 
     /**
