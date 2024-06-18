@@ -124,6 +124,17 @@ class Content
     }
 
     /**
+     * @throws ReflectionException
+     */
+    public function setMetaDataPreview(int $id, int $previewId): bool
+    {
+        if ($id <= 0 || $previewId <= 0) {
+            return false;
+        }
+        return $this->MDM->save(['id' => $id, 'preview_id' => $previewId]);
+    }
+
+    /**
      * @param  int  $id
      * @param  array  $data
      * @return bool
