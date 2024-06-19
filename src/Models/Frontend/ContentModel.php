@@ -59,7 +59,7 @@ class ContentModel extends AvegaCmsModel
      * @param  int  $id
      * @return array|null
      */
-    public function getContent(int $id): array|null
+    public function getContent(int $id): object|null
     {
         $this->afterFind = [];
 
