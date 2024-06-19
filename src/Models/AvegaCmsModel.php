@@ -215,7 +215,7 @@ class AvegaCmsModel extends Model
     {
         if ( ! empty($data['data'])) {
             // Получаем собранные значения из кастера
-            $allValues = CmsFileCast::getValues();
+            $allValues = CmsFileCast::getFilesId();
             dd($allValues, $data);
         }
 
