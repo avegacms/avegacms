@@ -71,6 +71,7 @@ class PageSeoBuilder
             'image'     => $this->data->meta['og:image'] //TODO подумать как лучше получать картинку для OG
         ];
 
+        $meta['preview']   = $this->data->preview_id;
         $meta['page_type'] = $this->data->meta_type;
 
         if ($meta['use_multi_locales'] = Cms::settings('core.env.useMultiLocales')) {
