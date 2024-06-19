@@ -10,7 +10,7 @@ class AvegaCmsModel extends Model
 {
     // Callbacks
     protected $allowCallbacks = true;
-    protected $afterFind      = ['getCmsFilesAfterFind'];
+    protected $afterFind      = [];
     //AvegaCms model settings
     /**
      * @var array $filterFields
@@ -41,6 +41,13 @@ class AvegaCmsModel extends Model
         'cmsdatetime' => CmsDatetimeCast::class,
         'cmsfile'     => CmsFileCast::class,
     ];
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->afterFind = ['getCmsFilesAfterFind'];
+    }
 
     /**
      * @param  array|null  $fields
