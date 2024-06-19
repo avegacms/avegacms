@@ -214,7 +214,15 @@ class AvegaCmsModel extends Model
      */
     protected function getCmsFilesAfterFind(array $data): array
     {
-        if ( ! empty($data['data'])) {
+        $fileCastMap = [];
+
+        foreach ($this->casts as $field => $cast) {
+            if ($cast === 'cmsfile') {
+                $fileCastMap[] = $field;
+            }
+        }
+
+        if ( ! empty($data['data']) && ! empty($fileCastMap)) {
             $filesId = array_filter(CmsFileCast::getFilesId(), function ($id) {
                 return (int) $id !== 0;
             });
@@ -223,9 +231,42 @@ class AvegaCmsModel extends Model
                 return $data;
             }
 
-            $files = CmsFileManager::getFiles(['id' => array_unique($filesId)], true)['list'] ?? [];
-            
-            dd($files);
+            CmsFileCast::resetFilesId();
+
+            $files = array_column(CmsFileManager::getFiles(['id' => array_unique($filesId)], true), null, 'id');
+
+            $setFiles = function (int|array|null $field) use ($files) {
+                if ($field === null) {
+                    return null;
+                }
+
+                if (is_int($field)) {
+                    return $files[$field] ?? null;
+                }
+
+                foreach ($field as &$file) {
+                    $file = $files[$file] ?? null;
+                }
+
+                return array_filter($field, fn ($el) => $el !== null);
+            };
+
+
+            if ($data['singleton']) {
+                foreach ($fileCastMap as $field) {
+                    if (property_exists($data['data'], $field)) {
+                        $data['data']->{$field} = $setFiles($data['data']->{$field});
+                    }
+                }
+            } else {
+                foreach ($data['data'] as &$item) {
+                    foreach ($fileCastMap as $field) {
+                        if (property_exists($item, $field)) {
+                            $item->{$field} = $setFiles($item->{$field});
+                        }
+                    }
+                }
+            }
         }
 
         return $data;

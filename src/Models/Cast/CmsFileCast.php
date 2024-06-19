@@ -26,7 +26,7 @@ class CmsFileCast extends BaseCast
         if ((str_starts_with($value, 'a:') || str_starts_with($value, 's:'))) {
             $value = unserialize($value, ['allowed_classes' => false]);
             foreach ($value as $id) {
-                self::$fileId[] = $id;
+                self::$fileId[] = (int) $id;
             }
             return (array) $value;
         } else {
