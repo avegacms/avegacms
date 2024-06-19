@@ -295,6 +295,8 @@ class MetaDataModel extends AvegaCmsModel
      */
     public function getMetadata(int $id, int $moduleId = 0): object|null
     {
+        $this->afterFind = [];
+
         $this->builder()->select(
             [
                 'metadata.id',
@@ -443,6 +445,8 @@ class MetaDataModel extends AvegaCmsModel
      */
     protected function getParentUrl(int $parentId): string
     {
+        $this->afterFind = [];
+
         $this->builder()->select(
             [
                 'metadata.id',
