@@ -47,7 +47,10 @@ class AvegaCmsModel extends Model
     {
         parent::__construct();
 
-        $this->afterFind = ['getCmsFilesAfterFind'];
+        $this->afterFind = [
+            ...['getCmsFilesAfterFind'],
+            ...$this->afterFind
+        ];
     }
 
     /**
@@ -243,8 +246,14 @@ class AvegaCmsModel extends Model
 
             if ($data['singleton'] === true) {
                 foreach ($fileCastMap as $field) {
-                    if (property_exists($data['data'], $field)) {
-                        $filesId[] = $getFile($data['data']->{$field});
+                    if (is_object($data['data'])) {
+                        if (property_exists($data['data'], $field)) {
+                            $filesId[] = $getFile($data['data']->{$field});
+                        }
+                    } else {
+                        if (array_key_exists($field, $data['data'])) {
+                            $filesId[] = $getFile($data['data'][$field]);
+                        }
                     }
                 }
             } else {
@@ -252,6 +261,15 @@ class AvegaCmsModel extends Model
                     foreach ($fileCastMap as $field) {
                         if (property_exists($item, $field)) {
                             $filesId[] = $getFile($item->{$field});
+                        }
+                        if (is_object($item)) {
+                            if (property_exists($item, $field)) {
+                                $filesId[] = $getFile($item->{$field});
+                            }
+                        } else {
+                            if (array_key_exists($field, $item)) {
+                                $filesId[] = $getFile($item[$field]);
+                            }
                         }
                     }
                 }

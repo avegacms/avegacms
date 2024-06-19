@@ -84,7 +84,7 @@ class MetaDataModel extends AvegaCmsModel
         'module_id'       => 'int',
         'creator_id'      => 'int',
         'item_id'         => 'int',
-        'preview_id'      => 'cmsfile',
+        'preview'         => 'cmsfile',
         'sort'            => 'int',
         'meta'            => '?json-array',
         'extra_data'      => '?json-array',
@@ -100,6 +100,11 @@ class MetaDataModel extends AvegaCmsModel
     ];
 
     protected int $level = 7;
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     /**
      * @param  int  $locale
@@ -253,14 +258,14 @@ class MetaDataModel extends AvegaCmsModel
      */
     public function getSubPages(int $id): array
     {
-        $this->afterFind = ['prepMetaData'];
+        $this->afterFind = [...$this->afterFind, ...['prepMetaData']];
 
         $this->builder()->select(
             [
                 'metadata.id',
                 'metadata.parent',
                 'metadata.locale_id',
-                'metadata.preview_id',
+                'metadata.preview_id AS preview',
                 'metadata.title',
                 'metadata.slug',
                 'metadata.url',
@@ -285,7 +290,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.id',
                 'metadata.parent',
                 'metadata.locale_id',
-                'metadata.preview_id',
+                'metadata.preview_id AS preview',
                 'metadata.title',
                 'CONCAT(TRIM(TRAILING "_" FROM metadata.url), "_", metadata.id) AS url',
                 'metadata.use_url_pattern',
@@ -336,7 +341,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.id',
                 'metadata.parent',
                 'metadata.locale_id',
-                'metadata.preview_id',
+                'metadata.preview_id AS preview',
                 'metadata.url',
                 'metadata.slug',
                 'metadata.in_sitemap',
