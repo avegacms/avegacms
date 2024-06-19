@@ -115,13 +115,11 @@ class FilesLinksModel extends AvegaCmsModel
         'updated_at'    => 'cmsdatetime',
         'provider'      => 'int'
     ];
+    
+    public function __construct(bool $isFM = false)
+    {
+        parent::__construct();
 
-    public function __construct(
-        ?ConnectionInterface $db = null,
-        ?ValidationInterface $validation = null,
-        bool $isFM = false
-    ) {
-        parent::__construct($db, $validation);
         $this->isFM                    = $isFM;
         $this->validationRules['type'] = [
             'rules' => 'if_exist|required|in_list[' . implode(',', FileTypes::get('value')) . ']'
