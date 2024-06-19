@@ -25,7 +25,7 @@ class AvegaCmsFrontendController extends AvegaCmsController
     protected object|null       $dataEntity      = null;
     protected array|object|null $parentMeta      = null;
     protected ?array            $customerContent = null; // Массив пользовательского контента
-    protected ?array            $content         = null;
+    protected array|object|null $content         = null;
     protected ?Pager            $pager           = null;
 
     /**
