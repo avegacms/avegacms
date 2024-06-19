@@ -166,8 +166,6 @@ class MetaDataModel extends AvegaCmsModel
      */
     public function getMetaMap(int $id, ?int $clearLast = null): array
     {
-        $this->afterFind = [];
-
         $this->builder()->from('metadata AS md_' . $this->level)->where(['md_' . $this->level . '.id' => $id]);
         for ($i = $this->level; $i > 0; $i--) {
             $this->builder()->select(['md_' . $i . '.id AS id' . $i]);
