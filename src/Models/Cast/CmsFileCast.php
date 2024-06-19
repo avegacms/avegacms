@@ -8,9 +8,6 @@ use CodeIgniter\DataCaster\Cast\BaseCast;
 
 class CmsFileCast extends BaseCast
 {
-    // Массив для хранения значений
-    private static array $fileId = [];
-
     /**
      * @param  mixed  $value
      * @param  array  $params
@@ -25,12 +22,11 @@ class CmsFileCast extends BaseCast
 
         if ((str_starts_with($value, 'a:') || str_starts_with($value, 's:'))) {
             $value = unserialize($value, ['allowed_classes' => false]);
-            foreach ($value as $id) {
-                self::$fileId[] = (int) $id;
+            foreach ($value as &$id) {
+                $id = (int) $id;
             }
             return (array) $value;
         } else {
-            self::$fileId[] = $value;
             return (int) $value;
         }
     }
@@ -44,17 +40,5 @@ class CmsFileCast extends BaseCast
     public static function set(mixed $value, array $params = [], ?object $helper = null): int|string
     {
         return is_array($value) ? serialize($value) : (int) $value;
-    }
-
-    // Метод для получения всех сохраненных значений
-    public static function getFilesId(): array
-    {
-        return self::$fileId;
-    }
-
-    // Метод для сброса массива значений
-    public static function resetFilesId(): void
-    {
-        self::$fileId = [];
     }
 }

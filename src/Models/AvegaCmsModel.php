@@ -223,19 +223,48 @@ class AvegaCmsModel extends Model
         }
 
         if ( ! empty($data['data']) && ! empty($fileCastMap)) {
-            $filesId = array_filter(CmsFileCast::getFilesId(), function ($id) {
-                return (int) $id !== 0;
-            });
+            $filesId = [];
+
+            $getFile = function (int|array|null $field) {
+                if ($field === null) {
+                    return null;
+                }
+
+                if (is_int($field)) {
+                    return $field;
+                }
+
+                foreach ($field as &$file) {
+                    $file = $files[$file] ?? null;
+                }
+
+                return array_filter($field, fn ($el) => $el !== null);
+            };
+
+            if ($data['singleton'] === true) {
+                foreach ($fileCastMap as $field) {
+                    if (property_exists($data['data'], $field)) {
+                        $filesId[] = $getFile($data['data']->{$field});
+                    }
+                }
+            } else {
+                foreach ($data['data'] as $item) {
+                    foreach ($fileCastMap as $field) {
+                        if (property_exists($item, $field)) {
+                            $filesId[] = $getFile($item->{$field});
+                        }
+                    }
+                }
+            }
+
 
             if (empty($filesId)) {
                 return $data;
             }
 
-            CmsFileCast::resetFilesId();
-
             $files = array_column(CmsFileManager::getFiles(['id' => array_unique($filesId)], true), null, 'id');
 
-            $setFiles = function (int|array|null $field) use ($files) {
+            $setFile = function (int|array|null $field) use ($files) {
                 if ($field === null) {
                     return null;
                 }
@@ -252,17 +281,17 @@ class AvegaCmsModel extends Model
             };
 
 
-            if ($data['singleton']) {
+            if ($data['singleton'] === true) {
                 foreach ($fileCastMap as $field) {
                     if (property_exists($data['data'], $field)) {
-                        $data['data']->{$field} = $setFiles($data['data']->{$field});
+                        $data['data']->{$field} = $setFile($data['data']->{$field});
                     }
                 }
             } else {
                 foreach ($data['data'] as &$item) {
                     foreach ($fileCastMap as $field) {
                         if (property_exists($item, $field)) {
-                            $item->{$field} = $setFiles($item->{$field});
+                            $item->{$field} = $setFile($item->{$field});
                         }
                     }
                 }
