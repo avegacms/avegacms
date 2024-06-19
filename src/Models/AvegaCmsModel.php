@@ -8,6 +8,9 @@ use AvegaCms\Models\Cast\{CmsDatetimeCast, CmsFileCast};
 
 class AvegaCmsModel extends Model
 {
+    // Callbacks
+    protected $allowCallbacks = true;
+    protected $afterFind      = ['getCmsFilesAfterFind'];
     //AvegaCms model settings
     /**
      * @var array $filterFields
@@ -161,6 +164,58 @@ class AvegaCmsModel extends Model
     }
 
     /**
+     * @param $value
+     * @param  string  $attribute
+     * @param  string  $fieldName
+     * @return mixed
+     */
+    protected function castAs($value, string $attribute, string $fieldName): mixed
+    {
+        return match (strtolower($attribute)) {
+            'int',
+            'integer'       => (int) $value,
+            'double',
+            'float'         => (float) $value,
+            'string'        => (string) $value,
+            'strtotime'     => strtotime($value),
+            'bool',
+            'boolean'       => (bool) $value,
+            'enum'          => in_array($value, $this->filterEnumValues[$fieldName] ?? []) ? $value : null,
+            'array'         => (array) (
+            (
+            (is_string($value) && (str_starts_with($value, 'a:') || str_starts_with($value, 's:'))) ?
+                unserialize($value) :
+                $value
+            )
+            ),
+            'int|array',
+            'integer|array' => is_int($value) ?
+                $this->castAs($value, 'int', $fieldName) :
+                (is_array($value) && ! empty($value) ? $this->castAs($value, 'array', $fieldName) : null),
+            'double|array',
+            'float|array'   => is_float($value) ?
+                $this->castAs($value, 'float', $fieldName) :
+                (is_array($value) && ! empty($value) ? $this->castAs($value, 'array', $fieldName) : null),
+            default         => null
+        };
+    }
+
+    /**
+     * @param  array  $data
+     * @return array
+     */
+    protected function getCmsFilesAfterFind(array $data): array
+    {
+        if ( ! empty($data['data'])) {
+            // Получаем собранные значения из кастера
+            $allValues = CmsFileCast::getValues();
+            dd($allValues, $data);
+        }
+
+        return $data;
+    }
+
+    /**
      * @param  string  $type
      * @param  array  $fields
      * @return void
@@ -255,42 +310,5 @@ class AvegaCmsModel extends Model
                 }
             }
         }
-    }
-
-    /**
-     * @param $value
-     * @param  string  $attribute
-     * @param  string  $fieldName
-     * @return mixed
-     */
-    protected function castAs($value, string $attribute, string $fieldName): mixed
-    {
-        return match (strtolower($attribute)) {
-            'int',
-            'integer'       => (int) $value,
-            'double',
-            'float'         => (float) $value,
-            'string'        => (string) $value,
-            'strtotime'     => strtotime($value),
-            'bool',
-            'boolean'       => (bool) $value,
-            'enum'          => in_array($value, $this->filterEnumValues[$fieldName] ?? []) ? $value : null,
-            'array'         => (array) (
-            (
-            (is_string($value) && (str_starts_with($value, 'a:') || str_starts_with($value, 's:'))) ?
-                unserialize($value) :
-                $value
-            )
-            ),
-            'int|array',
-            'integer|array' => is_int($value) ?
-                $this->castAs($value, 'int', $fieldName) :
-                (is_array($value) && ! empty($value) ? $this->castAs($value, 'array', $fieldName) : null),
-            'double|array',
-            'float|array'   => is_float($value) ?
-                $this->castAs($value, 'float', $fieldName) :
-                (is_array($value) && ! empty($value) ? $this->castAs($value, 'array', $fieldName) : null),
-            default         => null
-        };
     }
 }
