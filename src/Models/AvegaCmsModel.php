@@ -2,6 +2,7 @@
 
 namespace AvegaCms\Models;
 
+use AvegaCms\Utilities\CmsFileManager;
 use CodeIgniter\Model;
 use AvegaCms\Config\Services;
 use AvegaCms\Models\Cast\{CmsDatetimeCast, CmsFileCast};
@@ -214,9 +215,17 @@ class AvegaCmsModel extends Model
     protected function getCmsFilesAfterFind(array $data): array
     {
         if ( ! empty($data['data'])) {
-            // Получаем собранные значения из кастера
-            $allValues = CmsFileCast::getFilesId();
-            dd($allValues, $data);
+            $filesId = array_filter(CmsFileCast::getFilesId(), function ($id) {
+                return (int) $id !== 0;
+            });
+
+            if (empty($filesId)) {
+                return $data;
+            }
+
+            $files = CmsFileManager::getFiles(['id' => array_unique($filesId)], true)['list'] ?? [];
+            
+            dd($files);
         }
 
         return $data;
