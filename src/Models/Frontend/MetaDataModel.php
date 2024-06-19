@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace AvegaCms\Models\Frontend;
 
 use AvegaCms\Models\AvegaCmsModel;
-use AvegaCms\Utilities\CmsFileManager;
 use AvegaCms\Enums\{MetaStatuses, MetaDataTypes};
 
 class MetaDataModel extends AvegaCmsModel
@@ -281,8 +280,6 @@ class MetaDataModel extends AvegaCmsModel
      */
     public function getRubricPosts(array $filter = []): MetaDataModel
     {
-        $this->afterFind = ['prepPostsMetaData'];
-
         $this->builder()->select(
             [
                 'metadata.id',
@@ -366,33 +363,6 @@ class MetaDataModel extends AvegaCmsModel
                 }
             }
         }
-        return $data;
-    }
-
-    /**
-     * @param  array  $data
-     * @return array
-     */
-    protected function prepPostsMetaData(array $data): array
-    {
-        if ( ! is_null($data['data']) && $data['singleton'] === false) {
-            $ids = [];
-            foreach ($data['data'] as $item) {
-                $ids[]     = $item->preview_id;
-                $item->url = base_url($item->url);
-            }
-
-            $previews = CmsFileManager::getFiles(['ids' => $ids], true);
-
-            foreach ($data['data'] as $item) {
-                foreach ($previews as $preview) {
-                    if ($item->id === $preview->item_id) {
-                        $item->file = $preview;
-                    }
-                }
-            }
-        }
-
         return $data;
     }
 }
