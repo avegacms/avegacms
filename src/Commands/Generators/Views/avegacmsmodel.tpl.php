@@ -66,4 +66,9 @@ class {class} extends AvegaCmsModel
     protected array $filterEnumValues   = [];
     protected int $limit                = 20;
     protected int $maxLimit             = 100;
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
 }
