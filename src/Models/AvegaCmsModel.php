@@ -298,7 +298,6 @@ class AvegaCmsModel extends Model
                 return array_filter($field, fn ($el) => $el !== null);
             };
 
-
             if ($data['singleton'] === true) {
                 foreach ($fileCastMap as $field) {
                     if (property_exists($data['data'], $field)) {
@@ -314,6 +313,8 @@ class AvegaCmsModel extends Model
                     }
                 }
             }
+
+            unset($files, $filesId);
         }
 
         return $data;
