@@ -38,6 +38,14 @@ class AvegaCmsAPI extends AvegaCmsController
                 exit();
             }
 
+            json_decode($request->getBody(), false, 512, 0);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                Services::response()->setStatusCode(400,
+                    lang('Api.errors.invalidJSON', [json_last_error_msg()]))->send();
+                exit();
+            }
+
             if ($request->getBody() !== 'php://input' && empty($this->apiData = $request->getJSON(true))) {
                 Services::response()->setStatusCode(400, lang('Api.errors.noData'))->send();
                 exit();
