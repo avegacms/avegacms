@@ -8,6 +8,7 @@ use AvegaCms\Config\Services;
 use AvegaCms\Controllers\AvegaCmsController;
 use AvegaCms\Traits\AvegaCmsApiResponseTrait;
 use AvegaCms\Utilities\Cms;
+use AvegaCms\Exceptions\AvegaCmsApiException;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class AvegaCmsAPI extends AvegaCmsController
@@ -31,25 +32,27 @@ class AvegaCmsAPI extends AvegaCmsController
      */
     protected function getApiData(): void
     {
-        $request = Services::request();
-        if (in_array($request->getMethod(), ['POST', 'PUT', 'PATCH'], true)) {
-            if ($request->getBody() === null) {
-                Services::response()->setStatusCode(400, lang('Api.errors.noData'))->send();
-                exit();
-            }
+        try {
+            $request = Services::request();
 
-            json_decode($request->getBody(), false, 512, 0);
+            if (in_array($request->getMethod(), ['POST', 'PUT', 'PATCH'], true)) {
+                if ($request->getBody() === null) {
+                    throw AvegaCmsApiException::forNoData();
+                }
 
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                Services::response()->setStatusCode(400,
-                    lang('Api.errors.invalidJSON', [json_last_error_msg()]))->send();
-                exit();
-            }
+                json_decode($request->getBody(), false);
 
-            if ($request->getBody() !== 'php://input' && empty($this->apiData = $request->getJSON(true))) {
-                Services::response()->setStatusCode(400, lang('Api.errors.noData'))->send();
-                exit();
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    throw AvegaCmsApiException::forInvalidJSON(json_last_error_msg());
+                }
+
+                if ($request->getBody() !== 'php://input' && empty($this->apiData = $request->getJSON(true))) {
+                    throw AvegaCmsApiException::forUndefinedData();
+                }
             }
+        } catch (AvegaCmsApiException $e) {
+            Services::response()->setStatusCode(400, $e->getMessage())->send();
+            exit();
         }
     }
 
