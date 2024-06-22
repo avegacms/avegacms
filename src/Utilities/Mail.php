@@ -188,13 +188,13 @@ class Mail
             'priority'           => $config['priority'] ?? $defConfig['priority'],
 
             // SMTP - настройки
-            'smtpHost'           => $config['smtpHost'] ?? $defConfig['smtpHost'],
-            'smtpUser'           => $config['smtpUser'] ?? $defConfig['smtpUser'],
-            'smtpPass'           => $config['smtpPass'] ?? $defConfig['smtpPass'],
-            'smtpPort'           => $config['smtpPort'] ?? $defConfig['smtpPort'],
-            'smtpTimeout'        => $config['smtpTimeout'] ?? $defConfig['smtpTimeout'],
-            'smtpKeepalive'      => $config['smtpKeepalive'] ?? $defConfig['smtpKeepalive'],
-            'smtpCrypto'         => $config['smtpCrypto'] ?? $defConfig['smtpCrypto'],
+            'SMTPHost'           => $config['smtpHost'] ?? $defConfig['smtpHost'],
+            'SMTPUser'           => $config['smtpUser'] ?? $defConfig['smtpUser'],
+            'SMTPPass'           => $config['smtpPass'] ?? $defConfig['smtpPass'],
+            'SMTPPort'           => $config['smtpPort'] ?? $defConfig['smtpPort'],
+            'SMTPTimeout'        => $config['smtpTimeout'] ?? $defConfig['smtpTimeout'],
+            'SMTPKeepalive'      => $config['smtpKeepalive'] ?? $defConfig['smtpKeepalive'],
+            'SMTPCrypto'         => $config['smtpCrypto'] ?? $defConfig['smtpCrypto'],
 
             // Доп. настройки
             'autoSentEmail'      => $config['autoSentEmail'] ?? true,
