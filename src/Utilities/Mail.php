@@ -72,9 +72,9 @@ class Mail
         $config['protocol'] = strtolower($config['protocol'] ?? 'mail');
 
         $email->setFrom(
-            $config['protocol'] === 'smtp' ? $config['smtpUser'] : $config['fromEmail'],
+            ($config['protocol'] === 'smtp') ? $config['smtpUser'] : $config['fromEmail'],
             $config['fromName'] ?? '',
-            $config['protocol'] === 'smtp' ? null : ($config['returnEmail'] ?? null)
+            ($config['protocol'] === 'smtp') ? null : ($config['returnEmail'] ?? null)
         )->setTo($recipient['to']);
 
         if (is_null($template)) {
