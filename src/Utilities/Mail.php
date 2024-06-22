@@ -67,11 +67,12 @@ class Mail
             throw MailException::forNoEmailFolder();
         }
 
-        $config = self::getConfig($myConfig);
-        $email  = Services::email($config);
+        $config             = self::getConfig($myConfig);
+        $email              = Services::email($config);
+        $config['protocol'] = strtolower($config['protocol'] ?? 'mail');
 
         $email->setFrom(
-            $config['fromEmail'],
+            $config['protocol'] === 'smtp' ? $config['smtpUser'] : $config['fromEmail'],
             $config['fromName'] ?? '',
             $config['protocol'] === 'smtp' ? null : ($config['returnEmail'] ?? null)
         )->setTo($recipient['to']);
