@@ -175,7 +175,7 @@ class Mail
         return [
 
             'fromEmail'          => $config['fromEmail'] ?? $defConfig['fromEmail'],
-            'fromName'           => $config['fromName'] ?? $defConfig['fromEmail'],
+            'fromName'           => $config['fromName'] ?? $defConfig['fromName'],
             'replyEmail'         => $config['replyEmail'] ?? $defConfig['replyEmail'],
             'replyName'          => $config['replyName'] ?? $defConfig['replyName'],
             'returnEmail'        => $config['returnEmail'] ?? $defConfig['returnEmail'],
