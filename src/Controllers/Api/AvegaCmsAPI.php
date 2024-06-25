@@ -10,6 +10,8 @@ use AvegaCms\Traits\AvegaCmsApiResponseTrait;
 use AvegaCms\Utilities\Cms;
 use AvegaCms\Exceptions\AvegaCmsApiException;
 use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\HTTP\RequestInterface;
+
 
 class AvegaCmsAPI extends AvegaCmsController
 {
@@ -24,38 +26,9 @@ class AvegaCmsAPI extends AvegaCmsController
         helper(['date']);
         $this->userData       = Cms::userData();
         $this->userPermission = Cms::userPermission();
-        $this->getApiData();
+        $this->apiData        = $this->request->getJSON(true);
     }
-
-    /**
-     * @return void
-     */
-    protected function getApiData(): void
-    {
-        try {
-            $request = Services::request();
-
-            if (in_array($request->getMethod(), ['POST', 'PUT', 'PATCH'], true)) {
-                if ($request->getBody() === null) {
-                    throw AvegaCmsApiException::forNoData();
-                }
-
-                json_decode($request->getBody(), false);
-
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    throw AvegaCmsApiException::forInvalidJSON(json_last_error_msg());
-                }
-
-                if ($request->getBody() !== 'php://input' && empty($this->apiData = $request->getJSON(true))) {
-                    throw AvegaCmsApiException::forUndefinedData();
-                }
-            }
-        } catch (AvegaCmsApiException $e) {
-            Services::response()->setStatusCode(400, $e->getMessage())->send();
-            exit();
-        }
-    }
-
+    
     /**
      * @return ResponseInterface
      */
