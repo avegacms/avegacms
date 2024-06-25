@@ -118,20 +118,29 @@ class MetaDataModel extends AvegaCmsModel
         $this->contentMetaDataSelect();
 
         if (count($postSegments) == 2) {
-            $this->builder()->where(
+            $this->builder()->select(
+                [
+                    'CONCAT(TRIM(TRAILING "_" FROM metadata.url), "_", metadata.id) AS url'
+                ]
+            )->where(
                 [
                     'metadata.id'        => (int) $postSegments[1],
                     'metadata.meta_type' => MetaDataTypes::Post->name,
                 ]
             );
         } else {
-            $this->builder()->whereIn('metadata.meta_type',
-                [
-                    MetaDataTypes::Main->name,
-                    MetaDataTypes::Page->name,
-                    MetaDataTypes::Rubric->name,
-                ]
-            )->where(['metadata.slug' => ! empty($slug) ? $slug : 'main']);
+            $this->builder()
+                ->select(
+                    [
+                        'metadata.url'
+                    ]
+                )->whereIn('metadata.meta_type',
+                    [
+                        MetaDataTypes::Main->name,
+                        MetaDataTypes::Page->name,
+                        MetaDataTypes::Rubric->name,
+                    ]
+                )->where(['metadata.slug' => ! empty($slug) ? $slug : 'main']);
         }
 
         $this->builder()->where(['metadata.locale_id' => $locale]);

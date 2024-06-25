@@ -38,9 +38,9 @@ class PageSeoBuilder
         $locales = SeoUtils::Locales();
         $data    = SeoUtils::LocaleData($this->data->locale_id);
 
-        $meta['title']       = esc($this->data->meta['title']);
-        $meta['keywords']    = esc($this->data->meta['keywords']);
-        $meta['description'] = esc($this->data->meta['description']);
+        $meta['title']       = htmlspecialchars_decode(esc($this->data->meta['title']));
+        $meta['keywords']    = htmlspecialchars_decode(esc($this->data->meta['keywords']));
+        $meta['description'] = htmlspecialchars_decode(esc($this->data->meta['description']));
 
         if ($this->dictionary !== null) {
             $meta['title']       = esc(strtr($this->data->meta['title'], $this->dictionary));
@@ -103,7 +103,9 @@ class PageSeoBuilder
             $breadCrumbs[] = [
                 'url'    => '',
                 'title'  => strtr(
-                    esc(! empty($this->data->meta['breadcrumb']) ? $this->data->meta['breadcrumb'] : $this->data->title),
+                    htmlspecialchars_decode(
+                        esc(! empty($this->data->meta['breadcrumb']) ? $this->data->meta['breadcrumb'] : $this->data->title)
+                    ),
                     $this->dictionary ?? []
                 ),
                 'active' => true
@@ -115,7 +117,9 @@ class PageSeoBuilder
                 if ($crumb->meta_type !== MetaDataTypes::Main->name) {
                     $breadCrumbs[] = [
                         'url'    => base_url($crumb->url),
-                        'title'  => esc(! empty($crumb->meta->breadcrumb) ? $crumb->meta->breadcrumb : $crumb->title),
+                        'title'  => htmlspecialchars_decode(
+                            esc(! empty($crumb->meta->breadcrumb) ? $crumb->meta->breadcrumb : $crumb->title)
+                        ),
                         'active' => false
                     ];
                 }
@@ -125,7 +129,9 @@ class PageSeoBuilder
         if ( ! empty($locale = SeoUtils::Locales($this->data->locale_id))) {
             $breadCrumbs[] = [
                 'url'    => base_url(Cms::settings('core.env.useMultiLocales') ? $locale['slug'] : ''),
-                'title'  => esc($locale['home']),
+                'title'  => htmlspecialchars_decode(
+                    esc($locale['home'])
+                ),
                 'active' => false
             ];
         }
