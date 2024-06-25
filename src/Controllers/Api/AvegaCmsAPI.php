@@ -26,9 +26,9 @@ class AvegaCmsAPI extends AvegaCmsController
         helper(['date']);
         $this->userData       = Cms::userData();
         $this->userPermission = Cms::userPermission();
-        $this->apiData        = $this->request->getJSON(true);
+        $this->apiData        = request()->getJSON(true);
     }
-    
+
     /**
      * @return ResponseInterface
      */
