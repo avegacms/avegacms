@@ -146,17 +146,18 @@ class AvegaCmsFrontendController extends AvegaCmsController
             $this->error404();
         }
 
-        if ($this->dataEntity->meta_type !== MetaDataTypes::Main->name
-            && empty($this->parentMeta = $this->MDM->getMetaMap($this->dataEntity->parent ?? $this->dataEntity->id,
+        if ($this->dataEntity->meta_type !== MetaDataTypes::Main->name) {
+            if (empty($this->parentMeta = $this->MDM->getMetaMap($this->dataEntity->parent ?? $this->dataEntity->id,
                 $this->dataEntity->id))) {
-            $this->error404();
-        }
+                $this->error404();
+            }
 
-        if ($this->dataEntity->meta_type !== MetaDataTypes::Module->name &&
-            md5(implode('/', $segments)) !== md5($this->dataEntity->url)) {
-            $this->error404();
+            if ($this->dataEntity->meta_type !== MetaDataTypes::Module->name &&
+                md5(implode('/', $segments)) !== md5($this->dataEntity->url)) {
+                $this->error404();
+            }
         }
-
+        
         return null;
     }
 
