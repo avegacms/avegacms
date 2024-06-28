@@ -73,7 +73,6 @@ class AvegaCmsInstallSeeder extends Seeder
         //$this->_setLocales();
         $this->_createMainPages();
         $this->_createPages();
-        $this->_createRubrics();
         $this->_createDefaultActions();
         $this->_fileManagerRegistration();
         $this->_createPublicFolders();
@@ -1971,105 +1970,6 @@ class AvegaCmsInstallSeeder extends Seeder
      * @return void
      * @throws ReflectionException
      */
-    private function _createRubrics(): void
-    {
-        if (CLI::prompt('Create rubrics?', ['y', 'n']) === 'y' &&
-            ($rubrics = CLI::prompt(
-                'How many rubrics do you want to create?',
-                null,
-                ['required', 'is_natural']
-            ))) {
-            if ($rubrics > 0) {
-                $useMultiLocales = Cms::settings('core.env.useMultiLocales');
-                $locales         = $this->LLM->where([
-                    'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
-                ])->findColumn('id');
-                $mainPages       = array_column(
-                    $this->MDM->select(['id', 'parent', 'locale_id', 'slug', 'use_url_pattern', 'url'])
-                        ->where(['meta_type' => MetaDataTypes::Main->name])->asArray()->findAll(),
-                    null,
-                    'locale_id'
-                );
-
-                foreach ($locales as $locale) {
-                    $mainPage = $mainPages[$locale];
-                    for ($i = 0; $rubrics > $i; $i++) {
-                        $this->_createMetaData(
-                            type: MetaDataTypes::Rubric->name,
-                            locale: $locale,
-                            parent: $mainPage['id']
-                        );
-                    }
-                }
-
-                $this->_createPosts();
-            }
-        }
-    }
-
-    /**
-     * @return void
-     * @throws ReflectionException
-     */
-    private function _createPosts(): void
-    {
-        if (
-            CLI::prompt('Create new posts?', ['y', 'n']) === 'y' &&
-            ($num = CLI::prompt(
-                'How many posts do you want to create?',
-                null,
-                ['required', 'is_natural']
-            ))
-        ) {
-            $num = (int) $num;
-            if ($num > 0) {
-                $useMultiLocales = Cms::settings('core.env.useMultiLocales');
-
-                $locales = $this->LLM->where([
-                    'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
-                ])->findColumn('id');
-
-                if ($this->MDM->where(['meta_type' => MetaDataTypes::Rubric->name])->findColumn('id') === null) {
-                    return;
-                }
-
-                foreach ($locales as $locale) {
-                    $rubricsId = array_column(
-                        $this->MDM->select(['id', 'parent', 'locale_id', 'slug', 'use_url_pattern', 'url'])
-                            ->where(
-                                [
-                                    'locale_id' => $locale,
-                                    'meta_type' => MetaDataTypes::Rubric->name
-                                ]
-                            )->asArray()->findAll(),
-                        'url',
-                        'id'
-                    );
-
-                    $j = 1;
-                    for ($i = 0; $num > $i; $i++) {
-                        CLI::showProgress($j++, $num);
-                        $rubricId = array_rand($rubricsId);
-                        $this->_createMetaData(
-                            type: MetaDataTypes::Post->name,
-                            locale: $locale,
-                            parent: $rubricId,
-                            url: $rubricsId[$rubricId]
-                        );
-                    }
-                    CLI::showProgress(false);
-                    CLI::newLine();
-                }
-            }
-        }
-
-        CLI::newLine();
-    }
-
-    /**
-     * @return void
-     * @throws ReflectionException
-     */
     private function _createDefaultActions(): void
     {
         Cms::settings('core.seo.defRobotsTxt', view('template/seo/robots.php', [], ['debug' => false]));
@@ -2140,8 +2040,7 @@ class AvegaCmsInstallSeeder extends Seeder
         int $module = 0,
         int $parent = 0,
         int $item_id = 0,
-        ?string $status = null,
-        ?string $url = null
+        ?string $status = null
     ): int {
         helper(['date']);
 
@@ -2162,12 +2061,6 @@ class AvegaCmsInstallSeeder extends Seeder
                 $meta->status     = MetaStatuses::Publish->name;
                 $meta->sort       = 1;
                 $meta->publish_at = date('Y-m-d H:i:s', now());
-                break;
-            case MetaDataTypes::Rubric->name:
-                $meta->url = $meta->slug;
-                break;
-            case MetaDataTypes::Post->name:
-                $meta->url = $url . '/' . $meta->slug;
                 break;
             case MetaDataTypes::Page404->name:
                 $meta->url        = $meta->slug = 'page-not-found';
@@ -2243,11 +2136,5 @@ class AvegaCmsInstallSeeder extends Seeder
         }
 
         return $distribution;
-    }
-
-    private function _createPostsConfig(): void
-    {
-        // TODO 1. Создать PostImageConfig
-        // TODO 2. Создать PostSettingsConfig
     }
 }
