@@ -31,7 +31,7 @@ class Content
      */
     public function getMetaDataList(array $filter, bool $all = false): array
     {
-        $list = $this->MDM->getMetaDataList($this->type, $filter);
+        $list = $this->MDM->getMetaDataList($filter);
 
         return ($all) ? $list->findAll() : $list->apiPagination();
     }
@@ -60,8 +60,6 @@ class Content
             MetaDataTypes::Main->name,
             MetaDataTypes::Page->name,
             MetaDataTypes::Page404->name,
-            MetaDataTypes::Rubric->name,
-            MetaDataTypes::Post->name   => $this->type,
             MetaDataTypes::Module->name => ($this->moduleId > 0) ? MetaDataTypes::Module->name : throw ContentExceptions::forNoModuleId(),
             default                     => throw ContentExceptions::forUnknownType()
         };

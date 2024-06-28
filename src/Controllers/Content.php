@@ -25,7 +25,6 @@ class Content extends AvegaCmsFrontendController
      */
     public function index(): ResponseInterface
     {
-        $filter   = $this->request->getGet() ?? [];
         $template = 'content/';
         $data     = [];
 
@@ -36,16 +35,6 @@ class Content extends AvegaCmsFrontendController
             case MetaDataTypes::Page->name:
                 $template         .= 'page';
                 $data['subPages'] = $this->MDM->getSubPages($this->dataEntity->id);
-                break;
-            case MetaDataTypes::Rubric->name:
-                $template         .= 'rubric';
-                $filter['rubric'] = $this->dataEntity->id;
-                $filter['s']      = $filter['s'] ?? '-published';
-                $data['posts']    = $this->MDM->getRubricPosts($filter)->paginate($contentSettings['posts']['postsPerPage'] ?? 20);
-                $this->pager      = $this->MDM->pager;
-                break;
-            case MetaDataTypes::Post->name:
-                $template .= 'post';
                 break;
             default:
                 $this->error404();

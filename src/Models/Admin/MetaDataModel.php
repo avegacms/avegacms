@@ -36,6 +36,7 @@ class MetaDataModel extends AvegaCmsModel
         'extra_data',
         'status',
         'meta_type',
+        'page_type',
         'in_sitemap',
         'meta_sitemap',
         'use_url_pattern',
@@ -68,6 +69,7 @@ class MetaDataModel extends AvegaCmsModel
             'rules' => 'if_exist|required|max_length[512]'
         ],
         'sort'                  => ['rules' => 'if_exist|required|is_natural'],
+        'page_type'             => ['rules' => 'if_exist|required|max_length[64]'],
         'extra_data'            => ['rules' => 'if_exist|permit_empty'],
         'publish_at'            => ['rules' => 'if_exist|permit_empty|valid_date[Y-m-d H:i:s]'],
         'created_by_id'         => ['rules' => 'if_exist|is_natural'],
@@ -156,39 +158,33 @@ class MetaDataModel extends AvegaCmsModel
         'extra'           => '?int-bool'
     ];
 
-    public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
+    public function __construct()
     {
-        parent::__construct($db, $validation);
+        parent::__construct();
 
         $this->validationRules['slug']                    = [
             'rules'  => 'if_exist|required|unique_db_key[metadata.parent+module_id+item_id+use_url_pattern+slug,id,{id}]',
-            'errors' => [
-                'unique_db_key' => lang('Validation.uniqueDbKey.notUnique'),
-            ]
+            'errors' => ['unique_db_key' => lang('Validation.uniqueDbKey.notUnique')]
         ];
         $this->validationRules['status']                  = [
             'label' => 'Статус',
-            'rules' => 'if_exist|required|in_list[' . implode(',',
-                    MetaStatuses::get('name')) . ']'
+            'rules' => 'if_exist|required|in_list[' . implode(',', MetaStatuses::get('name')) . ']'
         ];
         $this->validationRules['meta_type']               = [
             'label' => 'Тип страницы',
-            'rules' => 'if_exist|required|in_list[' . implode(',',
-                    MetaDataTypes::get('name')) . ']'
+            'rules' => 'if_exist|required|in_list[' . implode(',', MetaDataTypes::get('name')) . ']'
         ];
         $this->validationRules['meta_sitemap.changefreq'] = [
             'label' => 'Тип страницы',
-            'rules' => 'if_exist|required|in_list[' . implode(',',
-                    SitemapChangefreqs::get('name')) . ']'
+            'rules' => 'if_exist|required|in_list[' . implode(',', SitemapChangefreqs::get('name')) . ']'
         ];
     }
 
     /**
-     * @param  string  $type
      * @param  array  $filter
      * @return AvegaCmsModel
      */
-    public function getMetaDataList(string $type, array $filter = []): AvegaCmsModel
+    public function getMetaDataList(array $filter = []): AvegaCmsModel
     {
         $this->builder()->select(
             [
@@ -199,9 +195,11 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.slug',
                 'metadata.creator_id',
                 'metadata.title',
+                'pm.title AS parent_title',
                 'metadata.url',
                 'metadata.status',
                 'metadata.meta_type',
+                'metadata.page_type',
                 'metadata.in_sitemap',
                 'metadata.use_url_pattern',
                 'metadata.publish_at',
@@ -211,67 +209,8 @@ class MetaDataModel extends AvegaCmsModel
                 'u.login AS author'
             ]
         )->join('locales AS l', 'l.id = metadata.locale_id')
-            ->join('users AS u', 'u.id = metadata.creator_id', 'left');
-
-        switch (ucfirst($type)) {
-            case MetaDataTypes::Main->name:
-            case MetaDataTypes::Page->name:
-
-                $this->builder()
-                    ->select(['pm.title AS parent_title'])
-                    ->join('metadata AS pm', 'pm.id = metadata.parent', 'left')
-                    ->groupStart()
-                    ->whereIn(
-                        'metadata.meta_type',
-                        [
-                            MetaDataTypes::Main->name,
-                            MetaDataTypes::Page->name
-                        ]
-                    )->where(['metadata.module_id' => 0])
-                    ->groupEnd();
-
-                break;
-
-            case MetaDataTypes::Rubric->name:
-
-                $this->builder()
-                    ->groupStart()
-                    ->where(
-                        [
-                            'metadata.meta_type' => MetaDataTypes::Rubric->name,
-                            'metadata.module_id' => 0
-                        ]
-                    )->groupEnd();
-
-                break;
-
-            case MetaDataTypes::Post->name:
-
-                $this->builder()
-                    ->groupStart()
-                    ->where(
-                        [
-                            'metadata.meta_type' => MetaDataTypes::Post->name,
-                            'metadata.module_id' => 0
-                        ]
-                    )->groupEnd();
-
-                break;
-            case MetaDataTypes::Module->name:
-
-                $this->builder()
-                    ->groupStart()
-                    ->where(
-                        [
-                            'metadata.meta_type' => MetaDataTypes::Module->name,
-                            'metadata.module_id' => $filter['module_id'] ?? 0
-                        ]
-                    )->groupEnd();
-
-                unset($filter['module_id']);
-
-                break;
-        }
+            ->join('users AS u', 'u.id = metadata.creator_id', 'left')
+            ->join('metadata AS pm', 'pm.id = metadata.parent', 'left');
 
         return $this->filter($filter);
     }

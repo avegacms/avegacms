@@ -113,37 +113,11 @@ class MetaDataModel extends AvegaCmsModel
      */
     public function getContentMetaData(int $locale, string $slug = ''): array|object|null
     {
-        $postSegments = explode('_', $slug);
-
         $this->contentMetaDataSelect();
 
-        if (count($postSegments) == 2) {
-            $this->builder()->select(
-                [
-                    'CONCAT(TRIM(TRAILING "_" FROM metadata.url), "_", metadata.id) AS url'
-                ]
-            )->where(
-                [
-                    'metadata.id'        => (int) $postSegments[1],
-                    'metadata.meta_type' => MetaDataTypes::Post->name,
-                ]
-            );
-        } else {
-            $this->builder()
-                ->select(
-                    [
-                        'metadata.url'
-                    ]
-                )->whereIn('metadata.meta_type',
-                    [
-                        MetaDataTypes::Main->name,
-                        MetaDataTypes::Page->name,
-                        MetaDataTypes::Rubric->name,
-                    ]
-                )->where(['metadata.slug' => ! empty($slug) ? $slug : 'main']);
-        }
-
-        $this->builder()->where(['metadata.locale_id' => $locale]);
+        $this->builder()->whereIn('metadata.meta_type', [MetaDataTypes::Main->name, MetaDataTypes::Page->name])
+            ->where(['metadata.slug' => ! empty($slug) ? $slug : 'main'])
+            ->where(['metadata.locale_id' => $locale]);
 
         $this->checkStatus();
 
@@ -284,38 +258,6 @@ class MetaDataModel extends AvegaCmsModel
         $this->checkStatus();
 
         return $this->findAll();
-    }
-
-    /**
-     * @param  array  $filter
-     * @return MetaDataModel
-     */
-    public function getRubricPosts(array $filter = []): MetaDataModel
-    {
-        $this->builder()->select(
-            [
-                'metadata.id',
-                'metadata.parent',
-                'metadata.locale_id',
-                'metadata.preview_id AS preview',
-                'metadata.title',
-                'CONCAT(TRIM(TRAILING "_" FROM metadata.url), "_", metadata.id) AS url',
-                'metadata.use_url_pattern',
-                'c.anons',
-                'c.extra',
-                'u.login AS author',
-                'metadata.publish_at'
-            ]
-        )->join('content AS c', 'c.id = metadata.id')
-            ->join('users AS u', 'u.id = metadata.creator_id', 'left')
-            ->groupStart();
-
-        $this->checkStatus();
-
-        $this->builder()->where(['metadata.meta_type' => MetaDataTypes::Post->name])
-            ->groupEnd();
-
-        return $this->filter($filter);
     }
 
     /**

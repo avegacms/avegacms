@@ -330,12 +330,13 @@ class CreateAvegaCmsTables extends Migration
                 'constraint' => MetaStatuses::get('name'),
                 'default'    => MetaStatuses::Publish->name
             ],
-            // статус страницы
+            // Матасущность страницы
             'meta_type'       => [
                 'type'       => 'enum',
                 'constraint' => MetaDataTypes::get('name'),
                 'default'    => MetaDataTypes::Undefined->name
             ],
+            'page_type'       => ['type' => 'varchar', 'constraint' => 64, 'null' => true, 'default' => ''],
             // флаг добавления в карту сайта
             'in_sitemap'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // Метаданные для карты сайта
