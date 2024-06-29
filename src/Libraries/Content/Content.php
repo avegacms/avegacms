@@ -59,9 +59,9 @@ class Content
         $data['meta_type']       = match (ucfirst($this->type)) {
             MetaDataTypes::Main->name,
             MetaDataTypes::Page->name,
-            MetaDataTypes::Page404->name,
-            MetaDataTypes::Module->name => ($this->moduleId > 0) ? MetaDataTypes::Module->name : throw ContentExceptions::forNoModuleId(),
-            default                     => throw ContentExceptions::forUnknownType()
+            MetaDataTypes::Page404->name => ucfirst($this->type),
+            MetaDataTypes::Module->name  => ($this->moduleId > 0) ? MetaDataTypes::Module->name : throw ContentExceptions::forNoModuleId(),
+            default                      => throw ContentExceptions::forUnknownType()
         };
 
         $data['item_id']   ??= 0;

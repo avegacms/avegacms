@@ -4,12 +4,9 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Database\Seeds;
 
+use AvegaCms\Libraries\Content\Exceptions\ContentExceptions;
 use AvegaCms\Database\Factories\{MetaDataFactory, MetaContentFactory};
-use CodeIgniter\Test\Fabricator;
 use AvegaCms\Enums\{FieldsReturnTypes, MetaDataTypes, MetaStatuses, UserStatuses};
-use AvegaCms\Utilities\{Cms, CmsModule, CmsFileManager};
-use CodeIgniter\Database\Seeder;
-use CodeIgniter\CLI\CLI;
 use AvegaCms\Config\AvegaCms;
 use AvegaCms\Models\Admin\{ModulesModel,
     MetaDataModel,
@@ -23,13 +20,20 @@ use AvegaCms\Models\Admin\{ModulesModel,
     LocalesModel,
     EmailTemplateModel
 };
+use AvegaCms\Libraries\Content\Content;
+use AvegaCms\Utilities\{Cms, CmsModule, CmsFileManager};
 use AvegaCms\Utilities\Exceptions\UploaderException;
+use CodeIgniter\Test\Fabricator;
+use CodeIgniter\Database\Seeder;
+use CodeIgniter\CLI\CLI;
 use ReflectionException;
 use Exception;
 
 class AvegaCmsInstallSeeder extends Seeder
 {
-    protected string             $version  = AvegaCms::AVEGACMS_VERSION;
+    protected string             $version         = AvegaCms::AVEGACMS_VERSION;
+    protected int                $numPages        = 0;
+    protected int                $contentModuleId = 0;
     protected ModulesModel       $MM;
     protected ContentModel       $CM;
     protected LoginModel         $LM;
@@ -40,7 +44,6 @@ class AvegaCmsInstallSeeder extends Seeder
     protected LocalesModel       $LLM;
     protected EmailTemplateModel $ETM;
     protected MetaDataModel      $MDM;
-    protected int                $numPages = 0;
 
     /**
      * @return void
@@ -413,76 +416,6 @@ class AvegaCmsInstallSeeder extends Seeder
                     'name'          => 'Cms.modules.name.email_template',
                     'version'       => $this->version,
                     'description'   => 'Cms.modules.description.email_template',
-                    'extra'         => [],
-                    'in_sitemap'    => false,
-                    'active'        => true,
-                    'created_by_id' => $userId,
-                    'updated_by_id' => 0
-                ]
-            ],
-            'content'  => [
-                [
-                    'parent'        => $list['content'],
-                    'is_core'       => true,
-                    'is_plugin'     => false,
-                    'is_system'     => false,
-                    'key'           => 'content.rubrics',
-                    'slug'          => 'rubrics',
-                    'class_name'    => '',
-                    'name'          => 'Cms.modules.name.rubrics',
-                    'version'       => $this->version,
-                    'description'   => 'Cms.modules.description.rubrics',
-                    'extra'         => [],
-                    'in_sitemap'    => true,
-                    'active'        => true,
-                    'created_by_id' => $userId,
-                    'updated_by_id' => 0
-                ],
-                [
-                    'parent'        => $list['content'],
-                    'is_core'       => true,
-                    'is_plugin'     => false,
-                    'is_system'     => false,
-                    'key'           => 'content.pages',
-                    'slug'          => 'pages',
-                    'class_name'    => '',
-                    'name'          => 'Cms.modules.name.pages',
-                    'version'       => $this->version,
-                    'description'   => 'Cms.modules.description.pages',
-                    'extra'         => [],
-                    'in_sitemap'    => true,
-                    'active'        => true,
-                    'created_by_id' => $userId,
-                    'updated_by_id' => 0
-                ],
-                [
-                    'parent'        => $list['content'],
-                    'is_core'       => true,
-                    'is_plugin'     => false,
-                    'is_system'     => false,
-                    'key'           => 'content.posts',
-                    'slug'          => 'posts',
-                    'class_name'    => '',
-                    'name'          => 'Cms.modules.name.posts',
-                    'version'       => $this->version,
-                    'description'   => 'Cms.modules.description.posts',
-                    'extra'         => [],
-                    'in_sitemap'    => true,
-                    'active'        => true,
-                    'created_by_id' => $userId,
-                    'updated_by_id' => 0
-                ],
-                [
-                    'parent'        => $list['content'],
-                    'is_core'       => true,
-                    'is_plugin'     => false,
-                    'is_system'     => false,
-                    'key'           => 'content.tags',
-                    'slug'          => 'tags',
-                    'class_name'    => '',
-                    'name'          => 'Cms.modules.name.tags',
-                    'version'       => $this->version,
-                    'description'   => 'Cms.modules.description.tags',
                     'extra'         => [],
                     'in_sitemap'    => false,
                     'active'        => true,
@@ -1700,113 +1633,7 @@ class AvegaCmsInstallSeeder extends Seeder
                 'return_type'   => FieldsReturnTypes::Integer->value,
                 'label'         => 'Settings.label.filemanager.uploadConfigThumbHeight',
                 'context'       => 'Settings.context.filemanager.uploadConfigThumbHeight'
-            ],
-
-            // Content
-            [
-                'module_id'     => 0,
-                'is_core'       => true,
-                'entity'        => 'content',
-                'slug'          => 'posts',
-                'key'           => 'postsPerPage',
-                'value'         => 20,
-                'default_value' => 20,
-                'return_type'   => FieldsReturnTypes::Integer->value,
-                'label'         => 'Settings.label.posts.postsPerPage',
-                'context'       => 'Settings.context.posts.postsPerPage'
-            ],
-            [
-                'module_id'     => 0,
-                'is_core'       => true,
-                'entity'        => 'content',
-                'slug'          => 'posts',
-                'key'           => 'showAuthorPost',
-                'value'         => 1,
-                'default_value' => 1,
-                'return_type'   => FieldsReturnTypes::Boolean->value,
-                'label'         => 'Settings.label.posts.showAuthorPost',
-                'context'       => 'Settings.context.posts.showAuthorPost'
-            ],
-            [
-                'module_id'     => 0,
-                'is_core'       => true,
-                'entity'        => 'content',
-                'slug'          => 'posts',
-                'key'           => 'showDatePost',
-                'value'         => 1,
-                'default_value' => 1,
-                'return_type'   => FieldsReturnTypes::Boolean->value,
-                'label'         => 'Settings.label.posts.showDatePost',
-                'context'       => 'Settings.context.posts.showDatePost'
-            ],
-            [
-                'module_id'     => 0,
-                'is_core'       => true,
-                'entity'        => 'content',
-                'slug'          => 'posts',
-                'key'           => 'dateFormatPost',
-                'value'         => 'd.m.Y H:i',
-                'default_value' => 'd.m.Y H:i',
-                'return_type'   => FieldsReturnTypes::String->value,
-                'label'         => 'Settings.label.posts.dateFormatPost',
-                'context'       => 'Settings.context.posts.dateFormatPost'
-            ],
-            [
-                'module_id'     => 0,
-                'is_core'       => true,
-                'entity'        => 'content',
-                'slug'          => 'posts',
-                'key'           => 'preViewFileConfig',
-                'value'         => serialize([
-                    'big'    => [
-                        'width'         => 1000,
-                        'height'        => 700,
-                        'maintainRatio' => true,
-                        'masterDim'     => 'width',
-                        'quality'       => 100
-                    ],
-                    'middle' => [
-                        'width'         => 510,
-                        'height'        => 510,
-                        'maintainRatio' => true,
-                        'masterDim'     => 'width',
-                        'quality'       => 100
-                    ],
-                    'small'  => [
-                        'width'         => 360,
-                        'height'        => 256,
-                        'maintainRatio' => true,
-                        'masterDim'     => 'width',
-                        'quality'       => 100
-                    ]
-                ]),
-                'default_value' => serialize([
-                    'big'    => [
-                        'width'         => 1000,
-                        'height'        => 700,
-                        'maintainRatio' => true,
-                        'masterDim'     => 'width',
-                        'quality'       => 100
-                    ],
-                    'middle' => [
-                        'width'         => 510,
-                        'height'        => 510,
-                        'maintainRatio' => true,
-                        'masterDim'     => 'width',
-                        'quality'       => 100
-                    ],
-                    'small'  => [
-                        'width'         => 360,
-                        'height'        => 256,
-                        'maintainRatio' => true,
-                        'masterDim'     => 'width',
-                        'quality'       => 100
-                    ]
-                ]),
-                'return_type'   => FieldsReturnTypes::Array->value,
-                'label'         => 'Settings.label.posts.showAuthorPost',
-                'context'       => 'Settings.context.posts.showAuthorPost'
-            ],
+            ]
         ];
 
         foreach ($settingsList as $item) {
@@ -1901,31 +1728,50 @@ class AvegaCmsInstallSeeder extends Seeder
 
     /**
      * @return void
-     * @throws ReflectionException
+     * @throws ContentExceptions|ReflectionException
      */
     private function _createMainPages(): void
     {
-        $useMultiLocales = Cms::settings('core.env.useMultiLocales');
+        try {
+            $useMultiLocales       = Cms::settings('core.env.useMultiLocales');
+            $this->contentModuleId = CmsModule::meta('content')['id'];
 
-        $locales = $this->LLM->where([
-            'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
-        ])->findColumn('id');
+            $locales = $this->LLM->where([
+                'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
+            ])->findAll();
 
-        foreach ($locales as $locale) {
-            // Создание главной страницы
-            $mainId = $this->_createMetaData(
-                type: MetaDataTypes::Main->name,
-                locale: $locale,
-                status: MetaStatuses::Publish->name
-            );
+            foreach ($locales as $locale) {
+                // Создание главной страницы
+                $mainId = (new Content(MetaDataTypes::Main->name, $this->contentModuleId))
+                    ->createMetaData(
+                        [
+                            'parent'     => 0,
+                            'title'      => $locale->home,
+                            'locale_id'  => $locale->id,
+                            'slug'       => 'main',
+                            'url'        => '/',
+                            'page_type'  => 'main',
+                            'in_sitemap' => true,
+                            'status'     => MetaStatuses::Publish->name
+                        ]
+                    );
 
-            // Создание 404 страницы
-            $this->_createMetaData(
-                type: MetaDataTypes::Page404->name,
-                locale: $locale,
-                parent: $mainId,
-                status: MetaStatuses::Publish->name
-            );
+                // Создание 404 страницы
+                (new Content(MetaDataTypes::Page404->name, $this->contentModuleId))
+                    ->createMetaData(
+                        [
+                            'parent'    => $mainId,
+                            'title'     => 'Page not found',
+                            'slug'      => 'page-404',
+                            'url'       => 'page-404',
+                            'locale_id' => $locale->id,
+                            'page_type' => 'page',
+                            'status'    => MetaStatuses::Publish->name
+                        ]
+                    );
+            }
+        } catch (ContentExceptions|ReflectionException $e) {
+            dd($e->getMessages() ?? $e->getMessage());
         }
 
         CLI::newLine();
@@ -1951,15 +1797,22 @@ class AvegaCmsInstallSeeder extends Seeder
 
             $locales = $this->LLM->where([
                 'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
-            ])->findColumn('id');
+            ])->findAll();
 
             $num            = (int) $num;
             $this->numPages = $num;
+            $mainIds        = $this->MDM->where(['meta_type' => MetaDataTypes::Main->name])->findColumn('id');
 
-            $mainIds = $this->MDM->where(['meta_type' => MetaDataTypes::Main->name])->findColumn('id');
-
-            foreach ($locales as $key => $locale) {
-                $this->_createSubPages($num, (int) $nesting, $locale, $mainIds[$key]);
+            foreach ($locales as $locale) {
+                foreach ($mainIds as $id) {
+                    $this->_createSubPages(
+                        $num,
+                        (int) $nesting,
+                        $locale->id,
+                        $id
+                    );
+                    break;
+                }
             }
 
             CLI::newLine();
@@ -2091,22 +1944,31 @@ class AvegaCmsInstallSeeder extends Seeder
      * @param  int  $locale
      * @param  int  $parent
      * @return void
-     * @throws ReflectionException
+     * @throws ContentExceptions|ReflectionException
      */
     private function _createSubPages(int $num, int $nesting, int $locale, int $parent): void
     {
         if ($num > 0 && $nesting > 0 && ! empty($levels = $this->_getLevelList($num, $nesting))) {
-            $pages = [];
+            $pages      = [];
+            $contentLib = new Content(MetaDataTypes::Page->name, $this->contentModuleId);
+
             foreach ($levels as $k => $level) {
                 if ($level > 0) {
                     $pages[$k] = [];
                     for ($i = 1; $i <= $level; $i++) {
-                        $key         = ($k > 1) ? $k - 1 : $k;
-                        $pages[$k][] = $this->_createMetaData(
-                            type: MetaDataTypes::Page->name,
-                            locale: $locale,
-                            parent: ($k == 1) ? $parent : $pages[$key][array_rand($pages[$key])]
-                        );
+                        $key = ($k > 1) ? $k - 1 : $k;
+
+                        $data    = (new Fabricator(MetaDataFactory::class, null))->makeObject();
+                        $content = (new Fabricator(MetaContentFactory::class, null))->makeObject();
+
+                        $data->parent    = ($k == 1) ? $parent : $pages[$key][array_rand($pages[$key])];
+                        $data->locale_id = $locale;
+                        $data->anons     = $content->anons;
+                        $data->content   = $content->content;
+
+                        unset($data->module_id, $data->meta_type);
+
+                        $pages[$k][] = $contentLib->createMetaData((array) $data);
                     }
                 }
             }

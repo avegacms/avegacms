@@ -6,8 +6,6 @@ namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Utilities\{Cms, SeoUtils};
-use CodeIgniter\Database\ConnectionInterface;
-use CodeIgniter\Validation\ValidationInterface;
 use AvegaCms\Enums\{MetaStatuses, MetaDataTypes, SitemapChangefreqs};
 use ReflectionException;
 use Exception;
