@@ -12,6 +12,29 @@ trait AvegaCmsApiResponseTrait
     use ResponseTrait;
 
     /**
+     * @param  array|string  $messages
+     * @param  int  $status  HTTP status code
+     * @param  string|null  $code  Custom, API-specific, error code
+     * @param  string  $customMessage
+     * @return ResponseInterface
+     */
+    protected function fail(
+        array|string $messages,
+        int $status = 400,
+        ?string $code = null,
+        string $customMessage = ''
+    ): ResponseInterface {
+        $response = [
+            'error' => [
+                'code'    => $code ?? $status,
+                'message' => ( ! is_array($messages)) ? [$messages] : $messages
+            ]
+        ];
+
+        return $this->respond($response, $status, $customMessage);
+    }
+    
+    /**
      * @param  array|string|null  $payload
      * @param  array|string|null  $meta
      * @param  string  $message

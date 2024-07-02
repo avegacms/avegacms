@@ -4,13 +4,10 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Controllers\Api;
 
-use AvegaCms\Config\Services;
 use AvegaCms\Controllers\AvegaCmsController;
 use AvegaCms\Traits\AvegaCmsApiResponseTrait;
 use AvegaCms\Utilities\Cms;
-use AvegaCms\Exceptions\AvegaCmsApiException;
 use CodeIgniter\HTTP\ResponseInterface;
-use CodeIgniter\HTTP\RequestInterface;
 
 
 class AvegaCmsAPI extends AvegaCmsController
