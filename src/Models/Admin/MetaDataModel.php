@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Models\AvegaCmsModel;
-use AvegaCms\Utilities\{Cms, SeoUtils};
+use AvegaCms\Utilities\{Cms, CmsModule, SeoUtils};
 use AvegaCms\Enums\{MetaStatuses, MetaDataTypes, SitemapChangefreqs};
 use ReflectionException;
 use Exception;
@@ -178,6 +178,42 @@ class MetaDataModel extends AvegaCmsModel
         ];
     }
 
+    public function selectPages(array $filter = []): array
+    {
+        $this->afterFind = ['selectPagesSetUrl'];
+
+        $id = CmsModule::meta('content')['id'];
+
+        if ($filter['module_id'] ?? false) {
+            unset ($filter['module_id']);
+        }
+
+        $this->builder()->select(
+            [
+                'metadata.id',
+                'metadata.parent',
+                'metadata.locale_id',
+                'metadata.slug',
+                'metadata.title',
+                'metadata.url',
+                'metadata.status',
+                'metadata.publish_at',
+                'locales.slug AS lang',
+                'locales.slug AS locale_name',
+                'm2.title AS parent_title',
+                'm2.url AS parent_url'
+            ]
+        )->join('locales', 'locales.id = metadata.locale_id')
+            ->join('metadata AS m2', 'm2.id = metadata.parent', 'left')
+            ->groupStart()
+            ->where(['metadata.module_id' => $id])
+            ->groupEnd()
+            ->orderBy('locales.id', 'ASC')
+            ->orderBy('metadata.id', 'ASC');
+
+        return $this->filter($filter)->apiPagination();
+    }
+
     /**
      * @param  array  $filter
      * @return AvegaCmsModel
@@ -298,6 +334,25 @@ class MetaDataModel extends AvegaCmsModel
         );
 
         return $this->first();
+    }
+
+    /**
+     * @param  array  $data
+     * @return array
+     */
+    protected function selectPagesSetUrl(array $data): array
+    {
+        foreach ($data['data'] as $item) {
+            if ( ! is_null($item->url)) {
+                $item->url = base_url($item->url);
+            }
+
+            if ( ! is_null($item->parent_url)) {
+                $item->parent_url = base_url($item->parent_url);
+            }
+        }
+
+        return $data;
     }
 
     /**

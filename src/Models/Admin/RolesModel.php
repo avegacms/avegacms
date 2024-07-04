@@ -67,6 +67,7 @@ class RolesModel extends AvegaCmsModel
     protected $afterDelete    = ['clearCache'];
 
     protected array $casts = [
+        'id'            => 'int',
         'self_auth'     => '?int-bool',
         'module_id'     => '?int',
         'active'        => '?int-bool',

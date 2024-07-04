@@ -256,9 +256,7 @@ class AvegaCmsInstallSeeder extends Seeder
             }
         }
 
-        unset($modulesEntity);
-
-        $subModules = $this->MM->select(['id', 'slug'])->whereIn('slug', ['settings', 'content'])->findAll();
+        $subModules = $this->MM->select(['id', 'slug'])->whereIn('slug', ['settings'])->findAll();
 
         $list = [];
 
@@ -713,7 +711,7 @@ class AvegaCmsInstallSeeder extends Seeder
 
         $modules = $this->MM->select(['id', 'parent', 'is_system', 'is_plugin', 'slug'])->findAll();
         $roles   = $this->RM->select(['id', 'role'])->findAll();
-
+        
         foreach ($modules as $module) {
             foreach ($roles as $role) {
                 foreach ($permissions as $permission) {
@@ -1728,7 +1726,6 @@ class AvegaCmsInstallSeeder extends Seeder
 
     /**
      * @return void
-     * @throws ContentExceptions|ReflectionException
      */
     private function _createMainPages(): void
     {
