@@ -34,17 +34,18 @@ class AvegaCmsAPI extends AvegaCmsController
     public function getApiData(): array|null
     {
         try {
-            if (in_array($this->request->getMethod(), ['POST', 'PUT'], true)) {
-                if ($this->request->getBody() === null) {
+            $request = Services::request();
+            if (in_array($request->getMethod(), ['POST', 'PUT'], true)) {
+                if ($request->getBody() === null) {
                     throw AvegaCmsApiException::forNoData();
                 }
 
-                if ($this->request->getBody() !== 'php://input') {
-                    json_decode($this->request->getBody(), false);
+                if ($request->getBody() !== 'php://input') {
+                    json_decode($request->getBody(), false);
                     if (json_last_error() !== JSON_ERROR_NONE) {
                         throw AvegaCmsApiException::forInvalidJSON(json_last_error_msg());
                     }
-                    return $this->request->getJSON(true);
+                    return $request->getJSON(true);
                 }
             }
         } catch (AvegaCmsApiException $e) {
