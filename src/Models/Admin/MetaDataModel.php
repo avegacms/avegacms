@@ -253,10 +253,28 @@ class MetaDataModel extends AvegaCmsModel
      * @param  int  $id
      * @return object|null
      */
-    public function editMetadata(int $id): object|null
+    public function editPageMetaData(int $id): object|null
     {
-        $this->builder()->select(['metadata.*', 'content.*'])
-            ->join('content', 'content.id = metadata.id');
+        $this->builder()->select(
+            [
+                'metadata.id',
+                'metadata.parent',
+                'metadata.locale_id',
+                'metadata.slug',
+                'metadata.creator_id',
+                'metadata.title',
+                'metadata.url',
+                'metadata.meta',
+                'metadata.extra_data',
+                'metadata.sort',
+                'metadata.status',
+                'metadata.in_sitemap',
+                'metadata.meta_sitemap',
+                'metadata.publish_at',
+                'content.content',
+                'content.extra'
+            ]
+        )->join('content', 'content.id = metadata.id');
 
         return $this->find($id);
     }

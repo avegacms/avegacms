@@ -8,7 +8,6 @@ use AvegaCms\Controllers\AvegaCmsController;
 use AvegaCms\Exceptions\AvegaCmsApiException;
 use AvegaCms\Traits\AvegaCmsApiResponseTrait;
 use AvegaCms\Utilities\Cms;
-use CodeIgniter\Config\Services;
 use CodeIgniter\HTTP\ResponseInterface;
 
 
@@ -34,7 +33,7 @@ class AvegaCmsAPI extends AvegaCmsController
     public function getApiData(): array|null
     {
         try {
-            $request = Services::request();
+            $request = request();
             if (in_array($request->getMethod(), ['POST', 'PUT'], true)) {
                 if ($request->getBody() === null) {
                     throw AvegaCmsApiException::forNoData();
@@ -49,7 +48,7 @@ class AvegaCmsAPI extends AvegaCmsController
                 }
             }
         } catch (AvegaCmsApiException $e) {
-            Services::response()->setStatusCode(400, $e->getMessage())->send();
+            response()->setStatusCode(400, $e->getMessage())->send();
             exit();
         }
 
