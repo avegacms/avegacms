@@ -23,24 +23,6 @@ class ThrottlerFilter implements FilterInterface
         if (Services::throttler()->check(md5($request->getIPAddress()), 60, MINUTE) === false) {
             return Services::response()->setStatusCode(429);
         }
-
-        try {
-            if (in_array($request->getMethod(), ['POST', 'PUT'], true)) {
-                if ($request->getBody() === null) {
-                    throw AvegaCmsApiException::forNoData();
-                }
-
-                if ($request->getBody() !== 'php://input') {
-                    json_decode($request->getBody(), false);
-                    if (json_last_error() !== JSON_ERROR_NONE) {
-                        throw AvegaCmsApiException::forInvalidJSON(json_last_error_msg());
-                    }
-                }
-            }
-        } catch (AvegaCmsApiException $e) {
-            Services::response()->setStatusCode(400, $e->getMessage())->send();
-            exit();
-        }
     }
 
     /**
