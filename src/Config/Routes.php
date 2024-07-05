@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 use CodeIgniter\Router\RouteCollection;
 
 use AvegaCms\Controllers\{Content, Seo};
@@ -29,7 +31,7 @@ $routes->group('api', function (RouteCollection $routes) {
         $routes->get('logout/(:segment)', [[Login::class, 'logout'], '$1']);
         $routes->post('login/(:segment)', [[Login::class, 'index'], '$1']);
     });
-    $routes->group('admin', ['namespace' => 'AvegaCms\Controllers\Api\Admin', 'filter' => 'auth'],
+    $routes->group('admin', ['namespace' => 'AvegaCms\Controllers\Api\Admin'],
         function (RouteCollection $routes) {
             $routes->get('profile', [Profile::class, 'index']);
             $routes->group('content', function (RouteCollection $routes) {
