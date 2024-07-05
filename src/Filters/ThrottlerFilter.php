@@ -30,14 +30,11 @@ class ThrottlerFilter implements FilterInterface
                     throw AvegaCmsApiException::forNoData();
                 }
 
-                json_decode($request->getBody(), false);
-
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    throw AvegaCmsApiException::forInvalidJSON(json_last_error_msg());
-                }
-
-                if ($request->getBody() !== 'php://input' && empty(request()->getJSON(true))) {
-                    throw AvegaCmsApiException::forUndefinedData();
+                if ($request->getBody() !== 'php://input') {
+                    json_decode($request->getBody(), false);
+                    if (json_last_error() !== JSON_ERROR_NONE) {
+                        throw AvegaCmsApiException::forInvalidJSON(json_last_error_msg());
+                    }
                 }
             }
         } catch (AvegaCmsApiException $e) {
