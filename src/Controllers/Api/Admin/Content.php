@@ -63,14 +63,15 @@ class Content extends AvegaCmsAdminAPI
     }
 
     /**
-     * Return the editable properties of a resource object
-     *
-     * @param $id
+     * @param  int|null  $id
      * @return ResponseInterface
      */
-    public function edit($id = null): ResponseInterface
+    public function edit(?int $id = null): ResponseInterface
     {
-        //
+        if (($data = $this->MDM->editPageMetaData($id)) === null) {
+            return $this->failNotFound();
+        }
+        return $this->cmsRespond((array) $data);
     }
 
     /**
@@ -93,5 +94,14 @@ class Content extends AvegaCmsAdminAPI
     public function delete($id = null): ResponseInterface
     {
         //
+    }
+
+    protected function guide(): array
+    {
+        return [
+            'locales'    => [],
+            'statuses'   => [],
+            'changefreq' => []
+        ];
     }
 }
