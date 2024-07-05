@@ -7,12 +7,12 @@ namespace AvegaCms\Database\Factories;
 use AvegaCms\Enums\MetaStatuses;
 use AvegaCms\Models\Admin\MetaDataModel;
 use Faker\Generator;
-use Exception;
 
 class MetaDataFactory extends MetaDataModel
 {
     /**
-     * @throws Exception
+     * @param  Generator  $faker
+     * @return array
      */
     public function fake(Generator &$faker)
     {
@@ -23,16 +23,17 @@ class MetaDataFactory extends MetaDataModel
             'parent'          => 0,
             'locale_id'       => 0,
             'module_id'       => 0,
-            'slug'            => '',
+            'slug'            => $faker->slug(),
             'creator_id'      => 0,
             'item_id'         => 0,
-            'title'           => $faker->sentence(),
+            'title'           => $faker->realText(),
             'sort'            => rand(1, 1000),
             'url'             => '',
             'meta'            => [],
             'meta_sitemap'    => [],
-            'status'          => $status[array_rand($status)],
+            'status'          => MetaStatuses::Publish->name, //$status[array_rand($status)],
             'meta_type'       => '',
+            'page_type'       => 'page',
             'in_sitemap'      => true,
             'use_url_pattern' => false,
             'created_by_id'   => 0,

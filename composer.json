@@ -17,10 +17,10 @@
     "ext-gd": "*",
     "ext-zip": "*",
     "ext-mbstring": "*",
-    "ext-simplexml": "*"
+    "ext-simplexml": "*",
+    "codeigniter/coding-standard": "dev-develop"
   },
   "require-dev": {
-    "codeigniter/coding-standard": "^1.7",
     "fakerphp/faker": "^1.9",
     "mikey179/vfsstream": "^1.6",
     "phpunit/phpunit": "^9.1"

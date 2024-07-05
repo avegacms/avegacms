@@ -26,12 +26,12 @@ trait AvegaCmsSitemapTrait
     {
         helper(['date']);
 
-        if (empty($group)) {
+        if (is_array($group) && empty($group)) {
             return;
         }
 
-        $xml  = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="https://www.sitemaps.org/schemas/sitemap/0.9"></sitemapindex>');
         $data = [];
+        $xml  = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="https://www.sitemaps.org/schemas/sitemap/0.9"></sitemapindex>');
         $path = $this->path . $this->moduleName;
 
         if (is_string($group)) {
@@ -39,7 +39,7 @@ trait AvegaCmsSitemapTrait
                 return;
             }
             $data = $list;
-            $path .= '_' . $group . '.xml';
+            $path .= (($group !== '') ? '_' . $group : '') . '.xml';
         } elseif (is_array($group)) {
             foreach ($group as $item) {
                 $data[]['url'] = strtolower($path . (is_null($this->moduleName) ? '' : '_') . $item . '.xml');
@@ -56,7 +56,7 @@ trait AvegaCmsSitemapTrait
 
         foreach ($data as $item) {
             $url = $xml->addChild('sitemap');
-            $url->addChild('loc', htmlspecialchars(site_url($item['url'])));
+            $url->addChild('loc', htmlspecialchars(site_url($item->url ?? $item['url'])));
             $url->addChild('lastmod', date(DATE_W3C, $lastmod));
             $url->addChild('priority', strtolower($config['priority'] ?? SitemapChangefreqs::Monthly->name));
         }
@@ -71,16 +71,20 @@ trait AvegaCmsSitemapTrait
     }
 
     /**
-     * @param  string  $group
      * @param  array  $list
+     * @param  string  $group
      * @param  int|null  $qtyElements
      * @param  array|null  $groupConfig
      * @return void
-     * @throws Exception|ReflectionException
+     * @throws ReflectionException|Exception
      */
-    protected function setGroup(string $group, array $list, ?int $qtyElements = null, ?array $groupConfig = null): void
-    {
-        if (empty($group) || empty($list)) {
+    protected function setGroup(
+        array $list,
+        string $group = '',
+        ?int $qtyElements = null,
+        ?array $groupConfig = null
+    ): void {
+        if (empty($list)) {
             return;
         }
 
@@ -98,7 +102,11 @@ trait AvegaCmsSitemapTrait
             }
 
             if ( ! empty($groupUrl)) {
-                $this->setModule($group, $groupUrl, $groupConfig);
+                $this->setModule(
+                    $group,
+                    $groupUrl,
+                    $groupConfig
+                );
             }
         } else {
             $this->_createUrlSet($list, $group);
@@ -111,7 +119,7 @@ trait AvegaCmsSitemapTrait
      * @param  int  $step
      * @return string
      */
-    private function _createUrlSet(array $list, string $group, int $step = 0): string
+    private function _createUrlSet(array $list, string $group = '', int $step = 0): string
     {
         $xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9"></urlset>');
 
@@ -123,7 +131,7 @@ trait AvegaCmsSitemapTrait
             $url->addChild('priority', (string) ($item->priority ?? 50));
         }
 
-        $sitemapFile = $this->path . $this->moduleName . '_' . $group;
+        $sitemapFile = $this->path . $this->moduleName . ($group === '' ? '' : '_' . $group);
 
         if ($step > 0) {
             $sitemapFile .= '_' . $step;

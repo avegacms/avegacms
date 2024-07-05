@@ -31,8 +31,6 @@ class CreateAvegaCmsTables extends Migration
         'settings'        => 'settings',
         'metadata'        => 'metadata',
         'content'         => 'content',
-        'tags'            => 'tags',
-        'tags_links'      => 'tags_links',
         'files'           => 'files',
         'files_links'     => 'files_links',
         'sessions'        => 'sessions',
@@ -330,12 +328,13 @@ class CreateAvegaCmsTables extends Migration
                 'constraint' => MetaStatuses::get('name'),
                 'default'    => MetaStatuses::Publish->name
             ],
-            // статус страницы
+            // Мета сущность страницы
             'meta_type'       => [
                 'type'       => 'enum',
                 'constraint' => MetaDataTypes::get('name'),
                 'default'    => MetaDataTypes::Undefined->name
             ],
+            'page_type'       => ['type' => 'varchar', 'constraint' => 64, 'null' => true, 'default' => ''],
             // флаг добавления в карту сайта
             'in_sitemap'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // Метаданные для карты сайта
@@ -361,37 +360,6 @@ class CreateAvegaCmsTables extends Migration
         ]);
         $this->forge->addUniqueKey(['id']);
         $this->createTable($this->tables['content']);
-
-        /**
-         * Таблица с тегами
-         */
-        $this->forge->addField([
-            'id'     => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
-            'name'   => ['type' => 'varchar', 'constraint' => 128, 'null' => true],
-            'slug'   => ['type' => 'varchar', 'constraint' => 64, 'unique' => true, 'null' => true],
-            'active' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
-            ...Migrator::byId(),
-            ...Migrator::dateFields(['deleted_at'])
-        ]);
-        $this->forge->addPrimaryKey('id');
-        $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', onDelete: 'SET DEFAULT');
-        $this->forge->addForeignKey('updated_by_id', $this->tables['users'], 'id', onDelete: 'SET DEFAULT');
-        $this->createTable($this->tables['tags']);
-
-        /**
-         * Таблица связи тегов
-         */
-        $this->forge->addField([
-            'tag_id'        => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
-            'meta_id'       => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
-            'created_by_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => 0, 'default' => 0],
-            ...Migrator::dateFields(['updated_at', 'deleted_at'])
-        ]);
-        $this->forge->addUniqueKey(['tag_id', 'meta_id']);
-        $this->forge->addForeignKey('tag_id', $this->tables['tags'], 'id', onDelete: 'CASCADE');
-        $this->forge->addForeignKey('meta_id', $this->tables['metadata'], 'id', onDelete: 'CASCADE');
-        $this->forge->addForeignKey('created_by_id', $this->tables['users'], 'id', onDelete: 'SET DEFAULT');
-        $this->createTable($this->tables['tags_links']);
 
         $this->forge->addField([
             'id'        => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'auto_increment' => true],
