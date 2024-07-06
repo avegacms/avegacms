@@ -267,6 +267,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.meta',
                 'metadata.extra_data',
                 'metadata.sort',
+                'metadata.meta_type',
                 'metadata.status',
                 'metadata.in_sitemap',
                 'metadata.meta_sitemap',
@@ -274,7 +275,15 @@ class MetaDataModel extends AvegaCmsModel
                 'content.content',
                 'content.extra'
             ]
-        )->join('content', 'content.id = metadata.id');
+        )->join('content', 'content.id = metadata.id')
+            ->whereIn(
+                'metadata.meta_type',
+                [
+                    MetaDataTypes::Main->name,
+                    MetaDataTypes::Page->name,
+                    MetaDataTypes::Page404->name
+                ]
+            );
 
         return $this->find($id);
     }
@@ -352,6 +361,21 @@ class MetaDataModel extends AvegaCmsModel
         );
 
         return $this->first();
+    }
+
+    /**
+     * @return array
+     */
+    public function getParentPages(): array
+    {
+        $this->afterFind = ['getParentPagesList'];
+
+        $this->builder()->select(['id', 'title', 'parent'])
+            ->whereIn('meta_type', [MetaDataTypes::Main->name, MetaDataTypes::Page->name])
+            ->orderBy('locale_id', 'ASC')
+            ->orderBy('parent', 'ASC');
+
+        return $this->asArray()->findAll();
     }
 
     /**
@@ -478,5 +502,37 @@ class MetaDataModel extends AvegaCmsModel
             MetaDataTypes::Page404->value => '',
             default                       => ($parent->url === '/') ? '' : $parent->url . '/',
         };
+    }
+
+    /**
+     * @param  array  $data
+     * @return array
+     */
+    protected function getParentPagesList(array $data): array
+    {
+        if ( ! empty($data['data'])) {
+            $tree = $items = [];
+
+            foreach ($data['data'] as $element) {
+                $element['list']       = [];
+                $items[$element['id']] = $element;
+            }
+
+            // Построение иерархии
+            foreach ($items as &$item) {
+                if ($item['parent'] === 0) {
+                    $tree[] = &$item;
+                } else {
+                    if (isset($items[$item['parent']])) {
+                        $items[$item['parent']]['list'][] = &$item;
+                    }
+                }
+            }
+            unset($item);
+            $data['data'] = $tree;
+            unset($tree, $items);
+        }
+
+        return $data;
     }
 }

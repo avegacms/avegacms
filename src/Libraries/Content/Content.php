@@ -161,7 +161,11 @@ class Content
      */
     public function deleteMetaData(int $id): bool
     {
-        if ($id < 0 || $this->MDM->delete($id) === false) {
+        if ($id < 0 || $this->MDM->find($id) === null) {
+            throw ContentExceptions::forNoData();
+        }
+
+        if ($this->MDM->delete($id) === false) {
             throw new ContentExceptions($this->MDM->errors());
         }
 

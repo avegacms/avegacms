@@ -4,20 +4,25 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Controllers\Api\Admin;
 
-use AvegaCms\Models\Admin\{ContentModel, MetaDataModel};
+use AvegaCms\Enums\{MetaDataTypes, MetaStatuses, SitemapChangefreqs};
+use AvegaCms\Libraries\Content\Exceptions\ContentExceptions;
+use AvegaCms\Models\Admin\MetaDataModel;
+use AvegaCms\Libraries\Content\Content as ContentLib;
+use AvegaCms\Utilities\CmsModule;
 use CodeIgniter\HTTP\ResponseInterface;
 use ReflectionException;
 
 class Content extends AvegaCmsAdminAPI
 {
     protected MetaDataModel $MDM;
-    protected ContentModel  $CM;
+    protected int           $moduleId;
 
     public function __construct()
     {
         parent::__construct();
-        $this->CM  = new ContentModel();
-        $this->MDM = new MetaDataModel();
+
+        $this->MDM      = new MetaDataModel();
+        $this->moduleId = CmsModule::meta('content')['id'];
     }
 
     /**
@@ -28,18 +33,9 @@ class Content extends AvegaCmsAdminAPI
     public function index(): ResponseInterface
     {
         // TODO добавить данные для фильтра
-        return $this->cmsRespond($this->MDM->selectPages($this->request->getGet() ?? []));
-    }
-
-    /**
-     * Return the properties of a resource object
-     *
-     * @param $id
-     * @return ResponseInterface
-     */
-    public function show($id = null): ResponseInterface
-    {
-        //
+        return $this->cmsRespond(
+            $this->MDM->selectPages($this->request->getGet() ?? [])
+        );
     }
 
     /**
@@ -53,13 +49,16 @@ class Content extends AvegaCmsAdminAPI
     }
 
     /**
-     * Create a new resource object, from "posted" parameters
-     *
      * @return ResponseInterface
      */
     public function create(): ResponseInterface
     {
-        //
+        try {
+            $id = (new ContentLib(MetaDataTypes::Page->name, $this->moduleId))->createMetaData($this->apiData);
+            return $this->cmsRespondCreated($id);
+        } catch (ReflectionException|ContentExceptions $e) {
+            return $this->cmsRespondFail($e->getMessages() ?? $e->getMessage(), $e->getCode());
+        }
     }
 
     /**
@@ -71,37 +70,58 @@ class Content extends AvegaCmsAdminAPI
         if (($data = $this->MDM->editPageMetaData($id)) === null) {
             return $this->failNotFound();
         }
-        return $this->cmsRespond((array) $data);
+        return $this->cmsRespond(
+            (array) $data,
+            [
+                'parent_pages' => $this->MDM->getParentPages(),
+                'statuses'     => MetaStatuses::list(),
+                'changefreq'   => SitemapChangefreqs::list()
+            ]
+        );
     }
 
     /**
-     * Add or update a model resource, from "posted" properties
-     *
-     * @param $id
+     * @param  int|null  $id
      * @return ResponseInterface
      */
-    public function update($id = null): ResponseInterface
+    public function update(?int $id = null): ResponseInterface
     {
-        //
+        try {
+            if ($this->MDM->editPageMetaData($id) === null) {
+                return $this->failNotFound();
+            }
+
+            if ( ! in_array($this->apiData['meta_type'], [
+                MetaDataTypes::Main->name,
+                MetaDataTypes::Page->name,
+                MetaDataTypes::Page404->name
+            ])) {
+                throw ContentExceptions::forUnknownType();
+            }
+
+            (new ContentLib($this->apiData['meta_type'], $this->moduleId))->updateMetaData($id, $this->apiData);
+            return $this->respondNoContent();
+        } catch (ReflectionException|ContentExceptions $e) {
+            return $this->cmsRespondFail($e->getMessages() ?? $e->getMessage(), $e->getCode());
+        }
     }
 
     /**
-     * Delete the designated resource object from the model
-     *
-     * @param $id
+     * @param  int|null  $id
      * @return ResponseInterface
      */
-    public function delete($id = null): ResponseInterface
+    public function delete(?int $id = null): ResponseInterface
     {
-        //
-    }
+        try {
+            if ($this->MDM->editPageMetaData($id) === null) {
+                return $this->failNotFound();
+            }
 
-    protected function guide(): array
-    {
-        return [
-            'locales'    => [],
-            'statuses'   => [],
-            'changefreq' => []
-        ];
+            (new ContentLib(MetaDataTypes::Page->name))->deleteMetaData($id);
+
+            return $this->respondDeleted();
+        } catch (ContentExceptions $e) {
+            return $this->cmsRespondFail($e->getMessages() ?? $e->getMessage(), $e->getCode());
+        }
     }
 }
