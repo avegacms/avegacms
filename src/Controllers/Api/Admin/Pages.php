@@ -12,7 +12,7 @@ use AvegaCms\Utilities\CmsModule;
 use CodeIgniter\HTTP\ResponseInterface;
 use ReflectionException;
 
-class Content extends AvegaCmsAdminAPI
+class Pages extends AvegaCmsAdminAPI
 {
     protected MetaDataModel $MDM;
     protected int           $moduleId;
@@ -22,7 +22,7 @@ class Content extends AvegaCmsAdminAPI
         parent::__construct();
 
         $this->MDM      = new MetaDataModel();
-        $this->moduleId = CmsModule::meta('content')['id'];
+        $this->moduleId = CmsModule::meta('pages')['id'];
     }
 
     /**

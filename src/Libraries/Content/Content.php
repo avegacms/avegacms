@@ -100,6 +100,8 @@ class Content
         }
 
         $data['id']              = $id;
+        $data['module_id']       = $this->moduleId;
+        $data['item_id']         ??= 0;
         $data['use_url_pattern'] = boolval($data['use_url_pattern'] ?? 0);
 
         $content = [

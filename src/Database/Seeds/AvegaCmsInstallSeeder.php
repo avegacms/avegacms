@@ -202,9 +202,9 @@ class AvegaCmsInstallSeeder extends Seeder
                 'is_core'       => true,
                 'is_plugin'     => false,
                 'is_system'     => false,
-                'key'           => 'content',
-                'slug'          => 'content',
-                'class_name'    => 'Content',
+                'key'           => 'pages',
+                'slug'          => 'pages',
+                'class_name'    => 'Pages',
                 'name'          => 'Cms.modules.name.content',
                 'version'       => $this->version,
                 'description'   => 'Cms.modules.description.content',
@@ -219,12 +219,12 @@ class AvegaCmsInstallSeeder extends Seeder
                 'is_core'       => true,
                 'is_plugin'     => true,
                 'is_system'     => true,
-                'key'           => 'content_builder',
-                'slug'          => 'content_builder',
-                'class_name'    => '',
-                'name'          => 'Cms.modules.name.content_builder',
+                'key'           => 'builder',
+                'slug'          => 'builder',
+                'class_name'    => 'Builder',
+                'name'          => 'Cms.modules.name.builder',
                 'version'       => $this->version,
-                'description'   => 'Cms.modules.description.content_builder',
+                'description'   => 'Cms.modules.description.builder',
                 'extra'         => [],
                 'in_sitemap'    => false,
                 'active'        => true,
@@ -711,7 +711,7 @@ class AvegaCmsInstallSeeder extends Seeder
 
         $modules = $this->MM->select(['id', 'parent', 'is_system', 'is_plugin', 'slug'])->findAll();
         $roles   = $this->RM->select(['id', 'role'])->findAll();
-        
+
         foreach ($modules as $module) {
             foreach ($roles as $role) {
                 foreach ($permissions as $permission) {
@@ -1731,7 +1731,7 @@ class AvegaCmsInstallSeeder extends Seeder
     {
         try {
             $useMultiLocales       = Cms::settings('core.env.useMultiLocales');
-            $this->contentModuleId = CmsModule::meta('content')['id'];
+            $this->contentModuleId = CmsModule::meta('pages')['id'];
 
             $locales = $this->LLM->where([
                 'active' => 1, ...(! $useMultiLocales ? ['is_default' => 1] : [])
@@ -1799,7 +1799,7 @@ class AvegaCmsInstallSeeder extends Seeder
             $num            = (int) $num;
             $this->numPages = $num;
             $mainIds        = $this->MDM->where(['meta_type' => MetaDataTypes::Main->name])->findColumn('id');
-
+            
             foreach ($locales as $locale) {
                 foreach ($mainIds as $id) {
                     $this->_createSubPages(
@@ -1834,7 +1834,7 @@ class AvegaCmsInstallSeeder extends Seeder
         CmsFileManager::createDirectory(
             'content',
             [
-                'module_id' => CmsModule::meta('content')['id']
+                'module_id' => CmsModule::meta('pages')['id']
             ]
         );
 

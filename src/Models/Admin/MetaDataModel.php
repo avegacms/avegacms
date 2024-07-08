@@ -102,7 +102,6 @@ class MetaDataModel extends AvegaCmsModel
     protected array  $filterFields      = [
         'module_id' => 'metadata.module_id',
         'item_id'   => 'metadata.item_id',
-        'rubric'    => 'metadata.parent',
         'parent'    => 'metadata.parent',
         'locale'    => 'metadata.locale_id',
         'title'     => 'metadata.title',
@@ -119,7 +118,6 @@ class MetaDataModel extends AvegaCmsModel
     protected array  $filterCastsFields = [
         'module_id'  => 'integer',
         'item_id'    => 'integer',
-        'rubric'     => 'integer',
         'parent'     => 'integer',
         'locale'     => 'integer',
         'title'      => 'string',
@@ -134,26 +132,24 @@ class MetaDataModel extends AvegaCmsModel
     protected array $casts = [
         'id'              => 'int',
         'post_id'         => 'int',
-        'rubric_id'       => 'int',
         'parent'          => 'int',
         'locale_id'       => 'int',
         'module_id'       => 'int',
         'creator_id'      => 'int',
         'item_id'         => 'int',
-        'preview_id'      => 'int',
+        'preview_id'      => 'cmsfile',
         'sort'            => 'int',
         'meta'            => '?json-array',
         'meta_sitemap'    => '?json-array',
         'extra_data'      => '?json-array',
         'in_sitemap'      => '?int-bool',
         'use_url_pattern' => '?int-bool',
-        'rubrics'         => '?json-array',
         'created_by_id'   => 'int',
         'updated_by_id'   => 'int',
         'publish_at'      => '?cmsdatetime',
         'created_at'      => 'cmsdatetime',
         'updated_at'      => 'cmsdatetime',
-        'extra'           => '?int-bool'
+        'extra'           => '?json-array'
     ];
 
     public function __construct()
@@ -182,7 +178,7 @@ class MetaDataModel extends AvegaCmsModel
     {
         $this->afterFind = ['selectPagesSetUrl'];
 
-        $id = CmsModule::meta('content')['id'];
+        $id = CmsModule::meta('pages')['id'];
 
         if ($filter['module_id'] ?? false) {
             unset ($filter['module_id']);
