@@ -100,6 +100,8 @@ class Content
         }
 
         $data['id']              = $id;
+        $data['module_id']       = $this->moduleId;
+        $data['item_id']         ??= 0;
         $data['use_url_pattern'] = boolval($data['use_url_pattern'] ?? 0);
 
         $content = [
@@ -161,7 +163,11 @@ class Content
      */
     public function deleteMetaData(int $id): bool
     {
-        if ($id < 0 || $this->MDM->delete($id) === false) {
+        if ($id < 0 || $this->MDM->find($id) === null) {
+            throw ContentExceptions::forNoData();
+        }
+
+        if ($this->MDM->delete($id) === false) {
             throw new ContentExceptions($this->MDM->errors());
         }
 

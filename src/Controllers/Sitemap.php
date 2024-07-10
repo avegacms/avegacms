@@ -20,9 +20,9 @@ class Sitemap extends Controller
      */
     public function generate(): void
     {
-        $this->moduleName = 'Content';
+        $this->moduleName = 'Pages';
         $this->setGroup(
-            list: (new MetaDataSiteMapModel())->getContentSitemap('Pages', CmsModule::meta('content')['id'])
+            list: (new MetaDataSiteMapModel())->getContentSitemap('Pages', CmsModule::meta('pages')['id'])
         );
     }
 }

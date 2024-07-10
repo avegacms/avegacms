@@ -6,8 +6,8 @@ use CodeIgniter\Router\RouteCollection;
 
 use AvegaCms\Controllers\{Content, Seo};
 use AvegaCms\Controllers\Api\AvegaCmsAPI;
-use AvegaCms\Controllers\Api\Public\{Login, Content as ContentApi};
-use AvegaCms\Controllers\Api\Admin\{Content as ContentAdminApi, Profile};
+use AvegaCms\Controllers\Api\Public\Login;
+use AvegaCms\Controllers\Api\Admin\{Pages, Profile};
 use AvegaCms\Controllers\Api\Admin\Settings\{Locales,
     Modules,
     Navigations,
@@ -24,24 +24,20 @@ use AvegaCms\Controllers\Api\Admin\Settings\{Locales,
 
 $routes->group('api', function (RouteCollection $routes) {
     $routes->group('public', ['namespace' => 'AvegaCms\Controllers\Api\Public'], function (RouteCollection $routes) {
-        $routes->group('content', function (RouteCollection $routes) {
-            $routes->get('/', [ContentApi::class, 'index']);
-        });
         $routes->get('logout', [Login::class, 'logout']);
         $routes->get('logout/(:segment)', [[Login::class, 'logout'], '$1']);
         $routes->post('login/(:segment)', [[Login::class, 'index'], '$1']);
     });
     $routes->group('admin', ['namespace' => 'AvegaCms\Controllers\Api\Admin'],
         function (RouteCollection $routes) {
-            $routes->get('profile', [Profile::class, 'index']);
-            $routes->group('content', function (RouteCollection $routes) {
-                $routes->get('/', [ContentAdminApi::class, 'index']);
-                $routes->get('new', [ContentAdminApi::class, 'new']);
-                $routes->get('(:num)/edit', [[ContentAdminApi::class, 'edit'], '$1']);
-                $routes->post('/', [ContentAdminApi::class, 'create']);
-                $routes->put('(:num)', [[ContentAdminApi::class, 'update'], '$1']);
-                $routes->patch('(:num)', [[ContentAdminApi::class, 'patch'], '$1']);
-                $routes->delete('(:num)', [[ContentAdminApi::class, 'delete'], '$1']);
+            $routes->group('pages', function (RouteCollection $routes) {
+                $routes->get('/', [Pages::class, 'index']);
+                $routes->get('new', [Pages::class, 'new']);
+                $routes->get('(:num)/edit', [[Pages::class, 'edit'], '$1']);
+                $routes->post('/', [Pages::class, 'create']);
+                $routes->put('(:num)', [[Pages::class, 'update'], '$1']);
+                $routes->patch('(:num)', [[Pages::class, 'patch'], '$1']);
+                $routes->delete('(:num)', [[Pages::class, 'delete'], '$1']);
             });
             $routes->group('settings', function (RouteCollection $routes) {
                 $routes->group('locales', function (RouteCollection $routes) {
@@ -111,6 +107,7 @@ $routes->group('api', function (RouteCollection $routes) {
                     $routes->delete('(:num)', [[EmailTemplate::class, 'delete'], '$1']);
                 });
             });
+            $routes->get('profile', [Profile::class, 'index']);
         });
 });
 

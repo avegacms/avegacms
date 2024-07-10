@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace AvegaCms\Models;
 
 use AvegaCms\Utilities\CmsFileManager;
@@ -259,15 +261,12 @@ class AvegaCmsModel extends Model
             } else {
                 foreach ($data['data'] as $item) {
                     foreach ($fileCastMap as $field) {
-                        if (property_exists($item, $field)) {
-                            $filesId[] = $getFile($item->{$field});
-                        }
-                        if (is_object($item)) {
+                        if (is_object($item) || is_string($item)) {
                             if (property_exists($item, $field)) {
                                 $filesId[] = $getFile($item->{$field});
                             }
                         } else {
-                            if (array_key_exists($field, $item)) {
+                            if (is_array($item) && array_key_exists($field, $item)) {
                                 $filesId[] = $getFile($item[$field]);
                             }
                         }

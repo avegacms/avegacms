@@ -64,7 +64,7 @@ class Sitemap
     protected function generate(?string $className = null): void
     {
         if ( ! is_null($className)) {
-            if ($className === 'Content') {
+            if ($className === 'Pages') {
                 $classNamespace = "AvegaCms\\Controllers\\Sitemap";
             } else {
                 $classNamespace = "Modules\\{$className}\\Controllers\\Sitemap";
