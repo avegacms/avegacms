@@ -163,11 +163,16 @@ class Content
      */
     public function deleteMetaData(int $id): bool
     {
-        if ($id < 0 || $this->MDM->find($id) === null) {
+        if ($id < 0 || ($data = $this->MDM->find($id)) === null) {
             throw ContentExceptions::forNoData();
         }
 
-        if ($this->MDM->delete($id) === false) {
+        if (in_array($data->meta_type, [MetaDataTypes::Main->name, MetaDataTypes::Page404->name])) {
+            throw ContentExceptions::forForbiddenPageDelete();
+        }
+
+        if ($this->MDM->whereNotIn('meta_type',
+                [MetaDataTypes::Main->name, MetaDataTypes::Page404->name])->delete($id) === false) {
             throw new ContentExceptions($this->MDM->errors());
         }
 
