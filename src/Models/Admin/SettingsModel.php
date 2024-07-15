@@ -108,10 +108,9 @@ class SettingsModel extends AvegaCmsModel
         'updated_at'    => 'cmsdatetime'
     ];
 
-    public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
+    public function __construct()
     {
-        parent::__construct($db, $validation);
-
+        parent::__construct();
         $this->validationRules['return_type'] = 'if_exist|in_list[' . implode(',',
                 FieldsReturnTypes::get('value')) . ']';
     }
@@ -144,7 +143,7 @@ class SettingsModel extends AvegaCmsModel
      * @param  int  $localeId
      * @return array
      */
-    public function getSettings(string $entity, int $localeId = 0): array
+    public function getSettings(string $entity): array
     {
         $this->builder()->select(
             [
