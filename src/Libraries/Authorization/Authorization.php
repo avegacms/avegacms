@@ -406,8 +406,8 @@ class Authorization
         }
 
         foreach ($tokens as $item) {
-            if (hash_equals($item->refreshToken, $data['token'])) {
-                if ($item->expires > now()) {
+            if (hash_equals($item->refresh_token, $data['token'])) {
+                if ($item->expires < now()) {
                     throw AuthorizationException::forFailUnauthorized('expiresToken');
                 }
 
