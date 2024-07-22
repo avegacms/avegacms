@@ -10,6 +10,7 @@ enum FieldsReturnTypes: string
     case String    = 'STRING';
     case Boolean   = 'BOOLEAN';
     case Array     = 'ARRAY';
+    case Time      = 'TIME';
     case Date      = 'DATE';
     case DateTime  = 'DATETIME';
     case Timestamp = 'TIMESTAMP';
