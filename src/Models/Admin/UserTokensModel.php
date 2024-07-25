@@ -18,6 +18,7 @@ class UserTokensModel extends AvegaCmsModel
     protected $allowedFields    = [
         'id',
         'user_id',
+        'role_id',
         'access_token',
         'refresh_token',
         'expires',
@@ -38,6 +39,7 @@ class UserTokensModel extends AvegaCmsModel
     protected $validationRules      = [
         'id'            => ['rules' => 'if_exist|required|alpha_dash|max_length[128]'],
         'user_id'       => ['rules' => 'if_exist|is_natural_no_zero'],
+        'role_id'       => ['rules' => 'if_exist|is_natural_no_zero'],
         'access_token'  => ['rules' => 'if_exist|required|alpha_numeric_punct|max_length[2048]'],
         'refresh_token' => ['rules' => 'if_exist|required|alpha_numeric_punct|max_length[64]'],
         'expires'       => ['rules' => 'if_exist|is_natural'],
@@ -61,6 +63,7 @@ class UserTokensModel extends AvegaCmsModel
 
     protected array $casts = [
         'user_id'    => 'int',
+        'role_id'    => 'int',
         'expires'    => 'int',
         'created_at' => 'cmsdatetime',
         'updated_at' => 'cmsdatetime'

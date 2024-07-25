@@ -243,6 +243,7 @@ class Authorization
             $newUserSession = [
                 'id'            => $userSession['sessionId'],
                 'user_id'       => $user->id,
+                'role_id'       => $user->roleId,
                 'access_token'  => $userSession['accessToken'],
                 'refresh_token' => $userSession['refreshToken'],
                 'expires'       => $jwt['expired'],

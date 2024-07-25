@@ -127,6 +127,7 @@ class CreateAvegaCmsTables extends Migration
         $this->forge->addField([
             'id'            => ['type' => 'varchar', 'constraint' => 128, 'unique' => true, 'null' => true],
             'user_id'       => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
+            'role_id'       => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true],
             'access_token'  => ['type' => 'varchar', 'constraint' => 2048],
             'refresh_token' => ['type' => 'varchar', 'constraint' => 64, 'unique' => true],
             'expires'       => ['type' => 'int', 'null' => true, 'default' => 0],
@@ -134,6 +135,7 @@ class CreateAvegaCmsTables extends Migration
             'user_agent'    => ['type' => 'varchar', 'constraint' => 512],
             ...Migrator::dateFields(['deleted_at'])
         ]);
+        $this->forge->addForeignKey('role_id', $this->tables['roles'], 'id', onDelete: 'CASCADE');
         $this->forge->addForeignKey('user_id', $this->tables['users'], 'id', onDelete: 'CASCADE');
         $this->createTable($this->tables['user_tokens']);
 
