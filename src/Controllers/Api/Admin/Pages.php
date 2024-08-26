@@ -70,6 +70,9 @@ class Pages extends AvegaCmsAdminAPI
         if (($data = $this->MDM->editPageMetaData($id)) === null) {
             return $this->failNotFound();
         }
+
+        unset($data->meta_type);
+
         return $this->cmsRespond(
             (array) $data,
             [
@@ -87,11 +90,11 @@ class Pages extends AvegaCmsAdminAPI
     public function update(?int $id = null): ResponseInterface
     {
         try {
-            if ($this->MDM->editPageMetaData($id) === null) {
+            if (($data = $this->MDM->editPageMetaData($id)) === null) {
                 return $this->failNotFound();
             }
 
-            if ( ! in_array($this->apiData['meta_type'], [
+            if ( ! in_array($data->meta_type, [
                 MetaDataTypes::Main->name,
                 MetaDataTypes::Page->name,
                 MetaDataTypes::Page404->name
@@ -99,7 +102,8 @@ class Pages extends AvegaCmsAdminAPI
                 throw ContentExceptions::forUnknownType();
             }
 
-            (new ContentLib($this->apiData['meta_type'], $this->moduleId))->updateMetaData($id, $this->apiData);
+            (new ContentLib($data->meta_type, $this->moduleId))->updateMetaData($id, $this->apiData);
+            unset($data);
             return $this->respondNoContent();
         } catch (ReflectionException|ContentExceptions $e) {
             return $this->cmsRespondFail($e->getMessages() ?? $e->getMessage(), $e->getCode());

@@ -86,7 +86,7 @@ class UserRolesModel extends AvegaCmsModel
         'created_at'    => 'cmsdatetime'
     ];
 
-    public function getUsers()
+    public function getUsers(): AvegaCmsModel
     {
         $this->builder()->select(
             [
@@ -113,7 +113,7 @@ class UserRolesModel extends AvegaCmsModel
      * @param  string  $role
      * @return $this
      */
-    public function getUserRoles(int $userId, string $role = ''): Model
+    public function getUserRoles(int $userId, string $role = ''): AvegaCmsModel
     {
         $this->builder()->select(['user_roles.role_id', 'user_roles.user_id', 'r.role', 'r.self_auth'])
             ->join('users AS u', 'u.id = user_roles.user_id')

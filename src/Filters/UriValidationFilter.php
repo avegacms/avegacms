@@ -4,16 +4,13 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Filters;
 
+use AvegaCms\Config\Services;
+use Config\App;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Config\Services;
-use Exception;
-use AvegaCms\Libraries\Authorization\Authorization;
-use AvegaCms\Libraries\Authorization\Exceptions\AuthenticationException;
-use AvegaCms\Utilities\Cms;
 
-class AuthorizationFilter implements FilterInterface
+class UriValidationFilter implements FilterInterface
 {
     /**
      * Do whatever processing this filter needs to do.
@@ -28,18 +25,18 @@ class AuthorizationFilter implements FilterInterface
      * @param  RequestInterface  $request
      * @param  array|null  $arguments
      *
-     * @return mixed
+     * @return RequestInterface|ResponseInterface|string|void
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        try {
-            if (($settings = Cms::settings('core')) === null) {
-                throw new Exception('Auth settings not found');
+        $uri = $request->getUri()->getPath();
+
+        if ( ! preg_match('/^[' . config(App::class)->permittedURIChars . ']+$/i', $uri)) {
+            if ($request->getUri()->getSegment(1) === 'api') {
+                return Services::response()->setStatusCode(404);
             }
-            (new Authorization($settings))->checkUserAccess();
-            unset($settings);
-        } catch (AuthenticationException|Exception $e) {
-            return Services::response()->setStatusCode(401, $e->getMessage());
+
+            return redirect()->to('/page-404');
         }
     }
 
@@ -53,7 +50,7 @@ class AuthorizationFilter implements FilterInterface
      * @param  ResponseInterface  $response
      * @param  array|null  $arguments
      *
-     * @return void
+     * @return ResponseInterface|void
      */
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {

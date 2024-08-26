@@ -48,6 +48,14 @@ class ContentExceptions extends Exception
     /**
      * @return ContentExceptions
      */
+    public static function forForbiddenPageDelete(): ContentExceptions
+    {
+        return new static(lang('Api.errors.content.forbiddenPageDelete'));
+    }
+
+    /**
+     * @return ContentExceptions
+     */
     public static function forUnknownType(): ContentExceptions
     {
         return new static(lang('Api.errors.content.unknownType'));

@@ -54,15 +54,15 @@ trait AvegaCmsApiResponseTrait
 
     /**
      * @param  array|string  $messages
-     * @param  int  $status  HTTP status code
-     * @param  string|null  $code  Custom, API-specific, error code
+     * @param  int  $status
+     * @param  int|string|null  $code
      * @param  string  $customMessage
      * @return ResponseInterface
      */
     protected function cmsRespondFail(
         array|string $messages,
         int $status = 400,
-        ?string $code = null,
+        int|string|null $code = null,
         string $customMessage = ''
     ): ResponseInterface {
         $response = [

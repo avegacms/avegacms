@@ -243,6 +243,7 @@ class Authorization
             $newUserSession = [
                 'id'            => $userSession['sessionId'],
                 'user_id'       => $user->id,
+                'role_id'       => $user->roleId,
                 'access_token'  => $userSession['accessToken'],
                 'refresh_token' => $userSession['refreshToken'],
                 'expires'       => $jwt['expired'],
@@ -406,7 +407,7 @@ class Authorization
         }
 
         foreach ($tokens as $item) {
-            if (hash_equals($item->refreshToken, $data['token'])) {
+            if (hash_equals($item->refresh_token, $data['token'])) {
                 if ($item->expires > now()) {
                     throw AuthorizationException::forFailUnauthorized('expiresToken');
                 }

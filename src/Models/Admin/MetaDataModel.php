@@ -157,7 +157,7 @@ class MetaDataModel extends AvegaCmsModel
         parent::__construct();
 
         $this->validationRules['slug']                    = [
-            'rules'  => 'if_exist|required|unique_db_key[metadata.parent+module_id+item_id+use_url_pattern+slug,id,{id}]',
+            'rules'  => 'if_exist|required|alpha_dash|unique_db_key[metadata.parent+module_id+item_id+use_url_pattern+slug,id,{id}]',
             'errors' => ['unique_db_key' => lang('Validation.uniqueDbKey.notUnique')]
         ];
         $this->validationRules['status']                  = [
@@ -251,6 +251,8 @@ class MetaDataModel extends AvegaCmsModel
      */
     public function editPageMetaData(int $id): object|null
     {
+        $this->afterFind = ['selectPagesSetUrl'];
+
         $this->builder()->select(
             [
                 'metadata.id',
@@ -380,13 +382,23 @@ class MetaDataModel extends AvegaCmsModel
      */
     protected function selectPagesSetUrl(array $data): array
     {
-        foreach ($data['data'] as $item) {
-            if ( ! is_null($item->url)) {
-                $item->url = base_url($item->url);
+        if ($data['singleton '] === true) {
+            if ( ! is_null($data['data']->url)) {
+                $data['data']->url = base_url($data['data']->url);
             }
 
-            if ( ! is_null($item->parent_url)) {
-                $item->parent_url = base_url($item->parent_url);
+            if ( ! is_null($data['data']->parent_url)) {
+                $data['data']->parent_url = base_url($data['data']->parent_url);
+            }
+        } else {
+            foreach ($data['data'] as $item) {
+                if ( ! is_null($item->url)) {
+                    $item->url = base_url($item->url);
+                }
+
+                if ( ! is_null($item->parent_url)) {
+                    $item->parent_url = base_url($item->parent_url);
+                }
             }
         }
 

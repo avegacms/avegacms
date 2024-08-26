@@ -11,9 +11,10 @@ return [
         'save'            => 'Не удалось сохранить',
         'delete'          => 'Не удалось удалить "{0}"',
         'content'         => [
-            'noModuleId'         => 'Не указан ID модуля',
-            'unknownType'        => 'Неизвестный тип контента',
-            'unknownPatchMethod' => 'Неизвестный метод запроса'
+            'noModuleId'          => 'Не указан ID модуля',
+            'unknownType'         => 'Неизвестный тип контента',
+            'unknownPatchMethod'  => 'Неизвестный метод запроса',
+            'forbiddenPageDelete' => 'Данный тип страницы удалять нельзя'
         ]
     ]
 ];

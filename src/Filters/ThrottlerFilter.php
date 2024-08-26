@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace AvegaCms\Filters;
 
-use AvegaCms\Exceptions\AvegaCmsApiException;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
