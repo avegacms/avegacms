@@ -44,7 +44,7 @@ class Cms
                 'item_id' => 0,
                 'title' => $title,
                 'url' => $url ?? '',
-                'meta' => '',
+                'meta' => [],
                 'status' => MetaStatuses::Publish->name,
                 'meta_type' => MetaDataTypes::Page->name,
                 'in_sitemap' => $inSitemap,
