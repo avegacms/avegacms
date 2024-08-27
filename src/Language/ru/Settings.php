@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'label'   => [
-        'env'         => [
+    'label' => [
+        'env' => [
             'timezone'        => 'Часовой пояс',
             'secretKey'       => 'Секретный ключ',
             'defLocale'       => 'Локаль по-умолчанию',
@@ -10,7 +10,7 @@ return [
             'useFrontend'     => 'Использовать Frontend-контроллер',
             'useViewData'     => 'Использовать файлы отображения',
         ],
-        'auth'        => [
+        'auth' => [
             'useCors'              => 'Использовать CORS',
             'allowPreRegistration' => 'Разрешить предрегистрацию пользователя',
             'loginType'            => 'Вариант авторизации',
@@ -34,14 +34,14 @@ return [
             'recoveryCodeTime'     => 'Время действия хеша восстановления (минут)',
             'authSmsMessage'       => 'Текст смс для авторизации',
         ],
-        'seo'         => [
+        'seo' => [
             'useSitemap'        => 'Включить использование sitemap',
             'allowSiteIndexing' => 'Разрешить индексирование сайта',
             'sitemapBatchQty'   => 'Размер пакета для карты сайта',
             'useRobotsTxt'      => 'Включить использование robots.txt',
             'defRobotsTxt'      => 'Содержание robots.txt (по умолчанию)',
         ],
-        'email'       => [
+        'email' => [
             'fromEmail'     => 'Адрес отправителя',
             'fromName'      => 'Имя отправителя',
             'replyEmail'    => '',
@@ -73,11 +73,11 @@ return [
             'uploadConfigThumbMaintainRatio' => 'Сохранять соотношение сторон миниатюры файлового менеджера',
             'uploadConfigThumbMasterDim'     => 'Ось масштабирования миниатюры в файловом менеджере',
             'uploadConfigThumbWidth'         => 'Ширина миниатюры для файлового менеджера',
-            'uploadConfigThumbHeight'        => 'Высота миниатюры для файлового менеджера'
-        ]
+            'uploadConfigThumbHeight'        => 'Высота миниатюры для файлового менеджера',
+        ],
     ],
     'context' => [
-        'env'         => [
+        'env' => [
             'timezone'        => 'Часовой пояс',
             'secretKey'       => '',
             'defLocale'       => '',
@@ -85,7 +85,7 @@ return [
             'useFrontend'     => '',
             'useViewData'     => '',
         ],
-        'auth'        => [
+        'auth' => [
             'useCors'              => 'Технология современных браузеров, которая позволяет предоставить веб-страницам доступ к ресурсам другого домена',
             'allowPreRegistration' => 'Разрешить предрегистрацию пользователя, если его аккаунт не создан',
             'loginType'            => 'Варианты авторизации:: email, sms, email:sms, 2fa:email, 2fa:sms:email',
@@ -109,14 +109,14 @@ return [
             'recoveryCodeTime'     => 'Время действия хеша восстановления (минут)',
             'authSmsMessage'       => 'Код:{0} для входа. Никому не сообщайте его.',
         ],
-        'seo'         => [
+        'seo' => [
             'useSitemap'        => '',
             'allowSiteIndexing' => '',
             'sitemapBatchQty'   => '',
             'useRobotsTxt'      => '',
-            'defRobotsTxt'      => ''
+            'defRobotsTxt'      => '',
         ],
-        'email'       => [
+        'email' => [
             'fromEmail'     => '',
             'fromName'      => '',
             'replyEmail'    => '',
@@ -147,10 +147,10 @@ return [
             'uploadConfigThumbMaintainRatio' => 'Сохранять соотношение сторон миниатюры файлового менеджера',
             'uploadConfigThumbMasterDim'     => 'Ось масштабирования миниатюры в файловом менеджере',
             'uploadConfigThumbWidth'         => 'Ширина миниатюры для файлового менеджера',
-            'uploadConfigThumbHeight'        => 'Высота миниатюры для файлового менеджера'
-        ]
+            'uploadConfigThumbHeight'        => 'Высота миниатюры для файлового менеджера',
+        ],
     ],
-    'errors'  => [
-        'deleteIsDefault' => 'Нельзя удалить эту настройку'
-    ]
+    'errors' => [
+        'deleteIsDefault' => 'Нельзя удалить эту настройку',
+    ],
 ];

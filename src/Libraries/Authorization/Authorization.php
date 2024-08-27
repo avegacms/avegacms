@@ -1,42 +1,39 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Libraries\Authorization;
 
+use AvegaCms\Config\Services;
 use AvegaCms\Enums\UserConditions;
-use AvegaCms\Libraries\Authorization\Exceptions\{AuthorizationException, AuthenticationException};
+use AvegaCms\Libraries\Authorization\Exceptions\AuthenticationException;
+use AvegaCms\Libraries\Authorization\Exceptions\AuthorizationException;
+use AvegaCms\Models\Admin\LoginModel;
+use AvegaCms\Models\Admin\RolesModel;
+use AvegaCms\Models\Admin\SessionsModel;
+use AvegaCms\Models\Admin\UserAuthenticationModel;
+use AvegaCms\Models\Admin\UserRolesModel;
+use AvegaCms\Models\Admin\UserTokensModel;
 use AvegaCms\Utilities\Auth;
-use AvegaCms\Models\Admin\{LoginModel,
-    RolesModel,
-    UserAuthenticationModel,
-    UserRolesModel,
-    UserTokensModel,
-    SessionsModel
-};
 use AvegaCms\Utilities\Cms;
 use CodeIgniter\Session\Session;
 use CodeIgniter\Validation\Validation;
-use AvegaCms\Config\Services;
-use Firebase\JWT\Key;
-use Firebase\JWT\JWT;
 use Exception;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use ReflectionException;
 
 class Authorization
 {
-    protected array           $settings = [];
-    protected LoginModel      $LM;
-    protected RolesModel      $RM;
+    protected array $settings = [];
+    protected LoginModel $LM;
+    protected RolesModel $RM;
     protected UserTokensModel $UTM;
-
     protected UserRolesModel $URM;
-    protected Session        $session;
-
+    protected Session $session;
     protected Validation $validation;
 
     /**
-     * @param  array  $settings
      * @throws AuthorizationException
      */
     public function __construct(array $settings)
@@ -55,9 +52,6 @@ class Authorization
     }
 
     /**
-     * @param  array  $data
-     * @param  string|null  $role
-     * @return array
      * @throws AuthorizationException
      * @throws ReflectionException
      */
@@ -67,13 +61,13 @@ class Authorization
             throw AuthorizationException::forNoData();
         }
 
-        if ( ! in_array($this->settings['auth']['loginType'] ?? '', $this->settings['auth']['loginTypeList'])) {
+        if (! in_array($this->settings['auth']['loginType'] ?? '', $this->settings['auth']['loginTypeList'], true)) {
             throw AuthorizationException::forUnknownAuthType($this->settings['auth']['loginType']);
         }
 
         $loginType = $this->_checkType($data);
 
-        if ( ! $this->validate($this->_validate('auth_by_' . array_keys($loginType)[0]), $data)) {
+        if (! $this->validate($this->_validate('auth_by_' . array_keys($loginType)[0]), $data)) {
             throw new AuthorizationException($this->validation->getErrors());
         }
 
@@ -92,7 +86,7 @@ class Authorization
             'direct'    => 'set_user',
             'user_id'   => $user->id,
             'role'      => $user->role,
-            'condition' => UserConditions::Auth->value
+            'condition' => UserConditions::Auth->value,
         ];
 
         $loginType = key($loginType);
@@ -114,8 +108,8 @@ class Authorization
     }
 
     /**
-     * @param  array  $data
-     * @return array[]
+     * @return list<array>
+     *
      * @throws AuthorizationException|Exception
      */
     public function checkCode(array $data): array
@@ -124,7 +118,7 @@ class Authorization
             throw AuthorizationException::forNoData();
         }
 
-        if ( ! $this->validate($this->_validate('check_code'), $data)) {
+        if (! $this->validate($this->_validate('check_code'), $data)) {
             throw new AuthorizationException($this->validation->getErrors());
         }
 
@@ -133,14 +127,14 @@ class Authorization
         $conditions = [
             'expires >' => 0,
             'secret !=' => '',
-            ...$type
+            ...$type,
         ];
 
         if (($user = $this->LM->getUser($conditions)) === null) {
             throw AuthorizationException::forUnknownUser();
         }
 
-        if ( ! in_array($data['condition'], [UserConditions::CheckPhone->value, UserConditions::CheckEmail->value])) {
+        if (! in_array($data['condition'], [UserConditions::CheckPhone->value, UserConditions::CheckEmail->value], true)) {
             if ($user->expires < now($this->settings['env']['timezone'])) {
                 throw AuthorizationException::forCodeExpired();
             }
@@ -161,30 +155,26 @@ class Authorization
                 'direct'  => 'confirm',
                 'user_id' => $user->id,
                 'email'   => $user->email,
-                'phone'   => $user->phone
+                'phone'   => $user->phone,
             ],
-            UserConditions::Auth->value       => [
+            UserConditions::Auth->value => [
                 'status'  => true,
                 'direct'  => 'set_user',
                 'user_id' => $user->id,
-                'role'    => $user->role
+                'role'    => $user->role,
             ],
-            UserConditions::Recovery->value   => [
+            UserConditions::Recovery->value => [
                 'status'  => true,
                 'direct'  => 'password',
                 'user_id' => $user->id,
-                'hash'    => $hash ?? ''
+                'hash'    => $hash ?? '',
             ],
-            default                           => throw AuthorizationException::forWrongCode()
+            default => throw AuthorizationException::forWrongCode()
         };
     }
 
     /**
-     * @param  int  $userId
-     * @param  string  $userRole
-     * @param  array  $userData
-     * @return array
-     * @throws AuthorizationException|ReflectionException|Exception
+     * @throws AuthorizationException|Exception|ReflectionException
      */
     public function setUser(int $userId, string $userRole = '', array $userData = []): array
     {
@@ -204,7 +194,7 @@ class Authorization
             'userId'   => $user->id,
             'roleId'   => $user->roleId,
             'role'     => $user->role,
-            'status'   => $user->status
+            'status'   => $user->status,
         ];
 
         if ($this->settings['auth']['useSession']) {
@@ -248,10 +238,10 @@ class Authorization
                 'refresh_token' => $userSession['refreshToken'],
                 'expires'       => $jwt['expired'],
                 'user_ip'       => $userIp,
-                'user_agent'    => $userAgent
+                'user_agent'    => $userAgent,
             ];
 
-            if ( ! $this->UTM->insert($newUserSession)) {
+            if (! $this->UTM->insert($newUserSession)) {
                 throw new AuthorizationException($this->UTM->errors());
             }
         } else {
@@ -266,7 +256,7 @@ class Authorization
                 'condition'  => UserConditions::None->value,
                 'last_ip'    => $userIp,
                 'last_agent' => $userAgent,
-                'active_at'  => date('Y-m-d H:i:s', now($user->timezone))
+                'active_at'  => date('Y-m-d H:i:s', now($user->timezone)),
             ]
         );
 
@@ -276,8 +266,6 @@ class Authorization
     }
 
     /**
-     * @param  array  $data
-     * @return array
      * @throws AuthorizationException|Exception
      */
     public function recovery(array $data): array
@@ -286,11 +274,11 @@ class Authorization
             throw AuthorizationException::forFailForbidden();
         }
 
-        if (empty($data) || $this->settings['auth']['recoveryField'] != array_keys($data)[0]) {
+        if (empty($data) || $this->settings['auth']['recoveryField'] !== array_keys($data)[0]) {
             throw AuthorizationException::forNoData();
         }
 
-        if ( ! $this->validate($this->_validate('recovery'), $data)) {
+        if (! $this->validate($this->_validate('recovery'), $data)) {
             throw new AuthorizationException($this->validation->getErrors());
         }
 
@@ -306,7 +294,7 @@ class Authorization
             'user_id'   => $user->id,
             'condition' => UserConditions::Recovery->value,
             'code'      => $code,
-            'hash'      => $this->_hashCode($code)
+            'hash'      => $this->_hashCode($code),
         ];
 
         match ($this->settings['auth']['recoveryField']) {
@@ -320,9 +308,7 @@ class Authorization
     }
 
     /**
-     * @param  array  $data
-     * @return array
-     * @throws ReflectionException|Exception
+     * @throws Exception|ReflectionException
      */
     public function setPassword(array $data): array
     {
@@ -334,14 +320,14 @@ class Authorization
             throw AuthorizationException::forNoData();
         }
 
-        if ( ! $this->validate($this->_validate('password'), $data)) {
+        if (! $this->validate($this->_validate('password'), $data)) {
             throw new AuthorizationException($this->validation->getErrors());
         }
 
         $conditions = [
             'expires >' => 0,
             'secret'    => $data['hash'],
-            'condition' => UserConditions::Password->value
+            'condition' => UserConditions::Password->value,
         ];
 
         if (($user = $this->LM->getUser($conditions)) === null) {
@@ -363,7 +349,7 @@ class Authorization
                 'condition'  => UserConditions::None->value,
                 'last_ip'    => $request->getIPAddress(),
                 'last_agent' => $request->getUserAgent()->getAgentString(),
-                'active_at'  => date('Y-m-d H:i:s', now($user->timezone))
+                'active_at'  => date('Y-m-d H:i:s', now($user->timezone)),
             ]
         );
 
@@ -379,15 +365,13 @@ class Authorization
         return [
             'status'  => true,
             'direct'  => 'set_user',
-            'user_id' => $user->id
+            'user_id' => $user->id,
         ];
     }
 
     /**
-     * @param  array  $data
-     * @return array
-     * @throws ReflectionException
      * @throws Exception
+     * @throws ReflectionException
      */
     public function refresh(array $data): array
     {
@@ -398,7 +382,7 @@ class Authorization
             throw AuthorizationException::forNoData();
         }
 
-        if ( ! $this->validate($this->_validate('refresh_token'), $data)) {
+        if (! $this->validate($this->_validate('refresh_token'), $data)) {
             throw new AuthorizationException($this->validation->getErrors());
         }
 
@@ -424,11 +408,11 @@ class Authorization
                         'access_token' => $jwt['token'],
                         'expires'      => $jwt['expired'],
                         'user_ip'      => $request->getIPAddress(),
-                        'user_agent'   => $request->getUserAgent()->getAgentString()
+                        'user_agent'   => $request->getUserAgent()->getAgentString(),
                     ]
                 );
 
-                if ( ! $updated) {
+                if (! $updated) {
                     throw new AuthorizationException($this->UTM->errors());
                 }
 
@@ -440,8 +424,6 @@ class Authorization
     }
 
     /**
-     * @param  string  $slug
-     * @return void
      * @throws AuthorizationException
      * @throws ReflectionException
      */
@@ -457,16 +439,16 @@ class Authorization
         if ($this->settings['auth']['useSession']) {
             $session = session('avegacms');
 
-            if (in_array($slug, ['admin', 'client'])) {
+            if (in_array($slug, ['admin', 'client'], true)) {
                 if (array_key_exists($slug, $session)) {
-                    $userId         ??= $session[$slug]['userId'];
+                    $userId ??= $session[$slug]['userId'];
                     $session[$slug] = null;
                 }
             }
 
-            if ( ! is_null($session['modules'])) {
+            if (null !== $session['modules']) {
                 if (array_key_exists($slug, $session['modules'])) {
-                    $userId                    ??= $session['modules'][$slug]['userId'];
+                    $userId ??= $session['modules'][$slug]['userId'];
                     $session['modules'][$slug] = null;
                 }
             }
@@ -480,8 +462,6 @@ class Authorization
     }
 
     /**
-     * @param  bool  $isPublicAccess
-     * @return void
      * @throws Exception
      */
     public function checkUserAccess(bool $isPublicAccess = false): void
@@ -491,9 +471,9 @@ class Authorization
         $UTM      = model(UserTokensModel::class);
         $UAM      = model(UserAuthenticationModel::class);
 
-        if ($this->settings['auth']['useWhiteIpList'] &&
-            ! empty($this->settings['auth']['whiteIpList']) &&
-            in_array($request->getIPAddress(), $this->settings['auth']['whiteIpList'])
+        if ($this->settings['auth']['useWhiteIpList']
+            && ! empty($this->settings['auth']['whiteIpList'])
+            && in_array($request->getIPAddress(), $this->settings['auth']['whiteIpList'], true)
         ) {
             throw AuthenticationException::forAccessDenied();
         }
@@ -509,12 +489,12 @@ class Authorization
             'Bearer' => (strtolower($authHeader[1]) === 'session' && $this->settings['auth']['useSession']) ?
                 ['type' => 'session'] :
                 (
-                $this->settings['auth']['useJwt'] ?
+                    $this->settings['auth']['useJwt'] ?
                     [
-                        'type' => 'jwt', 'token' => $authHeader[1]
+                        'type' => 'jwt', 'token' => $authHeader[1],
                     ] : false
                 ),
-            default  => false
+            default => false
         };
 
         if ($authType === false) {
@@ -523,7 +503,6 @@ class Authorization
 
         switch ($authType['type']) {
             case 'session':
-
                 $session = session();
 
                 if ($session->has('avegacms') === false) {
@@ -537,8 +516,8 @@ class Authorization
                 $userData = (object) $session->get('avegacms.admin');
 
                 break;
-            case 'jwt':
 
+            case 'jwt':
                 $existToken = false;
 
                 try {
@@ -573,6 +552,7 @@ class Authorization
 
                 $userData = $payload->data;
                 break;
+
             case 'token':
                 // TODO реализовать в дальнейшем
                 throw AuthenticationException::forTokenNotFound();
@@ -595,8 +575,8 @@ class Authorization
             }
 
             $action = (bool) match ($request->getMethod()) {
-                'GET'    => ($permission['read'] ?? 0),
-                'POST'   => ($permission['create'] ?? 0),
+                'GET'  => ($permission['read'] ?? 0),
+                'POST' => ($permission['create'] ?? 0),
                 'PUT',
                 'PATCH'  => ($permission['update'] ?? 0),
                 'DELETE' => ($permission['delete'] ?? 0),
@@ -610,7 +590,7 @@ class Authorization
             Cms::setUser('permission', Cms::arrayToObject([
                 'self'      => (bool) ($permission['self'] ?? 0),
                 'moderated' => (bool) ($permission['moderated'] ?? 0),
-                'settings'  => (bool) ($permission['settings'] ?? 0)
+                'settings'  => (bool) ($permission['settings'] ?? 0),
             ]));
         }
 
@@ -618,10 +598,7 @@ class Authorization
     }
 
     /**
-     * @param  int  $userId
-     * @param  string  $condition
-     * @return int
-     * @throws ReflectionException|Exception
+     * @throws Exception|ReflectionException
      */
     public function setSecretCode(int $userId, string $condition): int
     {
@@ -632,51 +609,41 @@ class Authorization
                 'id'        => $userId,
                 'secret'    => $this->_hashCode($code),
                 'expires'   => $this->_setExpiresTime($condition),
-                'condition' => UserConditions::from($condition)->value
+                'condition' => UserConditions::from($condition)->value,
             ]
         );
 
         return $code;
     }
 
-    /**
-     * @param  int  $userId
-     * @return bool
-     */
     public function destroyUserSessions(int $userId): bool
     {
         if ($this->settings['auth']['useJwt']) {
-            if ( ! $this->UTM->where(['user_id' => $userId])->delete()) {
+            if (! $this->UTM->where(['user_id' => $userId])->delete()) {
                 throw AuthenticationException::forDestroyUserSessionError();
             }
+
             return true;
         }
         if ($this->settings['auth']['useSession']) {
-            if ( ! model(SessionsModel::class)->where(['user_id' => $userId])->delete()) {
+            if (! model(SessionsModel::class)->where(['user_id' => $userId])->delete()) {
                 throw AuthenticationException::forDestroyUserSessionError();
             }
+
             return true;
         }
+
         return false;
     }
 
-    /**
-     * @param  array  $rules
-     * @param  array  $data
-     * @return bool
-     */
     protected function validate(array $rules, array $data): bool
     {
         $this->validation = Services::validation();
+
         return $this->validation->setRules($rules)->run($data);
     }
 
     /**
-     * @param  array  $map
-     * @param  array  $segments
-     * @param  int  $index
-     * @param  int  $parent
-     * @return mixed
      * @throws AuthenticationException
      */
     private function _findPermission(array $map, array $segments, int $index = 0, int $parent = 0): mixed
@@ -691,10 +658,15 @@ class Authorization
                     throw AuthenticationException::forForbiddenAccess();
                 }
 
-                if (isset($actions['list']) && isset($segments[$index + 1])) {
-                    return $this->_findPermission($actions['list'], $segments, $index + 1,
-                        (int) $actions['module_id']) ?? $actions;
+                if (isset($actions['list'], $segments[$index + 1])) {
+                    return $this->_findPermission(
+                        $actions['list'],
+                        $segments,
+                        $index + 1,
+                        (int) $actions['module_id']
+                    ) ?? $actions;
                 }
+
                 return $actions;
             }
         }
@@ -703,19 +675,20 @@ class Authorization
     }
 
     /**
-     * @return mixed
      * @throws AuthorizationException
      */
     private function _getJwtPayload(): mixed
     {
         if (empty($authHeader = explode(' ', Services::request()->getServer('HTTP_AUTHORIZATION') ?? '')) || count(
-                $authHeader
-            ) !== 2) {
+            $authHeader
+        ) !== 2) {
             throw AuthorizationException::forFailUnauthorized();
         }
 
-        if ( ! $this->settings['auth']['useJwt'] || $authHeader[0] !== 'Bearer' || count($token = explode('.',
-                $authHeader[1])) !== 3) {
+        if (! $this->settings['auth']['useJwt'] || $authHeader[0] !== 'Bearer' || count($token = explode(
+            '.',
+            $authHeader[1]
+        )) !== 3) {
             throw AuthorizationException::forFailUnauthorized();
         }
 
@@ -727,7 +700,6 @@ class Authorization
     }
 
     /**
-     * @return int
      * @throws Exception
      */
     private function _getCode(): int
@@ -738,35 +710,25 @@ class Authorization
         );
     }
 
-    /**
-     * @param  int  $code
-     * @return string
-     */
     private function _hashCode(int $code): string
     {
         return sha1($code . $this->settings['env']['secretKey']);
     }
 
     /**
-     * @param  string  $condition
-     * @return int
      * @throws Exception
      */
     private function _setExpiresTime(string $condition): int
     {
         return match (strtolower($condition)) {
-                'auth',
-                'check_phone',
-                'check_email' => $this->settings['auth']['verifyCodeTime'],
-                'recovery',
-                'password'    => $this->settings['auth']['recoveryCodeTime'],
-            } * (now($this->settings['env']['timezone']) * MINUTE);
+            'auth',
+            'check_phone',
+            'check_email' => $this->settings['auth']['verifyCodeTime'],
+            'recovery',
+            'password' => $this->settings['auth']['recoveryCodeTime'],
+        } * (now($this->settings['env']['timezone']) * MINUTE);
     }
 
-    /**
-     * @param  array  $userData
-     * @return array
-     */
     public function _signatureTokenJWT(array $userData): array
     {
         $issuedAtTime    = time();
@@ -782,17 +744,15 @@ class Authorization
                     'nbf'  => $issuedAtTime,
                     'iat'  => $issuedAtTime, // Время выпуска JWT
                     'exp'  => $tokenExpiration, // Время действия JWT-токена
-                    'data' => $userData
+                    'data' => $userData,
                 ],
                 $this->settings['auth']['jwtSecretKey'],
                 $this->settings['auth']['jwtAlg']
-            )
+            ),
         ];
     }
 
     /**
-     * @param  array  $data
-     * @return array
      * @throws AuthorizationException
      */
     private function _checkType(array $data): array
@@ -809,8 +769,8 @@ class Authorization
     }
 
     /**
-     * @param  string  $type
-     * @return array[]
+     * @return list<array>
+     *
      * @throws AuthorizationException
      */
     private function _validate(string $type): array
@@ -823,100 +783,100 @@ class Authorization
 
         return match ($type) {
             'auth_by_login' => [
-                'login'    => [
+                'login' => [
                     'label'  => lang('Authorization.fields.login'),
                     'rules'  => $login . '|is_not_unique[users.login]',
                     'errors' => [
-                        'is_not_unique' => lang('Authorization.errors.isNotUnique')
-                    ]
+                        'is_not_unique' => lang('Authorization.errors.isNotUnique'),
+                    ],
                 ],
                 'password' => [
                     'label' => lang('Authorization.fields.password'),
-                    'rules' => $password
-                ]
+                    'rules' => $password,
+                ],
             ],
             'auth_by_email' => [
-                'email'    => [
+                'email' => [
                     'label'  => lang('Authorization.fields.email'),
                     'rules'  => 'required|' . $email . '|is_not_unique[users.email]',
                     'errors' => [
-                        'is_not_unique' => lang('Authorization.errors.isNotUnique')
-                    ]
+                        'is_not_unique' => lang('Authorization.errors.isNotUnique'),
+                    ],
                 ],
                 'password' => [
                     'label' => lang('Authorization.fields.password'),
-                    'rules' => $password
-                ]
+                    'rules' => $password,
+                ],
             ],
             'auth_by_phone' => [
                 'phone' => [
                     'label'  => lang('Authorization.fields.phone'),
                     'rules'  => 'required|' . $phone . '|is_not_unique[users.phone]',
                     'errors' => [
-                        'is_not_unique' => lang('Authorization.errors.isNotUnique')
-                    ]
-                ]
+                        'is_not_unique' => lang('Authorization.errors.isNotUnique'),
+                    ],
+                ],
             ],
-            'check_code'    => [
+            'check_code' => [
                 'condition' => [
                     'label' => lang('Authorization.fields.condition'),
                     'rules' => 'required|in_list[' . implode(',', UserConditions::get('value')) . ']',
                 ],
-                'login'     => [
+                'login' => [
                     'label'  => lang('Authorization.fields.login'),
                     'rules'  => 'if_exist|required_without[phone,email]|max_length[36]|is_not_unique[users.login]',
                     'errors' => [
-                        'is_not_unique' => lang('Authorization.errors.isNotUnique')
-                    ]
+                        'is_not_unique' => lang('Authorization.errors.isNotUnique'),
+                    ],
                 ],
-                'email'     => [
+                'email' => [
                     'label'  => lang('Authorization.fields.email'),
                     'rules'  => 'if_exist|required_without[phone,login]|' . $email . '|is_not_unique[users.email]',
                     'errors' => [
-                        'is_not_unique' => lang('Authorization.errors.isNotUnique')
-                    ]
+                        'is_not_unique' => lang('Authorization.errors.isNotUnique'),
+                    ],
                 ],
-                'phone'     => [
+                'phone' => [
                     'label'  => lang('Authorization.fields.phone'),
                     'rules'  => 'if_exist|required_without[email,login]|' . $phone . '|is_not_unique[users.phone]',
                     'errors' => [
-                        'is_not_unique' => lang('Authorization.errors.isNotUnique')
-                    ]
+                        'is_not_unique' => lang('Authorization.errors.isNotUnique'),
+                    ],
                 ],
-                'code'      => [
+                'code' => [
                     'label' => lang('Authorization.fields.code'),
-                    'rules' => 'required|numeric|exact_length[' . $this->settings['auth']['verifyCodeLength'] . ']'
-                ]
+                    'rules' => 'required|numeric|exact_length[' . $this->settings['auth']['verifyCodeLength'] . ']',
+                ],
             ],
-            'recovery'      => [
+            'recovery' => [
                 'email' => [
                     'label'  => lang('Authorization.fields.email'),
                     'rules'  => 'if_exist|required_without[login]|' . $email . '|is_not_unique[users.email]',
                     'errors' => [
-                        'is_not_unique' => lang('Authorization.errors.isNotUnique')
-                    ]
+                        'is_not_unique' => lang('Authorization.errors.isNotUnique'),
+                    ],
                 ],
                 'login' => [
                     'label'  => lang('Authorization.fields.login'),
                     'rules'  => 'if_exist|required_without[email]|max_length[36]|is_not_unique[users.login]',
                     'errors' => [
-                        'is_not_unique' => lang('Authorization.errors.isNotUnique')
-                    ]
-                ]
+                        'is_not_unique' => lang('Authorization.errors.isNotUnique'),
+                    ],
+                ],
             ],
-            'password'      => [
+            'password' => [
                 'password' => [
                     'label' => lang('Authorization.fields.password'),
-                    'rules' => $password
+                    'rules' => $password,
                 ],
                 'passconf' => [
                     'label' => lang('Authorization.fields.passconf'),
-                    'rules' => 'required|matches[password]'
+                    'rules' => 'required|matches[password]',
                 ],
-                'hash'     => [
+                'hash' => [
                     'label' => lang('Authorization.fields.hash'),
-                    'rules' => 'required|max_length[255]|alpha_numeric'
-                ]
+                    'rules' => 'required|max_length[255]|alpha_numeric',
+                ],
             ],
             'refresh_token' => [
                 'token' => [
@@ -925,10 +885,10 @@ class Authorization
                     'errors' => [
                         'max_length'    => lang('Authorization.errors.wrongToken'),
                         'alpha_numeric' => lang('Authorization.errors.wrongToken'),
-                    ]
-                ]
+                    ],
+                ],
             ],
-            default         => throw AuthorizationException::forRulesNotFound()
+            default => throw AuthorizationException::forRulesNotFound()
         };
     }
 }

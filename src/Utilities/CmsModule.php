@@ -1,21 +1,24 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Utilities;
 
 use AvegaCms\Config\AvegaCms;
-use AvegaCms\Enums\{MetaDataTypes, MetaStatuses};
-use AvegaCms\Models\Admin\{MetaDataModel, ContentModel, ModulesModel, PermissionsModel, RolesModel};
+use AvegaCms\Enums\MetaDataTypes;
+use AvegaCms\Enums\MetaStatuses;
+use AvegaCms\Models\Admin\ContentModel;
+use AvegaCms\Models\Admin\MetaDataModel;
+use AvegaCms\Models\Admin\ModulesModel;
+use AvegaCms\Models\Admin\PermissionsModel;
+use AvegaCms\Models\Admin\RolesModel;
+use Exception;
 use ReflectionException;
 use RuntimeException;
-use Exception;
 
 class CmsModule
 {
     /**
-     * @param  array  $moduleData
-     * @return void
      * @throws ReflectionException|RuntimeException
      */
     public static function install(array $moduleData): void
@@ -29,36 +32,36 @@ class CmsModule
         $name = ucwords($moduleData['slug']);
         $slug = strtolower($moduleData['slug']);
 
-        $moduleData['subModules'] = $moduleData['subModules'] ?? [];
+        $moduleData['subModules'] ??= [];
 
         $module = [
-            'parent'        => $moduleData['parent'] ?? 0,
-            'is_core'       => false,
-            'is_plugin'     => false,
-            'is_system'     => false,
-            'key'           => $moduleData['key'] ?? $slug,
-            'slug'          => $slug,
-            'class_name'    => $moduleData['className'] ?? '',
-            'name'          => $moduleData['name'] ?? $name . '.module.title.main',
-            'version'       => $version,
-            'description'   => $moduleData['description'] ?? $name . '.module.title.main',
-            'extra'         => [],
-            'url_pattern'   => isset($moduleData['urlPatterns']) ?
+            'parent'      => $moduleData['parent'] ?? 0,
+            'is_core'     => false,
+            'is_plugin'   => false,
+            'is_system'   => false,
+            'key'         => $moduleData['key'] ?? $slug,
+            'slug'        => $slug,
+            'class_name'  => $moduleData['className'] ?? '',
+            'name'        => $moduleData['name'] ?? $name . '.module.title.main',
+            'version'     => $version,
+            'description' => $moduleData['description'] ?? $name . '.module.title.main',
+            'extra'       => [],
+            'url_pattern' => isset($moduleData['urlPatterns']) ?
                 (is_array($moduleData['urlPatterns']) ?
                     ($moduleData['urlPatterns'][$slug] ?? '') :
                     $moduleData['urlPatterns']) :
                 $slug,
-            'in_sitemap'    => boolval($moduleData['inSitemap'] ?? 0),
+            'in_sitemap'    => (bool) ($moduleData['inSitemap'] ?? 0),
             'active'        => true,
             'created_by_id' => 1,
-            'updated_by_id' => 0
+            'updated_by_id' => 0,
         ];
 
         if (($parentId = $MM->insert($module)) === false) {
             d($MM->errors());
         }
 
-        if ( ! empty($moduleData['subModules'] ?? [])) {
+        if (! empty($moduleData['subModules'] ?? [])) {
             foreach ($moduleData['subModules'] as $group) {
                 $subName    = self::prepName($group);
                 $subModules = [
@@ -74,10 +77,10 @@ class CmsModule
                     'description'   => $name . '.module.title.' . $subName,
                     'extra'         => [],
                     'url_pattern'   => $moduleData['urlPatterns'][$group] ?? '',
-                    'in_sitemap'    => boolval($moduleData['inSitemap'] ?? 0),
+                    'in_sitemap'    => (bool) ($moduleData['inSitemap'] ?? 0),
                     'active'        => true,
                     'created_by_id' => 1,
-                    'updated_by_id' => 0
+                    'updated_by_id' => 0,
                 ];
                 if ($MM->insert($subModules) === false) {
                     d($MM->errors());
@@ -111,7 +114,7 @@ class CmsModule
                     'settings'      => true,
                     'extra'         => [],
                     'created_by_id' => 1,
-                    'updated_by_id' => 0
+                    'updated_by_id' => 0,
                 ];
 
                 if ($PM->insert($permissions) === false) {
@@ -123,20 +126,12 @@ class CmsModule
         cache()->delete('ModulesMetaData');
     }
 
-    /**
-     * @param  string  $name
-     * @return string
-     */
     public static function prepName(string $name): string
     {
         return lcfirst(str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $name))));
     }
 
-    /**
-     * @param  string  $key
-     * @return array|null
-     */
-    public static function meta(string $key): array|null
+    public static function meta(string $key): ?array
     {
         if (($meta = model(ModulesModel::class)->getModulesMeta()[$key] ?? null) === null) {
             log_message('error', "Module metadata not found :: key {$key}");
@@ -145,46 +140,26 @@ class CmsModule
         return $meta;
     }
 
-    /**
-     * @param  int  $moduleId
-     * @param  string  $slug
-     * @return object|null
-     */
-    public static function pageMeta(int $moduleId, string $slug): object|null
+    public static function pageMeta(int $moduleId, string $slug): ?object
     {
         return (new MetaDataModel())->pageModuleMeta($moduleId, $slug);
     }
 
-    /**
-     * @param  string  $key
-     * @return array
-     */
     public static function parseKey(string $key): array
     {
         if (count($parts = explode('.', $key)) === 0) {
             throw new RuntimeException('$key cannot be empty');
         }
 
-        $parts[1] = $parts[1] ?? null;
-        $parts[2] = $parts[2] ?? null;
-        $parts[3] = $parts[3] ?? null;
+        $parts[1] ??= null;
+        $parts[2] ??= null;
+        $parts[3] ??= null;
 
         return $parts;
     }
 
-
     /**
-     * @param  string  $key
-     * @param  string|null  $title
-     * @param  string|null  $url
-     * @param  int|null  $parent
-     * @param  string|null  $slug
-     * @param  array|null  $meta
-     * @param  array|null  $meta_sitemap
-     * @param  bool  $in_sitemap
-     * @param  bool  $use_url_pattern
-     * @return mixed
-     * @throws ReflectionException|Exception
+     * @throws Exception|ReflectionException
      */
     public static function createModulePage(
         string $key,
@@ -202,7 +177,7 @@ class CmsModule
         $metaData = self::meta($key);
         $MDM      = new MetaDataModel();
         $page     = [
-            'parent'          => $parent ?? (($metaData['parent'] != 0) ? $metaData['parent'] : 1),
+            'parent'          => $parent ?? (($metaData['parent'] !== 0) ? $metaData['parent'] : 1),
             'locale_id'       => 1, // TODO сделать настраиваемой
             'module_id'       => $metaData['id'] ?? $parent,
             'slug'            => $slug ?? $metaData['slug'],
@@ -214,10 +189,10 @@ class CmsModule
             'meta_sitemap'    => is_array($meta_sitemap) ? $meta_sitemap : [],
             'status'          => MetaStatuses::Publish->name,
             'meta_type'       => MetaDataTypes::Module->name,
-            'in_sitemap'      => boolval($in_sitemap ?? ($metaData['inSitemap'] ?? 0)),
+            'in_sitemap'      => (bool) ($in_sitemap ?? ($metaData['inSitemap'] ?? 0)),
             'use_url_pattern' => $use_url_pattern,
             'publish_at'      => date('Y-m-d H:i:s', now()),
-            'created_by_id'   => 1
+            'created_by_id'   => 1,
         ];
 
         if ($metaId = $MDM->insert($page)) {

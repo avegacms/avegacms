@@ -1,8 +1,8 @@
 <?php
 
-use CodeIgniter\HTTP\Header;
 use AvegaCms\Config\Services;
 use CodeIgniter\CodeIgniter;
+use CodeIgniter\HTTP\Header;
 
 $errorId = uniqid('error', true);
 ?>
@@ -32,8 +32,11 @@ $errorId = uniqid('error', true);
         <h1><?= esc($title), esc($exception->getCode() ? ' #' . $exception->getCode() : '') ?></h1>
         <p>
             <?= nl2br(esc($exception->getMessage())) ?>
-            <a href="https://www.duckduckgo.com/?q=<?= urlencode($title . ' ' . preg_replace('#\'.*\'|".*"#Us', '',
-                    $exception->getMessage())) ?>" rel="noreferrer" target="_blank">search &rarr;</a>
+            <a href="https://www.duckduckgo.com/?q=<?= urlencode($title . ' ' . preg_replace(
+                '#\'.*\'|".*"#Us',
+                '',
+                $exception->getMessage()
+            )) ?>" rel="noreferrer" target="_blank">search &rarr;</a>
         </p>
     </div>
 </div>
@@ -51,25 +54,28 @@ $errorId = uniqid('error', true);
 
 <div class="container">
     <?php
-    $last = $exception;
+                $last = $exception;
 
-    while ($prevException = $last->getPrevious()) {
-        $last = $prevException;
-        ?>
+while ($prevException = $last->getPrevious()) {
+    $last = $prevException;
+    ?>
 
         <pre>
     Caused by:
     <?= esc($prevException::class), esc($prevException->getCode() ? ' #' . $prevException->getCode() : '') ?>
 
             <?= nl2br(esc($prevException->getMessage())) ?>
-    <a href="https://www.duckduckgo.com/?q=<?= urlencode($prevException::class . ' ' . preg_replace('#\'.*\'|".*"#Us',
-            '', $prevException->getMessage())) ?>" rel="noreferrer" target="_blank">search &rarr;</a>
+    <a href="https://www.duckduckgo.com/?q=<?= urlencode($prevException::class . ' ' . preg_replace(
+        '#\'.*\'|".*"#Us',
+        '',
+        $prevException->getMessage()
+    )) ?>" rel="noreferrer" target="_blank">search &rarr;</a>
     <?= esc(clean_path($prevException->getFile()) . ':' . $prevException->getLine()) ?>
     </pre>
 
         <?php
-    }
-    ?>
+}
+?>
 </div>
 
 <?php if (defined('SHOW_DEBUG_BACKTRACE') && SHOW_DEBUG_BACKTRACE) : ?>
@@ -96,31 +102,36 @@ $errorId = uniqid('error', true);
                             <p>
                                 <!-- Trace info -->
                                 <?php if (isset($row['file']) && is_file($row['file'])) : ?><?php
-                                    if (isset($row['function']) && in_array($row['function'],
-                                            ['include', 'include_once', 'require', 'require_once'], true)) {
+                                    if (isset($row['function']) && in_array(
+                                        $row['function'],
+                                        ['include', 'include_once', 'require', 'require_once'],
+                                        true
+                                    )) {
                                         echo esc($row['function'] . ' ' . clean_path($row['file']));
                                     } else {
                                         echo esc(clean_path($row['file']) . ' : ' . $row['line']);
                                     }
-                                    ?><?php else: ?>
+                        ?><?php else: ?>
                                     {PHP internal code}
                                 <?php endif; ?>
 
                                 <!-- Class/Method -->
                                 <?php if (isset($row['class'])) : ?>
                                 &nbsp;&nbsp;&mdash;&nbsp;&nbsp;<?= esc($row['class'] . $row['type'] . $row['function']) ?>
-                                <?php if ( ! empty($row['args'])) : ?>
+                                <?php if (! empty($row['args'])) : ?>
                                 <?php $argsId = $errorId . 'args' . $index ?>
                                 ( <a href="#" onclick="return toggle('<?= esc($argsId, 'attr') ?>');">arguments</a> )
                             <div class="args" id="<?= esc($argsId, 'attr') ?>">
                                 <table cellspacing="0">
 
                                     <?php
-                                    $params = null;
+                        $params = null;
                                     // Reflection by name is not available for closure function
-                                    if ( ! str_ends_with($row['function'], '}')) {
-                                        $mirror = isset($row['class']) ? new ReflectionMethod($row['class'],
-                                            $row['function']) : new ReflectionFunction($row['function']);
+                                    if (! str_ends_with($row['function'], '}')) {
+                                        $mirror = isset($row['class']) ? new ReflectionMethod(
+                                            $row['class'],
+                                            $row['function']
+                                        ) : new ReflectionFunction($row['function']);
                                         $params = $mirror->getParameters();
                                     }
 
@@ -142,7 +153,7 @@ $errorId = uniqid('error', true);
                             <?php endif; ?>
                             <?php endif; ?>
 
-                            <?php if ( ! isset($row['class']) && isset($row['function'])) : ?>
+                            <?php if (! isset($row['class']) && isset($row['function'])) : ?>
                                 &nbsp;&nbsp;&mdash;&nbsp;&nbsp;    <?= esc($row['function']) ?>()
                             <?php endif; ?>
                             </p>
@@ -195,7 +206,7 @@ $errorId = uniqid('error', true);
 
                 <!-- Constants -->
                 <?php $constants = get_defined_constants(true); ?>
-                <?php if ( ! empty($constants['user'])) : ?>
+                <?php if (! empty($constants['user'])) : ?>
                     <h3>Constants</h3>
 
                     <table>
@@ -304,7 +315,7 @@ $errorId = uniqid('error', true);
                 <?php endif; ?>
 
                 <?php $headers = $request->headers(); ?>
-                <?php if ( ! empty($headers)) : ?>
+                <?php if (! empty($headers)) : ?>
 
                     <h3>Headers</h3>
 
@@ -328,7 +339,7 @@ $errorId = uniqid('error', true);
                                             echo ' (' . $i + 1 . ') ' . esc($header->getValueLine(), 'html');
                                         }
                                     }
-                                    ?>
+                            ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -341,8 +352,8 @@ $errorId = uniqid('error', true);
             <!-- Response -->
             <?php
             $response = Services::response();
-            $response->setStatusCode(http_response_code());
-            ?>
+$response->setStatusCode(http_response_code());
+?>
             <div class="content" id="response">
                 <table>
                     <tr>
@@ -352,7 +363,7 @@ $errorId = uniqid('error', true);
                 </table>
 
                 <?php $headers = $response->headers(); ?>
-                <?php if ( ! empty($headers)) : ?>
+                <?php if (! empty($headers)) : ?>
                     <h3>Headers</h3>
 
                     <table>
@@ -368,14 +379,14 @@ $errorId = uniqid('error', true);
                                 <td><?= esc($name, 'html') ?></td>
                                 <td>
                                     <?php
-                                    if ($value instanceof Header) {
-                                        echo esc($response->getHeaderLine($name), 'html');
-                                    } else {
-                                        foreach ($value as $i => $header) {
-                                            echo ' (' . $i + 1 . ') ' . esc($header->getValueLine(), 'html');
-                                        }
-                                    }
-                                    ?>
+                        if ($value instanceof Header) {
+                            echo esc($response->getHeaderLine($name), 'html');
+                        } else {
+                            foreach ($value as $i => $header) {
+                                echo ' (' . $i + 1 . ') ' . esc($header->getValueLine(), 'html');
+                            }
+                        }
+                            ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Models\Admin;
 
@@ -33,7 +33,7 @@ class ModulesModel extends AvegaCmsModel
         'created_by_id',
         'updated_by_id',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     // Dates
@@ -44,7 +44,7 @@ class ModulesModel extends AvegaCmsModel
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [
+    protected $validationRules = [
         'id'            => ['rules' => 'if_exist|is_natural_no_zero'],
         'is_core'       => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'parent'        => ['rules' => 'if_exist|is_natural'],
@@ -61,7 +61,7 @@ class ModulesModel extends AvegaCmsModel
         'in_sitemap'    => ['rules' => 'if_exist|is_natural|in_list[0,1,2]'],
         'active'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'created_by_id' => ['rules' => 'if_exist|is_natural'],
-        'updated_by_id' => ['rules' => 'if_exist|is_natural']
+        'updated_by_id' => ['rules' => 'if_exist|is_natural'],
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
@@ -77,8 +77,7 @@ class ModulesModel extends AvegaCmsModel
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = ['clearCache'];
-
-    protected array $casts = [
+    protected array $casts    = [
         'id'            => 'int',
         'meta_id'       => '?int',
         'parent'        => 'int',
@@ -92,13 +91,9 @@ class ModulesModel extends AvegaCmsModel
         'updated_by_id' => 'int',
         'created_at'    => 'cmsdatetime',
         'updated_at'    => 'cmsdatetime',
-        'num'           => 'int'
+        'num'           => 'int',
     ];
 
-    /**
-     * @param  int  $parent
-     * @return array
-     */
     public function getModules(int $parent = 0): array
     {
         $this->builder()->select([
@@ -115,16 +110,12 @@ class ModulesModel extends AvegaCmsModel
             'modules.extra',
             'modules.in_sitemap',
             'modules.active',
-            '(SELECT COUNT(m.id) FROM modules AS m WHERE m.parent = modules.id) AS num'
+            '(SELECT COUNT(m.id) FROM modules AS m WHERE m.parent = modules.id) AS num',
         ])->where(['modules.parent' => $parent]);
 
         return $this->findAll();
     }
 
-    /**
-     * @param  int  $id
-     * @return array|object|null
-     */
     public function forEdit(int $id): array|object|null
     {
         $this->_getSelect()->builder();
@@ -133,7 +124,6 @@ class ModulesModel extends AvegaCmsModel
     }
 
     /**
-     * @param  int  $id
      * @return $this
      */
     public function parentsId(int $id = 0): ModulesModel
@@ -143,9 +133,6 @@ class ModulesModel extends AvegaCmsModel
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getModulesList(): array
     {
         $this->builder()->select(['id', 'name'])
@@ -156,9 +143,6 @@ class ModulesModel extends AvegaCmsModel
         return array_column($this->findAll(), 'name', 'id');
     }
 
-    /**
-     * @return array
-     */
     public function getModulesMeta(): array
     {
         $modules = cache()->remember('ModulesMetaData', DAY * 30, function () {
@@ -173,10 +157,10 @@ class ModulesModel extends AvegaCmsModel
                     'modules.url_pattern',
                     'modules.in_sitemap',
                     'modules.active',
-                    'metadata.id AS meta_id'
+                    'metadata.id AS meta_id',
                 ]
             )->join('metadata', 'metadata.module_id = modules.id', 'left')
-                //->join('metadata', 'metadata.module_id = modules.id AND metadata.parent = 1', 'left')
+                // ->join('metadata', 'metadata.module_id = modules.id AND metadata.parent = 1', 'left')
                 ->where(['modules.is_plugin' => 0]);
 
             $modules = [];
@@ -197,16 +181,13 @@ class ModulesModel extends AvegaCmsModel
         return $modules;
     }
 
-
-    /**
-     * @return array
-     */
     public function getModulesSiteMapSchema(): array
     {
         return cache()->remember('ModulesSiteMapSchema', DAY * 30, function () {
             $schema = [];
             if (($all = $this->_getModulesSiteMapSchema()) !== null) {
                 $ids = [];
+
                 foreach ($all as $item) {
                     $ids[]              = $item->id;
                     $schema[$item->key] = (array) $item;
@@ -226,9 +207,6 @@ class ModulesModel extends AvegaCmsModel
         });
     }
 
-    /**
-     * @return void
-     */
     public function clearCache(): void
     {
         cache()->delete('ModulesMetaData');
@@ -237,9 +215,6 @@ class ModulesModel extends AvegaCmsModel
         $this->getModulesSiteMapSchema();
     }
 
-    /**
-     * @return ModulesModel
-     */
     private function _getSelect(): ModulesModel
     {
         $this->builder()->select([
@@ -262,10 +237,6 @@ class ModulesModel extends AvegaCmsModel
         return $this;
     }
 
-    /**
-     * @param  array  $ids
-     * @return array
-     */
     private function _getModulesSiteMapSchema(array $ids = []): array
     {
         $this->builder()->select(
@@ -278,18 +249,18 @@ class ModulesModel extends AvegaCmsModel
                 'modules.name',
                 'modules.url_pattern',
                 'modules.in_sitemap',
-                'modules.active'
+                'modules.active',
             ]
         )->where(
             [
                 'modules.active'     => 1,
                 'modules.in_sitemap' => 1,
                 'modules.is_system'  => 0,
-                'modules.is_plugin'  => 0
+                'modules.is_plugin'  => 0,
             ]
         );
 
-        if ( ! empty($ids)) {
+        if (! empty($ids)) {
             $this->builder()->whereIn('modules.parent', $ids);
         } else {
             $this->builder()->where(['modules.parent' => 0]);

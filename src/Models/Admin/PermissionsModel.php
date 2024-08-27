@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Models\Admin;
 
@@ -35,7 +35,7 @@ class PermissionsModel extends Model
         'created_by_id',
         'updated_by_id',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     // Dates
@@ -46,7 +46,7 @@ class PermissionsModel extends Model
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [
+    protected $validationRules = [
         'id'            => ['rules' => 'if_exist|is_natural_no_zero'],
         'role_id'       => ['rules' => 'if_exist|is_natural'],
         'parent'        => ['rules' => 'if_exist|is_natural'],
@@ -54,7 +54,7 @@ class PermissionsModel extends Model
         'slug'          => ['rules' => 'if_exist|permit_empty|alpha_dash|max_length[64]|unique_db_key[permissions.role_id+module_id+is_module+is_system+is_plugin+parent+slug,id,{id}]'],
         'extra'         => ['rules' => 'if_exist|permit_empty'],
         'created_by_id' => ['rules' => 'if_exist|is_natural'],
-        'updated_by_id' => ['rules' => 'if_exist|is_natural']
+        'updated_by_id' => ['rules' => 'if_exist|is_natural'],
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
@@ -70,8 +70,7 @@ class PermissionsModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
-
-    protected array $casts = [
+    protected array $casts    = [
         'id'            => 'int',
         'role_id'       => 'int',
         'parent'        => 'int',
@@ -91,13 +90,9 @@ class PermissionsModel extends Model
         'created_by_id' => 'int',
         'updated_by_id' => 'int',
         'created_at'    => 'cmsdatetime',
-        'updated_at'    => 'cmsdatetime'
+        'updated_at'    => 'cmsdatetime',
     ];
 
-    /**
-     * @param  int  $roleId
-     * @return array
-     */
     public function getDefaultPermissions(int $roleId = 0): array
     {
         $this->_getSelect()->builder()->where(['role_id' => $roleId]);
@@ -105,11 +100,6 @@ class PermissionsModel extends Model
         return $this->findAll();
     }
 
-    /**
-     * @param  int  $roleId
-     * @param  int  $moduleId
-     * @return array
-     */
     public function getActions(int $roleId, int $moduleId): array
     {
         $this->_getSelect()->builder()
@@ -123,10 +113,6 @@ class PermissionsModel extends Model
         return $this->findAll();
     }
 
-    /**
-     * @param  int  $id
-     * @return array|object|null
-     */
     public function forEdit(int $id): array|object|null
     {
         $this->_getSelect()->builder()->where(['role_id !=' => 0, 'module_id !=' => 0]);
@@ -154,7 +140,7 @@ class PermissionsModel extends Model
                 'delete',
                 'moderated',
                 'settings',
-                'extra'
+                'extra',
             ]
         );
 

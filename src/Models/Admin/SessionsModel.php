@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Models\Admin;
 
@@ -20,7 +20,7 @@ class SessionsModel extends AvegaCmsModel
         'user_id',
         'ip_address',
         'timestamp',
-        'data'
+        'data',
     ];
 
     // Dates
@@ -48,18 +48,17 @@ class SessionsModel extends AvegaCmsModel
     protected $afterDelete    = [];
 
     // AvegaCms filter settings
-    protected array  $filterFields      = [];
-    protected array  $searchFields      = [];
-    protected array  $sortableFields    = [];
-    protected array  $filterCastsFields = [];
+    protected array $filterFields       = [];
+    protected array $searchFields       = [];
+    protected array $sortableFields     = [];
+    protected array $filterCastsFields  = [];
     protected string $searchFieldAlias  = 'q';
     protected string $sortFieldAlias    = 's';
     protected string $sortDefaultFields = '';
-    protected array  $filterEnumValues  = [];
-    protected int    $limit             = 20;
-    protected int    $maxLimit          = 100;
-
-    protected array $casts = [
+    protected array $filterEnumValues   = [];
+    protected int $limit                = 20;
+    protected int $maxLimit             = 100;
+    protected array $casts              = [
         'user_id'   => 'int',
         'timestamp' => 'datetime',
     ];

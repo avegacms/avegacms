@@ -40,13 +40,13 @@ class AttributesModel extends AvegaCmsModel
     protected $afterDelete    = [];
 
     // AvegaCms filter settings
-    public array  $filterFields      = [];
-    public array  $searchFields      = [];
-    public array  $sortableFields    = [];
-    public array  $filterCastsFields = [];
-    public string $searchFieldAlias  = 'q';
-    public string $sortFieldAlias    = 's';
-    public array  $filterEnumValues  = [];
-    public int    $limit             = 20;
-    public int    $maxLimit          = 100;
+    public array $filterFields      = [];
+    public array $searchFields      = [];
+    public array $sortableFields    = [];
+    public array $filterCastsFields = [];
+    public string $searchFieldAlias = 'q';
+    public string $sortFieldAlias   = 's';
+    public array $filterEnumValues  = [];
+    public int $limit               = 20;
+    public int $maxLimit            = 100;
 }

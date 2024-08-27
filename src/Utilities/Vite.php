@@ -1,29 +1,17 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Utilities;
 
 class Vite
 {
-    /**
-     * @var bool
-     */
     private static bool $initialized = false;
 
-    /**
-     * @var array
-     */
     private static array $css = [];
 
-    /**
-     * @var array
-     */
     private static array $js = [];
 
-    /**
-     * @return void
-     */
     private static function init(): void
     {
         helper('html');
@@ -38,11 +26,12 @@ class Vite
                 self::$js[] = env('VITE_ORIGIN') . '/@vite/client';
                 self::$js[] = $entryFile;
                 break;
-            // Если существует manifest.json
-            case $manifest = @file_get_contents($path):
-                $manifest = json_decode($manifest);
 
-                if ( ! is_null($manifest)) {
+                // Если существует manifest.json
+            case $manifest = @file_get_contents($path):
+                $manifest  = json_decode($manifest);
+
+                if (null !== $manifest) {
                     foreach ($manifest as $item) {
                         if (property_exists($item, 'isEntry') && $item->isEntry) {
                             self::$js[] = 'dist/' . $item->file;
@@ -61,23 +50,20 @@ class Vite
         self::$initialized = true;
     }
 
-    /**
-     * @return string
-     */
     public static function css(): string
     {
-        if ( ! self::$initialized) {
+        if (! self::$initialized) {
             self::init();
         }
 
         return implode(
             PHP_EOL,
             array_map(
-                fn ($src) => link_tag(
+                static fn ($src) => link_tag(
                     [
                         'href'  => $src,
                         'rel'   => 'stylesheet',
-                        'type'  => "text/css",
+                        'type'  => 'text/css',
                         'media' => 'all',
                     ]
                 ),
@@ -86,23 +72,20 @@ class Vite
         );
     }
 
-    /**
-     * @return string
-     */
     public static function js(): string
     {
-        if ( ! self::$initialized) {
+        if (! self::$initialized) {
             self::init();
         }
 
         return implode(
             PHP_EOL,
             array_map(
-                fn ($src) => script_tag(
+                static fn ($src) => script_tag(
                     [
                         'src'     => $src,
                         'type'    => 'module',
-                        'charset' => "UTF-8"
+                        'charset' => 'UTF-8',
                     ]
                 ),
                 self::$js

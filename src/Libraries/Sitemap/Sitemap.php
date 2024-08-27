@@ -1,11 +1,11 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Libraries\Sitemap;
 
-use AvegaCms\Traits\AvegaCmsSitemapTrait;
 use AvegaCms\Models\Admin\ModulesModel;
+use AvegaCms\Traits\AvegaCmsSitemapTrait;
 use Exception;
 
 class Sitemap
@@ -27,20 +27,20 @@ class Sitemap
      * 2. Обновления карты сайта конкретного модуля
      * 3. Обновления карты сайта группы модуля
      *
-     * @return void
      * @throws Exception
      */
     public function run(): void
     {
         $modules = (new ModulesModel())->getModulesMeta();
 
-        if ( ! is_null($this->module) && array_key_exists($key = strtolower($this->module), $modules)) {
+        if (null !== $this->module && array_key_exists($key = strtolower($this->module), $modules)) {
             $module = $modules[$key];
             if ($module['in_sitemap'] === true && $module['parent'] === 0) {
                 $this->generate($module['class_name']);
             }
         } else {
             $sitemapGlobal = [];
+
             foreach ($modules as $module) {
                 if ($module['in_sitemap'] === true && $module['parent'] === 0) {
                     // Собираем общий список основных модулей
@@ -57,15 +57,11 @@ class Sitemap
         }
     }
 
-    /**
-     * @param  string|null  $className
-     * @return void
-     */
     protected function generate(?string $className = null): void
     {
-        if ( ! is_null($className)) {
+        if (null !== $className) {
             if ($className === 'Pages') {
-                $classNamespace = "AvegaCms\\Controllers\\Sitemap";
+                $classNamespace = 'AvegaCms\\Controllers\\Sitemap';
             } else {
                 $classNamespace = "Modules\\{$className}\\Controllers\\Sitemap";
             }

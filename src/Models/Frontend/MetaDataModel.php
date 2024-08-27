@@ -1,11 +1,12 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Models\Frontend;
 
+use AvegaCms\Enums\MetaDataTypes;
+use AvegaCms\Enums\MetaStatuses;
 use AvegaCms\Models\AvegaCmsModel;
-use AvegaCms\Enums\{MetaStatuses, MetaDataTypes};
 
 class MetaDataModel extends AvegaCmsModel
 {
@@ -43,7 +44,7 @@ class MetaDataModel extends AvegaCmsModel
     protected $afterDelete    = [];
 
     // AvegaCms filter settings
-    protected array  $filterFields      = [
+    protected array $filterFields = [
         'module_id' => 'metadata.module_id',
         'item_id'   => 'metadata.item_id',
         'rubric'    => 'metadata.parent',
@@ -51,31 +52,30 @@ class MetaDataModel extends AvegaCmsModel
         'locale'    => 'metadata.locale_id',
         'title'     => 'metadata.title',
         'sort'      => 'metadata.sort',
-        'published' => 'metadata.publish_at'
+        'published' => 'metadata.publish_at',
     ];
-    protected array  $searchFields      = [
-        'title'
+    protected array $searchFields = [
+        'title',
     ];
-    protected array  $sortableFields    = [
+    protected array $sortableFields = [
         'sort',
-        'published'
+        'published',
     ];
-    protected array  $filterCastsFields = [
+    protected array $filterCastsFields = [
         'module_id'  => 'integer',
         'item_id'    => 'integer',
         'rubric'     => 'integer',
         'parent'     => 'integer',
         'locale'     => 'integer',
         'title'      => 'string',
-        'publish_at' => 'string'
+        'publish_at' => 'string',
     ];
-    protected string $searchFieldAlias  = 'q';
-    protected string $sortFieldAlias    = 's';
-    protected array  $filterEnumValues  = [];
-    protected int    $limit             = 20;
-    protected int    $maxLimit          = 100;
-
-    protected array $casts = [
+    protected string $searchFieldAlias = 'q';
+    protected string $sortFieldAlias   = 's';
+    protected array $filterEnumValues  = [];
+    protected int $limit               = 20;
+    protected int $maxLimit            = 100;
+    protected array $casts             = [
         'id'              => 'int',
         'post_id'         => 'int',
         'rubric_id'       => 'int',
@@ -98,7 +98,6 @@ class MetaDataModel extends AvegaCmsModel
         'created_at'      => 'cmsdatetime',
         'updated_at'      => 'cmsdatetime',
     ];
-
     protected int $level = 7;
 
     public function __construct()
@@ -106,11 +105,6 @@ class MetaDataModel extends AvegaCmsModel
         parent::__construct();
     }
 
-    /**
-     * @param  int  $locale
-     * @param  string  $slug
-     * @return array|object|null
-     */
     public function getContentMetaData(int $locale, string $slug = ''): array|object|null
     {
         $this->contentMetaDataSelect();
@@ -124,10 +118,6 @@ class MetaDataModel extends AvegaCmsModel
         return $this->first();
     }
 
-    /**
-     * @param  int  $locale
-     * @return array|object|null
-     */
     public function getContentMetaData404(int $locale): array|object|null
     {
         $this->contentMetaDataSelect();
@@ -135,21 +125,17 @@ class MetaDataModel extends AvegaCmsModel
         $this->builder()->where(
             [
                 'metadata.meta_type' => MetaDataTypes::Page404->name,
-                'metadata.locale_id' => $locale
+                'metadata.locale_id' => $locale,
             ]
         );
 
         return $this->first();
     }
 
-    /**
-     * @param  int  $id
-     * @param  int|null  $clearLast
-     * @return array
-     */
     public function getMetaMap(int $id, ?int $clearLast = null): array
     {
         $this->builder()->from('metadata AS md_' . $this->level)->where(['md_' . $this->level . '.id' => $id]);
+
         for ($i = $this->level; $i > 0; $i--) {
             $this->builder()->select(['md_' . $i . '.id AS id' . $i]);
             if (($p = $i - 1)) {
@@ -178,13 +164,14 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.url',
                 'metadata.use_url_pattern',
                 'metadata.meta',
-                'metadata.meta_type'
+                'metadata.meta_type',
             ]
         )->whereIn('metadata.id', $list)
-            ->whereNotIn('metadata.meta_type',
+            ->whereNotIn(
+                'metadata.meta_type',
                 [
                     MetaDataTypes::Page404->name,
-                    MetaDataTypes::Undefined->name
+                    MetaDataTypes::Undefined->name,
                 ]
             )->orderBy('metadata.parent', 'DESC');
 
@@ -193,11 +180,6 @@ class MetaDataModel extends AvegaCmsModel
         return $this->findAll();
     }
 
-    /**
-     * @param  int  $moduleId
-     * @param  array  $filter
-     * @return array|object|null
-     */
     public function getModuleMetaData(int $moduleId, array $filter = []): array|object|null
     {
         $this->builder()->select(
@@ -214,7 +196,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.meta',
                 'metadata.extra_data',
                 'metadata.meta_type',
-                'metadata.publish_at'
+                'metadata.publish_at',
             ]
         );
 
@@ -224,7 +206,7 @@ class MetaDataModel extends AvegaCmsModel
                 [
                     'metadata.module_id' => $moduleId,
                     'metadata.meta_type' => MetaDataTypes::Module->name,
-                    ...$filter
+                    ...$filter,
                 ]
             )->groupEnd();
 
@@ -233,10 +215,6 @@ class MetaDataModel extends AvegaCmsModel
         return $this->first();
     }
 
-    /**
-     * @param  int  $id
-     * @return array
-     */
     public function getSubPages(int $id): array
     {
         $this->afterFind = [...$this->afterFind, ...['prepMetaData']];
@@ -260,9 +238,6 @@ class MetaDataModel extends AvegaCmsModel
         return $this->findAll();
     }
 
-    /**
-     * @return MetaDataModel
-     */
     protected function checkStatus(): MetaDataModel
     {
         $this->builder()
@@ -272,7 +247,7 @@ class MetaDataModel extends AvegaCmsModel
             ->where(
                 [
                     'metadata.status'        => MetaStatuses::Future->name,
-                    'metadata.publish_at <=' => date('Y-m-d H:i:s')
+                    'metadata.publish_at <=' => date('Y-m-d H:i:s'),
                 ]
             )->groupEnd()
             ->groupEnd();
@@ -299,7 +274,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.meta',
                 'metadata.extra_data',
                 'metadata.meta_type',
-                'metadata.publish_at'
+                'metadata.publish_at',
             ]
         )->where(['metadata.item_id' => 0]);
 
@@ -308,7 +283,7 @@ class MetaDataModel extends AvegaCmsModel
 
     protected function prepMetaData(array $data): array
     {
-        if ( ! is_null($data['data'])) {
+        if (null !== $data['data']) {
             if ($data['singleton']) {
                 $data['data']->url = base_url($data['data']->url);
             } else {
@@ -317,6 +292,7 @@ class MetaDataModel extends AvegaCmsModel
                 }
             }
         }
+
         return $data;
     }
 }

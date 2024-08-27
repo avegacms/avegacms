@@ -2,6 +2,6 @@
 
 return [
     'errors' => [
-        'deleteIsDefault' => 'Нельзя удалять корневую локаль'
-    ]
+        'deleteIsDefault' => 'Нельзя удалять корневую локаль',
+    ],
 ];

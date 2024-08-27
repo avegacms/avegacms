@@ -11,7 +11,7 @@ return [
         'passconf'  => 'Подтверждение пароля',
         'code'      => 'Код',
         'hash'      => 'Хэш-код',
-        'condition' => 'Условие'
+        'condition' => 'Условие',
     ],
     'errors' => [
         'noData'                  => 'Данные не найдены',
@@ -33,5 +33,5 @@ return [
         'tokenNotFound'           => 'Токен не обнаружен',
         'failSendAuthCode'        => 'Не удалось отправить код авторизации',
         'failPasswordUpdate'      => 'Не удалось обновить пароль',
-    ]
+    ],
 ];

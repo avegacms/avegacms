@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Models\Admin;
 
@@ -28,7 +28,7 @@ class EmailTemplateModel extends AvegaCmsModel
         'created_by_id',
         'updated_by_id',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     // Dates
@@ -39,7 +39,7 @@ class EmailTemplateModel extends AvegaCmsModel
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [
+    protected $validationRules = [
         'id'            => ['rules' => 'if_exist|is_natural'],
         'module_id'     => ['rules' => 'if_exist|is_natural'],
         'label'         => ['rules' => 'if_exist|permit_empty|string|max_length[255]'],
@@ -51,7 +51,7 @@ class EmailTemplateModel extends AvegaCmsModel
         'view'          => ['rules' => 'if_exist|permit_empty|string|max_length[255]'],
         'active'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'created_by_id' => ['rules' => 'if_exist|is_natural'],
-        'updated_by_id' => ['rules' => 'if_exist|is_natural']
+        'updated_by_id' => ['rules' => 'if_exist|is_natural'],
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
@@ -69,29 +69,28 @@ class EmailTemplateModel extends AvegaCmsModel
     protected $afterDelete    = ['clearEmailTemplateCache'];
 
     // AvegaCms filter settings
-    protected array  $filterFields      = [
+    protected array $filterFields = [
         'slug'  => 'email_templates.slug',
         'label' => 'email_templates.label',
-        'view'  => 'email_templates.view'
+        'view'  => 'email_templates.view',
     ];
-    protected array  $searchFields      = [
+    protected array $searchFields = [
         'label',
         'slug',
-        'view'
+        'view',
     ];
-    protected array  $sortableFields    = [];
-    protected array  $filterCastsFields = [
+    protected array $sortableFields    = [];
+    protected array $filterCastsFields = [
         'slug'   => 'string',
         'locale' => 'int',
-        'view'   => 'string'
+        'view'   => 'string',
     ];
-    protected string $searchFieldAlias  = 'q';
-    protected string $sortFieldAlias    = 's';
-    protected array  $filterEnumValues  = [];
-    protected int    $limit             = 20;
-    protected int    $maxLimit          = 100;
-
-    protected array $casts = [
+    protected string $searchFieldAlias = 'q';
+    protected string $sortFieldAlias   = 's';
+    protected array $filterEnumValues  = [];
+    protected int $limit               = 20;
+    protected int $maxLimit            = 100;
+    protected array $casts             = [
         'id'            => 'int',
         'module_id'     => 'int',
         'is_system'     => 'int',
@@ -102,7 +101,7 @@ class EmailTemplateModel extends AvegaCmsModel
         'created_by_id' => 'int',
         'updated_by_id' => 'int',
         'created_at'    => 'cmsdatetime',
-        'updated_at'    => 'cmsdatetime'
+        'updated_at'    => 'cmsdatetime',
     ];
 
     /**
@@ -118,17 +117,13 @@ class EmailTemplateModel extends AvegaCmsModel
                 'email_templates.is_system',
                 'email_templates.label',
                 'email_templates.view',
-                'email_templates.active'
+                'email_templates.active',
             ]
         );
 
         return $this;
     }
 
-    /**
-     * @param  int  $id
-     * @return array|object|null
-     */
     public function forEdit(int $id): array|object|null
     {
         $this->builder()->select(
@@ -141,21 +136,18 @@ class EmailTemplateModel extends AvegaCmsModel
                 'email_templates.subject',
                 'email_templates.content',
                 'email_templates.view',
-                'email_templates.active'
+                'email_templates.active',
             ]
         );
 
         return $this->find($id);
     }
 
-
-    /**
-     * @param  string  $slug
-     * @return array|object|null
-     */
     public function getEmailTemplate(string $slug): array|object|null
     {
-        return cache()->remember('emailTemplate' . ucfirst($slug), 30 * DAY,
+        return cache()->remember(
+            'emailTemplate' . ucfirst($slug),
+            30 * DAY,
             function () use ($slug) {
                 $this->builder()->select(
                     [
@@ -166,18 +158,15 @@ class EmailTemplateModel extends AvegaCmsModel
                 )->where(
                     [
                         'email_templates.slug'   => $slug,
-                        'email_templates.active' => 1
+                        'email_templates.active' => 1,
                     ]
                 );
 
                 return $this->first() ?? [];
-            });
+            }
+        );
     }
 
-    /**
-     * @param  array  $data
-     * @return void
-     */
     public function clearEmailTemplateCache(array $data): void
     {
         if (isset($data['slug'])) {

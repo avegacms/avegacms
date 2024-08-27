@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Controllers\Api\Admin\Settings;
 
@@ -8,7 +8,6 @@ use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
 use AvegaCms\Models\Admin\LocalesModel;
 use CodeIgniter\HTTP\ResponseInterface;
 use ReflectionException;
-
 
 class Locales extends AvegaCmsAdminAPI
 {
@@ -20,18 +19,11 @@ class Locales extends AvegaCmsAdminAPI
         $this->LM = model(LocalesModel::class);
     }
 
-    /**
-     * @return ResponseInterface
-     */
     public function index(): ResponseInterface
     {
         return $this->cmsRespond($this->LM->filter($this->request->getGet() ?? [])->apiPagination());
     }
 
-    /**
-     * @param $id
-     * @return ResponseInterface
-     */
     public function edit($id = null): ResponseInterface
     {
         if (($data = $this->LM->forEdit($id)) === null) {
@@ -42,7 +34,6 @@ class Locales extends AvegaCmsAdminAPI
     }
 
     /**
-     * @return ResponseInterface
      * @throws ReflectionException
      */
     public function create(): ResponseInterface
@@ -51,7 +42,7 @@ class Locales extends AvegaCmsAdminAPI
 
         $data['created_by_id'] = $this->userData->userId;
 
-        if ( ! $id = $this->LM->insert($data)) {
+        if (! $id = $this->LM->insert($data)) {
             return $this->failValidationErrors($this->LM->errors());
         }
 
@@ -59,8 +50,6 @@ class Locales extends AvegaCmsAdminAPI
     }
 
     /**
-     * @param $id
-     * @return ResponseInterface
      * @throws ReflectionException
      */
     public function update($id = null): ResponseInterface
@@ -80,21 +69,17 @@ class Locales extends AvegaCmsAdminAPI
         return $this->respondNoContent();
     }
 
-    /**
-     * @param $id
-     * @return ResponseInterface
-     */
     public function delete($id): ResponseInterface
     {
         if (($data = $this->LM->forEdit($id)) === null) {
             return $this->failNotFound();
         }
 
-        if ($data->is_default == 1) {
+        if ($data->is_default === 1) {
             return $this->failValidationErrors(lang('Locales.errors.deleteIsDefault'));
         }
 
-        if ( ! $this->LM->delete($id)) {
+        if (! $this->LM->delete($id)) {
             return $this->failValidationErrors(lang('Api.errors.delete', ['Locales']));
         }
 

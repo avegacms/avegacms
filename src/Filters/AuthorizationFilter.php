@@ -1,17 +1,17 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Filters;
 
-use CodeIgniter\Filters\FilterInterface;
-use CodeIgniter\HTTP\RequestInterface;
-use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Config\Services;
-use Exception;
 use AvegaCms\Libraries\Authorization\Authorization;
 use AvegaCms\Libraries\Authorization\Exceptions\AuthenticationException;
 use AvegaCms\Utilities\Cms;
+use CodeIgniter\Filters\FilterInterface;
+use CodeIgniter\HTTP\RequestInterface;
+use CodeIgniter\HTTP\ResponseInterface;
+use Exception;
 
 class AuthorizationFilter implements FilterInterface
 {
@@ -25,8 +25,7 @@ class AuthorizationFilter implements FilterInterface
      * sent back to the client, allowing for error pages,
      * redirects, etc.
      *
-     * @param  RequestInterface  $request
-     * @param  array|null  $arguments
+     * @param array|null $arguments
      *
      * @return mixed
      */
@@ -49,14 +48,11 @@ class AuthorizationFilter implements FilterInterface
      * to stop execution of other after filters, short of
      * throwing an Exception or Error.
      *
-     * @param  RequestInterface  $request
-     * @param  ResponseInterface  $response
-     * @param  array|null  $arguments
+     * @param array|null $arguments
      *
      * @return void
      */
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-        //
     }
 }

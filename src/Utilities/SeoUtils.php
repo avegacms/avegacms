@@ -1,20 +1,18 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Utilities;
 
 use AvegaCms\Enums\SitemapChangefreqs;
-use AvegaCms\Models\Admin\{LocalesModel, MetaDataModel, ModulesModel};
-use RuntimeException;
+use AvegaCms\Models\Admin\LocalesModel;
+use AvegaCms\Models\Admin\MetaDataModel;
+use AvegaCms\Models\Admin\ModulesModel;
 use ReflectionException;
+use RuntimeException;
 
 class SeoUtils
 {
-    /**
-     * @param  int  $id
-     * @return array
-     */
     public static function Locales(int $id = 0): array
     {
         $locales = array_column(model(LocalesModel::class)->getLocalesList(), null, 'id');
@@ -22,22 +20,15 @@ class SeoUtils
         if ($id > 0 && ! isset($locales[$id])) {
             throw new RuntimeException('Undefined locale');
         }
+
         return ($id > 0) ? $locales[$id] : $locales;
     }
 
-    /**
-     * @param  int  $id
-     * @return array
-     */
     public static function LocaleData(int $id): array
     {
         return self::Locales($id)['extra'];
     }
 
-    /**
-     * @param  int  $id
-     * @return array
-     */
     public static function mainPages(int $id = 0): array
     {
         $pages = array_column(model(MetaDataModel::class)->mainPages(), 'id', 'locale');
@@ -45,24 +36,18 @@ class SeoUtils
         if ($id > 0 && ! isset($pages[$id])) {
             throw new RuntimeException('Undefined main page');
         }
+
         return ($id > 0) ? $pages[$id] : $pages;
     }
 
-    /**
-     * @param  int  $locale
-     * @param  string|null  $key
-     * @param  string|null  $value
-     * @return array
-     */
     public static function rubricsList(int $locale = 0, ?string $key = null, ?string $value = null): array
     {
         $rubrics = model(MetaDataModel::class)->getRubrics();
 
         if ($locale > 0) {
             $rubrics = array_filter(array_map(
-                callback: function ($item) use ($locale) {
-                    return $item['locale_id'] === $locale ? $item : null;
-                }, array: $rubrics
+                callback: static fn ($item) => $item['locale_id'] === $locale ? $item : null,
+                array: $rubrics
             ));
         }
 
@@ -70,7 +55,7 @@ class SeoUtils
             throw new RuntimeException('Undefined rubrics');
         }
 
-        if ( ! is_null($key) || ! is_null($value)) {
+        if (null !== $key || null !== $value) {
             $rubrics = array_column($rubrics, $value, $key);
         }
 
@@ -78,10 +63,6 @@ class SeoUtils
     }
 
     /**
-     * @param  string  $pointer
-     * @param  array  $data
-     * @param  bool  $isSiteMap
-     * @return bool
      * @throws ReflectionException
      */
     public static function sitemap(string $pointer, array $data = [], bool $isSiteMap = true): bool
@@ -91,16 +72,18 @@ class SeoUtils
         $pointer = explode('.', $pointer);
         $num     = count($pointer);
 
-        if ( ! ['useSitemap'] && $num === 0) {
+        if (! ['useSitemap'] && $num === 0) {
             return false;
         }
-        if ( ! ($module = ($modules[$pointer[0]] ?? false))) {
+        if (! ($module = ($modules[$pointer[0]] ?? false))) {
             log_message('error', 'Sitemap pointer module "' . $pointer[0] . '" not found.');
+
             return false;
         }
 
         if ($num > 1 && ! ($subModule = ($modules[$pointer[0]]['sub'][$pointer[1]] ?? false))) {
             log_message('error', 'Sitemap sub pointer "' . $pointer[0] . '" not found.');
+
             return false;
         }
 
@@ -113,45 +96,41 @@ class SeoUtils
                         'url'        => base_url('uploads/sitemaps/' . ucfirst($key) . '.xml'),
                         'priority'   => 60,
                         'changefreq' => strtolower(SitemapChangefreqs::Daily->name),
-                        'date'       => $date
+                        'date'       => $date,
                     ];
                 }
+
                 return self::createSitemapXml($pointer[0], $data);
             }
 
-            if ( ! empty($data) && $isSiteMap === false) {
+            if (! empty($data) && $isSiteMap === false) {
                 return self::createSitemapXml($pointer[0], ['links' => $data], false);
             }
         } else {
             if (count($data) <= $config['sitemapBatchQty']) {
                 return self::createSitemapXml($pointer[1], ['links' => $data], false);
-            } else {
-                $chunkLinks = array_chunk($data, $config['sitemapBatchQty']);
-                $chunkNames = [];
-                foreach ($chunkLinks as $key => $links) {
-                    $xmlName = $pointer[1] . '_' . ($key + 1);
-                    if (self::createSitemapXml($xmlName, ['links' => $links], false)) {
-                        $chunkNames['links'][] = [
-                            'url'        => base_url('uploads/sitemaps/' . ucfirst($xmlName) . '.xml'),
-                            'priority'   => 60,
-                            'changefreq' => strtolower(SitemapChangefreqs::Daily->name),
-                            'date'       => $date
-                        ];
-                    }
-                }
-                return self::createSitemapXml($pointer[1], $chunkNames);
             }
+            $chunkLinks = array_chunk($data, $config['sitemapBatchQty']);
+            $chunkNames = [];
+
+            foreach ($chunkLinks as $key => $links) {
+                $xmlName = $pointer[1] . '_' . ($key + 1);
+                if (self::createSitemapXml($xmlName, ['links' => $links], false)) {
+                    $chunkNames['links'][] = [
+                        'url'        => base_url('uploads/sitemaps/' . ucfirst($xmlName) . '.xml'),
+                        'priority'   => 60,
+                        'changefreq' => strtolower(SitemapChangefreqs::Daily->name),
+                        'date'       => $date,
+                    ];
+                }
+            }
+
+            return self::createSitemapXml($pointer[1], $chunkNames);
         }
 
         return false;
     }
 
-    /**
-     * @param  string  $file
-     * @param  array  $data
-     * @param  bool  $isSiteMap
-     * @return bool
-     */
     public static function createSiteMapXml(string $file, array $data, bool $isSiteMap = true): bool
     {
         helper(['filesystem']);
@@ -161,12 +140,13 @@ class SeoUtils
             unlink(FCPATH . $file);
         }
 
-        if (is_null($data['isSiteMap'] ?? null)) {
+        if (null === ($data['isSiteMap'] ?? null)) {
             $data['isSiteMap'] = $isSiteMap;
         }
 
-        if ( ! write_file('./' . $file, view('template/seo/sitemap.php', $data, ['debug' => false]))) {
-            log_message('error', "Unable to write the $fileName.xml file");
+        if (! write_file('./' . $file, view('template/seo/sitemap.php', $data, ['debug' => false]))) {
+            log_message('error', "Unable to write the {$fileName}.xml file");
+
             return false;
         }
 

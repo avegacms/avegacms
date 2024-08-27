@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Models\Frontend;
 
@@ -40,26 +40,24 @@ class ContentModel extends AvegaCmsModel
     protected $afterDelete    = [];
 
     // AvegaCms filter settings
-    protected array  $filterFields      = [];
-    protected array  $searchFields      = [];
-    protected array  $sortableFields    = [];
-    protected array  $filterCastsFields = [];
-    protected string $searchFieldAlias  = 'q';
-    protected string $sortFieldAlias    = 's';
-    protected array  $filterEnumValues  = [];
-    protected int    $limit             = 20;
-    protected int    $maxLimit          = 100;
-
-    protected array $casts = [
+    protected array $filterFields      = [];
+    protected array $searchFields      = [];
+    protected array $sortableFields    = [];
+    protected array $filterCastsFields = [];
+    protected string $searchFieldAlias = 'q';
+    protected string $sortFieldAlias   = 's';
+    protected array $filterEnumValues  = [];
+    protected int $limit               = 20;
+    protected int $maxLimit            = 100;
+    protected array $casts             = [
         'id'    => 'int',
-        'extra' => '?json-array'
+        'extra' => '?json-array',
     ];
 
     /**
-     * @param  int  $id
      * @return array|null
      */
-    public function getContent(int $id): object|null
+    public function getContent(int $id): ?object
     {
         $this->afterFind = [];
 
@@ -69,7 +67,7 @@ class ContentModel extends AvegaCmsModel
                 'metadata.title',
                 'content.anons',
                 'content.content',
-                'content.extra'
+                'content.extra',
             ]
         )->join('metadata', 'metadata.id = content.id');
 

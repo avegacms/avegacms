@@ -1,40 +1,40 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Utilities;
 
-use CodeIgniter\HTTP\Files\UploadedFile;
-use Config\{Mimes, Services};
-use CodeIgniter\Files\File;
-use CodeIgniter\Images\Exceptions\ImageException;
 use AvegaCms\Enums\FileTypes;
+use AvegaCms\Models\Admin\FilesLinksModel;
+use AvegaCms\Models\Admin\FilesModel;
 use AvegaCms\Utilities\Exceptions\UploaderException;
-use AvegaCms\Models\Admin\{FilesModel, FilesLinksModel};
+use CodeIgniter\Files\File;
+use CodeIgniter\HTTP\Files\UploadedFile;
+use CodeIgniter\Images\Exceptions\ImageException;
+use Config\Mimes;
+use Config\Services;
 use ReflectionException;
 
 class CmsFileManager
 {
-    const excludedDirs = [
+    public const excludedDirs = [
         FCPATH . 'uploads',
-        'uploads'
+        'uploads',
     ];
 
     /**
-     * @param  array  $entity
-     * @param  array|string|null  $uploadConfig
-     * @param  array  $fileConfig
      * @return object|null
+     *
      * @throws ReflectionException|UploaderException
      */
     public static function upload(
         array $entity,
-        array|string $uploadConfig = null,
+        array|string|null $uploadConfig = null,
         array $fileConfig = []
-    ): array|null {
+    ): ?array {
         $request   = Services::request();
         $validator = Services::validation();
-        $directory = is_array($uploadConfig) ? ($uploadConfig['directory'] ?? 'content') : (is_null($uploadConfig) ? '' : $uploadConfig);
+        $directory = is_array($uploadConfig) ? ($uploadConfig['directory'] ?? 'content') : (null === $uploadConfig ? '' : $uploadConfig);
 
         if ($validator->setRules(self::_entityRules())->run($entity) === false) {
             throw new UploaderException($validator->getErrors());
@@ -57,17 +57,17 @@ class CmsFileManager
 
         $field = $uploadConfig['field'] ?? 'file';
 
-        if ( ! is_array($uploadConfig)) {
+        if (! is_array($uploadConfig)) {
             $uploadConfig = ['directory' => $directory];
         }
 
-        if ( ! $validator->setRules(self::uploadSettings($uploadConfig))->withRequest($request)->run()) {
+        if (! $validator->setRules(self::uploadSettings($uploadConfig))->withRequest($request)->run()) {
             throw new UploaderException($validator->getErrors());
         }
 
         $uploadedFile = $request->getFile($field);
 
-        if ( ! $uploadedFile->isValid()) {
+        if (! $uploadedFile->isValid()) {
             throw new UploaderException($uploadedFile->getErrorString() . '(' . $uploadedFile->getError() . ')');
         }
 
@@ -75,22 +75,17 @@ class CmsFileManager
     }
 
     /**
-     * @param  string  $filePath
-     * @param  array  $entity
-     * @param  array|string|null  $uploadConfig
-     * @param  array  $fileConfig
-     * @return array|null
-     * @throws UploaderException|ReflectionException
+     * @throws ReflectionException|UploaderException
      */
     public static function setFile(
         string $filePath,
         array $entity,
-        array|string $uploadConfig = null,
+        array|string|null $uploadConfig = null,
         array $fileConfig = []
-    ): array|null {
+    ): ?array {
         $FLM       = (new FilesLinksModel());
         $validator = Services::validation();
-        $directory = is_array($uploadConfig) ? ($uploadConfig['directory'] ?? 'content') : (is_null($uploadConfig) ? '' : $uploadConfig);
+        $directory = is_array($uploadConfig) ? ($uploadConfig['directory'] ?? 'content') : (null === $uploadConfig ? '' : $uploadConfig);
 
         if (file_exists($filePath) === false) {
             throw UploaderException::forFileNotFound($filePath);
@@ -118,11 +113,6 @@ class CmsFileManager
         return self::_setFile($filePath, $dirData, $entity, $fileConfig);
     }
 
-    /**
-     * @param  array  $filter
-     * @param  bool  $all
-     * @return array
-     */
     public static function getFiles(
         array $filter = [],
         bool $all = false
@@ -143,10 +133,7 @@ class CmsFileManager
      * Регистрирует в файловом менеджере директорию
      * и создаёт её на сервере
      *
-     * @param  string  $path
-     * @param  array  $config
-     * @return int
-     * @throws UploaderException|ReflectionException
+     * @throws ReflectionException|UploaderException
      */
     public static function createDirectory(string $path, array $config): int
     {
@@ -160,7 +147,7 @@ class CmsFileManager
                 'data'          => ['url' => $path],
                 'provider'      => $config['provider'] ?? 0,
                 'type'          => FileTypes::Directory->value,
-                'created_by_id' => $config['user_id'] ?? 0
+                'created_by_id' => $config['user_id'] ?? 0,
             ]
         );
 
@@ -175,7 +162,7 @@ class CmsFileManager
                     'item_id'       => $config['item_id'] ?? 0,
                     'uid'           => $config['uid'] ?? '',
                     'type'          => FileTypes::Directory->value,
-                    'created_by_id' => $config['user_id'] ?? 0
+                    'created_by_id' => $config['user_id'] ?? 0,
                 ]
             );
         } else {
@@ -185,12 +172,7 @@ class CmsFileManager
         return $directoryId;
     }
 
-
-    /**
-     * @param  int|array  $filesId
-     * @return bool
-     */
-    public static function delete(int|array $filesId): bool
+    public static function delete(array|int $filesId): bool
     {
         if (empty(($filesId = ! is_array($filesId) ? [$filesId] : $filesId))) {
             return false;
@@ -203,19 +185,20 @@ class CmsFileManager
         }
 
         $filesId = [];
+
         foreach ($files as $file) {
             $filesId[] = $file->id;
             if ($file->type === FileTypes::Image->value) {
                 self::deleteFile($file->data['path']['original']);
-                if ( ! empty($file->data['path']['webp'] ?? '')) {
+                if (! empty($file->data['path']['webp'] ?? '')) {
                     self::deleteFile($file->data['path']['webp']);
                 }
-                if ( ! empty($file->data['thumb'] ?? '')) {
+                if (! empty($file->data['thumb'] ?? '')) {
                     foreach ($file->data['thumb'] as $thumb) {
                         self::deleteFile($thumb);
                     }
                 }
-                if ( ! empty($file->data['variants'] ?? '')) {
+                if (! empty($file->data['variants'] ?? '')) {
                     foreach ($file->data['variants'] as $variant) {
                         foreach ($variant as $item) {
                             self::deleteFile($item);
@@ -231,16 +214,13 @@ class CmsFileManager
     }
 
     /**
-     * @param  string  $filePath
-     * @param  array  $config
-     * @return array
      * @throws ReflectionException|UploaderException
      */
     public static function createThumb(string $filePath, array $config = []): array
     {
         $original = FCPATH . trim($filePath, '/');
 
-        if ( ! file_exists($original)) {
+        if (! file_exists($original)) {
             throw UploaderException::forFileNotFound($filePath);
         }
 
@@ -269,7 +249,7 @@ class CmsFileManager
                 )->save(FCPATH . $url, $settings['thumbQuality']);
 
             $result = [
-                'original' => $url
+                'original' => $url,
             ];
 
             if ($defConfig['createWebp']) {
@@ -285,25 +265,21 @@ class CmsFileManager
     /**
      * Метод конвертации изображения в WebP формат
      *
-     * @param  string  $filePath
-     * @param  string  $newPath
-     * @param  int  $webpQuality
-     * @return string
      * @throws UploaderException
      */
     public static function convertToWebp(string $filePath, string $newPath = '', int $webpQuality = 80): string
     {
         $original = FCPATH . trim($filePath, '/');
 
-        if ( ! empty($newPath)) {
+        if (! empty($newPath)) {
             $newPath = trim($newPath, '/');
         }
 
-        if ( ! file_exists($original)) {
+        if (! file_exists($original)) {
             throw UploaderException::forFileNotFound($filePath);
         }
 
-        if ( ! extension_loaded('gd') || ! function_exists('gd_info')) {
+        if (! extension_loaded('gd') || ! function_exists('gd_info')) {
             throw UploaderException::forGDLibNotSupported();
         }
 
@@ -312,14 +288,15 @@ class CmsFileManager
         // Если пытаемся преобразовать изображение в webp-формате
         if (getimagesize($original)['mime'] === 'image/webp') {
             $url = $filePath;
-            if ( ! empty($newPath)) {
-                if ( ! is_dir(FCPATH . $newPath)) {
+            if (! empty($newPath)) {
+                if (! is_dir(FCPATH . $newPath)) {
                     throw UploaderException::forDirectoryNotFound($newPath);
                 }
-                if ( ! copy($original, FCPATH . ($url = $newPath . $fileName))) {
+                if (! copy($original, FCPATH . ($url = $newPath . $fileName))) {
                     throw UploaderException::forNotMovedFile($url);
                 }
             }
+
             return $url;
         }
 
@@ -327,8 +304,8 @@ class CmsFileManager
         $fileUrl  = pathinfo($filePath, PATHINFO_DIRNAME);
         $url      = $fileUrl . '/' . $fileName;
 
-        if ( ! empty($newPath)) {
-            if ( ! is_dir(FCPATH . $newPath)) {
+        if (! empty($newPath)) {
+            if (! is_dir(FCPATH . $newPath)) {
                 throw UploaderException::forDirectoryNotFound($newPath);
             }
             $url = $newPath . '/' . $fileName;
@@ -347,9 +324,6 @@ class CmsFileManager
     }
 
     /**
-     * @param  string  $filePath
-     * @param  array  $settings
-     * @return array
      * @throws ReflectionException|UploaderException
      */
     public static function resizeImage(string $filePath, array $settings): array
@@ -385,9 +359,6 @@ class CmsFileManager
     }
 
     /**
-     * @param  string  $filePath
-     * @param  array  $settings
-     * @return array
      * @throws ReflectionException|UploaderException
      */
     public static function fitImage(string $filePath, array $settings): array
@@ -419,8 +390,6 @@ class CmsFileManager
     }
 
     /**
-     * @param  string  $path
-     * @return void
      * @throws UploaderException
      */
     public static function checkFilePath(string $path): void
@@ -439,11 +408,11 @@ class CmsFileManager
         $directoryPath = $uploadPath;
 
         foreach ($path as $directory) {
-            if ( ! is_dir($directoryPath .= '/' . $directory)) {
-                if ( ! mkdir($directoryPath, 0777, true)) {
+            if (! is_dir($directoryPath .= '/' . $directory)) {
+                if (! mkdir($directoryPath, 0777, true)) {
                     throw UploaderException::forCreateDirectory($directoryPath);
                 }
-                if ( ! is_file($directoryPath . '/index.html')) {
+                if (! is_file($directoryPath . '/index.html')) {
                     $file = fopen($directoryPath . '/index.html', 'x+b');
                     fclose($file);
                 }
@@ -457,19 +426,14 @@ class CmsFileManager
             'module_id' => ['rules' => 'if_exist|is_natural'],
             'entity_id' => ['rules' => 'if_exist|is_natural'],
             'item_id'   => ['rules' => 'if_exist|is_natural'],
-            'user_id'   => ['rules' => 'if_exist|is_natural']
+            'user_id'   => ['rules' => 'if_exist|is_natural'],
         ];
     }
 
     /**
-     * @param  string  $filePath
-     * @param  object  $dirData
-     * @param  array  $entity
-     * @param  array  $fileConfig
-     * @return array|null
      * @throws ReflectionException|UploaderException
      */
-    private static function _setFile(string $filePath, object $dirData, array $entity, array $fileConfig): array|null
+    private static function _setFile(string $filePath, object $dirData, array $entity, array $fileConfig): ?array
     {
         $FM        = (new FilesModel());
         $FLM       = (new FilesLinksModel());
@@ -488,7 +452,7 @@ class CmsFileManager
         $title      = pathinfo($uploadedFile->getName(), PATHINFO_FILENAME);
 
         // Переносим файл в нужную директорию
-        if ( ! rename($filePath, $uploadPath . $fileName)) {
+        if (! rename($filePath, $uploadPath . $fileName)) {
             throw UploaderException::forNotMovedFile($filePath);
         }
 
@@ -498,16 +462,16 @@ class CmsFileManager
         $type     = ($isImage) ? FileTypes::Image->value : FileTypes::File->value;
         $dirFile  = $directory . '/' . $fileName;
         $fileData = [
-            'provider'      => 0,
-            'type'          => $type,
-            'data'          => [
+            'provider' => 0,
+            'type'     => $type,
+            'data'     => [
                 'title' => $title,
                 'ext'   => $extension,
                 'size'  => $size,
                 'file'  => $fileName,
-                'path'  => $dirFile
+                'path'  => $dirFile,
             ],
-            'created_by_id' => $userId
+            'created_by_id' => $userId,
         ];
 
         if ($type === FileTypes::Image->value) {
@@ -515,11 +479,13 @@ class CmsFileManager
             $fileData['data']['path']  = ['original' => $dirFile];
 
             if ($defConfig['createWebp']) {
-                $fileData['data']['path']['webp'] = self::convertToWebp($dirFile,
-                    webpQuality: $defConfig['webpQuality']);
+                $fileData['data']['path']['webp'] = self::convertToWebp(
+                    $dirFile,
+                    webpQuality: $defConfig['webpQuality']
+                );
             }
 
-            if ( ! empty($fileConfig)) {
+            if (! empty($fileConfig)) {
                 $fileData['data']['variants'] = match (($action = array_key_first($fileConfig))) {
                     'resize' => self::resizeImage($dirFile, $fileConfig[$action]),
                     'fit'    => self::fitImage($dirFile, $fileConfig[$action]),
@@ -541,10 +507,10 @@ class CmsFileManager
             'item_id'       => $entity['item_id'] ?? 0,
             'uid'           => '',
             'type'          => $type,
-            'created_by_id' => $userId
+            'created_by_id' => $userId,
         ];
 
-        if ( ! $FLM->insert($fileLinks)) {
+        if (! $FLM->insert($fileLinks)) {
             throw new UploaderException($FLM->errors());
         }
 
@@ -552,8 +518,8 @@ class CmsFileManager
     }
 
     /**
-     * @param  array  $settings
-     * @return array[]
+     * @return list<array>
+     *
      * @throws ReflectionException
      */
     private static function uploadSettings(array $settings): array
@@ -581,8 +547,8 @@ class CmsFileManager
             $uploadRule .= '|mime_in[' . $field . ',' . $settings['mimeIn'] . ']';
         }
 
-        $settings['extInImages'] = $settings['extInImages'] ?? $defConfig['extInImages'];
-        $settings['extInFiles']  = $settings['extInFiles'] ?? $defConfig['extInFiles'];
+        $settings['extInImages'] ??= $defConfig['extInImages'];
+        $settings['extInFiles'] ??= $defConfig['extInFiles'];
 
         $ext = match ($settings['extType'] ?? 'all') {
             'images' => implode(',', $settings['extInImages']),
@@ -601,15 +567,11 @@ class CmsFileManager
 
         return [
             $field => [
-                'rules' => $uploadRule
-            ]
+                'rules' => $uploadRule,
+            ],
         ];
     }
 
-    /**
-     * @param $file
-     * @return void
-     */
     private static function deleteFile($file): void
     {
         if ((@unlink(FCPATH . $file)) === false) {

@@ -1,11 +1,11 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Controllers\Api\Admin;
 
-use AvegaCms\Utilities\Auth;
 use AvegaCms\Libraries\Authorization\Exceptions\AuthorizationException;
+use AvegaCms\Utilities\Auth;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class Profile extends AvegaCmsAdminAPI
@@ -16,7 +16,6 @@ class Profile extends AvegaCmsAdminAPI
     }
 
     /**
-     * @return ResponseInterface
      * @throws AuthorizationException
      */
     public function index(): ResponseInterface
@@ -28,6 +27,7 @@ class Profile extends AvegaCmsAdminAPI
             Auth::setProfile($userId, $role);
             $profile = Auth::getProfile($userId, $role);
         }
+
         return $this->cmsRespond($profile);
     }
 }

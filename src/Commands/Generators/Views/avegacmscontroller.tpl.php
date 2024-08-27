@@ -1,11 +1,11 @@
-<?php 
+<?php
 /**
  * @var string $type
  */
 ?>
 <@php
 declare(strict_types=1);
-    
+
 namespace {namespace};
 
 use {useStatement};

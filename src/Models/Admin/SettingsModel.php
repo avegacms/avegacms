@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Models\Admin;
 
-use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Enums\FieldsReturnTypes;
-use CodeIgniter\Database\ConnectionInterface;
-use CodeIgniter\Validation\ValidationInterface;
+use AvegaCms\Models\AvegaCmsModel;
 
 class SettingsModel extends AvegaCmsModel
 {
@@ -32,7 +30,7 @@ class SettingsModel extends AvegaCmsModel
         'context',
         'sort',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     // Dates
@@ -43,7 +41,7 @@ class SettingsModel extends AvegaCmsModel
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [
+    protected $validationRules = [
         'id'            => ['rules' => 'if_exist|is_natural_no_zero'],
         'locale_id'     => ['rules' => 'if_exist|is_natural'],
         'module_id'     => ['rules' => 'if_exist|is_natural'],
@@ -54,49 +52,45 @@ class SettingsModel extends AvegaCmsModel
         'default_value' => ['rules' => 'if_exist|permit_empty'],
         'label'         => ['rules' => 'if_exist|permit_empty|string|max_length[255]'],
         'context'       => ['rules' => 'if_exist|permit_empty|string|max_length[512]'],
-        'sort'          => ['rules' => 'if_exist|is_natural']
+        'sort'          => ['rules' => 'if_exist|is_natural'],
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
 
     // Callbacks
-    protected $allowCallbacks = true;
-    protected $beforeInsert   = ['setCreatedById'];
-    protected $afterInsert    = ['dropSettingsCache'];
-    protected $beforeUpdate   = ['setUpdatedById'];
-    protected $afterUpdate    = ['dropSettingsCache'];
-    protected $beforeFind     = [];
-    protected $afterFind      = [];
-    protected $beforeDelete   = [];
-    protected $afterDelete    = [];
-
+    protected $allowCallbacks  = true;
+    protected $beforeInsert    = ['setCreatedById'];
+    protected $afterInsert     = ['dropSettingsCache'];
+    protected $beforeUpdate    = ['setUpdatedById'];
+    protected $afterUpdate     = ['dropSettingsCache'];
+    protected $beforeFind      = [];
+    protected $afterFind       = [];
+    protected $beforeDelete    = [];
+    protected $afterDelete     = [];
     public array $filterFields = [
         'id'     => 'settings.id',
         'locale' => 'settings.locale_id',
         'entity' => 'settings.entity',
         'slug'   => 'settings.slug',
         'key'    => 'settings.key',
-        'label'  => 'settings.label'
+        'label'  => 'settings.label',
     ];
-
-    public array $searchFields   = [];
-    public array $sortableFields = [];
-
-    public array  $filterCastsFields = [
+    public array $searchFields      = [];
+    public array $sortableFields    = [];
+    public array $filterCastsFields = [
         'id'     => 'int|array',
         'locale' => 'int',
         'entity' => 'string',
         'slug'   => 'string',
         'key'    => 'string',
-        'label'  => 'string'
+        'label'  => 'string',
     ];
-    public string $searchFieldAlias  = 'q';
-    public string $sortFieldAlias    = 's';
-    public int    $limit             = 20;
-    public int    $maxLimit          = 100;
-
-    protected array $casts = [
+    public string $searchFieldAlias = 'q';
+    public string $sortFieldAlias   = 's';
+    public int $limit               = 20;
+    public int $maxLimit            = 100;
+    protected array $casts          = [
         'id'            => 'int',
         'locale'        => 'int',
         'module_id'     => 'int',
@@ -105,19 +99,18 @@ class SettingsModel extends AvegaCmsModel
         'created_by_id' => 'int',
         'updated_by_id' => 'int',
         'created_at'    => 'cmsdatetime',
-        'updated_at'    => 'cmsdatetime'
+        'updated_at'    => 'cmsdatetime',
     ];
 
     public function __construct()
     {
         parent::__construct();
-        $this->validationRules['return_type'] = 'if_exist|in_list[' . implode(',',
-                FieldsReturnTypes::get('value')) . ']';
+        $this->validationRules['return_type'] = 'if_exist|in_list[' . implode(
+            ',',
+            FieldsReturnTypes::get('value')
+        ) . ']';
     }
 
-    /**
-     * @return AvegaCmsModel
-     */
     public function selectSettings(): AvegaCmsModel
     {
         $this->builder()->select(
@@ -131,7 +124,7 @@ class SettingsModel extends AvegaCmsModel
                 'settings.key',
                 'settings.label AS lang_label',
                 'IFNULL(m.slug, "AvegaCms Core") AS module_slug',
-                'IFNULL(m.name, "AvegaCms Core") AS module_name'
+                'IFNULL(m.name, "AvegaCms Core") AS module_name',
             ]
         )->join('modules AS m', 'm.id = settings.module_id', 'left');
 
@@ -139,9 +132,7 @@ class SettingsModel extends AvegaCmsModel
     }
 
     /**
-     * @param  string  $entity
-     * @param  int  $localeId
-     * @return array
+     * @param int $localeId
      */
     public function getSettings(string $entity): array
     {
@@ -151,7 +142,7 @@ class SettingsModel extends AvegaCmsModel
                 'slug',
                 'key',
                 'value',
-                'return_type'
+                'return_type',
             ]
         )->where('entity', $entity)
             ->orderBy('sort', 'ASC')
@@ -159,17 +150,17 @@ class SettingsModel extends AvegaCmsModel
 
         $settings = [];
 
-        if ( ! empty($result = $this->findAll())) {
+        if (! empty($result = $this->findAll())) {
             foreach ($result as $item) {
-                if ( ! empty($item->slug) && ! empty($item->key)) {
+                if (! empty($item->slug) && ! empty($item->key)) {
                     $settings[$item->slug][$item->key] = [
                         'value'       => $item->value,
-                        'return_type' => $item->return_type
+                        'return_type' => $item->return_type,
                     ];
                 } else {
                     $settings[$item->slug] = [
                         'value'       => $item->value,
-                        'return_type' => $item->return_type
+                        'return_type' => $item->return_type,
                     ];
                 }
             }
@@ -179,18 +170,12 @@ class SettingsModel extends AvegaCmsModel
         return $settings;
     }
 
-    /**
-     * @param  string  $entity
-     * @param  string|null  $slug
-     * @param  string|null  $property
-     * @return int
-     */
-    public function getId(string $entity, string $slug = null, string $property = null): int
+    public function getId(string $entity, ?string $slug = null, ?string $property = null): int
     {
         $this->builder()->where('entity', $entity);
-        if ( ! empty($slug)) {
+        if (! empty($slug)) {
             $this->builder()->where('slug', $slug);
-            if ( ! empty($property)) {
+            if (! empty($property)) {
                 $this->builder()->where('key', $property);
             }
         }
@@ -198,10 +183,6 @@ class SettingsModel extends AvegaCmsModel
         return $this->asArray()->findColumn('id')[0] ?? 0;
     }
 
-    /**
-     * @param  int  $id
-     * @return array|object|null
-     */
     public function forEdit(int $id): array|object|null
     {
         $this->builder()->select([
@@ -217,24 +198,17 @@ class SettingsModel extends AvegaCmsModel
             'return_type',
             'label',
             'context',
-            'sort'
+            'sort',
         ]);
 
         return $this->find($id);
     }
 
-    /**
-     * @return void
-     */
     protected function dropSettingsCache(): void
     {
         cache()->deleteMatching('settings_*');
     }
 
-    /**
-     * @param  array  $data
-     * @return array
-     */
     protected function setCreatedById(array $data): array
     {
         $data['data']['updated_by_id'] = $data['data']['created_by_id'] = $data['data']['created_by_id'] ?? 1;
@@ -242,13 +216,9 @@ class SettingsModel extends AvegaCmsModel
         return $data;
     }
 
-    /**
-     * @param  array  $data
-     * @return array
-     */
     protected function setUpdatedById(array $data): array
     {
-        $data['data']['updated_by_id'] = $data['data']['updated_by_id'] ?? 2;
+        $data['data']['updated_by_id'] ??= 2;
 
         return $data;
     }

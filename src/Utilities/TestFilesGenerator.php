@@ -1,22 +1,17 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Utilities;
 
-use AvegaCms\Models\Admin\{FilesModel, FilesLinksModel};
 use AvegaCms\Enums\FileTypes;
+use AvegaCms\Models\Admin\FilesLinksModel;
+use AvegaCms\Models\Admin\FilesModel;
 use ReflectionException;
 
 class TestFilesGenerator
 {
-
     /**
-     * @param  string  $path
-     * @param  string  $type
-     * @param  int  $num
-     * @param  array  $custom
-     * @return bool
      * @throws ReflectionException
      */
     public static function run(string $path, string $type = 'mixed', int $num = 1, array $custom = []): bool
@@ -31,7 +26,7 @@ class TestFilesGenerator
 
         $fileTypes = [
             'images' => ['jpg', 'jpeg', 'png', 'gif'],
-            'files'  => ['pdf', 'docx', 'xls', 'zip']
+            'files'  => ['pdf', 'docx', 'xls', 'zip'],
         ];
 
         helper(['file', 'text']);
@@ -40,8 +35,8 @@ class TestFilesGenerator
 
         for ($i = 0; $i < $num; $i++) {
             $ft       = $type === 'mixed' ? array_rand($fileTypes) : $type;
-            $size     = rand(1, 10000);
-            $name     = random_string('alnum', rand(32, 64));
+            $size     = mt_rand(1, 10000);
+            $name     = random_string('alnum', mt_rand(32, 64));
             $ext      = $fileTypes[$ft][array_rand($fileTypes[$ft])];
             $title    = random_string('alnum', 64);
             $fileType = FileTypes::File->value;
@@ -54,17 +49,17 @@ class TestFilesGenerator
                 'ext'      => $ext,
                 'file'     => $original,
                 'size'     => $size,
-                'path'     => $urlPath . '/' . $original
+                'path'     => $urlPath . '/' . $original,
             ];
 
             switch ($ft) {
                 case 'images':
-
                     $file['path']  = ['original' => $urlPath . '/' . $original];
                     $file['thumb'] = ['original' => $urlPath . '/thumb_' . $original];
                     $file['alt']   = $title;
                     $fileType      = $file['type'] = FileTypes::Image->value;
                     break;
+
                 case 'files':
                     $file['title'] = $file['alt'] = $title;
                     break;
@@ -75,7 +70,7 @@ class TestFilesGenerator
                     'data'          => $file,
                     'provider'      => $directory->provider ?? 0,
                     'type'          => $fileType,
-                    'created_by_id' => $custom['user_id'] ?? ($directory->user_id ?? 0)
+                    'created_by_id' => $custom['user_id'] ?? ($directory->user_id ?? 0),
                 ]
             );
 
@@ -89,7 +84,7 @@ class TestFilesGenerator
                         'entity_id'     => $custom['entity_id'] ?? ($directory->entity_id ?? 0),
                         'item_id'       => $custom['item_id'] ?? ($directory->item_id ?? 0),
                         'type'          => $fileType,
-                        'created_by_id' => $custom['user_id'] ?? ($directory->user_id ?? 0)
+                        'created_by_id' => $custom['user_id'] ?? ($directory->user_id ?? 0),
                     ]
                 );
             }

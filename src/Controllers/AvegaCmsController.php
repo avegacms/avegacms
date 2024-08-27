@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Controllers;
 
@@ -45,12 +45,6 @@ abstract class AvegaCmsController extends Controller
      */
     // protected $session;
 
-    /**
-     * @param  RequestInterface  $request
-     * @param  ResponseInterface  $response
-     * @param  LoggerInterface  $logger
-     * @return void
-     */
     public function initController(
         RequestInterface $request,
         ResponseInterface $response,

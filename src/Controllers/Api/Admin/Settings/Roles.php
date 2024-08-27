@@ -1,19 +1,21 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Controllers\Api\Admin\Settings;
 
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
+use AvegaCms\Models\Admin\PermissionsModel;
+use AvegaCms\Models\Admin\RolesModel;
+use AvegaCms\Models\Admin\UserRolesModel;
 use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Models\Admin\{RolesModel, PermissionsModel, UserRolesModel};
 use ReflectionException;
 
 class Roles extends AvegaCmsAdminAPI
 {
-    protected RolesModel       $RM;
+    protected RolesModel $RM;
     protected PermissionsModel $PM;
-    protected UserRolesModel   $URM;
+    protected UserRolesModel $URM;
 
     public function __construct()
     {
@@ -23,16 +25,12 @@ class Roles extends AvegaCmsAdminAPI
         $this->URM = model(UserRolesModel::class);
     }
 
-    /**
-     * @return ResponseInterface
-     */
     public function index(): ResponseInterface
     {
         return $this->cmsRespond($this->RM->filter($this->request->getGet() ?? [])->apiPagination());
     }
 
     /**
-     * @return ResponseInterface
      * @throws ReflectionException
      */
     public function create(): ResponseInterface
@@ -41,29 +39,26 @@ class Roles extends AvegaCmsAdminAPI
 
         $data['created_by_id'] = $this->userData->userId;
 
-        if ( ! $id = $this->RM->insert($data)) {
+        if (! $id = $this->RM->insert($data)) {
             return $this->failValidationErrors($this->RM->errors());
         }
 
         $defaultPermissions = $this->PM->getDefaultPermissions();
         $rolePermissions    = [];
+
         foreach ($defaultPermissions as $permission) {
             $permission['role_id']       = $id;
             $permission['created_by_id'] = $this->userData->userId;
             $rolePermissions[]           = $permission;
         }
 
-        if ( ! $this->PM->insertBatch($rolePermissions)) {
+        if (! $this->PM->insertBatch($rolePermissions)) {
             return $this->failNotFound(lang('Api.errors.create', ['Permissions']));
         }
 
         return $this->cmsRespondCreated($id);
     }
 
-    /**
-     * @param $id
-     * @return ResponseInterface
-     */
     public function edit($id = null): ResponseInterface
     {
         if (($data = $this->RM->find($id)) === null) {
@@ -73,20 +68,18 @@ class Roles extends AvegaCmsAdminAPI
         return $this->cmsRespond(
             [
                 'role'        => $data->toArray(),
-                'permissions' => $this->PM->getDefaultPermissions($id)
+                'permissions' => $this->PM->getDefaultPermissions($id),
             ]
         );
     }
 
     /**
-     * @param $id
-     * @return ResponseInterface
      * @throws ReflectionException
      */
     public function update($id = null): ResponseInterface
     {
         $data = $this->apiData;
-        
+
         if (($role = $this->RM->find($id)) === null) {
             return $this->failNotFound();
         }
@@ -103,8 +96,6 @@ class Roles extends AvegaCmsAdminAPI
     }
 
     /**
-     * @param $id
-     * @return ResponseInterface
      * @throws ReflectionException
      */
     public function delete($id = null): ResponseInterface
@@ -113,21 +104,21 @@ class Roles extends AvegaCmsAdminAPI
             return $this->failNotFound();
         }
 
-        if (in_array($role->role, ['root', 'default'])) {
+        if (in_array($role->role, ['root', 'default'], true)) {
             return $this->failValidationErrors(lang('Roles.errors.deleteIsDefault'));
         }
 
-        if ( ! $this->RM->delete($id)) {
+        if (! $this->RM->delete($id)) {
             return $this->failValidationErrors(lang('Api.errors.delete', ['Roles']));
         }
 
         cache()->delete('RAM_' . $role->role);
 
-        if ( ! $this->PM->where(['role_id' => $id])->delete()) {
+        if (! $this->PM->where(['role_id' => $id])->delete()) {
             return $this->failValidationErrors(lang('Api.errors.delete', ['Permissions']));
         }
 
-        if ( ! $this->URM->update(['role_id' => 4], ['role_id' => $id])) {
+        if (! $this->URM->update(['role_id' => 4], ['role_id' => $id])) {
             return $this->failValidationErrors(lang('Api.errors.update', ['UserRoles']));
         }
 

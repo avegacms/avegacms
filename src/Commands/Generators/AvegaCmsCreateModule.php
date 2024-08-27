@@ -2,14 +2,12 @@
 
 namespace AvegaCms\Commands\Generators;
 
-use CodeIgniter\CLI\BaseCommand;
-use CodeIgniter\CLI\CLI;
-use CodeIgniter\CLI\GeneratorTrait;
 use AvegaCms\Config\AvegaCms;
+use CodeIgniter\CLI\BaseCommand;
+use CodeIgniter\CLI\GeneratorTrait;
 
 class AvegaCmsCreateModule extends BaseCommand
 {
-
     use GeneratorTrait;
 
     /**
@@ -49,36 +47,33 @@ class AvegaCmsCreateModule extends BaseCommand
         'name' => 'The module name.',
     ];
 
-    /**
-     * @var array
-     */
     protected array $moduleFolder = [
         'Config'      => 'Routes.php',
         'Controllers' => [
             'Api' => [
                 'Admin'  => '.gitkeep',
-                'Public' => '.gitkeep'
-            ]
+                'Public' => '.gitkeep',
+            ],
         ],
-        'Database'    => [
+        'Database' => [
             'Factories'  => '.gitkeep',
             'Migrations' => '.gitkeep',
-            'Seeds'      => '.gitkeep'
+            'Seeds'      => '.gitkeep',
         ],
-        'Entities'    => '.gitkeep',
-        'Filters'     => '.gitkeep',
-        'Helpers'     => '.gitkeep',
-        'Language'    => '.gitkeep',
-        'Libraries'   => '.gitkeep',
-        'Models'      => [
+        'Entities'  => '.gitkeep',
+        'Filters'   => '.gitkeep',
+        'Helpers'   => '.gitkeep',
+        'Language'  => '.gitkeep',
+        'Libraries' => '.gitkeep',
+        'Models'    => [
             'Admin'    => '.gitkeep',
-            'Frontend' => '.gitkeep'
+            'Frontend' => '.gitkeep',
         ],
-        'Views'       => '.gitkeep'
+        'Views' => '.gitkeep',
     ];
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function run(array $params)
     {
@@ -87,11 +82,6 @@ class AvegaCmsCreateModule extends BaseCommand
         $this->createFolders($this->moduleFolder, ROOTPATH . 'modules' . DIRECTORY_SEPARATOR . ucfirst($module));
     }
 
-    /**
-     * @param  array  $folders
-     * @param  string  $path
-     * @return void
-     */
     protected function createFolders(array $folders, string $path): void
     {
         foreach ($folders as $folder => $item) {

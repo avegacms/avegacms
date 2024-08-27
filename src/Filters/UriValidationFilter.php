@@ -1,14 +1,14 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Filters;
 
 use AvegaCms\Config\Services;
-use Config\App;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use Config\App;
 
 class UriValidationFilter implements FilterInterface
 {
@@ -22,8 +22,7 @@ class UriValidationFilter implements FilterInterface
      * sent back to the client, allowing for error pages,
      * redirects, etc.
      *
-     * @param  RequestInterface  $request
-     * @param  array|null  $arguments
+     * @param array|null $arguments
      *
      * @return RequestInterface|ResponseInterface|string|void
      */
@@ -31,7 +30,7 @@ class UriValidationFilter implements FilterInterface
     {
         $uri = $request->getUri()->getPath();
 
-        if ( ! preg_match('/^[' . config(App::class)->permittedURIChars . ']+$/i', $uri)) {
+        if (! preg_match('/^[' . config(App::class)->permittedURIChars . ']+$/i', $uri)) {
             if ($request->getUri()->getSegment(1) === 'api') {
                 return Services::response()->setStatusCode(404);
             }
@@ -46,14 +45,11 @@ class UriValidationFilter implements FilterInterface
      * to stop execution of other after filters, short of
      * throwing an Exception or Error.
      *
-     * @param  RequestInterface  $request
-     * @param  ResponseInterface  $response
-     * @param  array|null  $arguments
+     * @param array|null $arguments
      *
      * @return ResponseInterface|void
      */
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-        //
     }
 }

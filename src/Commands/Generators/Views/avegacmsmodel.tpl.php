@@ -1,6 +1,6 @@
 <@php
 declare(strict_types=1);
-    
+
 namespace {namespace};
 
 use AvegaCms\Models\AvegaCmsModel;
@@ -30,20 +30,20 @@ class {class} extends AvegaCmsModel
         'created_at'    => 'cmsdatetime',
         'updated_at'    => 'cmsdatetime'
     ];
-    
+
     // Dates
     protected $useTimestamps = false;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
-    
+
     // Validation
     protected $validationRules      = [];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
-    
+
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
@@ -54,7 +54,7 @@ class {class} extends AvegaCmsModel
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
-    
+
     // AvegaCms filter settings
     protected array $filterFields       = [];
     protected array $searchFields       = [];
