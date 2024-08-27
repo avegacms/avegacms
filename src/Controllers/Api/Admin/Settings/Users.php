@@ -1,31 +1,35 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Controllers\Api\Admin\Settings;
 
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
-use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Models\Admin\{UserModel, UserRolesModel, RolesModel, UserTokensModel};
-use AvegaCms\Utilities\{Cms, Uploader};
+use AvegaCms\Models\Admin\RolesModel;
+use AvegaCms\Models\Admin\UserModel;
+use AvegaCms\Models\Admin\UserRolesModel;
+use AvegaCms\Models\Admin\UserTokensModel;
+use AvegaCms\Utilities\Cms;
 use AvegaCms\Utilities\Exceptions\UploaderException;
+use AvegaCms\Utilities\Uploader;
+use CodeIgniter\HTTP\ResponseInterface;
 use ReflectionException;
 
 class Users extends AvegaCmsAdminAPI
 {
-    protected RolesModel     $RM;
-    protected UserModel      $UM;
+    protected RolesModel $RM;
+    protected UserModel $UM;
     protected UserRolesModel $URM;
 
     /**
-     * @var array|string[]
+     * @var array|list<string>
      */
     protected array $userStatus = [
         'pre-registration',
         'active',
         'banned',
         'deleted',
-        ''
+        '',
     ];
 
     public function __construct()
@@ -36,29 +40,22 @@ class Users extends AvegaCmsAdminAPI
         $this->URM = model(UserRolesModel::class);
     }
 
-    /**
-     * @return ResponseInterface
-     */
     public function index(): ResponseInterface
     {
         return $this->cmsRespond($this->URM->getUsers()->filter($this->request->getGet() ?? [])->apiPagination());
     }
 
-    /**
-     * @return ResponseInterface
-     */
     public function new(): ResponseInterface
     {
         return $this->cmsRespond(
             [
                 'roles'    => $this->RM->getRolesList(),
-                'statuses' => $this->userStatus
+                'statuses' => $this->userStatus,
             ]
         );
     }
 
     /**
-     * @return ResponseInterface
      * @throws ReflectionException
      */
     public function create(): ResponseInterface
@@ -70,7 +67,7 @@ class Users extends AvegaCmsAdminAPI
         $roles = $data['roles'];
         unset($data['roles']);
 
-        if ( ! $id = $this->UM->insert($data)) {
+        if (! $id = $this->UM->insert($data)) {
             return $this->failValidationErrors($this->UM->errors());
         }
 
@@ -79,10 +76,6 @@ class Users extends AvegaCmsAdminAPI
         return $this->cmsRespondCreated($id);
     }
 
-    /**
-     * @param $id
-     * @return ResponseInterface
-     */
     public function edit($id = null): ResponseInterface
     {
         if (($data = $this->UM->forEdit((int) $id)) === null) {
@@ -97,8 +90,6 @@ class Users extends AvegaCmsAdminAPI
     }
 
     /**
-     * @param $id
-     * @return ResponseInterface
      * @throws ReflectionException
      */
     public function update($id = null): ResponseInterface
@@ -113,7 +104,7 @@ class Users extends AvegaCmsAdminAPI
 
         $reset = false;
         if (isset($data['reset'])) {
-            $reset = boolval($data['reset']);
+            $reset = (bool) ($data['reset']);
             unset($data['reset']);
         }
 
@@ -139,8 +130,6 @@ class Users extends AvegaCmsAdminAPI
     }
 
     /**
-     * @param $id
-     * @return ResponseInterface
      * @throws ReflectionException
      */
     public function upload($id = null): ResponseInterface
@@ -155,11 +144,11 @@ class Users extends AvegaCmsAdminAPI
                 'users',
                 [
                     'is_image' => true,
-                    'ext_in'   => 'png,jpg,jpeg,gif'
+                    'ext_in'   => 'png,jpg,jpeg,gif',
                 ]
             );
 
-            if ( ! $this->UM->save(['id' => $id, 'avatar' => $avatar['fileName']])) {
+            if (! $this->UM->save(['id' => $id, 'avatar' => $avatar['fileName']])) {
                 return $this->failValidationErrors($this->UM->errors());
             }
 
@@ -169,21 +158,17 @@ class Users extends AvegaCmsAdminAPI
         }
     }
 
-    /**
-     * @param $id
-     * @return ResponseInterface
-     */
     public function delete($id = null): ResponseInterface
     {
         if (($user = $this->UM->find($id)) === null) {
             return $this->failNotFound();
         }
 
-        if ( ! $this->UM->delete($id)) {
+        if (! $this->UM->delete($id)) {
             return $this->failValidationErrors(lang('Api.errors.delete', ['Users']));
         }
 
-        if ( ! $this->URM->where(['user_id' => $id])->delete()) {
+        if (! $this->URM->where(['user_id' => $id])->delete()) {
             return $this->failValidationErrors(lang('Api.errors.delete', ['UserRoles']));
         }
 
@@ -192,26 +177,20 @@ class Users extends AvegaCmsAdminAPI
         return $this->respondNoContent();
     }
 
-    /**
-     * @param  string  $file
-     * @return void
-     */
     private function _removeAvatar(string $file): void
     {
-        if ( ! empty($file) && file_exists($path = FCPATH . 'uploads/users' . $file)) {
+        if (! empty($file) && file_exists($path = FCPATH . 'uploads/users' . $file)) {
             unlink($path);
         }
     }
 
     /**
-     * @param  int  $userId
-     * @param  array  $roles
-     * @return void
      * @throws ReflectionException
      */
     private function _setRoles(int $userId, array $roles): void
     {
         $this->URM->where(['user_id' => $userId])->delete();
+
         foreach ($roles as $role) {
             $setRoles[] = [
                 'role_id'       => $role,
@@ -221,5 +200,4 @@ class Users extends AvegaCmsAdminAPI
         }
         $this->URM->insertBatch($setRoles ?? null);
     }
-
 }

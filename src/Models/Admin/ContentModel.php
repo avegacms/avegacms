@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Models\Admin;
 
@@ -17,15 +17,15 @@ class ContentModel extends AvegaCmsModel
         'id',
         'anons',
         'content',
-        'extra'
+        'extra',
     ];
 
     // Validation
-    protected $validationRules      = [
+    protected $validationRules = [
         'id'      => ['rules' => 'if_exist|required|is_natural_no_zero'],
         'anons'   => ['rules' => 'if_exist|permit_empty|string'],
         'content' => ['rules' => 'if_exist|permit_empty|string'],
-        'extra'   => ['rules' => 'if_exist|permit_empty|string']
+        'extra'   => ['rules' => 'if_exist|permit_empty|string'],
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
@@ -41,9 +41,8 @@ class ContentModel extends AvegaCmsModel
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
-
-    protected array $casts = [
+    protected array $casts    = [
         'id'    => 'int',
-        'extra' => '?json-array'
+        'extra' => '?json-array',
     ];
 }

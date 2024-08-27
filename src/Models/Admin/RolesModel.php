@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Models\Admin;
 
@@ -28,7 +28,7 @@ class RolesModel extends AvegaCmsModel
         'created_by_id',
         'updated_by_id',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     // Dates
@@ -39,7 +39,7 @@ class RolesModel extends AvegaCmsModel
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [
+    protected $validationRules = [
         'id'            => ['rules' => 'if_exist|is_natural_no_zero'],
         'role'          => ['rules' => 'if_exist|required|alpha_dash|max_length[36]|is_unique[roles.role,id,{id}]'],
         'description'   => ['rules' => 'if_exist|permit_empty|max_length[512]'],
@@ -49,7 +49,7 @@ class RolesModel extends AvegaCmsModel
         'module_id'     => ['rules' => 'if_exist|is_natural'],
         'role_entity'   => ['rules' => 'if_exist|permit_empty|max_length[512]'],
         'created_by_id' => ['rules' => 'if_exist|is_natural'],
-        'updated_by_id' => ['rules' => 'if_exist|is_natural']
+        'updated_by_id' => ['rules' => 'if_exist|is_natural'],
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
@@ -65,8 +65,7 @@ class RolesModel extends AvegaCmsModel
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = ['clearCache'];
-
-    protected array $casts = [
+    protected array $casts    = [
         'id'            => 'int',
         'self_auth'     => '?int-bool',
         'module_id'     => '?int',
@@ -75,24 +74,19 @@ class RolesModel extends AvegaCmsModel
         'created_by_id' => 'int',
         'updated_by_id' => 'int',
         'created_at'    => 'cmsdatetime',
-        'updated_at'    => 'cmsdatetime'
+        'updated_at'    => 'cmsdatetime',
     ];
 
-    /**
-     * @return array
-     */
     public function getRolesList(): array
     {
         return cache()->remember('RolesList', DAY * 30, function () {
             $this->builder()->select(['id', 'role'])->orderBy('role', 'ASC');
             $rolesData = $this->findAll();
+
             return array_column($rolesData, 'role', 'id');
         });
     }
 
-    /**
-     * @return array
-     */
     public function getActiveRoles(): array
     {
         return cache()->remember('ActiveRoles', DAY * 30, function () {
@@ -100,13 +94,11 @@ class RolesModel extends AvegaCmsModel
                 ->select(['id', 'role', 'path', 'self_auth', 'module_id', 'role_entity'])
                 ->where(['active' => 1]);
             $rolesData = $this->asArray()->findAll();
+
             return array_column($rolesData, null, 'role');
         });
     }
 
-    /**
-     * @return void
-     */
     public function clearCache(): void
     {
         cache()->delete('RolesList');

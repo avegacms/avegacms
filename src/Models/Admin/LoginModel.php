@@ -1,12 +1,12 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Models\Admin;
 
+use AvegaCms\Enums\UserStatuses;
 use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Utilities\CmsFileManager;
-use AvegaCms\Enums\UserStatuses;
 
 class LoginModel extends AvegaCmsModel
 {
@@ -38,7 +38,7 @@ class LoginModel extends AvegaCmsModel
         'active_at',
         'created_at',
         'updated_at',
-        'deleted_at'
+        'deleted_at',
     ];
 
     // Dates
@@ -64,8 +64,7 @@ class LoginModel extends AvegaCmsModel
     protected $afterFind      = ['getUserAvatar'];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
-
-    protected array $casts = [
+    protected array $casts    = [
         'id'            => 'int',
         'avatar'        => 'int',
         'profile'       => '?json-array',
@@ -78,25 +77,20 @@ class LoginModel extends AvegaCmsModel
         'deleted_at'    => '?cmsdatetime',
         'roleId'        => 'int',
         'moduleId'      => 'int',
-        'selfAuth'      => 'int'
+        'selfAuth'      => 'int',
     ];
 
-    /**
-     * @param  array  $fields
-     * @param  string|null  $role
-     * @return object|null
-     */
-    public function getUser(array $fields, ?string $role = null): object|null
+    public function getUser(array $fields, ?string $role = null): ?object
     {
         $list = [];
 
         foreach ($fields as $key => $field) {
-            if ( ! empty($field)) {
-                if (in_array($key, ['id', 'login', 'email', 'phone'])) {
+            if (! empty($field)) {
+                if (in_array($key, ['id', 'login', 'email', 'phone'], true)) {
                     $list['users.' . $key] = $field;
-                } elseif ($key == 'role_id') {
+                } elseif ($key === 'role_id') {
                     $list['user_roles.' . $key] = $field;
-                } elseif ($key == 'role') {
+                } elseif ($key === 'role') {
                     $list['roles.' . $key] = $field;
                 }
             }
@@ -122,7 +116,7 @@ class LoginModel extends AvegaCmsModel
                 'roles.module_id AS moduleId',
                 'roles.self_auth AS selfAuth',
                 'user_roles.role_id AS roleId',
-                'modules.slug AS module'
+                'modules.slug AS module',
             ]
         )->join('user_roles', 'user_roles.user_id = users.id')
             ->join('roles', 'roles.id = user_roles.role_id')
@@ -130,7 +124,7 @@ class LoginModel extends AvegaCmsModel
             ->where($list)
             ->whereIn('users.status', [UserStatuses::Active->value, UserStatuses::Registration->value]);
 
-        if ( ! is_null($role)) {
+        if (null !== $role) {
             if (str_starts_with($role, '!')) {
                 $this->builder()->where(['roles.role !=' => str_ireplace('!', '', $role)]);
             } else {
@@ -145,7 +139,7 @@ class LoginModel extends AvegaCmsModel
     {
         if ($data['method'] === 'first') {
             if ($data['data']->avatar > 0) {
-                if ( ! empty($avatar = CmsFileManager::getFiles(['id' => $data['data']->avatar], true))) {
+                if (! empty($avatar = CmsFileManager::getFiles(['id' => $data['data']->avatar], true))) {
                     $data['data']->avatar = $avatar->{0};
                 } else {
                     $data['data']->avatar = null;

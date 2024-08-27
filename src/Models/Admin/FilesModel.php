@@ -1,11 +1,11 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Models\Admin;
 
-use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Enums\FileTypes;
+use AvegaCms\Models\AvegaCmsModel;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
 
@@ -27,7 +27,7 @@ class FilesModel extends AvegaCmsModel
         'created_by_id',
         'updated_by_id',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     // Dates
@@ -38,7 +38,7 @@ class FilesModel extends AvegaCmsModel
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [
+    protected $validationRules = [
         'data'          => ['rules' => 'if_exist|required|max_length[2048]'],
         'extra'         => ['rules' => 'if_exist|permit_empty|max_length[16384]'],
         'provider'      => ['rules' => 'if_exist|is_natural'],
@@ -62,18 +62,17 @@ class FilesModel extends AvegaCmsModel
     protected $afterDelete    = [];
 
     // AvegaCms filter settings
-    protected array  $filterFields      = [];
-    protected array  $searchFields      = [];
-    protected array  $sortableFields    = [];
-    protected array  $filterCastsFields = [];
+    protected array $filterFields       = [];
+    protected array $searchFields       = [];
+    protected array $sortableFields     = [];
+    protected array $filterCastsFields  = [];
     protected string $searchFieldAlias  = 'q';
     protected string $sortFieldAlias    = 's';
     protected string $sortDefaultFields = '';
-    protected array  $filterEnumValues  = [];
-    protected int    $limit             = 20;
-    protected int    $maxLimit          = 100;
-
-    protected array $casts = [
+    protected array $filterEnumValues   = [];
+    protected int $limit                = 20;
+    protected int $maxLimit             = 100;
+    protected array $casts              = [
         'id'            => 'int',
         'provider'      => 'int',
         'data'          => 'json-array',
@@ -90,14 +89,10 @@ class FilesModel extends AvegaCmsModel
         parent::__construct($db, $validation);
 
         $this->validationRules['type'] = [
-            'rules' => 'if_exist|required|in_list[' . implode(',', FileTypes::get('value')) . ']'
+            'rules' => 'if_exist|required|in_list[' . implode(',', FileTypes::get('value')) . ']',
         ];
     }
 
-    /**
-     * @param  array  $filesId
-     * @return array
-     */
     public function getFilesForDelete(array $filesId): array
     {
         $this->builder()

@@ -1,26 +1,23 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Database\Migrations;
 
+use AvegaCms\Enums\FieldsReturnTypes;
+use AvegaCms\Enums\FileTypes;
+use AvegaCms\Enums\MetaDataTypes;
+use AvegaCms\Enums\MetaStatuses;
+use AvegaCms\Enums\NavigationTypes;
+use AvegaCms\Enums\UserConditions;
+use AvegaCms\Enums\UserStatuses;
+use AvegaCms\Utilities\Migrator;
 use CodeIgniter\Database\Migration;
 use CodeIgniter\Database\RawSql;
-use AvegaCms\Enums\{
-    UserStatuses,
-    UserConditions,
-    FieldsReturnTypes,
-    FileTypes,
-    MetaStatuses,
-    NavigationTypes,
-    MetaDataTypes
-};
-use AvegaCms\Utilities\Migrator;
 
 class CreateAvegaCmsTables extends Migration
 {
     private array $attributes;
-
     private array $tables = [
         'users'           => 'users',
         'roles'           => 'roles',
@@ -39,9 +36,6 @@ class CreateAvegaCmsTables extends Migration
         'email_templates' => 'email_templates',
     ];
 
-    /**
-     * @return void
-     */
     public function up(): void
     {
         $this->attributes = ($this->db->getPlatform() === 'MySQLi') ? Migrator::$attributes : [];
@@ -64,21 +58,21 @@ class CreateAvegaCmsTables extends Migration
             'profile'     => ['type' => 'text', 'null' => true],
             'extra'       => ['type' => 'text', 'null' => true],
             // Дополнительные поля
-            'status'      => [
+            'status' => [
                 'type'       => 'enum',
                 'constraint' => UserStatuses::get('value'),
-                'default'    => UserStatuses::NotDefined->value
+                'default'    => UserStatuses::NotDefined->value,
             ],
-            'condition'   => [
+            'condition' => [
                 'type'       => 'enum',
                 'constraint' => UserConditions::get('value'),
-                'default'    => UserConditions::None->value
+                'default'    => UserConditions::None->value,
             ],
-            'last_ip'     => ['type' => 'varchar', 'constraint' => 45],
-            'last_agent'  => ['type' => 'varchar', 'constraint' => 512],
-            'active_at'   => ['type' => 'datetime', 'null' => true],
+            'last_ip'    => ['type' => 'varchar', 'constraint' => 45],
+            'last_agent' => ['type' => 'varchar', 'constraint' => 512],
+            'active_at'  => ['type' => 'datetime', 'null' => true],
             ...Migrator::byId(),
-            ...Migrator::dateFields()
+            ...Migrator::dateFields(),
         ]);
         $this->forge->addPrimaryKey('id');
         $this->createTable($this->tables['users']);
@@ -93,16 +87,16 @@ class CreateAvegaCmsTables extends Migration
             'color'       => ['type' => 'varchar', 'constraint' => 16, 'null' => true],
             'path'        => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
             // Приоритет роли, в случае, если будут одинаковые действия
-            'priority'    => ['type' => 'tinyint', 'constraint' => 3, 'null' => 0, 'default' => 0],
+            'priority' => ['type' => 'tinyint', 'constraint' => 3, 'null' => 0, 'default' => 0],
             // Роль имеет свой отдельный доступ
-            'self_auth'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'self_auth' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // ID модуля
-            'module_id'   => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
+            'module_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
             // Сущность для профиля роли
             'role_entity' => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
             'active'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             ...Migrator::byId(),
-            ...Migrator::dateFields(['deleted_at'])
+            ...Migrator::dateFields(['deleted_at']),
         ]);
         $this->forge->addPrimaryKey('id');
         $this->createTable($this->tables['roles']);
@@ -114,7 +108,7 @@ class CreateAvegaCmsTables extends Migration
             'role_id'       => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true],
             'user_id'       => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true],
             'created_by_id' => ['type' => 'int', 'constraint' => 11, 'null' => true, 'default' => 0],
-            ...Migrator::dateFields(['updated_at', 'deleted_at'])
+            ...Migrator::dateFields(['updated_at', 'deleted_at']),
         ]);
         $this->forge->addUniqueKey(['user_id', 'role_id']);
         $this->forge->addForeignKey('role_id', $this->tables['roles'], 'id', onDelete: 'CASCADE');
@@ -133,7 +127,7 @@ class CreateAvegaCmsTables extends Migration
             'expires'       => ['type' => 'int', 'null' => true, 'default' => 0],
             'user_ip'       => ['type' => 'varchar', 'constraint' => 255],
             'user_agent'    => ['type' => 'varchar', 'constraint' => 512],
-            ...Migrator::dateFields(['deleted_at'])
+            ...Migrator::dateFields(['deleted_at']),
         ]);
         $this->forge->addForeignKey('role_id', $this->tables['roles'], 'id', onDelete: 'CASCADE');
         $this->forge->addForeignKey('user_id', $this->tables['users'], 'id', onDelete: 'CASCADE');
@@ -159,7 +153,7 @@ class CreateAvegaCmsTables extends Migration
             'in_sitemap'  => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             'active'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             ...Migrator::byId(),
-            ...Migrator::dateFields(['deleted_at'])
+            ...Migrator::dateFields(['deleted_at']),
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addUniqueKey(['parent', 'is_core', 'key']);
@@ -169,22 +163,22 @@ class CreateAvegaCmsTables extends Migration
          * Таблица "местоположения" используется как для мультязычных, так и для мультирегиональных приложений/сайтов
          */
         $this->forge->addField([
-            'id'          => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
-            'parent'      => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
-            'slug'        => ['type' => 'varchar', 'constraint' => 20, 'unique' => true, 'null' => true],
+            'id'     => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'parent' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
+            'slug'   => ['type' => 'varchar', 'constraint' => 20, 'unique' => true, 'null' => true],
             // Значение, которое будет отображаться в ULR (пример: ru / omsk)
-            'locale'      => ['type' => 'varchar', 'constraint' => 32, 'null' => true],
+            'locale' => ['type' => 'varchar', 'constraint' => 32, 'null' => true],
             // Для SEO (пример: ru_RU / en_EN)
             'locale_name' => ['type' => 'varchar', 'constraint' => 100, 'null' => true],
             // Наименование локали (пример: Русский язык / English language / omsk)
-            'home'        => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
+            'home' => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
             // Для SEO начальное значение для breadcrumbs
-            'extra'       => ['type' => 'text', 'null' => true],
+            'extra' => ['type' => 'text', 'null' => true],
             // Дополнительны данные
-            'is_default'  => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
-            'active'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'is_default' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'active'     => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             ...Migrator::byId(),
-            ...Migrator::dateFields(['deleted_at'])
+            ...Migrator::dateFields(['deleted_at']),
         ]);
         $this->forge->addPrimaryKey('id');
         $this->createTable($this->tables['locales']);
@@ -205,13 +199,13 @@ class CreateAvegaCmsTables extends Migration
             'return_type'   => [
                 'type'       => 'enum',
                 'constraint' => FieldsReturnTypes::get('value'),
-                'default'    => FieldsReturnTypes::String->value
+                'default'    => FieldsReturnTypes::String->value,
             ],
-            'label'         => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
-            'context'       => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
-            'sort'          => ['type' => 'tinyint', 'constraint' => 3, 'null' => 0, 'default' => 100],
+            'label'   => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
+            'context' => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
+            'sort'    => ['type' => 'tinyint', 'constraint' => 3, 'null' => 0, 'default' => 100],
             ...Migrator::byId(),
-            ...Migrator::dateFields(['deleted_at'])
+            ...Migrator::dateFields(['deleted_at']),
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addUniqueKey(['locale_id', 'module_id', 'entity', 'slug', 'key']);
@@ -221,11 +215,11 @@ class CreateAvegaCmsTables extends Migration
          * Таблица "местоположения" используется как для мультязычных, так и для мультирегиональных приложений/сайтов
          */
         $this->forge->addField([
-            'id'       => [
+            'id' => [
                 'type'           => 'bigint',
                 'constraint'     => 16,
                 'unsigned'       => true,
-                'auto_increment' => true
+                'auto_increment' => true,
             ],
             'data'     => ['type' => 'text', 'null' => true],
             'extra'    => ['type' => 'text', 'null' => true],
@@ -233,11 +227,11 @@ class CreateAvegaCmsTables extends Migration
             'type'     => [
                 'type'       => 'enum',
                 'constraint' => FileTypes::get('value'),
-                'default'    => FileTypes::File->value
+                'default'    => FileTypes::File->value,
             ],
-            'active'   => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 1],
+            'active' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 1],
             ...Migrator::byId(),
-            ...Migrator::dateFields(['deleted_at'])
+            ...Migrator::dateFields(['deleted_at']),
         ]);
         $this->forge->addPrimaryKey('id');
         $this->createTable($this->tables['files']);
@@ -247,29 +241,29 @@ class CreateAvegaCmsTables extends Migration
          */
         $this->forge->addField(
             [
-                'id'        => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
-                'user_id'   => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
+                'id'      => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
+                'user_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
                 // id - родительского модуля
-                'parent'    => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
+                'parent' => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
                 // id - модуль
                 'module_id' => [
                     'type'    => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true,
-                    'default' => 0
+                    'default' => 0,
                 ],
                 // id - сущности элемента модуля
                 'entity_id' => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
                 // id - элемента сущности
-                'item_id'   => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
+                'item_id' => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
                 // принадлежность к модулю
-                'uid'       => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
-                'active'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 1],
-                'type'      => [
+                'uid'    => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
+                'active' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 1],
+                'type'   => [
                     'type'       => 'enum',
                     'constraint' => FileTypes::get('value'),
-                    'default'    => FileTypes::File->value
+                    'default'    => FileTypes::File->value,
                 ],
                 ...Migrator::byId(),
-                ...Migrator::dateFields(['deleted_at'])
+                ...Migrator::dateFields(['deleted_at']),
             ]
         );
         $this->forge->addUniqueKey(['id', 'user_id', 'parent', 'module_id', 'entity_id', 'item_id']);
@@ -284,7 +278,7 @@ class CreateAvegaCmsTables extends Migration
             'user_id'    => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
             'ip_address' => ['type' => 'varchar', 'constraint' => 45, 'null' => false],
             'timestamp'  => ['type' => 'timestamp', 'null' => true, 'default' => new RawSql('CURRENT_TIMESTAMP')],
-            'data'       => ['type' => 'blob', 'null' => false]
+            'data'       => ['type' => 'blob', 'null' => false],
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addKey('timestamp');
@@ -294,58 +288,58 @@ class CreateAvegaCmsTables extends Migration
          * Таблица для хранения SEO-данных страниц приложения
          */
         $this->forge->addField([
-            'id'              => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'auto_increment' => true],
-            'parent'          => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
+            'id'     => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'auto_increment' => true],
+            'parent' => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
             // id - родительской записи
-            'locale_id'       => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => 0],
+            'locale_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => 0],
             // принадлежность к локалии
-            'module_id'       => [
+            'module_id' => [
                 'type'    => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true,
-                'default' => 0
+                'default' => 0,
             ],
             // принадлежность к модулю
-            'slug'            => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
+            'slug' => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
             // принадлежность к элементу модуля
-            'creator_id'      => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
+            'creator_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
             // id - пользователя создавшего запись
-            'item_id'         => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
+            'item_id' => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
             // id - файла превью записи
-            'preview_id'      => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
+            'preview_id' => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
             // id - элемента записи
-            'title'           => ['type' => 'varchar', 'constraint' => 1024, 'null' => true],
+            'title' => ['type' => 'varchar', 'constraint' => 1024, 'null' => true],
             // Название страницы
-            'sort'            => [
+            'sort' => [
                 'type'    => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true,
-                'default' => 0
+                'default' => 0,
             ],
             // порядковый номер записи
-            'url'             => ['type' => 'varchar', 'constraint' => 2048, 'null' => true],
+            'url' => ['type' => 'varchar', 'constraint' => 2048, 'null' => true],
             // URL-адрес без указания base_url
-            'meta'            => ['type' => 'text', 'null' => true],
+            'meta' => ['type' => 'text', 'null' => true],
             // объект, содержащий информацию о метаданных
-            'extra_data'      => ['type' => 'text', 'null' => true],
+            'extra_data' => ['type' => 'text', 'null' => true],
             // объект, содержащий информацию о дополнительных данных
-            'status'          => [
+            'status' => [
                 'type'       => 'enum',
                 'constraint' => MetaStatuses::get('name'),
-                'default'    => MetaStatuses::Publish->name
+                'default'    => MetaStatuses::Publish->name,
             ],
             // Мета сущность страницы
-            'meta_type'       => [
+            'meta_type' => [
                 'type'       => 'enum',
                 'constraint' => MetaDataTypes::get('name'),
-                'default'    => MetaDataTypes::Undefined->name
+                'default'    => MetaDataTypes::Undefined->name,
             ],
-            'page_type'       => ['type' => 'varchar', 'constraint' => 64, 'null' => true, 'default' => ''],
+            'page_type' => ['type' => 'varchar', 'constraint' => 64, 'null' => true, 'default' => ''],
             // флаг добавления в карту сайта
-            'in_sitemap'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'in_sitemap' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // Метаданные для карты сайта
-            'meta_sitemap'    => ['type' => 'text', 'null' => true],
+            'meta_sitemap' => ['type' => 'text', 'null' => true],
             // флаг использования шаблона url
             'use_url_pattern' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             'publish_at'      => ['type' => 'datetime', 'null' => true],
             ...Migrator::byId(),
-            ...Migrator::dateFields(['deleted_at'])
+            ...Migrator::dateFields(['deleted_at']),
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addUniqueKey(['parent', 'locale_id', 'module_id', 'item_id', 'use_url_pattern', 'slug']);
@@ -358,7 +352,7 @@ class CreateAvegaCmsTables extends Migration
             'id'      => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true],
             'anons'   => ['type' => 'text', 'null' => true], // краткая информация
             'content' => ['type' => 'longtext', 'null' => true], // остальная информация
-            'extra'   => ['type' => 'longtext', 'null' => true] // объект, содержащий информацию о дополнительных данных
+            'extra'   => ['type' => 'longtext', 'null' => true], // объект, содержащий информацию о дополнительных данных
         ]);
         $this->forge->addUniqueKey(['id']);
         $this->createTable($this->tables['content']);
@@ -374,28 +368,28 @@ class CreateAvegaCmsTables extends Migration
             // Является ли модуль плагином
             'is_plugin' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // принадлежность к модулю
-            'parent'    => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
+            'parent' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
             // URL-slug модуля
-            'slug'      => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
+            'slug' => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
             // разрешение на просмотр
-            'access'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'access' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // действия разрешены только со своими записями
-            'self'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'self' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // разрешение на создание
-            'create'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'create' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // разрешение на создание
-            'read'      => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'read' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // разрешение на чтение
-            'update'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'update' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // разрешение на обновление/редактирование
-            'delete'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'delete' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // разрешение на удаление
             'moderated' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             // действие требует модерации вышестоящих
-            'settings'  => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
-            'extra'     => ['type' => 'text', 'null' => true], // Настройки для плагинов
+            'settings' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'extra'    => ['type' => 'text', 'null' => true], // Настройки для плагинов
             ...Migrator::byId(),
-            ...Migrator::dateFields(['deleted_at'])
+            ...Migrator::dateFields(['deleted_at']),
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addUniqueKey(['role_id', 'module_id', 'is_module', 'is_system', 'is_plugin', 'parent', 'slug']);
@@ -410,16 +404,16 @@ class CreateAvegaCmsTables extends Migration
             'nav_type'  => [
                 'type'       => 'enum',
                 'constraint' => NavigationTypes::get('value'),
-                'default'    => NavigationTypes::Link->value
+                'default'    => NavigationTypes::Link->value,
             ],
-            'meta'      => ['type' => 'text', 'null' => true],
-            'title'     => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
-            'slug'      => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
-            'icon'      => ['type' => 'varchar', 'constraint' => 512, 'null' => true, 'default' => ''],
-            'sort'      => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true, 'default' => 0],
-            'active'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
+            'meta'   => ['type' => 'text', 'null' => true],
+            'title'  => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
+            'slug'   => ['type' => 'varchar', 'constraint' => 512, 'null' => true],
+            'icon'   => ['type' => 'varchar', 'constraint' => 512, 'null' => true, 'default' => ''],
+            'sort'   => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'null' => true, 'default' => 0],
+            'active' => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 0],
             ...Migrator::byId(),
-            ...Migrator::dateFields(['deleted_at'])
+            ...Migrator::dateFields(['deleted_at']),
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addUniqueKey(['parent', 'is_admin', 'locale_id', 'nav_type', 'slug']);
@@ -432,12 +426,12 @@ class CreateAvegaCmsTables extends Migration
             'label'     => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
             'slug'      => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
             'subject'   => ['type' => 'text', 'null' => true],
-            'content'   => ['type' => 'text', 'null' => true],// Если нет шаблона, то код можно писать сюда
+            'content'   => ['type' => 'text', 'null' => true], // Если нет шаблона, то код можно писать сюда
             'variables' => ['type' => 'text', 'null' => true],
             'view'      => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
             'active'    => ['type' => 'tinyint', 'constraint' => 1, 'null' => 0, 'default' => 1],
             ...Migrator::byId(),
-            ...Migrator::dateFields(['deleted_at'])
+            ...Migrator::dateFields(['deleted_at']),
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addUniqueKey(['module_id', 'is_system', 'slug']);
@@ -445,9 +439,6 @@ class CreateAvegaCmsTables extends Migration
         $this->createTable($this->tables['email_templates']);
     }
 
-    /**
-     * @return void
-     */
     public function down(): void
     {
         $this->db->disableForeignKeyChecks();
@@ -459,10 +450,6 @@ class CreateAvegaCmsTables extends Migration
         $this->db->enableForeignKeyChecks();
     }
 
-    /**
-     * @param  string  $tableName
-     * @return void
-     */
     private function createTable(string $tableName): void
     {
         $this->forge->createTable($tableName, false, $this->attributes);

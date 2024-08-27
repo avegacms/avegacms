@@ -1,18 +1,19 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Controllers\Api\Admin\Settings;
 
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
+use AvegaCms\Models\Admin\PermissionsModel;
+use AvegaCms\Models\Admin\RolesModel;
 use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Models\Admin\{PermissionsModel, RolesModel};
 use ReflectionException;
 
 class Permissions extends AvegaCmsAdminAPI
 {
     protected PermissionsModel $PM;
-    protected RolesModel       $RM;
+    protected RolesModel $RM;
 
     public function __construct()
     {
@@ -21,11 +22,6 @@ class Permissions extends AvegaCmsAdminAPI
         $this->RM = model(RolesModel::class);
     }
 
-    /**
-     * @param  int  $roleId
-     * @param  int  $moduleId
-     * @return ResponseInterface
-     */
     public function actions(int $roleId, int $moduleId): ResponseInterface
     {
         if (($permissions = $this->PM->getActions($roleId, $moduleId)) === null) {
@@ -36,8 +32,7 @@ class Permissions extends AvegaCmsAdminAPI
     }
 
     /**
-     * @param  int  $id
-     * @return ResponseInterface
+     * @param int $id
      */
     public function edit($id = null): ResponseInterface
     {
@@ -49,8 +44,6 @@ class Permissions extends AvegaCmsAdminAPI
     }
 
     /**
-     * @param $id
-     * @return ResponseInterface
      * @throws ReflectionException
      */
     public function update($id = null): ResponseInterface
@@ -76,10 +69,6 @@ class Permissions extends AvegaCmsAdminAPI
         return $this->respondNoContent();
     }
 
-    /**
-     * @param $id
-     * @return ResponseInterface
-     */
     public function delete($id = null): ResponseInterface
     {
         if (($permissions = $this->PM->forEdit((int) $id)) === null) {
@@ -90,11 +79,11 @@ class Permissions extends AvegaCmsAdminAPI
             return $this->failNotFound();
         }
 
-        if (in_array($role->role, ['root', 'default'])) {
+        if (in_array($role->role, ['root', 'default'], true)) {
             return $this->failValidationErrors(lang('Permissions.errors.notDelete'));
         }
 
-        if ( ! $this->PM->delete($id)) {
+        if (! $this->PM->delete($id)) {
             return $this->failValidationErrors(lang('Api.errors.delete', ['Permissions']));
         }
 

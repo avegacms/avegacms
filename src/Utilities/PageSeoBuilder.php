@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Utilities;
 
@@ -12,15 +12,13 @@ class PageSeoBuilder
 {
     /**
      * Объект с данными из таблицы metadata
-     * @var object
      */
     public object $data;
 
     /**
      * Специальный массив-словарь для замены масок на пользовательские значения метаданных
-     * @var array|null
      */
-    public array|null $dictionary;
+    public ?array $dictionary;
 
     public function __construct(object $data)
     {
@@ -68,7 +66,7 @@ class PageSeoBuilder
             'title'     => $meta['title'],
             'type'      => esc($this->data->meta['og:type']),
             'url'       => $meta['url'],
-            'image'     => $this->data->meta['og:image'] //TODO подумать как лучше получать картинку для OG
+            'image'     => $this->data->meta['og:image'], // TODO подумать как лучше получать картинку для OG
         ];
 
         $meta['preview']   = $this->data->preview ?? null;
@@ -90,9 +88,6 @@ class PageSeoBuilder
     }
 
     /**
-     * @param  string  $type
-     * @param  array|null  $parentBreadCrumbs
-     * @return array
      * @throws ReflectionException
      */
     public function breadCrumbs(string $type, ?array $parentBreadCrumbs = null): array
@@ -101,43 +96,41 @@ class PageSeoBuilder
 
         if ($type !== MetaDataTypes::Main->name) {
             $breadCrumbs[] = [
-                'url'    => '',
-                'title'  => strtr(
+                'url'   => '',
+                'title' => strtr(
                     htmlspecialchars_decode(
                         esc(! empty($this->data->meta['breadcrumb']) ? $this->data->meta['breadcrumb'] : $this->data->title)
                     ),
                     $this->dictionary ?? []
                 ),
-                'active' => true
+                'active' => true,
             ];
         }
 
-        if ( ! empty($parentBreadCrumbs)) {
+        if (! empty($parentBreadCrumbs)) {
             foreach ($parentBreadCrumbs as $crumb) {
                 if ($crumb->meta_type !== MetaDataTypes::Main->name) {
                     $breadCrumbs[] = [
-                        'url'    => base_url($crumb->url),
-                        'title'  => htmlspecialchars_decode(
+                        'url'   => base_url($crumb->url),
+                        'title' => htmlspecialchars_decode(
                             esc(! empty($crumb->meta->breadcrumb) ? $crumb->meta->breadcrumb : $crumb->title)
                         ),
-                        'active' => false
+                        'active' => false,
                     ];
                 }
             }
         }
 
-        if ( ! empty($locale = SeoUtils::Locales($this->data->locale_id))) {
+        if (! empty($locale = SeoUtils::Locales($this->data->locale_id))) {
             $breadCrumbs[] = [
-                'url'    => base_url(Cms::settings('core.env.useMultiLocales') ? $locale['slug'] : ''),
-                'title'  => htmlspecialchars_decode(
+                'url'   => base_url(Cms::settings('core.env.useMultiLocales') ? $locale['slug'] : ''),
+                'title' => htmlspecialchars_decode(
                     esc($locale['home'])
                 ),
-                'active' => false
+                'active' => false,
             ];
         }
 
-        return array_map(function ($item) {
-            return $item;
-        }, array_reverse($breadCrumbs));
+        return array_map(static fn ($item) => $item, array_reverse($breadCrumbs));
     }
 }

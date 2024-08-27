@@ -4,7 +4,6 @@ namespace AvegaCms\Commands\Generators;
 
 use AvegaCms\Config\AvegaCms;
 use CodeIgniter\CLI\BaseCommand;
-use CodeIgniter\CLI\CLI;
 use CodeIgniter\CLI\GeneratorTrait;
 
 class AvegaCmsFactoryGenerator extends BaseCommand
@@ -79,7 +78,7 @@ class AvegaCmsFactoryGenerator extends BaseCommand
 
         $model = trim(str_replace('/', '\\', $model), '\\');
 
-        if ( ! empty($namespace)) {
+        if (! empty($namespace)) {
             $model = $namespace . 'Models\\' . $model;
         }
 

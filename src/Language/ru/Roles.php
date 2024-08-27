@@ -2,6 +2,6 @@
 
 return [
     'errors' => [
-        'deleteIsDefault' => 'Нельзя удалить эту роль'
-    ]
+        'deleteIsDefault' => 'Нельзя удалить эту роль',
+    ],
 ];

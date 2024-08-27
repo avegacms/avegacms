@@ -1,12 +1,12 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Controllers\Api\Admin\Settings;
 
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
-use CodeIgniter\HTTP\ResponseInterface;
 use AvegaCms\Models\Admin\EmailTemplateModel;
+use CodeIgniter\HTTP\ResponseInterface;
 use ReflectionException;
 
 class EmailTemplate extends AvegaCmsAdminAPI
@@ -19,16 +19,12 @@ class EmailTemplate extends AvegaCmsAdminAPI
         $this->ETM = model(EmailTemplateModel::class);
     }
 
-    /**
-     * @return ResponseInterface
-     */
     public function index(): ResponseInterface
     {
         return $this->cmsRespond($this->ETM->getTemplates()->filter($this->request->getGet() ?? [])->apiPagination());
     }
 
     /**
-     * @return ResponseInterface
      * @throws ReflectionException
      */
     public function create(): ResponseInterface
@@ -37,17 +33,13 @@ class EmailTemplate extends AvegaCmsAdminAPI
 
         $data['created_by_id'] = $this->userData->userId;
 
-        if ( ! $id = $this->ETM->insert($data)) {
+        if (! $id = $this->ETM->insert($data)) {
             return $this->failValidationErrors($this->ETM->errors());
         }
 
         return $this->cmsRespondCreated($id);
     }
 
-    /**
-     * @param $id
-     * @return ResponseInterface
-     */
     public function edit($id = null): ResponseInterface
     {
         if (($data = $this->ETM->forEdit((int) $id)) === null) {
@@ -58,8 +50,6 @@ class EmailTemplate extends AvegaCmsAdminAPI
     }
 
     /**
-     * @param $id
-     * @return ResponseInterface
      * @throws ReflectionException
      */
     public function update($id = null): ResponseInterface
@@ -81,9 +71,6 @@ class EmailTemplate extends AvegaCmsAdminAPI
 
     /**
      * Delete the designated resource object from the model
-     *
-     * @param $id
-     * @return ResponseInterface
      */
     public function delete($id = null): ResponseInterface
     {
@@ -95,7 +82,7 @@ class EmailTemplate extends AvegaCmsAdminAPI
             return $this->failValidationErrors(lang('EmailTemplate.errors.deleteSystem'));
         }
 
-        if ( ! $this->ETM->delete($id)) {
+        if (! $this->ETM->delete($id)) {
             return $this->failValidationErrors(lang('Api.errors.delete', ['Locales']));
         }
 

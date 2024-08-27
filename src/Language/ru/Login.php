@@ -8,7 +8,7 @@ return [
         'phone'     => 'Телефон',
         'password'  => 'Пароль',
         'code'      => 'Код',
-        'condition' => 'Условие'
+        'condition' => 'Условие',
     ],
     'errors' => [
         'isNotUnique'        => 'Не является уникальным значением',
@@ -21,6 +21,5 @@ return [
         'expiresToken'       => 'Время действия токена истекло',
         'tokenNotFound'      => 'Токен не обнаружен',
         'failedSendAuthCode' => 'Не удалось отправить код авторизации',
-    ]
+    ],
 ];
-

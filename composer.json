@@ -18,7 +18,7 @@
     "ext-zip": "*",
     "ext-mbstring": "*",
     "ext-simplexml": "*",
-    "codeigniter/coding-standard": "dev-develop"
+    "codeigniter/coding-standard": "^1.8"
   },
   "require-dev": {
     "fakerphp/faker": "^1.9",
@@ -34,5 +34,6 @@
     "allow-plugins": {
       "phpstan/extension-installer": true
     }
-  }
+  },
+  "prefer-stable": true
 }

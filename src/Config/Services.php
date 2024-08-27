@@ -19,5 +19,4 @@ use CodeIgniter\Config\BaseService;
  */
 class Services extends BaseService
 {
-
 }

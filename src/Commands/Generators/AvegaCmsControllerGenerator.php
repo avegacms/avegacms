@@ -1,16 +1,16 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Commands\Generators;
 
+use AvegaCms\Config\AvegaCms;
+use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
+use AvegaCms\Controllers\Api\AvegaCmsAPI;
+use AvegaCms\Controllers\AvegaCmsFrontendController;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\CLI\GeneratorTrait;
-use AvegaCms\Controllers\AvegaCmsFrontendController;
-use AvegaCms\Controllers\Api\AvegaCmsAPI;
-use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
-use AvegaCms\Config\AvegaCms;
 
 class AvegaCmsControllerGenerator extends BaseCommand
 {
@@ -64,10 +64,6 @@ class AvegaCmsControllerGenerator extends BaseCommand
         '--force'     => 'Force overwrite existing file.',
     ];
 
-    /**
-     * @param  array  $params
-     * @return void
-     */
     public function run(array $params): void
     {
         $this->component = 'Controller';
@@ -79,16 +75,13 @@ class AvegaCmsControllerGenerator extends BaseCommand
         $this->generateClass($params);
     }
 
-    /**
-     * @param  string  $class
-     * @return string
-     */
     protected function prepare(string $class): string
     {
         if (count($classPath = explode('\\', $class)) >= 3) {
             if (in_array('Api', $classPath, true) && empty(array_intersect($classPath, ['Public', 'Admin']))) {
                 CLI::error(lang('Generator.error.controller.folderNotFound'), 'light_gray', 'red');
                 CLI::newLine();
+
                 exit();
             }
         }
@@ -102,8 +95,10 @@ class AvegaCmsControllerGenerator extends BaseCommand
         if ($type === 'controller' && $access === 'admin') {
             CLI::error(lang('CLI.commandNotFound', [$access]), 'light_gray', 'red');
             CLI::newLine();
+
             exit();
-        } elseif ($type === 'api') {
+        }
+        if ($type === 'api') {
             if ($access === 'admin') {
                 $useStatement = AvegaCmsAdminAPI::class;
                 $extends      = 'AvegaCmsAdminAPI';

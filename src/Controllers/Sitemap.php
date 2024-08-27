@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Controllers;
 
@@ -15,7 +15,6 @@ class Sitemap extends Controller
     use AvegaCmsSitemapTrait;
 
     /**
-     * @return void
      * @throws ReflectionException
      */
     public function generate(): void

@@ -4,6 +4,11 @@ namespace AvegaCms\Enums;
 
 enum FieldsTypes: string
 {
+    public static function get(?string $key = null): array
+    {
+        return in_array($key, ['name', 'value', true], true) ?
+            array_column(FieldsTypes::cases(), $key) : FieldsTypes::cases();
+    }
     case Button   = 'button';
     case Checkbox = 'checkbox';
     case Color    = 'color';
@@ -26,14 +31,4 @@ enum FieldsTypes: string
     case Time     = 'time';
     case Url      = 'url';
     case Week     = 'week';
-
-    /**
-     * @param  string|null  $key
-     * @return array
-     */
-    public static function get(?string $key = null): array
-    {
-        return in_array($key, ['name', 'value', true]) ?
-            array_column(FieldsTypes::cases(), $key) : FieldsTypes::cases();
-    }
 }

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Models\Admin;
 
@@ -19,11 +19,11 @@ class UserRolesModel extends AvegaCmsModel
         'role_id',
         'user_id',
         'created_by_id',
-        'created_at'
+        'created_at',
     ];
 
-    //AvegaCms model settings
-    public array  $filterFields      = [
+    // AvegaCms model settings
+    public array $filterFields = [
         'id'     => 'u.id',
         'login'  => 'u.login',
         'phone'  => 'u.phone',
@@ -31,25 +31,25 @@ class UserRolesModel extends AvegaCmsModel
         'status' => 'u.status',
         'role'   => 'r.role',
     ];
-    public array  $searchFields      = [
+    public array $searchFields = [
         'login',
         'phone',
-        'email'
+        'email',
     ];
-    public array  $sortableFields    = [];
-    public array  $filterCastsFields = [
+    public array $sortableFields    = [];
+    public array $filterCastsFields = [
         'id'     => 'int|array',
         'login'  => 'string',
         'avatar' => 'string',
         'phone'  => 'int',
         'email'  => 'string',
         'status' => 'string',
-        'role'   => 'string'
+        'role'   => 'string',
     ];
-    public string $searchFieldAlias  = 'q';
-    public string $sortFieldAlias    = 's';
-    public int    $limit             = 20;
-    public int    $maxLimit          = 100;
+    public string $searchFieldAlias = 'q';
+    public string $sortFieldAlias   = 's';
+    public int $limit               = 20;
+    public int $maxLimit            = 100;
 
     // Dates
     protected $useTimestamps = true;
@@ -59,10 +59,10 @@ class UserRolesModel extends AvegaCmsModel
     protected $deletedField  = '';
 
     // Validation
-    protected $validationRules      = [
+    protected $validationRules = [
         'role_id'       => ['rules' => 'if_exist|is_natural_no_zero'],
         'user_id'       => ['rules' => 'if_exist|is_natural_no_zero'],
-        'created_by_id' => ['rules' => 'if_exist|is_natural_no_zero']
+        'created_by_id' => ['rules' => 'if_exist|is_natural_no_zero'],
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
@@ -78,12 +78,11 @@ class UserRolesModel extends AvegaCmsModel
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
-
-    protected array $casts = [
+    protected array $casts    = [
         'role_id'       => 'int',
         'user_id'       => 'int',
         'created_by_id' => 'int',
-        'created_at'    => 'cmsdatetime'
+        'created_at'    => 'cmsdatetime',
     ];
 
     public function getUsers(): AvegaCmsModel
@@ -99,7 +98,7 @@ class UserRolesModel extends AvegaCmsModel
                 'u.status',
                 'u.active_at',
                 'user_roles.role_id',
-                'r.role'
+                'r.role',
             ]
         )->join('users AS u', 'u.id = user_roles.user_id')
             ->join('roles AS r', 'r.id = user_roles.role_id')
@@ -109,8 +108,6 @@ class UserRolesModel extends AvegaCmsModel
     }
 
     /**
-     * @param  int  $userId
-     * @param  string  $role
      * @return $this
      */
     public function getUserRoles(int $userId, string $role = ''): AvegaCmsModel
@@ -122,11 +119,11 @@ class UserRolesModel extends AvegaCmsModel
             ->where(
                 [
                     'user_roles.user_id' => $userId,
-                    'r.active'           => 1
+                    'r.active'           => 1,
                 ]
             )->orderBy('r.priority', 'ASC');
 
-        if ( ! empty($role)) {
+        if (! empty($role)) {
             $this->builder()->where(['r.role' => $role]);
         }
 

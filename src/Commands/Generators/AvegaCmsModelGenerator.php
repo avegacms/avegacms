@@ -71,7 +71,7 @@ class AvegaCmsModelGenerator extends BaseCommand
     {
         $this->component = 'Model';
         $this->directory = 'Models';
-        $this->template = 'avegacmsmodel.tpl.php';
+        $this->template  = 'avegacmsmodel.tpl.php';
 
         $this->classNameLang = 'CLI.generator.className.model';
         $this->generateClass($params);
@@ -82,9 +82,9 @@ class AvegaCmsModelGenerator extends BaseCommand
      */
     protected function prepare(string $class): string
     {
-        $table = $this->getOption('table');
+        $table   = $this->getOption('table');
         $dbGroup = $this->getOption('dbgroup');
-        $return = $this->getOption('return');
+        $return  = $this->getOption('return');
 
         $baseClass = class_basename($class);
 
@@ -92,11 +92,11 @@ class AvegaCmsModelGenerator extends BaseCommand
             $baseClass = $match[1];
         }
 
-        $table = is_string($table) ? $table : plural(strtolower($baseClass));
+        $table   = is_string($table) ? $table : plural(strtolower($baseClass));
         $dbGroup = is_string($dbGroup) ? $dbGroup : 'default';
-        $return = is_string($return) ? $return : 'array';
+        $return  = is_string($return) ? $return : 'array';
 
-        if ( ! in_array($return, ['array', 'object', 'entity'], true)) {
+        if (! in_array($return, ['array', 'object', 'entity'], true)) {
             // @codeCoverageIgnoreStart
             $return = CLI::prompt(lang('CLI.generator.returnType'), ['array', 'object', 'entity'], 'required');
             CLI::newLine();

@@ -1,32 +1,36 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Controllers;
 
-use AvegaCms\Enums\{EntityTypes, MetaDataTypes};
-use AvegaCms\Utilities\{Cms, CmsModule, PageSeoBuilder};
-use AvegaCms\Models\Frontend\{ContentModel, MetaDataModel};
+use AvegaCms\Enums\EntityTypes;
+use AvegaCms\Enums\MetaDataTypes;
+use AvegaCms\Models\Frontend\ContentModel;
+use AvegaCms\Models\Frontend\MetaDataModel;
+use AvegaCms\Utilities\Cms;
+use AvegaCms\Utilities\CmsModule;
+use AvegaCms\Utilities\PageSeoBuilder;
 use CodeIgniter\Events\Events;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\Pager\Pager;
 use JetBrains\PhpStorm\NoReturn;
-use RuntimeException;
 use ReflectionException;
+use RuntimeException;
 
 class AvegaCmsFrontendController extends AvegaCmsController
 {
-    protected string            $metaType        = 'Module';
-    protected bool              $useTemplateMeta = false; // Флаг использования кастомных метаданных
-    protected ?string           $moduleKey       = null; // Уникальный ключ модуля исп. в таблице modules
-    protected array             $metaParams      = []; // Массив для мета-параметров поиска в metadata
-    protected array             $breadCrumbs     = [];
-    protected MetaDataModel     $MDM;
-    protected object|null       $dataEntity      = null;
-    protected array|object|null $parentMeta      = null;
-    protected ?array            $customerContent = null; // Массив пользовательского контента
-    protected array|object|null $content         = null;
-    protected ?Pager            $pager           = null;
+    protected string $metaType      = 'Module';
+    protected bool $useTemplateMeta = false; // Флаг использования кастомных метаданных
+    protected ?string $moduleKey    = null; // Уникальный ключ модуля исп. в таблице modules
+    protected array $metaParams     = []; // Массив для мета-параметров поиска в metadata
+    protected array $breadCrumbs    = [];
+    protected MetaDataModel $MDM;
+    protected ?object $dataEntity           = null;
+    protected array|object|null $parentMeta = null;
+    protected ?array $customerContent       = null; // Массив пользовательского контента
+    protected array|object|null $content    = null;
+    protected ?Pager $pager                 = null;
 
     /**
      * @throws ReflectionException
@@ -39,10 +43,6 @@ class AvegaCmsFrontendController extends AvegaCmsController
     }
 
     /**
-     * @param  array  $pageData
-     * @param  string  $view
-     * @param  array  $options
-     * @return ResponseInterface
      * @throws ReflectionException
      */
     public function render(array $pageData = [], string $view = '', array $options = []): ResponseInterface
@@ -67,8 +67,8 @@ class AvegaCmsFrontendController extends AvegaCmsController
         $data = [...$data, ...((array) $eventData)];
 
         if (Cms::settings('core.env.useViewData')) {
-            if ( ! file_exists($file = APPPATH . 'Views/' . ($view = 'template/' . $view) . '.php')) {
-                throw new RuntimeException("File $file not found");
+            if (! file_exists($file = APPPATH . 'Views/' . ($view = 'template/' . $view) . '.php')) {
+                throw new RuntimeException("File {$file} not found");
             }
             $data['template'] = view($view, $data, $options);
         } else {
@@ -80,9 +80,7 @@ class AvegaCmsFrontendController extends AvegaCmsController
         return response()->setBody(view('template/foundation', $data, $options));
     }
 
-
     /**
-     * @return ResponseInterface|null
      * @throws ReflectionException
      */
     #[NoReturn]
@@ -96,15 +94,15 @@ class AvegaCmsFrontendController extends AvegaCmsController
                 $this->error404();
             }
 
-            if ( ! $this->useTemplateMeta) {
-                if ( ! empty($module['urlPattern']) && $patternSegment = explode('/', $module['urlPattern'])) {
+            if (! $this->useTemplateMeta) {
+                if (! empty($module['urlPattern']) && $patternSegment = explode('/', $module['urlPattern'])) {
                     foreach ($patternSegment as $k => $val) {
                         if (isset($segments[$k]) && $segments[$k] !== $val) {
                             $params[$val] = $segments[$k];
                         }
                     }
 
-                    if ( ! empty($params)) {
+                    if (! empty($params)) {
                         foreach ($params as $key => $value) {
                             $newKey = str_replace(['{', '}'], '', $key);
                             unset($params[$key]);
@@ -133,7 +131,7 @@ class AvegaCmsFrontendController extends AvegaCmsController
         }
 
         // Проверяем были ли переданы доп. мета параметры для поиска
-        if ( ! empty($this->metaParams) && ($this->metaType === EntityTypes::Module->name)) {
+        if (! empty($this->metaParams) && ($this->metaType === EntityTypes::Module->name)) {
             $params = [...$params, ...$this->metaParams];
         }
 
@@ -147,22 +145,23 @@ class AvegaCmsFrontendController extends AvegaCmsController
         }
 
         if ($this->dataEntity->meta_type !== MetaDataTypes::Main->name) {
-            if (empty($this->parentMeta = $this->MDM->getMetaMap($this->dataEntity->parent ?? $this->dataEntity->id,
-                $this->dataEntity->id))) {
+            if (empty($this->parentMeta = $this->MDM->getMetaMap(
+                $this->dataEntity->parent ?? $this->dataEntity->id,
+                $this->dataEntity->id
+            ))) {
                 $this->error404();
             }
 
-            if ($this->dataEntity->meta_type !== MetaDataTypes::Module->name &&
-                md5(implode('/', $segments)) !== md5($this->dataEntity->url)) {
+            if ($this->dataEntity->meta_type !== MetaDataTypes::Module->name
+                && md5(implode('/', $segments)) !== md5($this->dataEntity->url)) {
                 $this->error404();
             }
         }
-        
+
         return null;
     }
 
     /**
-     * @return void
      * @throws ReflectionException
      */
     #[NoReturn]
@@ -171,6 +170,7 @@ class AvegaCmsFrontendController extends AvegaCmsController
         $this->dataEntity = $this->MDM->getContentMetaData404(session('avegacms.client.locale.id') ?? 1);
         response()->setStatusCode(404);
         $this->render([], 'content/404')->send();
+
         exit();
     }
 }

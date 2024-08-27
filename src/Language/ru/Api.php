@@ -14,7 +14,7 @@ return [
             'noModuleId'          => 'Не указан ID модуля',
             'unknownType'         => 'Неизвестный тип контента',
             'unknownPatchMethod'  => 'Неизвестный метод запроса',
-            'forbiddenPageDelete' => 'Данный тип страницы удалять нельзя'
-        ]
-    ]
+            'forbiddenPageDelete' => 'Данный тип страницы удалять нельзя',
+        ],
+    ],
 ];

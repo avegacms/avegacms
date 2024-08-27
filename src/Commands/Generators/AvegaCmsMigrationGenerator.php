@@ -15,7 +15,9 @@ use AvegaCms\Config\AvegaCms;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\CLI\GeneratorTrait;
-use Config\{Database, Migrations, Session as SessionConfig};
+use Config\Database;
+use Config\Migrations;
+use Config\Session as SessionConfig;
 
 /**
  * Generates a skeleton migration file.

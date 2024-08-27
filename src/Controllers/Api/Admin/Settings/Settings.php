@@ -1,15 +1,16 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Controllers\Api\Admin\Settings;
 
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
+use AvegaCms\Enums\FieldsReturnTypes;
+use AvegaCms\Models\Admin\ModulesModel;
+use AvegaCms\Models\Admin\SettingsModel;
 use CodeIgniter\Database\Exceptions\DatabaseException;
 use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Models\Admin\{SettingsModel, ModulesModel};
 use ReflectionException;
-use AvegaCms\Enums\FieldsReturnTypes;
 
 class Settings extends AvegaCmsAdminAPI
 {
@@ -21,29 +22,22 @@ class Settings extends AvegaCmsAdminAPI
         $this->SM = model(SettingsModel::class);
     }
 
-    /**
-     * @return ResponseInterface
-     */
     public function index(): ResponseInterface
     {
         return $this->cmsRespond($this->SM->selectSettings()->filter($this->request->getGet() ?? [])->apiPagination());
     }
 
-    /**
-     * @return ResponseInterface
-     */
     public function new(): ResponseInterface
     {
         return $this->cmsRespond(
             [
                 'modules' => [0 => 'AvegaCms Core', ...model(ModulesModel::class)->getModulesList()],
-                'return'  => FieldsReturnTypes::get('value')
+                'return'  => FieldsReturnTypes::get('value'),
             ]
         );
     }
 
     /**
-     * @return ResponseInterface
      * @throws ReflectionException
      */
     public function create(): ResponseInterface
@@ -53,7 +47,7 @@ class Settings extends AvegaCmsAdminAPI
 
             $data['created_by_id'] = $this->userData->userId;
 
-            if ( ! $id = $this->SM->insert($data)) {
+            if (! $id = $this->SM->insert($data)) {
                 return $this->failValidationErrors($this->SM->errors());
             }
 
@@ -65,9 +59,6 @@ class Settings extends AvegaCmsAdminAPI
 
     /**
      * Return the editable properties of a resource object
-     *
-     * @param $id
-     * @return ResponseInterface
      */
     public function edit($id = null): ResponseInterface
     {
@@ -79,8 +70,6 @@ class Settings extends AvegaCmsAdminAPI
     }
 
     /**
-     * @param $id
-     * @return ResponseInterface
      * @throws ReflectionException
      */
     public function update($id = null): ResponseInterface
@@ -105,21 +94,17 @@ class Settings extends AvegaCmsAdminAPI
         }
     }
 
-    /**
-     * @param $id
-     * @return ResponseInterface
-     */
     public function delete($id = null): ResponseInterface
     {
         if (($data = $this->SM->forEdit((int) $id)) === null) {
             return $this->failNotFound();
         }
 
-        if ($data->is_core == 1) {
+        if ($data->is_core === 1) {
             return $this->failValidationErrors(lang('Settings.errors.deleteIsDefault'));
         }
 
-        if ( ! $this->SM->delete($id)) {
+        if (! $this->SM->delete($id)) {
             return $this->failValidationErrors(lang('Api.errors.delete', ['Settings']));
         }
 
@@ -127,7 +112,7 @@ class Settings extends AvegaCmsAdminAPI
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     private function _returnTypes(): array
     {
@@ -139,7 +124,7 @@ class Settings extends AvegaCmsAdminAPI
             'array'     => 'array',
             'datetime'  => 'datetime',
             'timestamp' => 'timestamp',
-            'json'      => 'json'
+            'json'      => 'json',
         ];
     }
 }

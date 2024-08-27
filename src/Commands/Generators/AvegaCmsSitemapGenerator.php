@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Commands\Generators;
 
@@ -50,13 +50,12 @@ class AvegaCmsSitemapGenerator extends BaseCommand
      */
     protected $arguments = [
         'moduleName' => 'Название модуля',
-        'parameter'  => 'Параметр для генератора Sitemap'
+        'parameter'  => 'Параметр для генератора Sitemap',
     ];
 
     /**
      * Actually execute a command.
      *
-     * @param  array  $params
      * @throws Exception
      */
     public function run(array $params): void
@@ -64,8 +63,8 @@ class AvegaCmsSitemapGenerator extends BaseCommand
         $moduleName = $params[0] ?? null;
         $parameter  = $params[1] ?? null;
 
-        if (is_null($moduleName)) {
-            CLI::write("Глобальная генерация Sitemap", 'green');
+        if (null === $moduleName) {
+            CLI::write('Глобальная генерация Sitemap', 'green');
         } else {
             CLI::write("Генерация Sitemap для модуля: {$moduleName}", 'green');
         }

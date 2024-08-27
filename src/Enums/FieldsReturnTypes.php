@@ -4,6 +4,11 @@ namespace AvegaCms\Enums;
 
 enum FieldsReturnTypes: string
 {
+    public static function get(?string $key = null): array
+    {
+        return in_array($key, ['name', 'value', true], true) ?
+            array_column(FieldsReturnTypes::cases(), $key) : FieldsReturnTypes::cases();
+    }
     case Integer   = 'INTEGER';
     case Float     = 'FLOAT';
     case Double    = 'DOUBLE';
@@ -15,14 +20,4 @@ enum FieldsReturnTypes: string
     case DateTime  = 'DATETIME';
     case Timestamp = 'TIMESTAMP';
     case Json      = 'JSON';
-
-    /**
-     * @param  string|null  $key
-     * @return array
-     */
-    public static function get(?string $key = null): array
-    {
-        return in_array($key, ['name', 'value', true]) ?
-            array_column(FieldsReturnTypes::cases(), $key) : FieldsReturnTypes::cases();
-    }
 }

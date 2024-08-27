@@ -2,8 +2,8 @@
 
 namespace AvegaCms\Commands\Generators;
 
-use CodeIgniter\CLI\BaseCommand;
 use AvegaCms\Config\AvegaCms;
+use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\CLI\GeneratorTrait;
 use ReflectionException;
@@ -41,14 +41,14 @@ class AvegaCmsAppStart extends BaseCommand
     protected $usage = 'avegacms:appstart';
 
     /**
-     * @param  array  $params
      * @throws ReflectionException
      */
     public function run(array $params)
     {
-        if ( ! is_file(ROOTPATH . '.env')) {
+        if (! is_file(ROOTPATH . '.env')) {
             CLI::error('File .env not exists', 'light_gray', 'red');
             CLI::newLine();
+
             return;
         }
 

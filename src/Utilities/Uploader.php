@@ -1,13 +1,13 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Utilities;
 
 use AvegaCms\Config\Mimes;
 use AvegaCms\Config\Services;
-use CodeIgniter\Files\File;
 use AvegaCms\Utilities\Exceptions\UploaderException;
+use CodeIgniter\Files\File;
 
 class Uploader
 {
@@ -30,7 +30,7 @@ class Uploader
 
         $file = $request->getFile($field);
 
-        if ( ! $file->isValid()) {
+        if (! $file->isValid()) {
             throw new UploaderException($file->getErrorString() . '(' . $file->getError() . ')');
         }
 
@@ -55,13 +55,11 @@ class Uploader
             'isImage'   => $isImage,
             'fileType'  => $isImage ? 'IMAGE' : 'FILE',
             'extension' => $extension,
-            'mimeType'  => $file->getMimeType()
+            'mimeType'  => $file->getMimeType(),
         ];
     }
 
     /**
-     * @param  string  $path
-     * @return void
      * @throws UploaderException
      */
     public static function checkFilePath(string $path): void
@@ -75,12 +73,13 @@ class Uploader
         }
 
         $directoryPath = self::$uploadPath;
+
         foreach ($path as $directory) {
-            if ( ! is_dir($directoryPath .= '/' . $directory)) {
-                if ( ! mkdir($directoryPath, 0777, true)) {
+            if (! is_dir($directoryPath .= '/' . $directory)) {
+                if (! mkdir($directoryPath, 0777, true)) {
                     throw UploaderException::forCreateDirectory($directoryPath);
                 }
-                if ( ! is_file($directoryPath . '/index.html')) {
+                if (! is_file($directoryPath . '/index.html')) {
                     $file = fopen($directoryPath . '/index.html', 'x+b');
                     fclose($file);
                 }
@@ -88,11 +87,6 @@ class Uploader
         }
     }
 
-    /**
-     * @param  string  $field
-     * @param  array  $settings
-     * @return array
-     */
     private static function checkSettings(string $field, array $settings): array
     {
         $maxSize = self::getMaxFileSize();
@@ -121,14 +115,11 @@ class Uploader
 
         return [
             $field => [
-                'rules' => $uploadRule
-            ]
+                'rules' => $uploadRule,
+            ],
         ];
     }
 
-    /**
-     * @return int
-     */
     private static function getMaxFileSize(): int
     {
         $max_upload   = (int) (ini_get('upload_max_filesize'));

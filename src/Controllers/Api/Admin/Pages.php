@@ -1,13 +1,15 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Controllers\Api\Admin;
 
-use AvegaCms\Enums\{MetaDataTypes, MetaStatuses, SitemapChangefreqs};
+use AvegaCms\Enums\MetaDataTypes;
+use AvegaCms\Enums\MetaStatuses;
+use AvegaCms\Enums\SitemapChangefreqs;
+use AvegaCms\Libraries\Content\Content as ContentLib;
 use AvegaCms\Libraries\Content\Exceptions\ContentExceptions;
 use AvegaCms\Models\Admin\MetaDataModel;
-use AvegaCms\Libraries\Content\Content as ContentLib;
 use AvegaCms\Utilities\CmsModule;
 use CodeIgniter\HTTP\ResponseInterface;
 use ReflectionException;
@@ -15,7 +17,7 @@ use ReflectionException;
 class Pages extends AvegaCmsAdminAPI
 {
     protected MetaDataModel $MDM;
-    protected int           $moduleId;
+    protected int $moduleId;
 
     public function __construct()
     {
@@ -27,8 +29,6 @@ class Pages extends AvegaCmsAdminAPI
 
     /**
      * Return an array of resource objects, themselves in array format
-     *
-     * @return ResponseInterface
      */
     public function index(): ResponseInterface
     {
@@ -40,31 +40,22 @@ class Pages extends AvegaCmsAdminAPI
 
     /**
      * Return a new resource object, with default properties
-     *
-     * @return ResponseInterface
      */
     public function new(): ResponseInterface
     {
-        //
     }
 
-    /**
-     * @return ResponseInterface
-     */
     public function create(): ResponseInterface
     {
         try {
             $id = (new ContentLib(MetaDataTypes::Page->name, $this->moduleId))->createMetaData($this->apiData);
+
             return $this->cmsRespondCreated($id);
-        } catch (ReflectionException|ContentExceptions $e) {
+        } catch (ContentExceptions|ReflectionException $e) {
             return $this->cmsRespondFail($e->getMessages() ?? $e->getMessage(), $e->getCode());
         }
     }
 
-    /**
-     * @param  int|null  $id
-     * @return ResponseInterface
-     */
     public function edit(?int $id = null): ResponseInterface
     {
         if (($data = $this->MDM->editPageMetaData($id)) === null) {
@@ -78,15 +69,11 @@ class Pages extends AvegaCmsAdminAPI
             [
                 'parent_pages' => $this->MDM->getParentPages(),
                 'statuses'     => MetaStatuses::list(),
-                'changefreq'   => SitemapChangefreqs::list()
+                'changefreq'   => SitemapChangefreqs::list(),
             ]
         );
     }
 
-    /**
-     * @param  int|null  $id
-     * @return ResponseInterface
-     */
     public function update(?int $id = null): ResponseInterface
     {
         try {
@@ -94,26 +81,23 @@ class Pages extends AvegaCmsAdminAPI
                 return $this->failNotFound();
             }
 
-            if ( ! in_array($data->meta_type, [
+            if (! in_array($data->meta_type, [
                 MetaDataTypes::Main->name,
                 MetaDataTypes::Page->name,
-                MetaDataTypes::Page404->name
-            ])) {
+                MetaDataTypes::Page404->name,
+            ], true)) {
                 throw ContentExceptions::forUnknownType();
             }
 
             (new ContentLib($data->meta_type, $this->moduleId))->updateMetaData($id, $this->apiData);
             unset($data);
+
             return $this->respondNoContent();
-        } catch (ReflectionException|ContentExceptions $e) {
+        } catch (ContentExceptions|ReflectionException $e) {
             return $this->cmsRespondFail($e->getMessages() ?? $e->getMessage(), $e->getCode());
         }
     }
 
-    /**
-     * @param  int|null  $id
-     * @return ResponseInterface
-     */
     public function delete(?int $id = null): ResponseInterface
     {
         try {

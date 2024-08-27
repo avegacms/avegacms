@@ -1,20 +1,21 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Libraries\Content;
 
-use AvegaCms\Libraries\Content\Exceptions\ContentExceptions;
-use AvegaCms\Models\Admin\{MetaDataModel, ContentModel};
 use AvegaCms\Enums\MetaDataTypes;
+use AvegaCms\Libraries\Content\Exceptions\ContentExceptions;
+use AvegaCms\Models\Admin\ContentModel;
+use AvegaCms\Models\Admin\MetaDataModel;
 use ReflectionException;
 
 class Content
 {
-    protected int           $moduleId = 0;
-    protected string|null   $type     = null;
+    protected int $moduleId = 0;
+    protected ?string $type = null;
     protected MetaDataModel $MDM;
-    protected ContentModel  $CM;
+    protected ContentModel $CM;
 
     public function __construct(string $type, int $moduleId = 0)
     {
@@ -24,11 +25,6 @@ class Content
         $this->CM       = new ContentModel();
     }
 
-    /**
-     * @param  array  $filter
-     * @param  bool  $all
-     * @return array
-     */
     public function getMetaDataList(array $filter, bool $all = false): array
     {
         $list = $this->MDM->getMetaDataList($filter);
@@ -37,8 +33,6 @@ class Content
     }
 
     /**
-     * @param  array  $data
-     * @return int
      * @throws ContentExceptions|ReflectionException
      */
     public function createMetaData(array $data): int
@@ -50,12 +44,12 @@ class Content
         $content = [
             'anons'   => $data['anons'] ?? '',
             'content' => $data['content'] ?? '',
-            'extra'   => $data['extra'] ?? null
+            'extra'   => $data['extra'] ?? null,
         ];
 
         unset($data['anons'], $data['content'], $data['extra']);
 
-        $data['use_url_pattern'] = boolval($data['use_url_pattern'] ?? 0);
+        $data['use_url_pattern'] = (bool) ($data['use_url_pattern'] ?? 0);
         $data['meta_type']       = match (ucfirst($this->type)) {
             MetaDataTypes::Main->name,
             MetaDataTypes::Page->name,
@@ -64,10 +58,10 @@ class Content
             default                      => throw ContentExceptions::forUnknownType()
         };
 
-        $data['item_id']   ??= 0;
+        $data['item_id'] ??= 0;
         $data['module_id'] = $this->moduleId;
 
-        if ( ! ($content['id'] = $this->MDM->insert($data))) {
+        if (! ($content['id'] = $this->MDM->insert($data))) {
             throw new ContentExceptions($this->MDM->errors());
         }
 
@@ -78,19 +72,12 @@ class Content
         return $content['id'];
     }
 
-    /**
-     * @param  int  $id
-     * @return object|null
-     */
-    public function getMetaData(int $id): object|null
+    public function getMetaData(int $id): ?object
     {
         return $this->MDM->getMetaData($id, $this->moduleId);
     }
 
     /**
-     * @param  int  $id
-     * @param  array  $data
-     * @return bool
      * @throws ContentExceptions|ReflectionException
      */
     public function updateMetaData(int $id, array $data): bool
@@ -99,15 +86,15 @@ class Content
             throw ContentExceptions::forNoData();
         }
 
-        $data['id']              = $id;
-        $data['module_id']       = $this->moduleId;
-        $data['item_id']         ??= 0;
-        $data['use_url_pattern'] = boolval($data['use_url_pattern'] ?? 0);
+        $data['id']        = $id;
+        $data['module_id'] = $this->moduleId;
+        $data['item_id'] ??= 0;
+        $data['use_url_pattern'] = (bool) ($data['use_url_pattern'] ?? 0);
 
         $content = [
             'anons'   => $data['anons'] ?? '',
             'content' => $data['content'] ?? '',
-            'extra'   => $data['extra'] ?? null
+            'extra'   => $data['extra'] ?? null,
         ];
 
         unset($data['anons'], $data['content'], $data['extra']);
@@ -131,13 +118,11 @@ class Content
         if ($id <= 0 || $previewId <= 0) {
             return false;
         }
+
         return $this->MDM->save(['id' => $id, 'preview_id' => $previewId]);
     }
 
     /**
-     * @param  int  $id
-     * @param  array  $data
-     * @return bool
      * @throws ContentExceptions|ReflectionException
      */
     public function patchMetaData(int $id, array $data): bool
@@ -146,7 +131,7 @@ class Content
             throw ContentExceptions::forNoData();
         }
 
-        if (key($data) != 'status') {
+        if (key($data) !== 'status') {
             return throw ContentExceptions::unknownPatchMethod();
         }
         if ($this->MDM->update($id, $data) === false) {
@@ -157,8 +142,6 @@ class Content
     }
 
     /**
-     * @param  int  $id
-     * @return bool
      * @throws ContentExceptions
      */
     public function deleteMetaData(int $id): bool
@@ -167,12 +150,14 @@ class Content
             throw ContentExceptions::forNoData();
         }
 
-        if (in_array($data->meta_type, [MetaDataTypes::Main->name, MetaDataTypes::Page404->name])) {
+        if (in_array($data->meta_type, [MetaDataTypes::Main->name, MetaDataTypes::Page404->name], true)) {
             throw ContentExceptions::forForbiddenPageDelete();
         }
 
-        if ($this->MDM->whereNotIn('meta_type',
-                [MetaDataTypes::Main->name, MetaDataTypes::Page404->name])->delete($id) === false) {
+        if ($this->MDM->whereNotIn(
+            'meta_type',
+            [MetaDataTypes::Main->name, MetaDataTypes::Page404->name]
+        )->delete($id) === false) {
             throw new ContentExceptions($this->MDM->errors());
         }
 

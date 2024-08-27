@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Controllers;
 
@@ -20,7 +20,6 @@ class Content extends AvegaCmsFrontendController
     }
 
     /**
-     * @return ResponseInterface
      * @throws ReflectionException
      */
     public function index(): ResponseInterface
@@ -32,10 +31,12 @@ class Content extends AvegaCmsFrontendController
             case MetaDataTypes::Main->name:
                 $template .= 'main';
                 break;
+
             case MetaDataTypes::Page->name:
-                $template         .= 'page';
+                $template .= 'page';
                 $data['subPages'] = $this->MDM->getSubPages($this->dataEntity->id);
                 break;
+
             default:
                 $this->error404();
         }

@@ -1,15 +1,15 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Controllers\Api\Admin\Settings;
 
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
-use AvegaCms\Utilities\SeoUtils;
-use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Models\Admin\NavigationsModel;
 use AvegaCms\Entities\NavigationsEntity;
 use AvegaCms\Enums\NavigationTypes;
+use AvegaCms\Models\Admin\NavigationsModel;
+use AvegaCms\Utilities\SeoUtils;
+use CodeIgniter\HTTP\ResponseInterface;
 use ReflectionException;
 
 class Navigations extends AvegaCmsAdminAPI
@@ -24,21 +24,18 @@ class Navigations extends AvegaCmsAdminAPI
 
     /**
      * Return a new resource object, with default properties
-     *
-     * @return ResponseInterface
      */
     public function new(): ResponseInterface
     {
         return $this->cmsRespond(
             [
                 'locales'  => array_column(SeoUtils::Locales(), 'locale_name', 'id'),
-                'navTypes' => NavigationTypes::get('value')
+                'navTypes' => NavigationTypes::get('value'),
             ]
         );
     }
 
     /**
-     * @return ResponseInterface
      * @throws ReflectionException
      */
     public function create(): ResponseInterface
@@ -49,7 +46,7 @@ class Navigations extends AvegaCmsAdminAPI
         $data['icon']          = '';
         $data['created_by_id'] = $this->userData->userId;
 
-        if ( ! $id = $this->NM->insert((new NavigationsEntity($data)))) {
+        if (! $id = $this->NM->insert((new NavigationsEntity($data)))) {
             return $this->failValidationErrors($this->NM->errors());
         }
 
@@ -58,9 +55,6 @@ class Navigations extends AvegaCmsAdminAPI
 
     /**
      * Return the editable properties of a resource object
-     *
-     * @param $id
-     * @return ResponseInterface
      */
     public function edit($id = null): ResponseInterface
     {
@@ -72,8 +66,6 @@ class Navigations extends AvegaCmsAdminAPI
     }
 
     /**
-     * @param $id
-     * @return ResponseInterface
      * @throws ReflectionException
      */
     public function update($id = null): ResponseInterface
@@ -95,9 +87,6 @@ class Navigations extends AvegaCmsAdminAPI
 
     /**
      * Delete the designated resource object from the model
-     *
-     * @param $id
-     * @return ResponseInterface
      */
     public function delete($id = null): ResponseInterface
     {
@@ -105,7 +94,7 @@ class Navigations extends AvegaCmsAdminAPI
             return $this->failNotFound();
         }
 
-        if ( ! $this->NM->where(['is_admin' => 0])->delete($id)) {
+        if (! $this->NM->where(['is_admin' => 0])->delete($id)) {
             return $this->failValidationErrors(lang('Api.errors.delete', ['Navigations']));
         }
 

@@ -2,6 +2,6 @@
 
 return [
     'errors' => [
-        'deleteIsDefault' => 'Нельзя удалить модуль'
-    ]
+        'deleteIsDefault' => 'Нельзя удалить модуль',
+    ],
 ];

@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'enums'  => [
+    'enums' => [
         'Registration' => 'Регистрация',
         'Active'       => 'Активно',
         'Moderated'    => 'На модерации',
@@ -15,5 +15,5 @@ return [
     'fields' => [
     ],
     'errors' => [
-    ]
+    ],
 ];

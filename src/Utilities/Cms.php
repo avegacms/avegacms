@@ -4,52 +4,48 @@ declare(strict_types=1);
 
 namespace AvegaCms\Utilities;
 
-use AvegaCms\Enums\{MetaDataTypes, MetaStatuses, FieldsReturnTypes};
-use AvegaCms\Models\Admin\{ContentModel, MetaDataModel, SettingsModel};
 use AvegaCms\Config\Services;
-use RuntimeException;
+use AvegaCms\Enums\FieldsReturnTypes;
+use AvegaCms\Enums\MetaDataTypes;
+use AvegaCms\Enums\MetaStatuses;
+use AvegaCms\Models\Admin\ContentModel;
+use AvegaCms\Models\Admin\MetaDataModel;
+use AvegaCms\Models\Admin\SettingsModel;
 use ReflectionException;
+use RuntimeException;
 
 class Cms
 {
-    private static object|null $access = null;
-    private static object|null $userData = null;
+    private static ?object $access   = null;
+    private static ?object $userData = null;
 
     /**
-     * @param string $title
-     * @param string|null $url
-     * @param string|null $slug
-     * @param int|null $parent
-     * @param int|null $localeId
-     * @param bool $inSitemap
-     * @return mixed
      * @throws ReflectionException
      */
     public static function createPage(
-        string  $title,
+        string $title,
         ?string $url,
         ?string $slug = null,
-        ?int    $parent = null,
-        ?int    $localeId = null,
-        bool    $inSitemap = false
-    ): mixed
-    {
+        ?int $parent = null,
+        ?int $localeId = null,
+        bool $inSitemap = false
+    ): mixed {
         $metaId = model(MetaDataModel::class)->insert(
             [
-                'parent' => $parent ?? 1,
-                'locale_id' => $localeId ?? 1,
-                'module_id' => 0,
-                'slug' => $slug ?? '',
-                'creator_id' => 1,
-                'item_id' => 0,
-                'title' => $title,
-                'url' => $url ?? '',
-                'meta' => [],
-                'status' => MetaStatuses::Publish->name,
-                'meta_type' => MetaDataTypes::Page->name,
-                'in_sitemap' => $inSitemap,
+                'parent'          => $parent ?? 1,
+                'locale_id'       => $localeId ?? 1,
+                'module_id'       => 0,
+                'slug'            => $slug ?? '',
+                'creator_id'      => 1,
+                'item_id'         => 0,
+                'title'           => $title,
+                'url'             => $url ?? '',
+                'meta'            => [],
+                'status'          => MetaStatuses::Publish->name,
+                'meta_type'       => MetaDataTypes::Page->name,
+                'in_sitemap'      => $inSitemap,
                 'use_url_pattern' => false,
-                'created_by_id' => 1
+                'created_by_id'   => 1,
             ]
         );
 
@@ -60,70 +56,50 @@ class Cms
         return $metaId;
     }
 
-    /**
-     * @return object|null
-     */
-    public static function userData(): object|null
+    public static function userData(): ?object
     {
         return self::$userData;
     }
 
-    /**
-     * @return object|null
-     */
-    public static function userPermission(): object|null
+    public static function userPermission(): ?object
     {
         return self::$access;
     }
 
-    /**
-     * @param string $key
-     * @param object|null $value
-     * @return void
-     */
     public static function setUser(string $key, ?object $value = null): void
     {
         match ($key) {
-            'user' => self::$userData = $value ?? null,
-            'permission' => self::$access = $value ?? null
+            'user'       => self::$userData = $value ?? null,
+            'permission' => self::$access   = $value ?? null
         };
     }
 
-    /**
-     * @param array $data
-     * @return void
-     */
     public static function initClientSession(array $data = []): void
     {
         $session = Services::session();
-        if (!$session->has('avegacms')) {
-            $session->set('avegacms',
+        if (! $session->has('avegacms')) {
+            $session->set(
+                'avegacms',
                 [
                     'client' => [
-
-                        'locale' => $data['client']['locale'] ?? null,
-                        'user' => $data['client']['user'] ?? null,
+                        'locale'  => $data['client']['locale'] ?? null,
+                        'user'    => $data['client']['user'] ?? null,
                         'confirm' => [
-
                             'useCookie' => null,
-                            'gdpr' => null
-                        ]
+                            'gdpr'      => null,
+                        ],
                     ],
                     'modules' => null,
-                    'admin' => null
+                    'admin'   => null,
                 ]
             );
         }
     }
 
     /**
-     * @param string $key
-     * @param string|array|int|bool|null $value
-     * @param array|null $config
-     * @return mixed
-     * @throws RuntimeException|ReflectionException
+     * @throws ReflectionException|RuntimeException
      */
-    public static function settings(string $key, string|array|int|bool|null $value = null, ?array $config = []): mixed
+    public static function settings(string $key, array|bool|int|string|null $value = null, ?array $config = []): mixed
     {
         [$entity, $slug, $property] = self::parseKey($key);
 
@@ -132,12 +108,12 @@ class Cms
         $SM = model(SettingsModel::class);
 
         if ($value === null) {
-            $settings = cache()->remember($prefix . $entity, DAY * 30, function () use ($entity, $SM) {
+            $settings = cache()->remember($prefix . $entity, DAY * 30, static function () use ($entity, $SM) {
                 if (empty($settings = $SM->getSettings($entity))) {
                     throw new RuntimeException('Unable to find a Settings array in DB.');
                 }
 
-                $processArray = function (&$settings) use (&$processArray) {
+                $processArray = static function (&$settings) use (&$processArray) {
                     foreach ($settings as $key => &$item) {
                         if (is_array($item)) {
                             if (isset($item['return_type'])) {
@@ -156,65 +132,57 @@ class Cms
                 return $settings;
             });
 
-            if (!is_null($slug) && !is_null($property)) {
-                if (!isset($settings[$slug][$property])) {
+            if (null !== $slug && null !== $property) {
+                if (! isset($settings[$slug][$property])) {
                     throw new RuntimeException('Unable to find in Settings array slug/key.');
                 }
                 $settings = $settings[$slug][$property];
-            } elseif (!is_null($slug)) {
-                if (!isset($settings[$slug])) {
+            } elseif (null !== $slug) {
+                if (! isset($settings[$slug])) {
                     throw new RuntimeException('Unable to find in Settings array slug/key');
                 }
                 $settings = $settings[$slug];
             }
 
             return $settings;
-        } else {
-            if (($id = $SM->getId($entity, $slug, $property)) > 0) {
-                return $SM->update($id, ['value' => $value]);
-            } else {
-                return $SM->insert(
-                    [
-                        'locale_id' => $config['locale_id'] ?? 0,
-                        'module_id' => $config['module_id'] ?? 0,
-                        'is_core' => boolval($config['is_core'] ?? 0),
-                        'entity' => $entity,
-                        'slug' => $slug ?? '',
-                        'key' => $property ?? '',
-                        'value' => $value,
-                        'default_value' => $config['default_value'] ?? '',
-                        'return_type' => $config['return_type'] ?? FieldsReturnTypes::String->value,
-                        'label' => $config['label'] ?? '',
-                        'context' => $config['context'] ?? '',
-                        'sort' => $config['sort'] ?? 100
-                    ]
-                );
-            }
         }
+        if (($id = $SM->getId($entity, $slug, $property)) > 0) {
+            return $SM->update($id, ['value' => $value]);
+        }
+
+        return $SM->insert(
+            [
+                'locale_id'     => $config['locale_id'] ?? 0,
+                'module_id'     => $config['module_id'] ?? 0,
+                'is_core'       => (bool) ($config['is_core'] ?? 0),
+                'entity'        => $entity,
+                'slug'          => $slug ?? '',
+                'key'           => $property ?? '',
+                'value'         => $value,
+                'default_value' => $config['default_value'] ?? '',
+                'return_type'   => $config['return_type'] ?? FieldsReturnTypes::String->value,
+                'label'         => $config['label'] ?? '',
+                'context'       => $config['context'] ?? '',
+                'sort'          => $config['sort'] ?? 100,
+            ]
+        );
     }
 
     /**
-     * @param string $url
-     * @param int|string $usePattern
-     * @param int|string $id
-     * @param string $slug
      * @param int|string $locale_id
-     * @param int|string $parent
-     * @return string
      */
     public static function urlPattern(
-        string     $url,
+        string $url,
         int|string $usePattern,
         int|string $id,
-        string     $slug,
+        string $slug,
         int|string $localeId,
         int|string $parent
-    ): string
-    {
+    ): string {
         return
             base_url(
                 strtolower(
-                    $usePattern == 1 ?
+                    $usePattern === 1 ?
                         str_ireplace(
                             ['{id}', '{slug}', '{locale_id}', '{parent}'],
                             [$id, $slug, $localeId, $parent],
@@ -225,31 +193,24 @@ class Cms
             );
     }
 
-    /**
-     * @param array $array
-     * @return object
-     */
     public static function arrayToObject(array $array): object
     {
-        return (object)array_map(function ($item) {
+        return (object) array_map(static function ($item) {
             if (is_array($item)) {
                 return self::arrayToObject($item);
             }
+
             return $item;
         }, $array);
     }
 
-    /**
-     * @param array $data
-     * @return array
-     */
     public static function getTree(array $data): array
     {
         $tree = [];
 
         foreach ($data as $key => &$item) {
             if (isset($item['parent'])) {
-                if (!$item['parent']) {
+                if (! $item['parent']) {
                     $tree[$key] = &$item;
                 } else {
                     $data[$item['parent']]['list'][$key] = &$item;
@@ -261,8 +222,6 @@ class Cms
     }
 
     /**
-     * @param string $key
-     * @return array
      * @throws RuntimeException
      */
     public static function parseKey(string $key): array
@@ -271,32 +230,30 @@ class Cms
             throw new RuntimeException('$key cannot be empty');
         }
 
-        $parts[1] = $parts[1] ?? null;
-        $parts[2] = $parts[2] ?? null;
+        $parts[1] ??= null;
+        $parts[2] ??= null;
 
         return $parts;
     }
 
     /**
-     * @param $value
-     * @param string $type
-     * @return integer|float|string|boolean|array|null
+     * @return array|bool|float|int|string|null
      */
     public static function castAs($value, string $type): mixed
     {
         return match ($type) {
-            FieldsReturnTypes::Integer->value => (int)$value,
-            FieldsReturnTypes::Double->value => (double)$value,
-            FieldsReturnTypes::Float->value => (float)$value,
-            FieldsReturnTypes::String->value => (string)$value,
-            FieldsReturnTypes::Boolean->value => (bool)$value,
-            FieldsReturnTypes::Json->value => $value,
-            FieldsReturnTypes::Array->value => (array)(
-            (
-            (is_string($value) && (str_starts_with($value, 'a:') || str_starts_with($value, 's:'))) ?
-                unserialize($value) :
-                $value
-            )
+            FieldsReturnTypes::Integer->value => (int) $value,
+            FieldsReturnTypes::Double->value  => (float) $value,
+            FieldsReturnTypes::Float->value   => (float) $value,
+            FieldsReturnTypes::String->value  => (string) $value,
+            FieldsReturnTypes::Boolean->value => (bool) $value,
+            FieldsReturnTypes::Json->value    => $value,
+            FieldsReturnTypes::Array->value   => (array) (
+                (
+                    (is_string($value) && (str_starts_with($value, 'a:') || str_starts_with($value, 's:'))) ?
+                    unserialize($value) :
+                    $value
+                )
             ),
             default => null
         };

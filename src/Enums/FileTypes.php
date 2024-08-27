@@ -4,6 +4,11 @@ namespace AvegaCms\Enums;
 
 enum FileTypes: string
 {
+    public static function get(?string $key = null): array
+    {
+        return in_array($key, ['name', 'value', true], true) ?
+            array_column(FileTypes::cases(), $key) : FileTypes::cases();
+    }
     case Directory = 'DIRECTORY';
     case Image     = 'IMAGE';
     case Video     = 'VIDEO';
@@ -11,14 +16,4 @@ enum FileTypes: string
     case File      = 'FILE';
     case Link      = 'LINK';
     case VideoLink = 'VIDEO_LINK';
-
-    /**
-     * @param  string|null  $key
-     * @return array
-     */
-    public static function get(?string $key = null): array
-    {
-        return in_array($key, ['name', 'value', true]) ?
-            array_column(FileTypes::cases(), $key) : FileTypes::cases();
-    }
 }

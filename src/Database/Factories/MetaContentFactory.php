@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Database\Factories;
 
@@ -14,7 +14,7 @@ class MetaContentFactory extends ContentModel
         return [
             'id'      => 0,
             'anons'   => $faker->paragraph(1),
-            'content' => $faker->paragraph(rand(6, 36))
+            'content' => $faker->paragraph(mt_rand(6, 36)),
         ];
     }
 }

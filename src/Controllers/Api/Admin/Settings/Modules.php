@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace AvegaCms\Controllers\Api\Admin\Settings;
 
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
+use AvegaCms\Models\Admin\ModulesModel;
+use AvegaCms\Models\Admin\PermissionsModel;
 use CodeIgniter\HTTP\ResponseInterface;
-use AvegaCms\Models\Admin\{ModulesModel, PermissionsModel};
 
 class Modules extends AvegaCmsAdminAPI
 {
-    protected ModulesModel     $MM;
+    protected ModulesModel $MM;
     protected PermissionsModel $PM;
 
     public function __construct()
@@ -20,9 +21,6 @@ class Modules extends AvegaCmsAdminAPI
         $this->PM = model(PermissionsModel::class);
     }
 
-    /**
-     * @return ResponseInterface
-     */
     public function index(): ResponseInterface
     {
         return $this->cmsRespond(
@@ -30,10 +28,6 @@ class Modules extends AvegaCmsAdminAPI
         );
     }
 
-    /**
-     * @param $id
-     * @return ResponseInterface
-     */
     public function show($id = null): ResponseInterface
     {
         if (($data = $this->MM->forEdit((int) $id)) === null) {
@@ -43,30 +37,26 @@ class Modules extends AvegaCmsAdminAPI
         return $this->cmsRespond(['module' => $data->toArray(), 'submodules' => $this->MM->getModules($id)]);
     }
 
-    /**
-     * @param $id
-     * @return ResponseInterface
-     */
     public function delete($id = null): ResponseInterface
     {
-        $excludedId = [1, 2, 3, 4, 5];
+        $excludedId  = [1, 2, 3, 4, 5];
         $pluginsSlug = ['content_builder', 'uploader'];
 
         if (($data = $this->MM->find($id)) === null) {
             return $this->failNotFound();
         }
 
-        if (in_array($id, $excludedId) || in_array($data->parent, $excludedId) || in_array($data->slug, $pluginsSlug)) {
+        if (in_array($id, $excludedId, true) || in_array($data->parent, $excludedId, true) || in_array($data->slug, $pluginsSlug, true)) {
             return $this->failValidationErrors(lang('Modules.errors.deleteIsDefault'));
         }
 
         $modulesId = $this->MM->parentsId($id)->findColumn('id');
 
-        if ( ! $this->MM->parentsId($id)->delete()) {
+        if (! $this->MM->parentsId($id)->delete()) {
             return $this->failValidationErrors(lang('Api.errors.delete', ['Modules']));
         }
 
-        if ( ! $this->PM->whereIn('id', $modulesId)->delete()) {
+        if (! $this->PM->whereIn('id', $modulesId)->delete()) {
             return $this->failValidationErrors(lang('Api.errors.delete', ['Permissions']));
         }
 

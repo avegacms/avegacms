@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Models\Admin;
 
@@ -27,7 +27,7 @@ class LocalesModel extends AvegaCmsModel
         'created_by_id',
         'updated_by_id',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     // Dates
@@ -38,7 +38,7 @@ class LocalesModel extends AvegaCmsModel
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [
+    protected $validationRules = [
         'id'            => ['rules' => 'if_exist|is_natural_no_zero'],
         'parent'        => ['rules' => 'if_exist|is_natural'],
         'slug'          => ['rules' => 'if_exist|required|alpha_dash|max_length[20]|is_unique[locales.slug,id,{id}]'],
@@ -49,7 +49,7 @@ class LocalesModel extends AvegaCmsModel
         'is_default'    => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'active'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'created_by_id' => ['rules' => 'if_exist|is_natural'],
-        'updated_by_id' => ['rules' => 'if_exist|is_natural']
+        'updated_by_id' => ['rules' => 'if_exist|is_natural'],
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
@@ -65,8 +65,7 @@ class LocalesModel extends AvegaCmsModel
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = ['clearCacheLocales'];
-
-    protected array $casts = [
+    protected array $casts    = [
         'id'            => 'int',
         'parent'        => 'int',
         'extra'         => '?json-array',
@@ -75,13 +74,9 @@ class LocalesModel extends AvegaCmsModel
         'created_by_id' => 'int',
         'updated_by_id' => 'int',
         'created_at'    => 'cmsdatetime',
-        'updated_at'    => 'cmsdatetime'
+        'updated_at'    => 'cmsdatetime',
     ];
 
-    /**
-     * @param  int  $id
-     * @return array|object|null
-     */
     public function forEdit(int $id): array|object|null
     {
         $this->builder()->select([
@@ -93,16 +88,12 @@ class LocalesModel extends AvegaCmsModel
             'home',
             'extra',
             'is_default',
-            'active'
+            'active',
         ]);
 
         return $this->find($id);
     }
 
-    /**
-     * @param  bool  $active
-     * @return array
-     */
     public function getLocalesList(bool $active = true): array
     {
         return cache()->remember('Locales' . ($active ? 'Active' : 'All'), DAY * 30, function () use ($active) {
@@ -111,16 +102,15 @@ class LocalesModel extends AvegaCmsModel
                 $this->builder()->where(['active' => 1]);
             }
             $locales = [];
+
             foreach ($this->findAll() as $locale) {
                 $locales[] = (array) $locale;
             }
+
             return $locales;
         });
     }
 
-    /**
-     * @return void
-     */
     protected function clearCacheLocales(): void
     {
         cache()->delete('LocalesActive');
@@ -129,5 +119,4 @@ class LocalesModel extends AvegaCmsModel
         $this->getLocalesList();
         $this->getLocalesList(false);
     }
-
 }

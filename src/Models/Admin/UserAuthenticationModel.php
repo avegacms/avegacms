@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Models\Admin;
 
@@ -62,8 +62,7 @@ class UserAuthenticationModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
-
-    protected array $casts = [
+    protected array $casts    = [
         'id'            => 'int',
         'role_id'       => 'int',
         'module_id'     => 'int',
@@ -83,14 +82,9 @@ class UserAuthenticationModel extends Model
         'created_by_id' => 'int',
         'updated_by_id' => 'int',
         'created_at'    => 'datetime',
-        'updated_at'    => 'datetime'
+        'updated_at'    => 'datetime',
     ];
 
-    /**
-     * @param  string  $role
-     * @param  int  $roleId
-     * @return array
-     */
     public function getRoleAccessMap(string $role, int $roleId): array
     {
         return cache()->remember('RAM_' . $role, DAY * 30, function () use ($roleId) {
@@ -110,7 +104,7 @@ class UserAuthenticationModel extends Model
                     'delete',
                     'moderated',
                     'settings',
-                    'extra'
+                    'extra',
                 ]
             )->where(['role_id' => $roleId]);
 

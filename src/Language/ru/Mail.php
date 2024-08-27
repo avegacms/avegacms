@@ -2,6 +2,6 @@
 
 return [
     'default' => [
-        'subject' => 'Без темы'
-    ]
+        'subject' => 'Без темы',
+    ],
 ];

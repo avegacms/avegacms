@@ -1,14 +1,14 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Models\Admin;
 
+use AvegaCms\Enums\NavigationTypes;
 use AvegaCms\Models\AvegaCmsModel;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
 use Faker\Generator;
-use AvegaCms\Enums\NavigationTypes;
 
 class NavigationsModel extends AvegaCmsModel
 {
@@ -34,7 +34,7 @@ class NavigationsModel extends AvegaCmsModel
         'created_by_id',
         'updated_by_id',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     // Dates
@@ -45,7 +45,7 @@ class NavigationsModel extends AvegaCmsModel
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [
+    protected $validationRules = [
         'id'            => ['rules' => 'if_exist|is_natural'],
         'parent'        => ['rules' => 'if_exist|is_natural'],
         'is_admin'      => ['rules' => 'if_exist|permit_empty|max_length[255]'],
@@ -58,7 +58,7 @@ class NavigationsModel extends AvegaCmsModel
         'sort'          => ['rules' => 'if_exist|is_natural_no_zero'],
         'active'        => ['rules' => 'if_exist|is_natural|in_list[0,1]'],
         'created_by_id' => ['rules' => 'if_exist|is_natural'],
-        'updated_by_id' => ['rules' => 'if_exist|is_natural']
+        'updated_by_id' => ['rules' => 'if_exist|is_natural'],
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
@@ -74,8 +74,7 @@ class NavigationsModel extends AvegaCmsModel
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
-
-    protected array $casts = [
+    protected array $casts    = [
         'id'            => 'int',
         'parent'        => 'int',
         'is_admin'      => '?int-bool',
@@ -86,21 +85,19 @@ class NavigationsModel extends AvegaCmsModel
         'created_by_id' => 'int',
         'updated_by_id' => 'int',
         'created_at'    => 'datetime',
-        'updated_at'    => 'datetime'
+        'updated_at'    => 'datetime',
     ];
 
     public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
     {
         parent::__construct($db, $validation);
 
-        $this->validationRules['nav_type'] = 'if_exist|required|in_list[' . implode(',',
-                NavigationTypes::get('value')) . ']';
+        $this->validationRules['nav_type'] = 'if_exist|required|in_list[' . implode(
+            ',',
+            NavigationTypes::get('value')
+        ) . ']';
     }
 
-    /**
-     * @param  int  $id
-     * @return array|object|null
-     */
     public function forEdit(int $id): array|object|null
     {
         $this->builder()->select(
@@ -115,7 +112,7 @@ class NavigationsModel extends AvegaCmsModel
                 'slug',
                 'icon',
                 'sort',
-                'active'
+                'active',
             ]
         )->where(['is_admin' => 0]);
 
@@ -123,8 +120,7 @@ class NavigationsModel extends AvegaCmsModel
     }
 
     /**
-     * @param  Generator  $faker
-     * @return int[]
+     * @return list<int>
      */
     public function fake(Generator &$faker): array
     {
@@ -143,7 +139,7 @@ class NavigationsModel extends AvegaCmsModel
             'sort'          => 1,
             'active'        => 1,
             'created_by_id' => 1,
-            'updated_by_id' => 0
+            'updated_by_id' => 0,
         ];
     }
 }

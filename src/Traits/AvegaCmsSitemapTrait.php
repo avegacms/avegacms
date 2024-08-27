@@ -1,28 +1,24 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AvegaCms\Traits;
 
-use AvegaCms\Utilities\Cms;
 use AvegaCms\Enums\SitemapChangefreqs;
-use SimpleXMLElement;
-use ReflectionException;
+use AvegaCms\Utilities\Cms;
 use Exception;
+use ReflectionException;
+use SimpleXMLElement;
 
 trait AvegaCmsSitemapTrait
 {
-    protected string $path       = 'uploads/sitemaps/';
-    private ?string  $moduleName = null;
+    protected string $path      = 'uploads/sitemaps/';
+    private ?string $moduleName = null;
 
     /**
-     * @param  string|array  $group
-     * @param  array|null  $list
-     * @param  array|null  $config
-     * @return void
      * @throws Exception
      */
-    protected function setModule(string|array $group, ?array $list = null, ?array $config = null): void
+    protected function setModule(array|string $group, ?array $list = null, ?array $config = null): void
     {
         helper(['date']);
 
@@ -42,7 +38,7 @@ trait AvegaCmsSitemapTrait
             $path .= (($group !== '') ? '_' . $group : '') . '.xml';
         } elseif (is_array($group)) {
             foreach ($group as $item) {
-                $data[]['url'] = strtolower($path . (is_null($this->moduleName) ? '' : '_') . $item . '.xml');
+                $data[]['url'] = strtolower($path . (null === $this->moduleName ? '' : '_') . $item . '.xml');
             }
             $path .= '.xml';
         } else {
@@ -71,12 +67,7 @@ trait AvegaCmsSitemapTrait
     }
 
     /**
-     * @param  array  $list
-     * @param  string  $group
-     * @param  int|null  $qtyElements
-     * @param  array|null  $groupConfig
-     * @return void
-     * @throws ReflectionException|Exception
+     * @throws Exception|ReflectionException
      */
     protected function setGroup(
         array $list,
@@ -88,7 +79,7 @@ trait AvegaCmsSitemapTrait
             return;
         }
 
-        if ( ! is_numeric($qtyElements)) {
+        if (! is_numeric($qtyElements)) {
             $qtyElements = Cms::settings('core.seo.sitemapBatchQty');
         }
 
@@ -96,12 +87,13 @@ trait AvegaCmsSitemapTrait
             $groupUrl = [];
             $i        = 0;
             $list     = array_chunk($list, $qtyElements);
+
             foreach ($list as $chunk) {
                 $i++;
                 $groupUrl[]['url'] = $this->_createUrlSet($chunk, $group, $i);
             }
 
-            if ( ! empty($groupUrl)) {
+            if (! empty($groupUrl)) {
                 $this->setModule(
                     $group,
                     $groupUrl,
@@ -113,12 +105,6 @@ trait AvegaCmsSitemapTrait
         }
     }
 
-    /**
-     * @param  array  $list
-     * @param  string  $group
-     * @param  int  $step
-     * @return string
-     */
     private function _createUrlSet(array $list, string $group = '', int $step = 0): string
     {
         $xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9"></urlset>');
@@ -148,14 +134,11 @@ trait AvegaCmsSitemapTrait
         return $sitemapFile;
     }
 
-    /**
-     * @return void
-     */
     private function _checkFolder(): void
     {
         $path = substr_replace(FCPATH . $this->path, '', -1);
 
-        if ( ! is_dir($path)) {
+        if (! is_dir($path)) {
             mkdir($path, 0755, true);
         }
     }
