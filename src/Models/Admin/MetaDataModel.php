@@ -16,14 +16,14 @@ use ReflectionException;
 
 class MetaDataModel extends AvegaCmsModel
 {
-    protected $DBGroup = 'default';
-    protected $table = 'metadata';
-    protected $primaryKey = 'id';
+    protected $DBGroup          = 'default';
+    protected $table            = 'metadata';
+    protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType = 'object';
-    protected $useSoftDeletes = false;
-    protected $protectFields = true;
-    protected $allowedFields = [
+    protected $returnType       = 'object';
+    protected $useSoftDeletes   = false;
+    protected $protectFields    = true;
+    protected $allowedFields    = [
         'parent',
         'locale_id',
         'module_id',
@@ -51,65 +51,66 @@ class MetaDataModel extends AvegaCmsModel
 
     // Dates
     protected $useTimestamps = true;
-    protected $dateFormat = 'datetime';
-    protected $createdField = 'created_at';
-    protected $updatedField = 'updated_at';
-    protected $deletedField = 'deleted_at';
+    protected $dateFormat    = 'datetime';
+    protected $createdField  = 'created_at';
+    protected $updatedField  = 'updated_at';
+    protected $deletedField  = 'deleted_at';
 
     // Validation
     protected $validationRules = [
-        'id' => ['rules' => 'if_exist|required|is_natural_no_zero'],
-        'parent' => ['rules' => 'if_exist|required|is_natural'],
-        'locale_id' => ['rules' => 'if_exist|required|is_natural_no_zero'],
-        'module_id' => ['rules' => 'if_exist|required|is_natural'],
-        'item_id' => ['rules' => 'if_exist|required|is_natural'],
+        'id'         => ['rules' => 'if_exist|required|is_natural_no_zero'],
+        'parent'     => ['rules' => 'if_exist|required|is_natural'],
+        'locale_id'  => ['rules' => 'if_exist|required|is_natural_no_zero'],
+        'module_id'  => ['rules' => 'if_exist|required|is_natural'],
+        'item_id'    => ['rules' => 'if_exist|required|is_natural'],
         'preview_id' => ['rules' => 'if_exist|required|is_natural'],
-        'url' => ['rules' => 'if_exist|permit_empty'],
+        'url'        => ['rules' => 'if_exist|permit_empty'],
         'creator_id' => ['rules' => 'if_exist|required|is_natural'],
-        'title' => [
+        'title'      => [
             'label' => 'Название',
             'rules' => 'if_exist|required|max_length[512]',
         ],
-        'sort' => ['rules' => 'if_exist|required|is_natural'],
-        'page_type' => ['rules' => 'if_exist|required|max_length[64]'],
-        'extra_data' => ['rules' => 'if_exist|permit_empty'],
-        'publish_at' => ['rules' => 'if_exist|permit_empty|valid_date[Y-m-d H:i:s]'],
+        'sort'          => ['rules' => 'if_exist|required|is_natural'],
+        'page_type'     => ['rules' => 'if_exist|required|max_length[64]'],
+        'extra_data'    => ['rules' => 'if_exist|permit_empty'],
+        'publish_at'    => ['rules' => 'if_exist|permit_empty|valid_date[Y-m-d H:i:s]'],
         'created_by_id' => ['rules' => 'if_exist|is_natural'],
         'updated_by_id' => ['rules' => 'if_exist|is_natural'],
         // Метаданные для JSON полей
-        'meta.title' => ['rules' => 'if_exist|permit_empty|max_length[512]'],
-        'meta.keywords' => ['rules' => 'if_exist|permit_empty|max_length[512]'],
-        'meta.description' => ['rules' => 'if_exist|permit_empty|max_length[512]'],
-        'meta.breadcrumb' => ['rules' => 'if_exist|permit_empty|max_length[255]'],
-        'meta.og:title' => ['rules' => 'if_exist|permit_empty|max_length[512]'],
-        'meta.og:type' => ['rules' => 'if_exist|permit_empty|max_length[512]'],
-        'meta.og:url' => ['rules' => 'if_exist|permit_empty|max_length[512]'],
-        'meta.og:image' => ['rules' => 'if_exist|permit_empty|is_natural'],
+        'meta.title'            => ['rules' => 'if_exist|permit_empty|max_length[512]'],
+        'meta.keywords'         => ['rules' => 'if_exist|permit_empty|max_length[512]'],
+        'meta.description'      => ['rules' => 'if_exist|permit_empty|max_length[512]'],
+        'meta.breadcrumb'       => ['rules' => 'if_exist|permit_empty|max_length[255]'],
+        'meta.og:title'         => ['rules' => 'if_exist|permit_empty|max_length[512]'],
+        'meta.og:type'          => ['rules' => 'if_exist|permit_empty|max_length[512]'],
+        'meta.og:url'           => ['rules' => 'if_exist|permit_empty|max_length[512]'],
+        'meta.og:image'         => ['rules' => 'if_exist|permit_empty|is_natural'],
         'meta_sitemap.priority' => ['rules' => 'if_exist|permit_empty|is_natural'],
     ];
-    protected $validationMessages = [];
-    protected $skipValidation = false;
+    protected $validationMessages   = [];
+    protected $skipValidation       = false;
     protected $cleanValidationRules = true;
 
     // Callbacks
     protected $allowCallbacks = true;
-    protected $beforeInsert = ['beforeMetaDataInsert'];
-    protected $afterInsert = [];
-    protected $beforeUpdate = [];
-    protected $afterUpdate = [];
-    protected $beforeFind = [];
-    protected $afterFind = [];
-    protected $beforeDelete = [];
-    protected $afterDelete = [];
+    protected $beforeInsert   = ['beforeMetaDataInsert'];
+    protected $afterInsert    = [];
+    protected $beforeUpdate   = [];
+    protected $afterUpdate    = [];
+    protected $beforeFind     = [];
+    protected $afterFind      = [];
+    protected $beforeDelete   = [];
+    protected $afterDelete    = [];
 
     // AvegaCms filter settings
     protected array $filterFields = [
+        'id'        => 'metadata.id',
         'module_id' => 'metadata.module_id',
-        'item_id' => 'metadata.item_id',
-        'parent' => 'metadata.parent',
-        'locale' => 'metadata.locale_id',
-        'title' => 'metadata.title',
-        'sort' => 'metadata.sort',
+        'item_id'   => 'metadata.item_id',
+        'parent'    => 'metadata.parent',
+        'locale'    => 'metadata.locale_id',
+        'title'     => 'metadata.title',
+        'sort'      => 'metadata.sort',
         'published' => 'metadata.publish_at',
     ];
     protected array $searchFields = [
@@ -120,39 +121,40 @@ class MetaDataModel extends AvegaCmsModel
         'published',
     ];
     protected array $filterCastsFields = [
-        'module_id' => 'integer',
-        'item_id' => 'integer',
-        'parent' => 'integer',
-        'locale' => 'integer',
-        'title' => 'string',
+        'id'         => 'integer|array',
+        'module_id'  => 'integer',
+        'item_id'    => 'integer',
+        'parent'     => 'integer',
+        'locale'     => 'integer',
+        'title'      => 'string',
         'publish_at' => 'string',
     ];
     protected string $searchFieldAlias = 'q';
-    protected string $sortFieldAlias = 's';
-    protected array $filterEnumValues = [];
-    protected int $limit = 20;
-    protected int $maxLimit = 100;
-    protected array $casts = [
-        'id' => 'int',
-        'post_id' => 'int',
-        'parent' => 'int',
-        'locale_id' => 'int',
-        'module_id' => 'int',
-        'creator_id' => 'int',
-        'item_id' => 'int',
-        'preview_id' => 'cmsfile',
-        'sort' => 'int',
-        'meta' => '?json-array',
-        'meta_sitemap' => '?json-array',
-        'extra_data' => '?json-array',
-        'in_sitemap' => '?int-bool',
+    protected string $sortFieldAlias   = 's';
+    protected array $filterEnumValues  = [];
+    protected int $limit               = 20;
+    protected int $maxLimit            = 100;
+    protected array $casts             = [
+        'id'              => 'int',
+        'post_id'         => 'int',
+        'parent'          => 'int',
+        'locale_id'       => 'int',
+        'module_id'       => 'int',
+        'creator_id'      => 'int',
+        'item_id'         => 'int',
+        'preview_id'      => 'cmsfile',
+        'sort'            => 'int',
+        'meta'            => '?json-array',
+        'meta_sitemap'    => '?json-array',
+        'extra_data'      => '?json-array',
+        'in_sitemap'      => '?int-bool',
         'use_url_pattern' => '?int-bool',
-        'created_by_id' => 'int',
-        'updated_by_id' => 'int',
-        'publish_at' => '?cmsdatetime',
-        'created_at' => 'cmsdatetime',
-        'updated_at' => 'cmsdatetime',
-        'extra' => '?json-array',
+        'created_by_id'   => 'int',
+        'updated_by_id'   => 'int',
+        'publish_at'      => '?cmsdatetime',
+        'created_at'      => 'cmsdatetime',
+        'updated_at'      => 'cmsdatetime',
+        'extra'           => '?json-array',
     ];
 
     public function __construct()
@@ -160,7 +162,7 @@ class MetaDataModel extends AvegaCmsModel
         parent::__construct();
 
         $this->validationRules['slug'] = [
-            'rules' => 'if_exist|permit_empty|alpha_dash|unique_db_key[metadata.parent+module_id+item_id+use_url_pattern+slug,id,{id}]',
+            'rules'  => 'if_exist|permit_empty|alpha_dash|unique_db_key[metadata.parent+module_id+item_id+use_url_pattern+slug,id,{id}]',
             'errors' => ['unique_db_key' => lang('Validation.uniqueDbKey.notUnique')],
         ];
         $this->validationRules['status'] = [
@@ -304,7 +306,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.in_sitemap',
                 'metadata.publish_at',
                 'metadata.created_at',
-                'metadata.updated_at'
+                'metadata.updated_at',
             ]
         )->where(
             [
@@ -370,7 +372,7 @@ class MetaDataModel extends AvegaCmsModel
         )->where(
             [
                 'metadata.meta_type' => MetaDataTypes::Module->name,
-                'metadata.slug' => $slug,
+                'metadata.slug'      => $slug,
                 'metadata.module_id' => $moduleId,
                 'metadata.locale_id' => $localeId,
             ]
@@ -429,24 +431,24 @@ class MetaDataModel extends AvegaCmsModel
         }
 
         if (empty($meta['url'] ?? '')) {
-            $url = !empty($meta['slug'] ?? '') ? $meta['slug'] : mb_url_title(strtolower($meta['title']));
+            $url         = ! empty($meta['slug'] ?? '') ? $meta['slug'] : mb_url_title(strtolower($meta['title']));
             $meta['url'] = match ($meta['meta_type'] ?? '') {
                 MetaDataTypes::Main->name => Cms::settings('core.env.useMultiLocales') ? SeoUtils::Locales($meta['locale_id'])['slug'] : '/',
                 MetaDataTypes::Page->name => $this->getParentUrl($meta['parent'] ?? 0) . $url,
-                default => strtolower($url)
+                default                   => strtolower($url)
             };
         }
 
         if (isset($meta['meta'])) {
-            $meta['meta'] = json_decode($meta['meta'], true);
-            $meta['meta']['title'] = !empty($meta['meta']['title'] ?? '') ? $meta['meta']['title'] : $meta['title'];
-            $meta['meta']['keywords'] = !empty($meta['meta']['keywords'] ?? '') ? $meta['meta']['keywords'] : '';
-            $meta['meta']['description'] = !empty($meta['meta']['description'] ?? '') ? $meta['meta']['description'] : '';
+            $meta['meta']                = json_decode($meta['meta'], true);
+            $meta['meta']['title']       = ! empty($meta['meta']['title'] ?? '') ? $meta['meta']['title'] : $meta['title'];
+            $meta['meta']['keywords']    = ! empty($meta['meta']['keywords'] ?? '') ? $meta['meta']['keywords'] : '';
+            $meta['meta']['description'] = ! empty($meta['meta']['description'] ?? '') ? $meta['meta']['description'] : '';
 
             $meta['meta']['breadcrumb'] ??= '';
 
-            $meta['meta']['og:title'] = !empty($meta['meta']['og:title'] ?? '') ? $meta['meta']['og:title'] : $meta['title'];
-            $meta['meta']['og:type'] = !empty($meta['meta']['og:type'] ?? '') ? $meta['meta']['og:type'] : 'website';
+            $meta['meta']['og:title'] = ! empty($meta['meta']['og:title'] ?? '') ? $meta['meta']['og:title'] : $meta['title'];
+            $meta['meta']['og:type']  = ! empty($meta['meta']['og:type'] ?? '') ? $meta['meta']['og:type'] : 'website';
             $meta['meta']['og:url'] ??= $meta['url'];
             $meta['meta']['og:image'] ??= 0;
 
@@ -454,14 +456,14 @@ class MetaDataModel extends AvegaCmsModel
         } else {
             $meta['meta'] = json_encode(
                 [
-                    'title' => $meta['title'],
-                    'keywords' => '',
+                    'title'       => $meta['title'],
+                    'keywords'    => '',
                     'description' => '',
-                    'breadcrumb' => '',
-                    'og:title' => $meta['title'],
-                    'og:type' => 'website',
-                    'og:url' => $meta['url'],
-                    'og:image' => 0,
+                    'breadcrumb'  => '',
+                    'og:title'    => $meta['title'],
+                    'og:type'     => 'website',
+                    'og:url'      => $meta['url'],
+                    'og:image'    => 0,
                 ]
             );
         }
@@ -475,7 +477,7 @@ class MetaDataModel extends AvegaCmsModel
         } else {
             $meta['meta_sitemap'] = json_encode(
                 [
-                    'priority' => 50,
+                    'priority'   => 50,
                     'changefreq' => SitemapChangefreqs::Monthly->value,
                 ]
             );
@@ -513,17 +515,17 @@ class MetaDataModel extends AvegaCmsModel
         return match ($parent->meta_type) {
             MetaDataTypes::Main->value,
             MetaDataTypes::Page404->value => '',
-            default => ($parent->url === '/') ? '' : $parent->url . '/',
+            default                       => ($parent->url === '/') ? '' : $parent->url . '/',
         };
     }
 
     protected function getParentPagesList(array $data): array
     {
-        if (!empty($data['data'])) {
+        if (! empty($data['data'])) {
             $tree = $items = [];
 
             foreach ($data['data'] as $element) {
-                $element['list'] = [];
+                $element['list']       = [];
                 $items[$element['id']] = $element;
             }
 
