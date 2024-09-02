@@ -16,6 +16,8 @@ use ReflectionException;
 class FrontendFilter implements FilterInterface
 {
     /**
+     * @param mixed|null $arguments
+     *
      * @return RedirectResponse|ResponseInterface|void
      *
      * @throws ReflectionException
@@ -68,6 +70,8 @@ class FrontendFilter implements FilterInterface
     }
 
     /**
+     * @param mixed|null $arguments
+     *
      * @return void
      */
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)

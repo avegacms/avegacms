@@ -59,6 +59,8 @@ class Settings extends AvegaCmsAdminAPI
 
     /**
      * Return the editable properties of a resource object
+     *
+     * @param mixed|null $id
      */
     public function edit($id = null): ResponseInterface
     {
@@ -70,6 +72,8 @@ class Settings extends AvegaCmsAdminAPI
     }
 
     /**
+     * @param mixed|null $id
+     *
      * @throws ReflectionException
      */
     public function update($id = null): ResponseInterface

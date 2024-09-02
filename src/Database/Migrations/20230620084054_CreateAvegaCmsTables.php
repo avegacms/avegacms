@@ -304,7 +304,7 @@ class CreateAvegaCmsTables extends Migration
             // id - пользователя создавшего запись
             'item_id' => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
             // id - файла превью записи
-            'preview_id' => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
+            'preview_id' => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'null' => true],
             // id - элемента записи
             'title' => ['type' => 'varchar', 'constraint' => 1024, 'null' => true],
             // Название страницы

@@ -74,6 +74,8 @@ class Roles extends AvegaCmsAdminAPI
     }
 
     /**
+     * @param mixed|null $id
+     *
      * @throws ReflectionException
      */
     public function update($id = null): ResponseInterface
@@ -96,6 +98,8 @@ class Roles extends AvegaCmsAdminAPI
     }
 
     /**
+     * @param mixed|null $id
+     *
      * @throws ReflectionException
      */
     public function delete($id = null): ResponseInterface

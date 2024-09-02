@@ -50,6 +50,8 @@ class Locales extends AvegaCmsAdminAPI
     }
 
     /**
+     * @param mixed|null $id
+     *
      * @throws ReflectionException
      */
     public function update($id = null): ResponseInterface

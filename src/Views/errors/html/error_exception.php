@@ -54,7 +54,7 @@ $errorId = uniqid('error', true);
 
 <div class="container">
     <?php
-                $last = $exception;
+                            $last = $exception;
 
 while ($prevException = $last->getPrevious()) {
     $last = $prevException;
