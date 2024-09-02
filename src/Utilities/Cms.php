@@ -237,6 +237,8 @@ class Cms
     }
 
     /**
+     * @param mixed $value
+     *
      * @return array|bool|float|int|string|null
      */
     public static function castAs($value, string $type): mixed

@@ -7,10 +7,8 @@ namespace AvegaCms\Utilities;
 class Vite
 {
     private static bool $initialized = false;
-
-    private static array $css = [];
-
-    private static array $js = [];
+    private static array $css        = [];
+    private static array $js         = [];
 
     private static function init(): void
     {

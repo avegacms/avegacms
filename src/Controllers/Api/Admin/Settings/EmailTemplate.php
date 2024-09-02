@@ -50,6 +50,8 @@ class EmailTemplate extends AvegaCmsAdminAPI
     }
 
     /**
+     * @param mixed|null $id
+     *
      * @throws ReflectionException
      */
     public function update($id = null): ResponseInterface
@@ -71,6 +73,8 @@ class EmailTemplate extends AvegaCmsAdminAPI
 
     /**
      * Delete the designated resource object from the model
+     *
+     * @param mixed|null $id
      */
     public function delete($id = null): ResponseInterface
     {

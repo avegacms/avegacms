@@ -12,6 +12,8 @@ use CodeIgniter\HTTP\ResponseInterface;
 class ThrottlerFilter implements FilterInterface
 {
     /**
+     * @param mixed|null $arguments
+     *
      * @return ResponseInterface|void
      */
     public function before(RequestInterface $request, $arguments = null)

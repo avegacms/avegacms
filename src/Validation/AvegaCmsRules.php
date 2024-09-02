@@ -10,6 +10,8 @@ class AvegaCmsRules
      * Example:
      *    unique_db_key[table.field_1+field_2....+field_n,where_field,where_value]
      *    unique_db_key[users.parent+is_admin+locale_id+nav_type+slug,id,{id}]
+     *
+     * @param mixed $str
      */
     public function unique_db_key($str, string $field, array $data, ?string &$error = null): bool
     {

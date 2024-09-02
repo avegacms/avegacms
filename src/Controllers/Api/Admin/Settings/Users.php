@@ -90,6 +90,8 @@ class Users extends AvegaCmsAdminAPI
     }
 
     /**
+     * @param mixed|null $id
+     *
      * @throws ReflectionException
      */
     public function update($id = null): ResponseInterface
@@ -130,6 +132,8 @@ class Users extends AvegaCmsAdminAPI
     }
 
     /**
+     * @param mixed|null $id
+     *
      * @throws ReflectionException
      */
     public function upload($id = null): ResponseInterface
