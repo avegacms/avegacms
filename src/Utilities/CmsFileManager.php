@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace AvegaCms\Utilities;
 
-use AvegaCms\Config\Mimes;
-use AvegaCms\Config\Services;
 use AvegaCms\Enums\FileTypes;
 use AvegaCms\Models\Admin\FilesLinksModel;
 use AvegaCms\Models\Admin\FilesModel;
@@ -13,6 +11,8 @@ use AvegaCms\Utilities\Exceptions\UploaderException;
 use CodeIgniter\Files\File;
 use CodeIgniter\HTTP\Files\UploadedFile;
 use CodeIgniter\Images\Exceptions\ImageException;
+use Config\Mimes;
+use Config\Services;
 use ReflectionException;
 
 class CmsFileManager
