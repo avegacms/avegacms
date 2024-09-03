@@ -76,6 +76,7 @@ src/Config/Images.php
 src/Config/Kint.php
 src/Config/Logger.php
 src/Config/Migrations.php
+src/Config/Mimes.php
 src/Config/Modules.php
 src/Config/Pager.php
 src/Config/Paths.php
