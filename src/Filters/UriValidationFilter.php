@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace AvegaCms\Filters;
 
+use AvegaCms\Config\App;
 use AvegaCms\Config\Services;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
-use Config\App;
 
 class UriValidationFilter implements FilterInterface
 {

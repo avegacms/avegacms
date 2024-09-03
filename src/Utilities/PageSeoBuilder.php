@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace AvegaCms\Utilities;
 
+use AvegaCms\Config\Services;
 use AvegaCms\Enums\MetaDataTypes;
-use Config\Services;
 use ReflectionException;
 
 class PageSeoBuilder
