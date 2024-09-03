@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AvegaCms\Validation;
 
-use AvegaCms\Config\Database;
+use Config\Database;
 
 class AvegaCmsRules
 {

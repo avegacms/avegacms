@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace AvegaCms\Utilities;
 
-use AvegaCms\Config\Mimes;
-use AvegaCms\Config\Services;
 use AvegaCms\Utilities\Exceptions\UploaderException;
 use CodeIgniter\Files\File;
+use Config\Mimes;
+use Config\Services;
 
 class Uploader
 {
