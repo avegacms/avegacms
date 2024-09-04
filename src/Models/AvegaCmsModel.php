@@ -209,7 +209,7 @@ class AvegaCmsModel extends Model
         $fileCastMap = [];
 
         foreach ($this->casts as $field => $cast) {
-            if ($cast === 'cmsfile') {
+            if (in_array($cast, ['cmsfile','?cmsfile'], true)) {
                 $fileCastMap[] = $field;
             }
         }
