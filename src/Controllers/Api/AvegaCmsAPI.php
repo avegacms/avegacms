@@ -30,19 +30,29 @@ class AvegaCmsAPI extends AvegaCmsController
     {
         try {
             $request = request();
-            if (in_array($request->getMethod(), ['POST', 'PUT'], true)) {
-                if ($request->getBody() === null) {
-                    throw AvegaCmsApiException::forNoData();
-                }
 
-                if ($request->getBody() !== 'php://input') {
-                    json_decode($request->getBody(), false);
-                    if (json_last_error() !== JSON_ERROR_NONE) {
-                        throw AvegaCmsApiException::forInvalidJSON(json_last_error_msg());
+            switch ($request->getMethod()) {
+                case 'POST':
+                case 'PUT':
+                    if ($request->getBody() === null) {
+                        throw AvegaCmsApiException::forNoData();
                     }
 
-                    return $request->getJSON(true);
-                }
+                    if ($request->getBody() !== 'php://input') {
+                        json_decode($request->getBody(), false);
+                        if (json_last_error() !== JSON_ERROR_NONE) {
+                            throw AvegaCmsApiException::forInvalidJSON(json_last_error_msg());
+                        }
+
+                        return $request->getJSON(true);
+                    }
+                    break;
+
+                case 'PATCH':
+                    if ($request->getBody() !== null) {
+                        return $request->getJSON(true);
+                    }
+                    break;
             }
         } catch (AvegaCmsApiException $e) {
             response()->setStatusCode(400, $e->getMessage())->send();
