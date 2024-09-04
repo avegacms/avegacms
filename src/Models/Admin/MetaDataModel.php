@@ -318,8 +318,6 @@ class MetaDataModel extends AvegaCmsModel
 
     public function getMetadata(int $id, int $moduleId = 0): ?object
     {
-        $this->afterFind = [];
-
         $this->builder()->select(
             [
                 'metadata.id',
