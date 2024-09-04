@@ -7,6 +7,7 @@ namespace AvegaCms\Libraries\Sitemap;
 use AvegaCms\Models\Admin\ModulesModel;
 use AvegaCms\Traits\AvegaCmsSitemapTrait;
 use Exception;
+use ReflectionException;
 
 class Sitemap
 {
@@ -57,13 +58,18 @@ class Sitemap
         }
     }
 
+    /**
+     * @throws ReflectionException
+     */
     protected function generate(?string $className = null): void
     {
         if (null !== $className) {
             if ($className === 'Pages') {
                 $classNamespace = 'AvegaCms\\Controllers\\Sitemap';
             } else {
-                $classNamespace = "Modules\\{$className}\\Controllers\\Sitemap";
+                if (! class_exists($classNamespace = "Modules\\{$className}\\Controllers\\Sitemap")) {
+                    $classNamespace = "{$className}\\Controllers\\Sitemap";
+                }
             }
             if (class_exists($classNamespace)) {
                 $sitemap = new $classNamespace();
