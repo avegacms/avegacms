@@ -290,7 +290,7 @@ class AvegaCmsModel extends Model
                     }
                 }
             } else {
-                foreach ($data['data'] as &$item) {
+                foreach ($data['data'] as $item) {
                     foreach ($fileCastMap as $field) {
                         if (property_exists($item, $field)) {
                             $item->{$field} = $setFile($item->{$field});
