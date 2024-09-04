@@ -1951,7 +1951,7 @@ class AvegaCmsInstallSeeder extends Seeder
         // Распределяем страницы по уровням
         for ($i = 1; $i <= $nestedLevels; $i++) {
             // Определяем случайное количество страниц для текущего уровня
-            $pagesForLevel = mt_rand(1, $totalPages);
+            $pagesForLevel = $totalPages > 1 ? mt_rand(1, $totalPages) : $totalPages;
             // Записываем случайное количество страниц для текущего уровня в массив
             $distribution[$i] = count(array_splice($pagesArray, 0, $pagesForLevel));
             // Уменьшаем общее количество страниц
