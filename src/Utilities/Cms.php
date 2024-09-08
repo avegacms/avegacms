@@ -169,11 +169,17 @@ class Cms
     }
 
     /**
-     * @param int|string $locale_id
+     * @param string $url
+     * @param bool $usePattern
+     * @param int|string $id
+     * @param string $slug
+     * @param int|string $localeId
+     * @param int|string $parent
+     * @return string
      */
     public static function urlPattern(
         string $url,
-        int|string $usePattern,
+        bool $usePattern,
         int|string $id,
         string $slug,
         int|string $localeId,
@@ -182,7 +188,7 @@ class Cms
         return
             base_url(
                 strtolower(
-                    $usePattern === 1 ?
+                    $usePattern === true ?
                         str_ireplace(
                             ['{id}', '{slug}', '{locale_id}', '{parent}'],
                             [$id, $slug, $localeId, $parent],
@@ -245,7 +251,7 @@ class Cms
     {
         return match ($type) {
             FieldsReturnTypes::Integer->value => (int) $value,
-            FieldsReturnTypes::Double->value  => (float) $value,
+            FieldsReturnTypes::Double->value,
             FieldsReturnTypes::Float->value   => (float) $value,
             FieldsReturnTypes::String->value  => (string) $value,
             FieldsReturnTypes::Boolean->value => (bool) $value,
