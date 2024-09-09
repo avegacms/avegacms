@@ -132,7 +132,7 @@ class AvegaCmsFrontendController extends AvegaCmsController
 
         // Проверяем были ли переданы доп. мета параметры для поиска
         if (! empty($this->metaParams) && ($this->metaType === EntityTypes::Module->name)) {
-            $params = [...$params, ...$this->metaParams];
+            $params = array_filter([...$params, ...$this->metaParams], static fn ($el) => $el !== null);
         }
 
         $this->dataEntity = match ($this->metaType) {
