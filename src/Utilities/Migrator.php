@@ -12,7 +12,7 @@ class Migrator
     public static array $attributes = [
         'ENGINE'  => 'InnoDB',
         'CHARSET' => 'utf8',
-        'COLLATE' => 'utf8_unicode_ci',
+        'COLLATE' => 'utf8mb4_unicode_ci',
     ];
 
     /**
