@@ -11,7 +11,7 @@ class Migrator
      */
     public static array $attributes = [
         'ENGINE'  => 'InnoDB',
-        'CHARSET' => 'utf8',
+        'CHARSET' => 'utf8mb4',
         'COLLATE' => 'utf8mb4_unicode_ci',
     ];
 
