@@ -6,8 +6,6 @@ namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Enums\FileTypes;
 use AvegaCms\Models\AvegaCmsModel;
-use CodeIgniter\Database\ConnectionInterface;
-use CodeIgniter\Validation\ValidationInterface;
 
 class FilesModel extends AvegaCmsModel
 {
@@ -84,9 +82,9 @@ class FilesModel extends AvegaCmsModel
         'updated_at'    => '?cmsdatetime',
     ];
 
-    public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
+    public function __construct()
     {
-        parent::__construct($db, $validation);
+        parent::__construct();
 
         $this->validationRules['type'] = [
             'rules' => 'if_exist|required|in_list[' . implode(',', FileTypes::get('value')) . ']',
