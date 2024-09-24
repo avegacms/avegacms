@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 /**
  * This file is part of CodeIgniter 4 framework.
  *
@@ -12,9 +12,9 @@
 namespace AvegaCms\Commands\Generators;
 
 use AvegaCms\Config\AvegaCms;
-use AvegaCms\Config\Database;
-use AvegaCms\Config\Migrations;
-use AvegaCms\Config\Session as SessionConfig;
+use Config\Database;
+use Config\Migrations;
+use Config\Session as SessionConfig;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\CLI\GeneratorTrait;
@@ -79,7 +79,7 @@ class AvegaCmsMigrationGenerator extends BaseCommand
     /**
      * Actually execute a command.
      */
-    public function run(array $params)
+    public function run(array $params): void
     {
         $this->component = 'Migration';
         $this->directory = 'Database\Migrations';
@@ -91,7 +91,7 @@ class AvegaCmsMigrationGenerator extends BaseCommand
         }
 
         $this->classNameLang = 'CLI.generator.className.migration';
-        $this->execute($params);
+        $this->generateClass($params);
     }
 
     /**
