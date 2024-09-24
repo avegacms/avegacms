@@ -94,7 +94,6 @@ class EmailTemplateModel extends AvegaCmsModel
         'id'            => 'int',
         'module_id'     => 'int',
         'is_system'     => 'int',
-        'subject'       => 'json-array',
         'content'       => 'json-array',
         'variables'     => 'json-array',
         'active'        => '?int-bool',
