@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of CodeIgniter 4 framework.
@@ -12,12 +13,12 @@ declare(strict_types=1);
 namespace AvegaCms\Commands\Generators;
 
 use AvegaCms\Config\AvegaCms;
-use Config\Database;
-use Config\Migrations;
-use Config\Session as SessionConfig;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\CLI\GeneratorTrait;
+use Config\Database;
+use Config\Migrations;
+use Config\Session as SessionConfig;
 
 /**
  * Generates a skeleton migration file.

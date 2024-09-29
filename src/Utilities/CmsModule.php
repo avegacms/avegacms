@@ -134,7 +134,7 @@ class CmsModule
     public static function meta(string $key): ?array
     {
         if (($meta = (new ModulesModel())->getModulesMeta()[$key] ?? null) === null) {
-            log_message('error', "Module metadata not found :: key $key");
+            log_message('error', "Module metadata not found :: key {$key}");
         }
 
         return $meta;

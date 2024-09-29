@@ -61,6 +61,7 @@ class AvegaCmsCreateModule extends BaseCommand
             'Seeds'      => '.gitkeep',
         ],
         'Entities'  => '.gitkeep',
+        'Enums'     => '.gitkeep',
         'Filters'   => '.gitkeep',
         'Helpers'   => '.gitkeep',
         'Language'  => '.gitkeep',
@@ -69,7 +70,8 @@ class AvegaCmsCreateModule extends BaseCommand
             'Admin'    => '.gitkeep',
             'Frontend' => '.gitkeep',
         ],
-        'Views' => '.gitkeep',
+        'Utilities' => '.gitkeep',
+        'Views'     => '.gitkeep',
     ];
 
     /**

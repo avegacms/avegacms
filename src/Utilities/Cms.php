@@ -168,15 +168,6 @@ class Cms
         );
     }
 
-    /**
-     * @param string $url
-     * @param bool $usePattern
-     * @param int|string $id
-     * @param string $slug
-     * @param int|string $localeId
-     * @param int|string $parent
-     * @return string
-     */
     public static function urlPattern(
         string $url,
         bool $usePattern,
