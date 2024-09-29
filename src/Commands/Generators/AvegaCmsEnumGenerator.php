@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace AvegaCms\Commands\Generators;
 
 use AvegaCms\Config\AvegaCms;
@@ -9,6 +11,7 @@ use CodeIgniter\CLI\GeneratorTrait;
 class AvegaCmsEnumGenerator extends BaseCommand
 {
     use GeneratorTrait;
+
     /**
      * The Command's Group
      *
@@ -59,8 +62,6 @@ class AvegaCmsEnumGenerator extends BaseCommand
 
     /**
      * Actually execute a command.
-     *
-     * @param array $params
      */
     public function run(array $params): void
     {

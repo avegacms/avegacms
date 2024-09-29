@@ -64,10 +64,8 @@ class AvegaCmsModelGenerator extends BaseCommand
 
     /**
      * Actually execute a command.
-     *
-     * @return void
      */
-    public function run(array $params)
+    public function run(array $params): void
     {
         $this->component = 'Model';
         $this->directory = 'Models';
