@@ -6,7 +6,6 @@ namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Enums\UserStatuses;
 use AvegaCms\Models\AvegaCmsModel;
-use AvegaCms\Utilities\CmsFileManager;
 
 class LoginModel extends AvegaCmsModel
 {
@@ -80,6 +79,11 @@ class LoginModel extends AvegaCmsModel
         'selfAuth'      => 'int',
     ];
 
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     public function getUser(array $fields, ?string $role = null): ?object
     {
         $list = [];
@@ -134,21 +138,4 @@ class LoginModel extends AvegaCmsModel
 
         return $this->first();
     }
-
-    /*public function getUserAvatar(array $data): array
-    {
-        if ($data['method'] === 'first' && $data['data'] !== null) {
-            if ($data['data']->avatar > 0) {
-                if (! empty($avatar = CmsFileManager::getFiles(['id' => $data['data']->avatar], true))) {
-                    $data['data']->avatar = $avatar->{0};
-                } else {
-                    $data['data']->avatar = null;
-                }
-            } else {
-                $data['data']->avatar = null;
-            }
-        }
-
-        return $data;
-    }*/
 }
