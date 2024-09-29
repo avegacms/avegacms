@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AvegaCms\Enums;
 
 enum UserConditions: string
