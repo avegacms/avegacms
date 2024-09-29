@@ -61,7 +61,7 @@ class LoginModel extends AvegaCmsModel
     protected $beforeUpdate   = [];
     protected $afterUpdate    = [];
     protected $beforeFind     = [];
-    protected $afterFind      = ['getUserAvatar'];
+    protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
     protected array $casts    = [
@@ -135,7 +135,7 @@ class LoginModel extends AvegaCmsModel
         return $this->first();
     }
 
-    public function getUserAvatar(array $data): array
+    /*public function getUserAvatar(array $data): array
     {
         if ($data['method'] === 'first' && $data['data'] !== null) {
             if ($data['data']->avatar > 0) {
@@ -150,5 +150,5 @@ class LoginModel extends AvegaCmsModel
         }
 
         return $data;
-    }
+    }*/
 }
