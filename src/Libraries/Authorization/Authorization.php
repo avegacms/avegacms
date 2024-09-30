@@ -253,7 +253,6 @@ class Authorization
                 'id'         => $user->id,
                 'secret'     => '',
                 'expires'    => 0,
-                'condition'  => UserConditions::None->value,
                 'last_ip'    => $userIp,
                 'last_agent' => $userAgent,
                 'active_at'  => date('Y-m-d H:i:s', now($user->timezone)),
