@@ -55,6 +55,7 @@ class CreateAvegaCmsTables extends Migration
             'path'        => ['type' => 'varchar', 'constraint' => 512], // Будет храниться хэш
             'expires'     => ['type' => 'int', 'null' => true, 'default' => 0], // Срок действия хэша
             'is_verified' => ['type' => 'tinyint', 'constraint' => 1, 'null' => true, 'default' => 0],
+            'attempts'    => ['type' => 'tinyint', 'constraint' => 2, 'null' => true, 'default' => 0], // Количество попыток авторизации/регистрации
             'profile'     => ['type' => 'text', 'null' => true],
             'extra'       => ['type' => 'text', 'null' => true],
             // Дополнительные поля
@@ -71,6 +72,7 @@ class CreateAvegaCmsTables extends Migration
             'last_ip'    => ['type' => 'varchar', 'constraint' => 45],
             'last_agent' => ['type' => 'varchar', 'constraint' => 512],
             'active_at'  => ['type' => 'datetime', 'null' => true],
+            'blocked_at' => ['type' => 'datetime', 'null' => true], // Время блокировки аккаунта
             ...Migrator::byId(),
             ...Migrator::dateFields(),
         ]);
