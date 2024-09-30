@@ -8,8 +8,6 @@ use AvegaCms\Enums\UserStatuses;
 use AvegaCms\Models\AvegaCmsModel;
 use AvegaCms\Utilities\Auth;
 use AvegaCms\Utilities\Cms;
-use CodeIgniter\Database\ConnectionInterface;
-use CodeIgniter\Validation\ValidationInterface;
 use Faker\Generator;
 use ReflectionException;
 
@@ -125,9 +123,9 @@ class UserModel extends AvegaCmsModel
     /**
      * @throws ReflectionException
      */
-    public function __construct(?ConnectionInterface $db = null, ?ValidationInterface $validation = null)
+    public function __construct()
     {
-        parent::__construct($db, $validation);
+        parent::__construct();
 
         $this->validationRules['status'] = 'if_exist|in_list[' . implode(',', UserStatuses::get('value')) . ']';
 
