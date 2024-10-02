@@ -631,6 +631,7 @@ class Authorization
         $data = [
             'id'         => md5($login),
             'login'      => $login,
+            'code'       => $code,
             'expires'    => now($this->settings['env']['timezone']) + ($time * MINUTE),
             'user_id'    => $request->getIPAddress(),
             'user_agent' => $request->getUserAgent()->getAgentString(),

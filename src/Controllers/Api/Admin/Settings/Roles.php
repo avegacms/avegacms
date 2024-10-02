@@ -89,6 +89,7 @@ class Roles extends AvegaCmsAdminAPI
             return $this->failNotFound();
         }
 
+        $data['id']            = $id;
         $data['updated_by_id'] = $this->userData->userId;
 
         if ($this->RM->save($data) === false) {
