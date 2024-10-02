@@ -80,7 +80,7 @@ class AttemptsEntranceModel extends AvegaCmsModel
         $id = md5($login);
 
         $data = cache()->remember('AttemptsEntrance_' . $id, $delay, function () use ($id) {
-            $this->builder()->select(['id', 'code', 'expires'])->where(['id' => $id]);
+            $this->builder()->select(['id', 'code', 'delay', 'expires'])->where(['id' => $id]);
 
             return $this->first();
         });
