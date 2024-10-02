@@ -102,7 +102,7 @@ class Roles extends AvegaCmsAdminAPI
      *
      * @throws ReflectionException
      */
-    public function delete($id = null): ResponseInterface
+    public function delete(?int $id): ResponseInterface
     {
         if (($role = $this->RM->find($id)) === null) {
             return $this->failNotFound();
@@ -122,7 +122,7 @@ class Roles extends AvegaCmsAdminAPI
             return $this->failValidationErrors(lang('Api.errors.delete', ['Permissions']));
         }
 
-        if (! $this->URM->update(['role_id' => 4], ['role_id' => $id])) {
+        if (! $this->URM->where(['role_id' => $id])->update(null, ['role_id' => 4])) {
             return $this->failValidationErrors(lang('Api.errors.update', ['UserRoles']));
         }
 
