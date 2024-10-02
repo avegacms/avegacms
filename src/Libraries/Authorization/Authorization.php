@@ -628,8 +628,12 @@ class Authorization
      */
     public function setCode(string $login, int $time): int
     {
-        if ($this->AEM->getCode($login) !== null) {
-            throw AuthorizationException::forCodeNotExpired();
+        if (($data = $this->AEM->getCode($login)) !== null) {
+            if ($data->expires > now($this->settings['env']['timezone'])) {
+                throw AuthorizationException::forCodeNotExpired();
+            }
+
+            cache()->delete('AttemptsEntrance_' . $data->id);
         }
 
         $code = $this->_getCode();
