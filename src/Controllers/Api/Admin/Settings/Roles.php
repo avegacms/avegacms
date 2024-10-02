@@ -39,7 +39,7 @@ class Roles extends AvegaCmsAdminAPI
 
         $data['created_by_id'] = $this->userData->userId;
 
-        if (! $id = $this->RM->insert($data)) {
+        if (($id = $this->RM->insert($data)) === false) {
             return $this->failValidationErrors($this->RM->errors());
         }
 
@@ -47,9 +47,10 @@ class Roles extends AvegaCmsAdminAPI
         $rolePermissions    = [];
 
         foreach ($defaultPermissions as $permission) {
-            $permission['role_id']       = $id;
-            $permission['created_by_id'] = $this->userData->userId;
-            $rolePermissions[]           = $permission;
+            $permission->role_id       = $id;
+            $permission->created_by_id = $this->userData->userId;
+            $permission->extra         = json_encode($permission->extra);
+            $rolePermissions[]         = $permission;
         }
 
         if (! $this->PM->insertBatch($rolePermissions)) {
