@@ -19,26 +19,41 @@ class CreateAvegaCmsTables extends Migration
 {
     private array $attributes;
     private array $tables = [
-        'users'           => 'users',
-        'roles'           => 'roles',
-        'user_roles'      => 'user_roles',
-        'user_tokens'     => 'user_tokens',
-        'locales'         => 'locales',
-        'modules'         => 'modules',
-        'settings'        => 'settings',
-        'metadata'        => 'metadata',
-        'content'         => 'content',
-        'files'           => 'files',
-        'files_links'     => 'files_links',
-        'sessions'        => 'sessions',
-        'permissions'     => 'permissions',
-        'navigations'     => 'navigations',
-        'email_templates' => 'email_templates',
+        'attempts_entrance' => 'attempts_entrance',
+        'users'             => 'users',
+        'roles'             => 'roles',
+        'user_roles'        => 'user_roles',
+        'user_tokens'       => 'user_tokens',
+        'locales'           => 'locales',
+        'modules'           => 'modules',
+        'settings'          => 'settings',
+        'metadata'          => 'metadata',
+        'content'           => 'content',
+        'files'             => 'files',
+        'files_links'       => 'files_links',
+        'sessions'          => 'sessions',
+        'permissions'       => 'permissions',
+        'navigations'       => 'navigations',
+        'email_templates'   => 'email_templates',
     ];
 
     public function up(): void
     {
         $this->attributes = ($this->db->getPlatform() === 'MySQLi') ? Migrator::$attributes : [];
+
+        /**
+         * Таблица попыток входа
+         */
+        $this->forge->addField([
+            'id'         => ['type' => 'varchar', 'constraint' => 128, 'unique' => true, 'null' => true],
+            'login'      => ['type' => 'varchar', 'constraint' => 255, 'unique' => true],
+            'code'       => ['type' => 'int', 'constraint' => 11, 'null' => true, 'default' => 0],
+            'expires'    => ['type' => 'int', 'constraint' => 11, 'null' => true, 'default' => 0],
+            'user_ip'    => ['type' => 'varchar', 'constraint' => 255],
+            'user_agent' => ['type' => 'varchar', 'constraint' => 512],
+            ...Migrator::dateFields(['deleted_at']),
+        ]);
+        $this->createTable($this->tables['attempts_entrance']);
 
         /**
          * Таблица пользователей
