@@ -110,12 +110,16 @@ class Authorization
         return $authResult;
     }
 
+    public function checkCode(string $login, int $code): bool
+    {
+    }
+
     /**
      * @return list<array>
      *
      * @throws AuthorizationException|Exception
      */
-    public function checkCode(array $data): array
+    public function checkCodeOld(array $data): array
     {
         if (empty($data)) {
             throw AuthorizationException::forNoData();
@@ -627,12 +631,14 @@ class Authorization
         $code = $this->_getCode();
 
         $request = Services::request();
+        $delay   = $time * MINUTE;
 
         $data = [
             'id'         => md5($login),
             'login'      => $login,
             'code'       => $code,
-            'expires'    => now($this->settings['env']['timezone']) + ($time * MINUTE),
+            'delay'      => $delay,
+            'expires'    => now($this->settings['env']['timezone']) + $delay,
             'user_id'    => $request->getIPAddress(),
             'user_agent' => $request->getUserAgent()->getAgentString(),
         ];

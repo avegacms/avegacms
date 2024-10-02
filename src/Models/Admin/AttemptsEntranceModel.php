@@ -16,9 +16,10 @@ class AttemptsEntranceModel extends AvegaCmsModel
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'uid',
+        'id',
         'login',
         'code',
+        'delay',
         'expires',
         'user_ip',
         'user_agent',
@@ -27,6 +28,7 @@ class AttemptsEntranceModel extends AvegaCmsModel
     ];
     protected array $casts = [
         'code'       => 'int',
+        'delay'      => 'int',
         'expires'    => 'int',
         'created_at' => 'cmsdatetime',
         'updated_at' => 'cmsdatetime',
@@ -48,9 +50,9 @@ class AttemptsEntranceModel extends AvegaCmsModel
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
-    protected $afterInsert    = [];
+    protected $afterInsert    = ['setUserEntranceCode'];
     protected $beforeUpdate   = [];
-    protected $afterUpdate    = [];
+    protected $afterUpdate    = ['setUserEntranceCode'];
     protected $beforeFind     = [];
     protected $afterFind      = [];
     protected $beforeDelete   = [];
@@ -71,5 +73,25 @@ class AttemptsEntranceModel extends AvegaCmsModel
     public function __construct()
     {
         parent::__construct();
+    }
+
+    public function getCode(string $login, int $delay = 0): ?object
+    {
+        $id = md5($login);
+
+        return cache()->remember('AttemptsEntrance_' . $id, $delay, function () use ($id) {
+            $this->builder()->select(['id', 'code', 'expires'])->where(['id' => $id]);
+
+            return $this->first();
+        });
+    }
+
+    protected function setUserEntranceCode(array $data): array
+    {
+        if ($data['result'] === true) {
+            $this->getCode($data['data']['login'], $data['data']['delay']);
+        }
+
+        return $data;
     }
 }

@@ -48,6 +48,7 @@ class CreateAvegaCmsTables extends Migration
             'id'         => ['type' => 'varchar', 'constraint' => 128, 'unique' => true, 'null' => true],
             'login'      => ['type' => 'varchar', 'constraint' => 255, 'unique' => true],
             'code'       => ['type' => 'int', 'constraint' => 11, 'null' => true, 'default' => 0],
+            'delay'      => ['type' => 'int', 'constraint' => 11, 'null' => true, 'default' => 0],
             'expires'    => ['type' => 'bigint', 'constraint' => 16, 'null' => true, 'default' => 0],
             'user_ip'    => ['type' => 'varchar', 'constraint' => 255],
             'user_agent' => ['type' => 'varchar', 'constraint' => 512],
