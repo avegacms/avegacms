@@ -60,7 +60,7 @@ class Roles extends AvegaCmsAdminAPI
         return $this->cmsRespondCreated($id);
     }
 
-    public function edit($id = null): ResponseInterface
+    public function edit(int $id = null): ResponseInterface
     {
         if (($data = $this->RM->find($id)) === null) {
             return $this->failNotFound();
@@ -68,18 +68,16 @@ class Roles extends AvegaCmsAdminAPI
 
         return $this->cmsRespond(
             [
-                'role'        => $data->toArray(),
+                'role'        => (array) $data,
                 'permissions' => $this->PM->getDefaultPermissions($id),
             ]
         );
     }
 
     /**
-     * @param mixed|null $id
-     *
      * @throws ReflectionException
      */
-    public function update($id = null): ResponseInterface
+    public function update(?int $id = null): ResponseInterface
     {
         $data = $this->apiData;
 
