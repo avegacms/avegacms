@@ -393,7 +393,7 @@ class MetaDataModel extends AvegaCmsModel
 
     protected function selectPagesSetUrl(array $data): array
     {
-        if ($data['singleton '] === true) {
+        if ($data['singleton'] === true) {
             if (null !== $data['data']->url) {
                 $data['data']->url = base_url($data['data']->url);
             }
