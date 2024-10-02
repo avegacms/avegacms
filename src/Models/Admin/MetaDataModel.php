@@ -114,7 +114,7 @@ class MetaDataModel extends AvegaCmsModel
         'published' => 'metadata.publish_at',
     ];
     protected array $searchFields = [
-        'title',
+        'title'     => 'metadata.title',
     ];
     protected array $sortableFields = [
         'sort',
