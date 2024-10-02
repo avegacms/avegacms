@@ -8,6 +8,7 @@ use AvegaCms\Config\Services;
 use AvegaCms\Enums\UserConditions;
 use AvegaCms\Libraries\Authorization\Exceptions\AuthenticationException;
 use AvegaCms\Libraries\Authorization\Exceptions\AuthorizationException;
+use AvegaCms\Models\Admin\AttemptsEntranceModel;
 use AvegaCms\Models\Admin\LoginModel;
 use AvegaCms\Models\Admin\RolesModel;
 use AvegaCms\Models\Admin\SessionsModel;
@@ -30,6 +31,7 @@ class Authorization
     protected RolesModel $RM;
     protected UserTokensModel $UTM;
     protected UserRolesModel $URM;
+    protected AttemptsEntranceModel $AEM;
     protected Session $session;
     protected Validation $validation;
 
@@ -49,6 +51,7 @@ class Authorization
         $this->RM       = model(RolesModel::class);
         $this->UTM      = model(UserTokensModel::class);
         $this->URM      = model(UserRolesModel::class);
+        $this->AEM      = model(AttemptsEntranceModel::class);
     }
 
     /**
@@ -611,6 +614,31 @@ class Authorization
                 'condition' => UserConditions::from($condition)->value,
             ]
         );
+
+        return $code;
+    }
+
+    /**
+     * @throws Exception
+     * @throws ReflectionException
+     */
+    public function setCode(string $login, int $time): int
+    {
+        $code = $this->_getCode();
+
+        $request = Services::request();
+
+        $data = [
+            'id'         => md5($login),
+            'login'      => $login,
+            'expires'    => now($this->settings['env']['timezone']) + ($time * MINUTE),
+            'user_id'    => $request->getIPAddress(),
+            'user_agent' => $request->getUserAgent()->getAgentString(),
+        ];
+
+        if ($this->AEM->save($data) === false) {
+            throw AuthorizationException::forCreateCode();
+        }
 
         return $code;
     }

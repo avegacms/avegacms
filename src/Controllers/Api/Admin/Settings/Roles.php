@@ -60,7 +60,7 @@ class Roles extends AvegaCmsAdminAPI
         return $this->cmsRespondCreated($id);
     }
 
-    public function edit(int $id = null): ResponseInterface
+    public function edit(?int $id = null): ResponseInterface
     {
         if (($data = $this->RM->find($id)) === null) {
             return $this->failNotFound();
