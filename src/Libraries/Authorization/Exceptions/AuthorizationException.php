@@ -67,6 +67,11 @@ class AuthorizationException extends Exception
         return new static(lang('Authorization.errors.createToken'));
     }
 
+    public static function forCreateCode(): AuthorizationException
+    {
+        return new static(lang('Authorization.errors.createCode'));
+    }
+
     public static function forCodeExpired(): AuthorizationException
     {
         return new static(lang('Authorization.errors.codeExpired'));
