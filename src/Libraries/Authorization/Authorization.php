@@ -628,6 +628,10 @@ class Authorization
      */
     public function setCode(string $login, int $time): int
     {
+        if ($this->AEM->getCode($login) !== null) {
+            throw AuthorizationException::forCreateCode();
+        }
+
         $code = $this->_getCode();
 
         $request = Services::request();
