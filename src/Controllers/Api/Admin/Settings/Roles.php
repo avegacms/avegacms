@@ -40,7 +40,7 @@ class Roles extends AvegaCmsAdminAPI
         $data['created_by_id'] = $this->userData->userId;
 
         if (($id = $this->RM->insert($data)) === false) {
-            return $this->failValidationErrors($this->RM->errors());
+            return $this->cmsRespondFail($this->RM->errors());
         }
 
         $defaultPermissions = $this->PM->getDefaultPermissions();
@@ -75,7 +75,7 @@ class Roles extends AvegaCmsAdminAPI
             return $this->failNotFound();
         }
 
-        return $this->cmsRespond( (array) $this->PM->getDefaultPermissions($id));
+        return $this->cmsRespond((array) $this->PM->getDefaultPermissions($id));
     }
 
     /**
@@ -92,7 +92,7 @@ class Roles extends AvegaCmsAdminAPI
         $data['updated_by_id'] = $this->userData->userId;
 
         if ($this->RM->save($data) === false) {
-            return $this->failValidationErrors($this->RM->errors());
+            return $this->cmsRespondFail($this->RM->errors());
         }
 
         cache()->delete('RAM_' . $role->role);
@@ -112,21 +112,21 @@ class Roles extends AvegaCmsAdminAPI
         }
 
         if (in_array($role->role, ['root', 'default'], true)) {
-            return $this->failValidationErrors(lang('Roles.errors.deleteIsDefault'));
+            return $this->cmsRespondFail(lang('Roles.errors.deleteIsDefault'));
         }
 
         if (! $this->RM->delete($id)) {
-            return $this->failValidationErrors(lang('Api.errors.delete', ['Roles']));
+            return $this->cmsRespondFail(lang('Api.errors.delete', ['Roles']));
         }
 
         cache()->delete('RAM_' . $role->role);
 
         if (! $this->PM->where(['role_id' => $id])->delete()) {
-            return $this->failValidationErrors(lang('Api.errors.delete', ['Permissions']));
+            return $this->cmsRespondFail(lang('Api.errors.delete', ['Permissions']));
         }
 
         if (! $this->URM->where(['role_id' => $id])->update(null, ['role_id' => 4])) {
-            return $this->failValidationErrors(lang('Api.errors.update', ['UserRoles']));
+            return $this->cmsRespondFail(lang('Api.errors.update', ['UserRoles']));
         }
 
         return $this->respondNoContent();

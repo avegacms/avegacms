@@ -47,17 +47,17 @@ class Modules extends AvegaCmsAdminAPI
         }
 
         if (in_array($id, $excludedId, true) || in_array($data->parent, $excludedId, true) || in_array($data->slug, $pluginsSlug, true)) {
-            return $this->failValidationErrors(lang('Modules.errors.deleteIsDefault'));
+            return $this->cmsRespondFail(lang('Modules.errors.deleteIsDefault'));
         }
 
         $modulesId = $this->MM->parentsId($id)->findColumn('id');
 
         if (! $this->MM->parentsId($id)->delete()) {
-            return $this->failValidationErrors(lang('Api.errors.delete', ['Modules']));
+            return $this->cmsRespondFail(lang('Api.errors.delete', ['Modules']));
         }
 
         if (! $this->PM->whereIn('id', $modulesId)->delete()) {
-            return $this->failValidationErrors(lang('Api.errors.delete', ['Permissions']));
+            return $this->cmsRespondFail(lang('Api.errors.delete', ['Permissions']));
         }
 
         cache()->clean();

@@ -34,7 +34,7 @@ class EmailTemplate extends AvegaCmsAdminAPI
         $data['created_by_id'] = $this->userData->userId;
 
         if (! $id = $this->ETM->insert($data)) {
-            return $this->failValidationErrors($this->ETM->errors());
+            return $this->cmsRespondFail($this->ETM->errors());
         }
 
         return $this->cmsRespondCreated($id);
@@ -65,7 +65,7 @@ class EmailTemplate extends AvegaCmsAdminAPI
         $data['updated_by_id'] = $this->userData->userId;
 
         if ($this->ETM->save($data) === false) {
-            return $this->failValidationErrors($this->ETM->errors());
+            return $this->cmsRespondFail($this->ETM->errors());
         }
 
         return $this->respondNoContent();
@@ -83,11 +83,11 @@ class EmailTemplate extends AvegaCmsAdminAPI
         }
 
         if ($data->is_system === 1) {
-            return $this->failValidationErrors(lang('EmailTemplate.errors.deleteSystem'));
+            return $this->cmsRespondFail(lang('EmailTemplate.errors.deleteSystem'));
         }
 
         if (! $this->ETM->delete($id)) {
-            return $this->failValidationErrors(lang('Api.errors.delete', ['Locales']));
+            return $this->cmsRespondFail(lang('Api.errors.delete', ['Locales']));
         }
 
         return $this->respondNoContent();
