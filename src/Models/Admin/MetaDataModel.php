@@ -248,8 +248,6 @@ class MetaDataModel extends AvegaCmsModel
 
     public function editPageMetaData(int $id): ?object
     {
-        $this->afterFind = ['selectPagesSetUrl'];
-
         $this->builder()->select(
             [
                 'metadata.id',
