@@ -59,7 +59,7 @@ class Permissions extends AvegaCmsAdminAPI
         $data['updated_by_id'] = $this->userData->userId;
 
         if ($this->PM->save($data) === false) {
-            return $this->failValidationErrors($this->PM->errors());
+            return $this->cmsRespondFail($this->PM->errors());
         }
 
         if (($role = $this->RM->find($permissions->role_id)) === null) {
@@ -82,11 +82,11 @@ class Permissions extends AvegaCmsAdminAPI
         }
 
         if (in_array($role->role, ['root', 'default'], true)) {
-            return $this->failValidationErrors(lang('Permissions.errors.notDelete'));
+            return $this->cmsRespondFail(lang('Permissions.errors.notDelete'));
         }
 
         if (! $this->PM->delete($id)) {
-            return $this->failValidationErrors(lang('Api.errors.delete', ['Permissions']));
+            return $this->cmsRespondFail(lang('Api.errors.delete', ['Permissions']));
         }
 
         cache()->delete('RAM_' . $role->role);

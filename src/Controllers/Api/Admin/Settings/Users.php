@@ -68,7 +68,7 @@ class Users extends AvegaCmsAdminAPI
         unset($data['roles']);
 
         if (! $id = $this->UM->insert($data)) {
-            return $this->failValidationErrors($this->UM->errors());
+            return $this->cmsRespondFail($this->UM->errors());
         }
 
         $this->_setRoles((int) $id, $roles);
@@ -117,7 +117,7 @@ class Users extends AvegaCmsAdminAPI
         }
 
         if ($this->UM->save($data) === false) {
-            return $this->failValidationErrors($this->UM->errors());
+            return $this->cmsRespondFail($this->UM->errors());
         }
 
         if ($reset && Cms::settings('core.auth.useJwt')) {
@@ -153,12 +153,12 @@ class Users extends AvegaCmsAdminAPI
             );
 
             if (! $this->UM->save(['id' => $id, 'avatar' => $avatar['fileName']])) {
-                return $this->failValidationErrors($this->UM->errors());
+                return $this->cmsRespondFail($this->UM->errors());
             }
 
             return $this->cmsRespond($avatar);
         } catch (UploaderException $e) {
-            return $this->failValidationErrors(empty($e->getMessages()) ? $e->getMessage() : $e->getMessages());
+            return $this->cmsRespondFail(empty($e->getMessages()) ? $e->getMessage() : $e->getMessages());
         }
     }
 
@@ -169,11 +169,11 @@ class Users extends AvegaCmsAdminAPI
         }
 
         if (! $this->UM->delete($id)) {
-            return $this->failValidationErrors(lang('Api.errors.delete', ['Users']));
+            return $this->cmsRespondFail(lang('Api.errors.delete', ['Users']));
         }
 
         if (! $this->URM->where(['user_id' => $id])->delete()) {
-            return $this->failValidationErrors(lang('Api.errors.delete', ['UserRoles']));
+            return $this->cmsRespondFail(lang('Api.errors.delete', ['UserRoles']));
         }
 
         $this->_removeAvatar($user->avatar);

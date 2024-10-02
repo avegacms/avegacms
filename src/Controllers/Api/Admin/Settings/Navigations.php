@@ -47,7 +47,7 @@ class Navigations extends AvegaCmsAdminAPI
         $data['created_by_id'] = $this->userData->userId;
 
         if (! $id = $this->NM->insert((new NavigationsEntity($data)))) {
-            return $this->failValidationErrors($this->NM->errors());
+            return $this->cmsRespondFail($this->NM->errors());
         }
 
         return $this->cmsRespondCreated($id);
@@ -83,7 +83,7 @@ class Navigations extends AvegaCmsAdminAPI
         $data['updated_by_id'] = $this->userData->userId;
 
         if ($this->NM->save($data) === false) {
-            return $this->failValidationErrors($this->NM->errors());
+            return $this->cmsRespondFail($this->NM->errors());
         }
 
         return $this->respondNoContent();
@@ -101,7 +101,7 @@ class Navigations extends AvegaCmsAdminAPI
         }
 
         if (! $this->NM->where(['is_admin' => 0])->delete($id)) {
-            return $this->failValidationErrors(lang('Api.errors.delete', ['Navigations']));
+            return $this->cmsRespondFail(lang('Api.errors.delete', ['Navigations']));
         }
 
         return $this->respondNoContent();

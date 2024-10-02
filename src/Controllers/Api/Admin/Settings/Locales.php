@@ -43,7 +43,7 @@ class Locales extends AvegaCmsAdminAPI
         $data['created_by_id'] = $this->userData->userId;
 
         if (! $id = $this->LM->insert($data)) {
-            return $this->failValidationErrors($this->LM->errors());
+            return $this->cmsRespondFail($this->LM->errors());
         }
 
         return $this->cmsRespondCreated($id);
@@ -65,7 +65,7 @@ class Locales extends AvegaCmsAdminAPI
         $data['updated_by_id'] = $this->userData->userId;
 
         if ($this->LM->save($data) === false) {
-            return $this->failValidationErrors($this->LM->errors());
+            return $this->cmsRespondFail($this->LM->errors());
         }
 
         return $this->respondNoContent();
@@ -78,11 +78,11 @@ class Locales extends AvegaCmsAdminAPI
         }
 
         if ($data->is_default === 1) {
-            return $this->failValidationErrors(lang('Locales.errors.deleteIsDefault'));
+            return $this->cmsRespondFail(lang('Locales.errors.deleteIsDefault'));
         }
 
         if (! $this->LM->delete($id)) {
-            return $this->failValidationErrors(lang('Api.errors.delete', ['Locales']));
+            return $this->cmsRespondFail(lang('Api.errors.delete', ['Locales']));
         }
 
         return $this->respondNoContent();

@@ -48,12 +48,12 @@ class Settings extends AvegaCmsAdminAPI
             $data['created_by_id'] = $this->userData->userId;
 
             if (! $id = $this->SM->insert($data)) {
-                return $this->failValidationErrors($this->SM->errors());
+                return $this->cmsRespondFail($this->SM->errors());
             }
 
             return $this->cmsRespondCreated($id);
         } catch (DatabaseException $e) {
-            return $this->failValidationErrors($e->getMessage());
+            return $this->cmsRespondFail($e->getMessage());
         }
     }
 
@@ -89,12 +89,12 @@ class Settings extends AvegaCmsAdminAPI
             $data['updated_by_id'] = $this->userData->userId;
 
             if ($this->SM->save($data) === false) {
-                return $this->failValidationErrors($this->SM->errors());
+                return $this->cmsRespondFail($this->SM->errors());
             }
 
             return $this->respondNoContent();
         } catch (DatabaseException $e) {
-            return $this->failValidationErrors($e->getMessage());
+            return $this->cmsRespondFail($e->getMessage());
         }
     }
 
@@ -105,11 +105,11 @@ class Settings extends AvegaCmsAdminAPI
         }
 
         if ($data->is_core === 1) {
-            return $this->failValidationErrors(lang('Settings.errors.deleteIsDefault'));
+            return $this->cmsRespondFail(lang('Settings.errors.deleteIsDefault'));
         }
 
         if (! $this->SM->delete($id)) {
-            return $this->failValidationErrors(lang('Api.errors.delete', ['Settings']));
+            return $this->cmsRespondFail(lang('Api.errors.delete', ['Settings']));
         }
 
         return $this->respondNoContent();
