@@ -66,12 +66,16 @@ class Roles extends AvegaCmsAdminAPI
             return $this->failNotFound();
         }
 
-        return $this->cmsRespond(
-            [
-                'role'        => (array) $data,
-                'permissions' => $this->PM->getDefaultPermissions($id),
-            ]
-        );
+        return $this->cmsRespond((array) $data);
+    }
+
+    public function permissions(?int $id = null): ResponseInterface
+    {
+        if ($this->RM->find($id) === null) {
+            return $this->failNotFound();
+        }
+
+        return $this->cmsRespond( (array) $this->PM->getDefaultPermissions($id));
     }
 
     /**

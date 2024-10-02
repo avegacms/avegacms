@@ -75,6 +75,7 @@ $routes->group('api', static function (RouteCollection $routes) {
                 $routes->group('roles', static function (RouteCollection $routes) {
                     $routes->get('/', [Roles::class, 'index']);
                     $routes->get('(:num)/edit', [Roles::class, 'edit/$1']);
+                    $routes->get('(:num)/permissions', [Roles::class, 'permissions/$1']);
                     $routes->post('/', [Roles::class, 'create']);
                     $routes->put('(:num)', [[Roles::class, 'update'], '$1']);
                     $routes->patch('(:num)', [[Roles::class, 'update'], '$1']);
