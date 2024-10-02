@@ -121,7 +121,7 @@ class MetaDataModel extends AvegaCmsModel
         'published',
     ];
     protected array $filterCastsFields = [
-        'id'         => 'integer|array',
+        'id'         => 'integer',
         'module_id'  => 'integer',
         'item_id'    => 'integer',
         'parent'     => 'integer',
