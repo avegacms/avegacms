@@ -200,6 +200,10 @@ class Users extends AvegaCmsAdminAPI
                     'matches' => 'Пароли не совпадают',
                 ],
             ],
+            'status' => [
+                'label' => 'Статус',
+                'rules' => 'required|in_list[' . implode(',', UserStatuses::get('value')) . ']'
+            ],
             'role' => [
                 'label' => 'Роль',
                 'rules' => 'required|is_natural_no_zero',
