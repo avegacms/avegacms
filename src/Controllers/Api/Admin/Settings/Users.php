@@ -203,9 +203,11 @@ class Users extends AvegaCmsAdminAPI
     /**
      * @throws ReflectionException
      */
-    private function _setRoles(int $userId, array $roles): void
+    private function _setRoles(int $userId, array|int $roles): void
     {
         $this->URM->where(['user_id' => $userId])->delete();
+
+        $roles = is_array($roles) ? $roles : [$roles];
 
         foreach ($roles as $role) {
             $setRoles[] = [
