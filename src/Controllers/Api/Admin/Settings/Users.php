@@ -191,7 +191,7 @@ class Users extends AvegaCmsAdminAPI
             ],
             'password_conf' => [
                 'label'  => 'Подтверждение пароля',
-                'rules'  => ($isReg ? 'required' : 'permit_empty') . 'max_length[64]|matches[password]',
+                'rules'  => ($isReg ? 'required' : 'permit_empty') . '|max_length[64]|matches[password]',
                 'errors' => [
                     'matches' => 'Пароли не совпадают',
                 ],
