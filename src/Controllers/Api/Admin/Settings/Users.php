@@ -63,6 +63,8 @@ class Users extends AvegaCmsAdminAPI
         $roles = $data['role'];
         unset($data['role']);
 
+        $this->UM->skipValidation();
+
         if (! $id = $this->UM->insert($data)) {
             return $this->cmsRespondFail($this->UM->errors());
         }
@@ -102,6 +104,8 @@ class Users extends AvegaCmsAdminAPI
 
         $data                  = $this->validator->getValidated();
         $data['updated_by_id'] = $this->userData->userId;
+
+        $this->UM->skipValidation();
 
         if ($this->UM->save($data) === false) {
             return $this->cmsRespondFail($this->UM->errors());
