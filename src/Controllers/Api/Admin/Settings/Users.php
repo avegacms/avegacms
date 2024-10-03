@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AvegaCms\Controllers\Api\Admin\Settings;
 
 use AvegaCms\Controllers\Api\Admin\AvegaCmsAdminAPI;
+use AvegaCms\Enums\UserStatuses;
 use AvegaCms\Models\Admin\RolesModel;
 use AvegaCms\Models\Admin\UserModel;
 use AvegaCms\Models\Admin\UserRolesModel;
@@ -50,7 +51,7 @@ class Users extends AvegaCmsAdminAPI
         return $this->cmsRespond(
             [
                 'roles'    => $this->RM->getRolesList(),
-                'statuses' => $this->userStatus,
+                'statuses' => UserStatuses::list(),
             ]
         );
     }
@@ -136,9 +137,9 @@ class Users extends AvegaCmsAdminAPI
      *
      * @throws ReflectionException
      */
-    public function upload($id = null): ResponseInterface
+    public function upload(?int $id = null): ResponseInterface
     {
-        if ($this->UM->forEdit((int) $id) === null) {
+        if ($this->UM->forEdit($id) === null) {
             return $this->failNotFound();
         }
 
