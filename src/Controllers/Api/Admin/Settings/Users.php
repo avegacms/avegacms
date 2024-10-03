@@ -9,8 +9,6 @@ use AvegaCms\Enums\UserStatuses;
 use AvegaCms\Models\Admin\RolesModel;
 use AvegaCms\Models\Admin\UserModel;
 use AvegaCms\Models\Admin\UserRolesModel;
-use AvegaCms\Models\Admin\UserTokensModel;
-use AvegaCms\Utilities\Cms;
 use AvegaCms\Utilities\Exceptions\UploaderException;
 use AvegaCms\Utilities\Uploader;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -21,17 +19,6 @@ class Users extends AvegaCmsAdminAPI
     protected RolesModel $RM;
     protected UserModel $UM;
     protected UserRolesModel $URM;
-
-    /**
-     * @var array|list<string>
-     */
-    protected array $userStatus = [
-        'pre-registration',
-        'active',
-        'banned',
-        'deleted',
-        '',
-    ];
 
     public function __construct()
     {
@@ -50,6 +37,10 @@ class Users extends AvegaCmsAdminAPI
     {
         return $this->cmsRespond(
             [
+                'email'    => '',
+                'password' => '',
+            ],
+            [
                 'roles'    => $this->RM->getRolesList(),
                 'statuses' => UserStatuses::list(),
             ]
@@ -61,12 +52,16 @@ class Users extends AvegaCmsAdminAPI
      */
     public function create(): ResponseInterface
     {
-        $data = $this->apiData;
+        if ($this->validateData($this->apiData, $this->_rules()) === false) {
+            return $this->cmsRespondFail($this->validator->getErrors());
+        }
+
+        $data = $this->validator->getValidated();
 
         $data['created_by_id'] = $this->userData->userId;
 
-        $roles = $data['roles'];
-        unset($data['roles']);
+        $roles = $data['role'];
+        unset($data['role']);
 
         if (! $id = $this->UM->insert($data)) {
             return $this->cmsRespondFail($this->UM->errors());
@@ -87,7 +82,7 @@ class Users extends AvegaCmsAdminAPI
             return $this->failNotFound();
         }
 
-        return $this->cmsRespond($data->toArray());
+        return $this->cmsRespond((array) $data);
     }
 
     /**
@@ -97,36 +92,19 @@ class Users extends AvegaCmsAdminAPI
      */
     public function update($id = null): ResponseInterface
     {
-        $data = $this->apiData;
-
-        if (($user = $this->UM->find($id)) === null) {
+        if ($this->UM->forEdit((int) $id) === null) {
             return $this->failNotFound();
         }
 
+        if ($this->validateData($this->apiData, $this->_rules()) === false) {
+            return $this->cmsRespondFail($this->validator->getErrors());
+        }
+
+        $data                  = $this->validator->getValidated();
         $data['updated_by_id'] = $this->userData->userId;
-
-        $reset = false;
-        if (isset($data['reset'])) {
-            $reset = (bool) ($data['reset']);
-            unset($data['reset']);
-        }
-
-        if ($data['roles'] ?? false) {
-            $roles = $data['roles'];
-            unset($data['roles']);
-            $this->_setRoles((int) $id, $roles);
-        }
 
         if ($this->UM->save($data) === false) {
             return $this->cmsRespondFail($this->UM->errors());
-        }
-
-        if ($reset && Cms::settings('core.auth.useJwt')) {
-            (new UserTokensModel())->where(['user_id' => $id])->delete();
-        }
-
-        if (isset($data['avatar']) && empty($data['avatar'])) {
-            $this->_removeAvatar($user->avatar);
         }
 
         return $this->respondNoContent();
@@ -180,6 +158,35 @@ class Users extends AvegaCmsAdminAPI
         $this->_removeAvatar($user->avatar);
 
         return $this->respondNoContent();
+    }
+
+    private function _rules(): array
+    {
+        return [
+            'login' => [
+                'label' => 'Логин',
+                'rules' => 'permit_empty|alpha_dash|max_length[36]',
+            ],
+            'email' => [
+                'label' => 'Email',
+                'rules' => 'required|max_length[255]|valid_email|is_unique[users.email,id,{id}]',
+            ],
+            'password' => [
+                'label' => 'Пароль',
+                'rules' => 'required|max_length[64]|verify_password',
+            ],
+            'password_conf' => [
+                'label'  => 'Подтверждение пароля',
+                'rules'  => 'required|max_length[64]|matches[password]',
+                'errors' => [
+                    'matches' => 'Пароли не совпадают',
+                ],
+            ],
+            'role' => [
+                'label' => 'Роль',
+                'rules' => 'required|is_natural_no_zero',
+            ],
+        ];
     }
 
     private function _removeAvatar(string $file): void

@@ -64,7 +64,7 @@ class CreateAvegaCmsTables extends Migration
             'login'       => ['type' => 'varchar', 'constraint' => 36, 'null' => true],
             'avatar'      => ['type' => 'bigint', 'constraint' => 16, 'unsigned' => true, 'default' => 0],
             'phone'       => ['type' => 'decimal', 'constraint' => 11, 'null' => true],
-            'email'       => ['type' => 'varchar', 'constraint' => 255, 'unique' => true, 'null' => true],
+            'email'       => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
             'timezone'    => ['type' => 'varchar', 'constraint' => 144, 'default' => 'Europe/Moscow'],
             'password'    => ['type' => 'varchar', 'constraint' => 255],
             'secret'      => ['type' => 'varchar', 'constraint' => 255],

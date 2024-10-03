@@ -154,20 +154,26 @@ class UserModel extends AvegaCmsModel
     {
         $this->builder()->select(
             [
-                'id',
-                'login',
-                'avatar',
-                'phone',
-                'email',
-                'timezone',
-                'password',
-                'path',
-                'is_verified',
-                'profile',
-                'extra',
-                'status',
+                'users.id',
+                'users.login',
+                'users.avatar',
+                'users.phone',
+                'users.email',
+                'users.timezone',
+                'users.password',
+                'users.path',
+                'users.is_verified',
+                'users.profile',
+                'users.extra',
+                'users.status',
             ]
-        );
+        )->join(
+            'user_roles',
+            'user_roles.user_id = users.id'
+        )->join(
+            'roles',
+            'roles.id = user_roles.role_id'
+        )->where(['roles.module_id' => 0]);
 
         return $this->find($id);
     }
