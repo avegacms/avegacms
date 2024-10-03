@@ -83,7 +83,20 @@ class RolesModel extends AvegaCmsModel
             $this->builder()->select(['id', 'role'])->orderBy('role', 'ASC');
             $rolesData = $this->findAll();
 
-            return array_column($rolesData, 'role', 'id');
+            $list = [];
+
+            if ($rolesData !== null) {
+                foreach ($rolesData as $role) {
+                    $list[] = [
+                        'label' => $role->role,
+                        'value' => $role->id,
+                    ];
+                }
+            }
+
+            unset($rolesData);
+
+            return $list;
         });
     }
 
