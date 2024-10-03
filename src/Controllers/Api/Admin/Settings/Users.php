@@ -80,10 +80,6 @@ class Users extends AvegaCmsAdminAPI
             return $this->failNotFound();
         }
 
-        if (($data->roles = $this->URM->where(['user_id' => $id])->findColumn('role_id')) === null) {
-            return $this->failNotFound();
-        }
-
         return $this->cmsRespond((array) $data);
     }
 
@@ -94,16 +90,26 @@ class Users extends AvegaCmsAdminAPI
      */
     public function update($id = null): ResponseInterface
     {
-        if ($this->UM->forEdit((int) $id) === null) {
+        if (($old = $this->UM->forEdit((int) $id)) === null) {
             return $this->failNotFound();
         }
 
-        if ($this->validateData($this->apiData, $this->_rules()) === false) {
+        if ($this->validateData($this->apiData, $this->_rules(false)) === false) {
             return $this->cmsRespondFail($this->validator->getErrors());
         }
 
         $data                  = $this->validator->getValidated();
         $data['updated_by_id'] = $this->userData->userId;
+
+        if (isset($data['password']) && trim($data['password']) === '') {
+            unset($data['password']);
+        }
+
+        if ($old->email !== $data['email']) {
+            if ($this->UM->select('email')->where(['email' => $data['email']])->first() !== null) {
+                return $this->cmsRespondFail('Данная почта уже зарегистрирована');
+            }
+        }
 
         $this->UM->skipValidation();
 
@@ -145,9 +151,9 @@ class Users extends AvegaCmsAdminAPI
         }
     }
 
-    public function delete($id = null): ResponseInterface
+    public function delete(?int $id = null): ResponseInterface
     {
-        if (($user = $this->UM->find($id)) === null) {
+        if ($this->UM->forEdit($id) === null) {
             return $this->failNotFound();
         }
 
@@ -159,12 +165,10 @@ class Users extends AvegaCmsAdminAPI
             return $this->cmsRespondFail(lang('Api.errors.delete', ['UserRoles']));
         }
 
-        $this->_removeAvatar($user->avatar);
-
         return $this->respondNoContent();
     }
 
-    private function _rules(): array
+    private function _rules(bool $isReg = true): array
     {
         return [
             'login' => [
@@ -177,11 +181,11 @@ class Users extends AvegaCmsAdminAPI
             ],
             'password' => [
                 'label' => 'Пароль',
-                'rules' => 'required|max_length[64]|verify_password',
+                'rules' => ($isReg ? 'required' : 'permit_empty') . '|max_length[64]|verify_password',
             ],
             'password_conf' => [
                 'label'  => 'Подтверждение пароля',
-                'rules'  => 'required|max_length[64]|matches[password]',
+                'rules'  => ($isReg ? 'required' : 'permit_empty') . 'max_length[64]|matches[password]',
                 'errors' => [
                     'matches' => 'Пароли не совпадают',
                 ],
