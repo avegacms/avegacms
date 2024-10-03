@@ -112,6 +112,7 @@ class UserModel extends AvegaCmsModel
         'avatar'        => 'int',
         'expires'       => 'int',
         'attempts'      => 'int',
+        'role'          => 'int',
         'is_verified'   => '?int-bool',
         'profile'       => '?json-array',
         'extra'         => '?json-array',
@@ -157,7 +158,7 @@ class UserModel extends AvegaCmsModel
                 'users.id',
                 'users.email',
                 'users.status',
-                'user_roles.role_id',
+                'user_roles.role_id AS role',
             ]
         )->join(
             'user_roles',
