@@ -100,6 +100,8 @@ class Users extends AvegaCmsAdminAPI
             return $this->failNotFound();
         }
 
+        $this->apiData['id'] = $id;
+
         if ($this->validateData($this->apiData, $this->_rules(false)) === false) {
             return $this->cmsRespondFail($this->validator->getErrors());
         }
@@ -176,10 +178,12 @@ class Users extends AvegaCmsAdminAPI
 
     private function _rules(bool $isReg = true): array
     {
+        $isReg = ($isReg ? 'required' : 'permit_empty');
+
         return [
-            'login' => [
-                'label' => 'Логин',
-                'rules' => 'permit_empty|alpha_dash|max_length[36]',
+            'id' => [
+                'label' => 'ID',
+                'rules' => $isReg,
             ],
             'email' => [
                 'label' => 'Email',
@@ -187,11 +191,11 @@ class Users extends AvegaCmsAdminAPI
             ],
             'password' => [
                 'label' => 'Пароль',
-                'rules' => ($isReg ? 'required' : 'permit_empty') . '|max_length[64]|verify_password',
+                'rules' => $isReg . '|max_length[64]|verify_password',
             ],
             'password_conf' => [
                 'label'  => 'Подтверждение пароля',
-                'rules'  => ($isReg ? 'required' : 'permit_empty') . '|max_length[64]|matches[password]',
+                'rules'  => $isReg . '|max_length[64]|matches[password]',
                 'errors' => [
                     'matches' => 'Пароли не совпадают',
                 ],
