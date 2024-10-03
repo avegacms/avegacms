@@ -80,7 +80,13 @@ class Users extends AvegaCmsAdminAPI
             return $this->failNotFound();
         }
 
-        return $this->cmsRespond((array) $data);
+        return $this->cmsRespond(
+            (array) $data,
+            [
+                'roles'    => $this->RM->getRolesList(),
+                'statuses' => UserStatuses::list(),
+            ]
+        );
     }
 
     /**
