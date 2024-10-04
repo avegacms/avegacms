@@ -640,8 +640,9 @@ class Authorization
             if ($data->expires > now($this->settings['env']['timezone'])) {
                 throw AuthorizationException::forCodeNotExpired();
             }
+
             // увеличиваем период действия кода
-            $time = current(array_filter($delayPeriod, static fn ($value) => $value > $time)) ?: max($delayPeriod);
+            $time = current(array_filter($delayPeriod, static fn ($value) => $value > ($data->delay / MINUTE))) ?: max($delayPeriod);
             $attempts++; // увеличиваем количество попыток
             cache()->delete('AttemptsEntrance_' . $data->id);
         }
