@@ -82,6 +82,11 @@ class AuthorizationException extends Exception
         return new static(lang('Authorization.errors.codeExpired'));
     }
 
+    public static function forUnknownCode(): AuthorizationException
+    {
+        return new static(lang('Authorization.errors.unknownCode'));
+    }
+
     public static function forWrongCode(): AuthorizationException
     {
         return new static(lang('Authorization.errors.wrongCode'));
