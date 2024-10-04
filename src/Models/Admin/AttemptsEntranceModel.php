@@ -19,6 +19,7 @@ class AttemptsEntranceModel extends AvegaCmsModel
         'id',
         'login',
         'code',
+        'attempts',
         'delay',
         'expires',
         'user_ip',
@@ -28,6 +29,7 @@ class AttemptsEntranceModel extends AvegaCmsModel
     ];
     protected array $casts = [
         'code'       => 'int',
+        'attempts'   => 'int',
         'delay'      => 'int',
         'expires'    => 'int',
         'created_at' => 'cmsdatetime',
@@ -80,7 +82,7 @@ class AttemptsEntranceModel extends AvegaCmsModel
         $id = md5($login);
 
         $data = cache()->remember('AttemptsEntrance_' . $id, $delay, function () use ($id) {
-            $this->builder()->select(['id', 'code', 'delay', 'expires'])->where(['id' => $id]);
+            $this->builder()->select(['id', 'code', 'attempts', 'delay', 'expires'])->where(['id' => $id]);
 
             return $this->first();
         });
