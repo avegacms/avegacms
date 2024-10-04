@@ -628,14 +628,21 @@ class Authorization
      */
     public function setCode(string $login): array
     {
-        $time     = 5;
-        $attempts = 1;
+        $attempts    = 1;
+        $delayPeriod = $this->settings['auth']['codeSmsDelayPeriods'];
+        $time        = $delayPeriod[0];
+
+        if (filter_var($login, FILTER_VALIDATE_EMAIL) === true) {
+            $delayPeriod = $this->settings['auth']['codeEmailDelayPeriods'];
+        }
 
         if (($data = $this->AEM->getCode($login)) !== null) {
             if ($data->expires > now($this->settings['env']['timezone'])) {
                 throw AuthorizationException::forCodeNotExpired();
             }
-
+            // увеличиваем период действия кода
+            $time = current(array_filter($delayPeriod, static fn ($value) => $value > $time)) ?: max($delayPeriod);
+            $attempts++; // увеличиваем количество попыток
             cache()->delete('AttemptsEntrance_' . $data->id);
         }
 
@@ -648,6 +655,7 @@ class Authorization
             'id'         => md5($login),
             'login'      => $login,
             'code'       => $code,
+            'attempts'   => $attempts,
             'delay'      => $delay,
             'expires'    => now($this->settings['env']['timezone']) + $delay,
             'user_id'    => $request->getIPAddress(),
