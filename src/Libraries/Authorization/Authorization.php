@@ -127,6 +127,9 @@ class Authorization
             throw AuthorizationException::forWrongCode();
         }
 
+        // Удаляем запись попытки
+        $this->AEM->clear($login);
+
         return true;
     }
 
