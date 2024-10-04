@@ -1155,6 +1155,19 @@ class AvegaCmsInstallSeeder extends Seeder
                 'context'       => 'Settings.context.auth.attempts',
             ],
             [
+                // Время очистки брошенных попыток
+                'module_id'     => 0,
+                'is_core'       => true,
+                'entity'        => 'core',
+                'slug'          => 'auth',
+                'key'           => 'attemptsClearTime',
+                'value'         => 60,
+                'default_value' => 60,
+                'return_type'   => FieldsReturnTypes::Integer->value,
+                'label'         => 'Settings.label.auth.attemptsClearTime',
+                'context'       => 'Settings.context.auth.attemptsClearTime',
+            ],
+            [
                 // Время блокировки после неверных попыток авторизации
                 'module_id'     => 0,
                 'is_core'       => true,

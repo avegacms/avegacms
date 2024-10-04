@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace AvegaCms\Models\Admin;
 
 use AvegaCms\Models\AvegaCmsModel;
+use AvegaCms\Utilities\Cms;
+use Exception;
+use ReflectionException;
 
 class AttemptsEntranceModel extends AvegaCmsModel
 {
@@ -96,10 +99,19 @@ class AttemptsEntranceModel extends AvegaCmsModel
         return $data ?? null;
     }
 
+    public function clear(string $login): bool
+    {
+        return $this->builder()->delete(['id' => md5($login)]);
+    }
+
+    /**
+     * @throws ReflectionException|Exception
+     */
     protected function setUserEntranceCode(array $data): array
     {
         if ($data['result'] === true) {
             $this->getCode($data['data']['login'], $data['data']['delay']);
+            $this->builder()->where(['updated_at <'=> now(Cms::settings('core.env.timezone'))])->delete();
         }
 
         return $data;
