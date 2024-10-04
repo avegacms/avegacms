@@ -1141,6 +1141,58 @@ class AvegaCmsInstallSeeder extends Seeder
                 'label'         => 'Settings.label.auth.authSmsMessage',
                 'context'       => 'Settings.context.auth.authSmsMessage',
             ],
+            [
+                // Количество попыток авторизации
+                'module_id'     => 0,
+                'is_core'       => true,
+                'entity'        => 'core',
+                'slug'          => 'auth',
+                'key'           => 'attempts',
+                'value'         => 10,
+                'default_value' => 10,
+                'return_type'   => FieldsReturnTypes::Integer->value,
+                'label'         => 'Settings.label.auth.attempts',
+                'context'       => 'Settings.context.auth.attempts',
+            ],
+            [
+                // Время блокировки после неверных попыток авторизации
+                'module_id'     => 0,
+                'is_core'       => true,
+                'entity'        => 'core',
+                'slug'          => 'auth',
+                'key'           => 'freezeLoginTime',
+                'value'         => 60,
+                'default_value' => 60,
+                'return_type'   => FieldsReturnTypes::Integer->value,
+                'label'         => 'Settings.label.auth.freezeLoginTime',
+                'context'       => 'Settings.context.auth.freezeLoginTime',
+            ],
+            [
+                // Временные периоды отправки кода SMS регистрации/авторизации
+                'module_id'     => 0,
+                'is_core'       => true,
+                'entity'        => 'core',
+                'slug'          => 'auth',
+                'key'           => 'codeSmsDelayPeriods',
+                'value'         => serialize([5, 15, 30, 45, 60]),
+                'default_value' => serialize([5, 15, 30, 45, 60]),
+                'return_type'   => FieldsReturnTypes::Array->value,
+                'label'         => 'Settings.label.auth.codeSmsDelayTime',
+                'context'       => 'Settings.context.auth.codeSmsDelayTime',
+            ],
+            [
+                // Временные периоды отправки кода Email регистрации/авторизации
+                'module_id'     => 0,
+                'is_core'       => true,
+                'entity'        => 'core',
+                'slug'          => 'auth',
+                'key'           => 'codeEmailDelayPeriods',
+                'value'         => serialize([5, 15, 30, 45, 60]),
+                'default_value' => serialize([5, 15, 30, 45, 60]),
+                'return_type'   => FieldsReturnTypes::Array->value,
+                'label'         => 'Settings.label.auth.codeEmailDelayPeriods',
+                'context'       => 'Settings.context.auth.codeEmailDelayPeriods',
+            ],
 
             // Seo
             [
