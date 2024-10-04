@@ -46,6 +46,7 @@ class AttemptsEntranceModel extends AvegaCmsModel
     // Validation
     protected $validationRules = [
         'id'       => ['rules' => 'required|max_length[128]|alpha_dash'],
+        'code'     => ['rules' => 'required|is_natural_no_zero|min_length[4]|max_length[6]'],
         'attempts' => ['rules' => 'required|is_natural_no_zero'],
         'delay'    => ['rules' => 'required|is_natural_no_zero'],
         'expires'  => ['rules' => 'required|is_natural_no_zero'],
