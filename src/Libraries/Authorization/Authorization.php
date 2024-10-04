@@ -110,8 +110,24 @@ class Authorization
         return $authResult;
     }
 
+    /**
+     * @throws AuthorizationException|Exception
+     */
     public function checkCode(string $login, int $code): bool
     {
+        if (($data = $this->AEM->getCode($login)) === null) {
+            throw AuthorizationException::forUnknownCode();
+        }
+
+        if ($data->expires < now($this->settings['env']['timezone'])) {
+            throw AuthorizationException::forCodeExpired();
+        }
+
+        if ($data->code !== $code) {
+            throw AuthorizationException::forWrongCode();
+        }
+
+        return true;
     }
 
     /**
