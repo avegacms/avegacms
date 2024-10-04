@@ -202,7 +202,7 @@ class Users extends AvegaCmsAdminAPI
             ],
             'status' => [
                 'label' => 'Статус',
-                'rules' => 'required|in_list[' . implode(',', UserStatuses::get('value')) . ']'
+                'rules' => 'required|in_list[' . implode(',', UserStatuses::get('value')) . ']',
             ],
             'role' => [
                 'label' => 'Роль',
