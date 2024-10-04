@@ -111,7 +111,9 @@ class AttemptsEntranceModel extends AvegaCmsModel
     {
         if ($data['result'] === true) {
             $this->getCode($data['data']['login'], $data['data']['delay']);
-            $this->builder()->where(['updated_at <'=> now(Cms::settings('core.env.timezone'))])->delete();
+            // Очищаем прошлые попытки
+            $delay = now(Cms::settings('core.env.timezone')) - (Cms::settings('core.auth.attemptsClearTime') * MINUTE);
+            $this->builder()->where(['updated_at <'=> $delay])->delete();
         }
 
         return $data;
