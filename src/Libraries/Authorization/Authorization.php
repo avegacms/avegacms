@@ -626,8 +626,11 @@ class Authorization
      * @throws Exception
      * @throws ReflectionException
      */
-    public function setCode(string $login, int $time): int
+    public function setCode(string $login): array
     {
+        $time     = 5;
+        $attempts = 1;
+
         if (($data = $this->AEM->getCode($login)) !== null) {
             if ($data->expires > now($this->settings['env']['timezone'])) {
                 throw AuthorizationException::forCodeNotExpired();
@@ -655,7 +658,10 @@ class Authorization
             throw AuthorizationException::forCreateCode();
         }
 
-        return $code;
+        return [
+            'code'  => $code,
+            'delay' => $delay,
+        ];
     }
 
     public function destroyUserSessions(int $userId): bool
