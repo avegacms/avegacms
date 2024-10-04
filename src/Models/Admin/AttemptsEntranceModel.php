@@ -105,15 +105,15 @@ class AttemptsEntranceModel extends AvegaCmsModel
     }
 
     /**
-     * @throws ReflectionException|Exception
+     * @throws Exception|ReflectionException
      */
     protected function setUserEntranceCode(array $data): array
     {
         if ($data['result'] === true) {
             $this->getCode($data['data']['login'], $data['data']['delay']);
             // Очищаем прошлые попытки
-            $delay = now(Cms::settings('core.env.timezone')) - (Cms::settings('core.auth.attemptsClearTime') * MINUTE);
-            $this->builder()->where(['updated_at <'=> $delay])->delete();
+            $oldDate = now(Cms::settings('core.env.timezone')) - (Cms::settings('core.auth.attemptsClearTime') * MINUTE);
+            $this->builder()->where(['updated_at <' => $oldDate])->delete();
         }
 
         return $data;
