@@ -44,7 +44,12 @@ class AttemptsEntranceModel extends AvegaCmsModel
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules = [
+        'id'       => ['rules' => 'required|max_length[128]|alpha_dash'],
+        'attempts' => ['rules' => 'required|is_natural_no_zero'],
+        'delay'    => ['rules' => 'required|is_natural_no_zero'],
+        'expires'  => ['rules' => 'required|is_natural_no_zero'],
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
