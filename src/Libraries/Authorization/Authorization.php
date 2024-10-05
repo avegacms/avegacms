@@ -651,7 +651,7 @@ class Authorization
         $delayPeriod = $this->settings['auth']['codeSmsDelayPeriods'];
         $time        = $delayPeriod[0];
 
-        if ((bool) (filter_var($login, FILTER_VALIDATE_EMAIL)) === true) {
+        if (boolval(filter_var($login, FILTER_VALIDATE_EMAIL)) === true) {
             $delayPeriod = $this->settings['auth']['codeEmailDelayPeriods'];
         }
 
