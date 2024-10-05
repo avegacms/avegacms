@@ -116,6 +116,7 @@ class AttemptsEntranceModel extends AvegaCmsModel
 
         if ($ids !== null) {
             $this->builder()->where(['updated_at <' => $oldDate])->delete();
+
             foreach ($ids as $id) {
                 cache()->delete('AttemptsEntrance_' . $id);
             }
