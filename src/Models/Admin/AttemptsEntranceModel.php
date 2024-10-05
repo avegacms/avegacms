@@ -107,13 +107,30 @@ class AttemptsEntranceModel extends AvegaCmsModel
     /**
      * @throws Exception|ReflectionException
      */
+    public function clearOldAttempts(): void
+    {
+        $oldDate = now(Cms::settings('core.env.timezone')) - (Cms::settings('core.auth.attemptsClearTime') * MINUTE);
+
+        $this->builder()->where(['updated_at <' => $oldDate]);
+        $ids = $this->findColumn('id');
+
+        if ($ids !== null) {
+            $this->builder()->where(['updated_at <' => $oldDate])->delete();
+            foreach ($ids as $id) {
+                cache()->delete('AttemptsEntrance_' . $id);
+            }
+        }
+    }
+
+    /**
+     * @throws ReflectionException
+     */
     protected function setUserEntranceCode(array $data): array
     {
         if ($data['result'] === true) {
             $this->getCode($data['data']['login'], $data['data']['delay']);
             // Очищаем прошлые попытки
-            $oldDate = now(Cms::settings('core.env.timezone')) - (Cms::settings('core.auth.attemptsClearTime') * MINUTE);
-            $this->builder()->where(['updated_at <' => $oldDate])->delete();
+            $this->clearOldAttempts();
         }
 
         return $data;
