@@ -331,7 +331,7 @@ class CreateAvegaCmsTables extends Migration
                 'default' => 0,
             ],
             // порядковый номер записи
-            'url' => ['type' => 'varchar', 'constraint' => 2048, 'null' => true],
+            'url'      => ['type' => 'varchar', 'constraint' => 2048, 'null' => true],
             'hash_url' => ['type' => 'varchar', 'constraint' => 64, 'null' => true],
             // URL-адрес без указания base_url
             'meta' => ['type' => 'text', 'null' => true],

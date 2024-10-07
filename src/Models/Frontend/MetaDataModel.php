@@ -105,13 +105,18 @@ class MetaDataModel extends AvegaCmsModel
         parent::__construct();
     }
 
-    public function getContentMetaData(int $locale, string $slug = ''): array|object|null
+    public function getContentMetaData(int $locale, string $slug = ''): ?object
     {
         $this->contentMetaDataSelect();
 
         $this->builder()->whereIn('metadata.meta_type', [MetaDataTypes::Main->name, MetaDataTypes::Page->name])
-            ->where(['metadata.slug' => ! empty($slug) ? $slug : 'main'])
             ->where(['metadata.locale_id' => $locale]);
+
+        if (empty($slug)) {
+            $this->builder()->where(['metadata.slug' => 'main']);
+        } else {
+            $this->builder()->where(['metadata.hash_url' => $slug]);
+        }
 
         $this->checkStatus();
 
