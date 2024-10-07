@@ -127,7 +127,7 @@ class AvegaCmsFrontendController extends AvegaCmsController
             }
         } else {
             $params['locale']  = session()->get('avegacms.client.locale.id');
-            $params['segment'] = empty($segments) ? '' : end($segments);
+            $params['segment'] = empty($segments) ? '' : ($segments = md5(implode('/', $segments)));
         }
 
         // Проверяем были ли переданы доп. мета параметры для поиска
@@ -145,15 +145,12 @@ class AvegaCmsFrontendController extends AvegaCmsController
         }
 
         if ($this->dataEntity->meta_type !== MetaDataTypes::Main->name) {
-            if (empty($this->parentMeta = $this->MDM->getMetaMap(
-                $this->dataEntity->parent ?? $this->dataEntity->id,
-                $this->dataEntity->id
-            ))) {
+            $entity = $this->dataEntity->parent ?? $this->dataEntity->id;
+            if (empty($this->parentMeta = $this->MDM->getMetaMap($entity, $this->dataEntity->id))) {
                 $this->error404();
             }
 
-            if ($this->dataEntity->meta_type !== MetaDataTypes::Module->name
-                && md5(implode('/', $segments)) !== md5($this->dataEntity->url)) {
+            if ($this->dataEntity->meta_type !== MetaDataTypes::Module->name && $segments !== md5($this->dataEntity->url)) {
                 $this->error404();
             }
         }

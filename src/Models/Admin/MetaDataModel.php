@@ -66,7 +66,7 @@ class MetaDataModel extends AvegaCmsModel
         'item_id'    => ['rules' => 'if_exist|required|is_natural'],
         'preview_id' => ['rules' => 'if_exist|permit_empty|is_natural'],
         'url'        => ['rules' => 'if_exist|permit_empty'],
-        'hash_url'        => ['rules' => 'if_exist|permit_empty'],
+        'hash_url'   => ['rules' => 'if_exist|permit_empty'],
         'creator_id' => ['rules' => 'if_exist|required|is_natural'],
         'title'      => [
             'label' => 'Название',
@@ -437,7 +437,7 @@ class MetaDataModel extends AvegaCmsModel
             };
         }
 
-        if(empty($meta['url'] ?? '')) {
+        if (! empty($meta['url'] ?? '')) {
             $meta['hash_url'] = md5($meta['url']);
         }
 
@@ -496,7 +496,7 @@ class MetaDataModel extends AvegaCmsModel
 
     protected function setUrlHash(array $data): array
     {
-        if(empty($data['data']['url'] ?? '')) {
+        if (! empty($data['data']['url'] ?? '')) {
             $data['data']['hash_url'] = md5($data['data']['url']);
         }
 
