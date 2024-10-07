@@ -7,6 +7,7 @@ namespace AvegaCms\Utilities;
 use AvegaCms\Config\AvegaCms;
 use AvegaCms\Enums\MetaDataTypes;
 use AvegaCms\Enums\MetaStatuses;
+use AvegaCms\Exceptions\AvegaCmsException;
 use AvegaCms\Models\Admin\ContentModel;
 use AvegaCms\Models\Admin\MetaDataModel;
 use AvegaCms\Models\Admin\ModulesModel;
@@ -195,11 +196,10 @@ class CmsModule
             'created_by_id'   => 1,
         ];
 
-        if ($metaId = $MDM->insert($page)) {
-            (new ContentModel())->insert(['id' => $metaId]);
-        } else {
-            d($MDM->errors());
+        if (($metaId = $MDM->insert($page)) === false) {
+            throw new AvegaCmsException($MDM->errors());
         }
+        (new ContentModel())->insert(['id' => $metaId]);
 
         return $metaId;
     }

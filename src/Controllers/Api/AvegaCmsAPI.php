@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace AvegaCms\Controllers\Api;
 
 use AvegaCms\Controllers\AvegaCmsController;
-use AvegaCms\Exceptions\AvegaCmsApiException;
+use AvegaCms\Exceptions\AvegaCmsException;
 use AvegaCms\Traits\AvegaCmsApiResponseTrait;
 use AvegaCms\Utilities\Cms;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -35,13 +35,13 @@ class AvegaCmsAPI extends AvegaCmsController
                 case 'POST':
                 case 'PUT':
                     if ($request->getBody() === null) {
-                        throw AvegaCmsApiException::forNoData();
+                        throw AvegaCmsException::forNoData();
                     }
 
                     if ($request->getBody() !== 'php://input') {
                         json_decode($request->getBody(), false);
                         if (json_last_error() !== JSON_ERROR_NONE) {
-                            throw AvegaCmsApiException::forInvalidJSON(json_last_error_msg());
+                            throw AvegaCmsException::forInvalidJSON(json_last_error_msg());
                         }
 
                         return $request->getJSON(true);
@@ -54,7 +54,7 @@ class AvegaCmsAPI extends AvegaCmsController
                     }
                     break;
             }
-        } catch (AvegaCmsApiException $e) {
+        } catch (AvegaCmsException $e) {
             response()->setStatusCode(400, $e->getMessage())->send();
 
             exit();
