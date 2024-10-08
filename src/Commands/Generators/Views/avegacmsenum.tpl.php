@@ -8,13 +8,13 @@ enum {class}: string
     public static function get(?string $key = null): array
     {
         return in_array($key, ['name', 'value', true], true) ?
-            array_column({class}::cases(), $key) :
-            {class}::cases();
+            array_column(self::cases(), $key) :
+            self::cases();
     }
 
     public static function fromName(string $name): string
     {
-        foreach ({class}::cases() as $enum) {
+        foreach (self::cases() as $enum) {
             if ($enum->name === $name) {
                 return $enum->value;
             }
@@ -27,7 +27,7 @@ enum {class}: string
     {
         $list = [];
 
-        foreach ({class}::cases() as $enum) {
+        foreach (self::cases() as $enum) {
             $list[] = ['label' => $enum->value, 'value' => $enum->name];
         }
 
