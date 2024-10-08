@@ -11,6 +11,17 @@ enum FieldsTypes: string
         return in_array($key, ['name', 'value', true], true) ?
             array_column(FieldsTypes::cases(), $key) : FieldsTypes::cases();
     }
+
+    public static function list(): array
+    {
+        $list = [];
+
+        foreach (FieldsTypes::cases() as $enum) {
+            $list[] = ['label' => $enum->value, 'value' => $enum->name];
+        }
+
+        return $list;
+    }
     case Button   = 'button';
     case Checkbox = 'checkbox';
     case Color    = 'color';

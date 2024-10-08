@@ -11,6 +11,18 @@ enum FieldsReturnTypes: string
         return in_array($key, ['name', 'value', true], true) ?
             array_column(FieldsReturnTypes::cases(), $key) : FieldsReturnTypes::cases();
     }
+
+    public static function list(): array
+    {
+        $list = [];
+
+        foreach (FieldsReturnTypes::cases() as $enum) {
+            $list[] = ['label' => $enum->value, 'value' => $enum->name];
+        }
+
+        return $list;
+    }
+
     case Integer   = 'INTEGER';
     case Float     = 'FLOAT';
     case Double    = 'DOUBLE';

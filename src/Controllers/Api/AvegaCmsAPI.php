@@ -9,6 +9,7 @@ use AvegaCms\Exceptions\AvegaCmsException;
 use AvegaCms\Traits\AvegaCmsApiResponseTrait;
 use AvegaCms\Utilities\Cms;
 use CodeIgniter\HTTP\ResponseInterface;
+use Throwable;
 
 class AvegaCmsAPI extends AvegaCmsController
 {
@@ -66,5 +67,12 @@ class AvegaCmsAPI extends AvegaCmsController
     public function apiMethodNotFound(): ResponseInterface
     {
         return $this->failNotFound();
+    }
+
+    public function cmsException(Throwable $exception): ResponseInterface
+    {
+        return $this->cmsRespondFail(
+            $exception instanceof AvegaCmsException ? $exception->getMessages() : $exception->getMessage()
+        );
     }
 }

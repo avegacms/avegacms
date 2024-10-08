@@ -68,7 +68,7 @@ class AvegaCmsFrontendController extends AvegaCmsController
 
         if (Cms::settings('core.env.useViewData')) {
             if (! file_exists($file = APPPATH . 'Views/' . ($view = 'template/' . $view) . '.php')) {
-                throw new RuntimeException("File {$file} not found");
+                throw new RuntimeException("File $file not found");
             }
             $data['template'] = view($view, $data, $options);
         } else {
@@ -95,7 +95,7 @@ class AvegaCmsFrontendController extends AvegaCmsController
             }
 
             if (! $this->useTemplateMeta) {
-                if (! empty($module['urlPattern']) && $patternSegment = explode('/', $module['urlPattern'])) {
+                if (! empty($module['url_pattern']) && $patternSegment = explode('/', $module['url_pattern'])) {
                     foreach ($patternSegment as $k => $val) {
                         if (isset($segments[$k]) && $segments[$k] !== $val) {
                             $params[$val] = $segments[$k];
