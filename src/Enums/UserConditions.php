@@ -9,7 +9,7 @@ enum UserConditions: string
     public static function get(?string $key = null): array
     {
         return in_array($key, ['name', 'value', true], true) ?
-            array_column(UserConditions::cases(), $key) : UserConditions::cases();
+            array_column(self::cases(), $key) : self::cases();
     }
     case None         = 'NONE';
     case Registration = 'REGISTRATION';

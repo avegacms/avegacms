@@ -9,14 +9,14 @@ enum UserGenders: string
     public static function get(?string $key = null): array
     {
         return in_array($key, ['name', 'value', true], true) ?
-            array_column(UserGenders::cases(), $key) : UserGenders::cases();
+            array_column(self::cases(), $key) : self::cases();
     }
 
     public static function list(): array
     {
         $list = [];
 
-        foreach (UserGenders::cases() as $enum) {
+        foreach (self::cases() as $enum) {
             $list[] = ['label' => lang('Users.enums.' . $enum->name), 'value' => $enum->value];
         }
 
