@@ -68,7 +68,7 @@ class AvegaCmsFrontendController extends AvegaCmsController
 
         if (Cms::settings('core.env.useViewData')) {
             if (! file_exists($file = APPPATH . 'Views/' . ($view = 'template/' . $view) . '.php')) {
-                throw new RuntimeException("File {$file} not found");
+                throw new RuntimeException("File $file not found");
             }
             $data['template'] = view($view, $data, $options);
         } else {
