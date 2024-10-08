@@ -102,7 +102,7 @@ class AvegaCmsRules
 
     public function is_boolean($value, ?string &$error = null): bool
     {
-        if ($value === null || is_bool($value) === false || trim((string) $value) === '') {
+        if (is_bool($value) === false || trim((string) $value) === '') {
             $error = lang('Validation.verifyIsBoolean');
 
             return false;
