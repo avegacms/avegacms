@@ -233,12 +233,7 @@ class Cms
         return $parts;
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return array|bool|float|int|string|null
-     */
-    public static function castAs($value, string $type): mixed
+    public static function castAs(mixed $value, string $type): mixed
     {
         return match ($type) {
             FieldsReturnTypes::Integer->value => (int) $value,
