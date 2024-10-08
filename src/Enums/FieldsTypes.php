@@ -11,6 +11,12 @@ enum FieldsTypes: string
         return in_array($key, ['name', 'value', true], true) ?
             array_column(FieldsTypes::cases(), $key) : FieldsTypes::cases();
     }
+
+    public function ()
+    {
+
+    }
+
     case Button   = 'button';
     case Checkbox = 'checkbox';
     case Color    = 'color';
