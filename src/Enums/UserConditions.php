@@ -14,6 +14,7 @@ enum UserConditions: string
     case None         = 'NONE';
     case Registration = 'REGISTRATION';
     case Auth         = 'AUTH';
+    case CheckProfile   = 'CHECK_PROFILE';
     case CheckPhone   = 'CHECK_PHONE';
     case CheckEmail   = 'CHECK_EMAIL';
     case Recovery     = 'RECOVERY';
