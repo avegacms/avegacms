@@ -22,7 +22,6 @@ enum FieldsTypes: string
 
         return $list;
     }
-
     case Button   = 'button';
     case Checkbox = 'checkbox';
     case Color    = 'color';
