@@ -7,6 +7,7 @@ namespace AvegaCms\Models\Frontend;
 use AvegaCms\Enums\MetaDataTypes;
 use AvegaCms\Enums\MetaStatuses;
 use AvegaCms\Models\AvegaCmsModel;
+use AvegaCms\Utilities\Cms;
 
 class MetaDataModel extends AvegaCmsModel
 {
@@ -39,7 +40,7 @@ class MetaDataModel extends AvegaCmsModel
     protected $beforeUpdate   = [];
     protected $afterUpdate    = [];
     protected $beforeFind     = [];
-    protected $afterFind      = [];
+    protected $afterFind      = ['prepMetaData'];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
@@ -222,8 +223,6 @@ class MetaDataModel extends AvegaCmsModel
 
     public function getSubPages(int $id): array
     {
-        $this->afterFind = [...$this->afterFind, ...['prepMetaData']];
-
         $this->builder()->select(
             [
                 'metadata.id',
@@ -289,11 +288,29 @@ class MetaDataModel extends AvegaCmsModel
     protected function prepMetaData(array $data): array
     {
         if (null !== $data['data']) {
-            if ($data['singleton']) {
-                $data['data']->url = base_url($data['data']->url);
+            if ($data['singleton'] === true) {
+                if (isset($data['data']->url)) {
+                    $data['data']->url = Cms::urlPattern(
+                        $data['data']->url,
+                        $data['data']->use_url_pattern,
+                        $data['data']->id,
+                        $data['data']->slug,
+                        $data['data']->locale_id,
+                        $data['data']->parent
+                    );
+                }
             } else {
                 foreach ($data['data'] as $item) {
-                    $item->url = base_url($item->url);
+                    if (isset($item->url)) {
+                        $item->url = Cms::urlPattern(
+                            $item->url,
+                            $item->use_url_pattern,
+                            $item->id,
+                            $item->slug,
+                            $item->locale_id,
+                            $item->parent
+                        );
+                    }
                 }
             }
         }
