@@ -12,9 +12,15 @@ enum FieldsTypes: string
             array_column(FieldsTypes::cases(), $key) : FieldsTypes::cases();
     }
 
-    public function ()
+    public static function list(): array
     {
+        $list = [];
 
+        foreach (FieldsTypes::cases() as $enum) {
+            $list[] = ['label' => $enum->value, 'value' => $enum->name];
+        }
+
+        return $list;
     }
 
     case Button   = 'button';
