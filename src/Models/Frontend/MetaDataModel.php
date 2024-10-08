@@ -168,6 +168,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.title',
                 'metadata.slug',
                 'metadata.url',
+                'metadata.hash_url',
                 'metadata.use_url_pattern',
                 'metadata.meta',
                 'metadata.meta_type',
@@ -199,6 +200,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.title',
                 'metadata.slug',
                 'metadata.url',
+                'metadata.hash_url',
                 'metadata.meta',
                 'metadata.extra_data',
                 'metadata.meta_type',
@@ -232,6 +234,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.title',
                 'metadata.slug',
                 'metadata.url',
+                'metadata.hash_url',
                 'metadata.use_url_pattern',
             ]
         )->where(['metadata.parent' => $id])
@@ -271,6 +274,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.locale_id',
                 'metadata.preview_id AS preview',
                 'metadata.url',
+                'metadata.hash_url',
                 'metadata.slug',
                 'metadata.in_sitemap',
                 'metadata.use_url_pattern',

@@ -150,7 +150,7 @@ class AvegaCmsFrontendController extends AvegaCmsController
                 $this->error404();
             }
 
-            if ($this->dataEntity->meta_type !== MetaDataTypes::Module->name && $segments !== md5($this->dataEntity->url)) {
+            if ($this->dataEntity->meta_type !== MetaDataTypes::Module->name && $segments !== $this->dataEntity->hash_url) {
                 $this->error404();
             }
         }
