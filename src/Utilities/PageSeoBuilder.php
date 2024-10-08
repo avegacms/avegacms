@@ -111,7 +111,7 @@ class PageSeoBuilder
             foreach ($parentBreadCrumbs as $crumb) {
                 if ($crumb->meta_type !== MetaDataTypes::Main->name) {
                     $breadCrumbs[] = [
-                        'url'   => base_url($crumb->url),
+                        'url'   => $crumb->url,
                         'title' => htmlspecialchars_decode(
                             esc(! empty($crumb->meta->breadcrumb) ? $crumb->meta->breadcrumb : $crumb->title)
                         ),
