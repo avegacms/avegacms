@@ -81,7 +81,8 @@ class CmsFileManager
         string $filePath,
         array $entity,
         array|string|null $uploadConfig = null,
-        array $fileConfig = []
+        array $fileConfig = [],
+        bool $saveOriginal = false
     ): ?array {
         $FLM       = (new FilesLinksModel());
         $validator = Services::validation();
@@ -110,7 +111,7 @@ class CmsFileManager
             throw UploaderException::forDirectoryNotFound($directory);
         }
 
-        return self::_setFile($filePath, $dirData, $entity, $fileConfig);
+        return self::_setFile($filePath, $dirData, $entity, $fileConfig, $saveOriginal);
     }
 
     public static function getFiles(
@@ -433,7 +434,7 @@ class CmsFileManager
     /**
      * @throws ReflectionException|UploaderException
      */
-    private static function _setFile(string $filePath, object $dirData, array $entity, array $fileConfig): ?array
+    private static function _setFile(string $filePath, object $dirData, array $entity, array $fileConfig, bool $saveOriginal = false): ?array
     {
         $FM        = (new FilesModel());
         $FLM       = (new FilesLinksModel());
@@ -451,9 +452,16 @@ class CmsFileManager
         $size       = $uploadedFile->getSize();
         $title      = pathinfo($uploadedFile->getName(), PATHINFO_FILENAME);
 
-        // Переносим файл в нужную директорию
-        if (! rename($filePath, $uploadPath . $fileName)) {
-            throw UploaderException::forNotMovedFile($filePath);
+        if ($saveOriginal === true) {
+            // Делаем копию с оригинала
+            if (! copy($filePath, $uploadPath . $fileName)) {
+                throw UploaderException::forNotMovedFile($filePath);
+            }
+        } else {
+            // Переносим файл в нужную директорию
+            if (! rename($filePath, $uploadPath . $fileName)) {
+                throw UploaderException::forNotMovedFile($filePath);
+            }
         }
 
         // Получаем информацию по файлу
