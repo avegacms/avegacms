@@ -214,13 +214,14 @@ class Authorization
         $userAgent   = $request->getUserAgent()->getAgentString();
         $userIp      = $request->getIPAddress();
         $userSession = [
-            'isAuth'   => true,
-            'selfAuth' => true,
-            'module'   => $user->module,
-            'userId'   => $user->id,
-            'roleId'   => $user->roleId,
-            'role'     => $user->role,
-            'status'   => $user->status,
+            'isAuth'    => true,
+            'selfAuth'  => true,
+            'module'    => $user->module,
+            'userId'    => $user->id,
+            'roleId'    => $user->roleId,
+            'role'      => $user->role,
+            'status'    => $user->status,
+            'condition' => $user->condition,
         ];
 
         if ($this->settings['auth']['useSession']) {
