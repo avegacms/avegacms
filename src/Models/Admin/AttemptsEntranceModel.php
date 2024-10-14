@@ -101,7 +101,9 @@ class AttemptsEntranceModel extends AvegaCmsModel
 
     public function clear(string $login): bool
     {
-        return $this->builder()->delete(['id' => md5($login)]);
+        $login = md5($login);
+        cache()->delete('AttemptsEntrance_' . $login);
+        return $this->builder()->delete(['id' => $login]);
     }
 
     /**
