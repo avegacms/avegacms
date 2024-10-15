@@ -12,13 +12,13 @@ trait AvegaCmsApiResponseTrait
     use ResponseTrait;
 
     protected function cmsRespond(
-        array|string|null $payload = null,
+        array|object|string|null $payload = null,
         array|string|null $meta = null,
         string $message = ''
     ): ResponseInterface {
         $data = null;
         if (null !== $payload) {
-            $data['data'] = is_array($payload) ? $payload : [$payload];
+            $data['data'] = is_array($payload) ? $payload : (is_object($payload) ? (array) $payload : [$payload]);
             if (in_array('pagination', array_keys($data['data']), true)) {
                 $meta['pagination'] = $data['data']['pagination'];
                 unset($data['data']['pagination']);
