@@ -103,6 +103,7 @@ class AttemptsEntranceModel extends AvegaCmsModel
     {
         $login = md5($login);
         cache()->delete('AttemptsEntrance_' . $login);
+
         return $this->builder()->delete(['id' => $login]);
     }
 

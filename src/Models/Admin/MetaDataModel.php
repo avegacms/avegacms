@@ -112,11 +112,15 @@ class MetaDataModel extends AvegaCmsModel
         'parent'    => 'metadata.parent',
         'locale'    => 'metadata.locale_id',
         'title'     => 'metadata.title',
+        'url'       => 'metadata.url',
+        'slug'      => 'metadata.slug',
         'sort'      => 'metadata.sort',
         'published' => 'metadata.publish_at',
     ];
     protected array $searchFields = [
         'title' => 'metadata.title',
+        'url'   => 'metadata.url',
+        'slug'  => 'metadata.slug',
     ];
     protected array $sortableFields = [
         'sort',

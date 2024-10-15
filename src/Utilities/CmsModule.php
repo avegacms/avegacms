@@ -203,4 +203,28 @@ class CmsModule
 
         return $metaId;
     }
+
+    public static function getModulePageMeta(
+        int|string $moduleKey,
+        ?string $slug = null,
+        ?int $localeId = null,
+        ?int $parent = null,
+        ?int $itemId = null,
+        ?string $url = null
+    ): ?object {
+        if (($moduleKey = is_int($moduleKey) ? $moduleKey : (self::meta($moduleKey)['id'] ?? null)) === null) {
+            return null;
+        }
+
+        $filter = [
+            'parent'    => $parent,
+            'locale_id' => $localeId,
+            'module_id' => $moduleKey,
+            'slug'      => $slug,
+            'item_id'   => $itemId,
+            'url'       => $url,
+        ];
+
+        return (new MetaDataModel())->filter(array_filter($filter, static fn ($value) => $value !== null))->first();
+    }
 }
