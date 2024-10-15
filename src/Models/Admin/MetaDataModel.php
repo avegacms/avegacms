@@ -133,6 +133,8 @@ class MetaDataModel extends AvegaCmsModel
         'parent'     => 'integer',
         'locale'     => 'integer',
         'title'      => 'string',
+        'url'        => 'string',
+        'slug'       => 'string',
         'publish_at' => 'string',
     ];
     protected string $searchFieldAlias = 'q';
