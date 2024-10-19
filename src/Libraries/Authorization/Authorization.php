@@ -128,9 +128,14 @@ class Authorization
         }
 
         // Удаляем запись попытки
-        $this->AEM->clear($login);
+        $this->clearCode($login);
 
         return true;
+    }
+
+    public function clearCode(string $login): void
+    {
+        $this->AEM->clear($login);
     }
 
     /**
