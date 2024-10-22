@@ -225,6 +225,39 @@ class MetaDataModel extends AvegaCmsModel
         return $this->first();
     }
 
+    public function getMetadataModule(int $moduleId = 0): ?object
+    {
+        $this->builder()->select(
+            [
+                'metadata.id',
+                'metadata.parent',
+                'metadata.locale_id',
+                'metadata.module_id',
+                'metadata.item_id',
+                'metadata.creator_id',
+                'metadata.slug',
+                'metadata.title',
+                'metadata.sort',
+                'metadata.url',
+                'metadata.meta',
+                'metadata.meta_sitemap',
+                'metadata.extra_data',
+                'metadata.status',
+                'metadata.preview_id',
+                'metadata.in_sitemap',
+                'metadata.publish_at',
+                'metadata.created_at',
+                'metadata.updated_at',
+            ]
+        )->where(
+            [
+                'metadata.module_id' => $moduleId,
+            ]
+        );
+
+        return $this;
+    }
+
     public function getSubPages(int $id): array
     {
         $this->builder()->select(
