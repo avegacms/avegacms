@@ -46,6 +46,7 @@ class MetaDataModel extends AvegaCmsModel
 
     // AvegaCms filter settings
     protected array $filterFields = [
+        'id'        => 'metadata.id',
         'module_id' => 'metadata.module_id',
         'item_id'   => 'metadata.item_id',
         'rubric'    => 'metadata.parent',
@@ -63,6 +64,7 @@ class MetaDataModel extends AvegaCmsModel
         'published',
     ];
     protected array $filterCastsFields = [
+        'id'         => 'integer|array',
         'module_id'  => 'integer',
         'item_id'    => 'integer',
         'rubric'     => 'integer',
