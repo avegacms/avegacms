@@ -239,6 +239,7 @@ class MetaDataModel extends AvegaCmsModel
                 'metadata.title',
                 'metadata.sort',
                 'metadata.url',
+                'metadata.use_url_pattern',
                 'metadata.meta',
                 'metadata.meta_sitemap',
                 'metadata.extra_data',
