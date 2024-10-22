@@ -46,6 +46,7 @@ class MetaDataModel extends AvegaCmsModel
 
     // AvegaCms filter settings
     protected array $filterFields = [
+        'id'        => 'metadata.id',
         'module_id' => 'metadata.module_id',
         'item_id'   => 'metadata.item_id',
         'rubric'    => 'metadata.parent',
@@ -63,6 +64,7 @@ class MetaDataModel extends AvegaCmsModel
         'published',
     ];
     protected array $filterCastsFields = [
+        'id'         => 'integer|array',
         'module_id'  => 'integer',
         'item_id'    => 'integer',
         'rubric'     => 'integer',
@@ -221,6 +223,39 @@ class MetaDataModel extends AvegaCmsModel
         $this->checkStatus();
 
         return $this->first();
+    }
+
+    public function getMetadataModule(int $moduleId = 0): ?object
+    {
+        $this->builder()->select(
+            [
+                'metadata.id',
+                'metadata.parent',
+                'metadata.locale_id',
+                'metadata.module_id',
+                'metadata.item_id',
+                'metadata.creator_id',
+                'metadata.slug',
+                'metadata.title',
+                'metadata.sort',
+                'metadata.url',
+                'metadata.meta',
+                'metadata.meta_sitemap',
+                'metadata.extra_data',
+                'metadata.status',
+                'metadata.preview_id',
+                'metadata.in_sitemap',
+                'metadata.publish_at',
+                'metadata.created_at',
+                'metadata.updated_at',
+            ]
+        )->where(
+            [
+                'metadata.module_id' => $moduleId,
+            ]
+        );
+
+        return $this;
     }
 
     public function getSubPages(int $id): array
