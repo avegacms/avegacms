@@ -28,13 +28,14 @@ class Cms
         ?string $slug = null,
         ?int $parent = null,
         ?int $localeId = null,
+        ?int $moduleId = null,
         bool $inSitemap = false
     ): mixed {
         $metaId = model(MetaDataModel::class)->insert(
             [
                 'parent'          => $parent ?? 1,
                 'locale_id'       => $localeId ?? 1,
-                'module_id'       => 0,
+                'module_id'       => $moduleId ?? 0,
                 'slug'            => $slug ?? '',
                 'creator_id'      => 1,
                 'item_id'         => 0,
