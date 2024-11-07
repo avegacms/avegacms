@@ -72,7 +72,7 @@ class AvegaCmsAPI extends AvegaCmsController
     public function cmsException(Throwable $exception): ResponseInterface
     {
         return $this->cmsRespondFail(
-            $exception instanceof AvegaCmsException ? $exception->getMessages() : $exception->getMessage()
+            $exception instanceof AvegaCmsException ? $exception->getMessages() : ($exception->getMessage() ?? $exception->getMessages())
         );
     }
 }
