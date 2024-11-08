@@ -132,7 +132,8 @@ class SettingsModel extends AvegaCmsModel
     }
 
     /**
-     * @param int $localeId
+     * @param string $entity
+     * @return array
      */
     public function getSettings(string $entity): array
     {
