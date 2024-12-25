@@ -113,6 +113,7 @@ class MetaDataModel extends AvegaCmsModel
         'locale'    => 'metadata.locale_id',
         'title'     => 'metadata.title',
         'url'       => 'metadata.url',
+        'status'    => 'metadata.status',
         'slug'      => 'metadata.slug',
         'sort'      => 'metadata.sort',
         'published' => 'metadata.publish_at',
@@ -132,6 +133,7 @@ class MetaDataModel extends AvegaCmsModel
         'locale'     => 'integer',
         'title'      => 'string',
         'url'        => 'string',
+        'status'     => 'string',
         'slug'       => 'string',
         'publish_at' => 'string',
     ];
