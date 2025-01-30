@@ -193,7 +193,7 @@ class AvegaCmsModel extends Model
                 )
             ),
             'int|array',
-            'integer|array' => is_int($value) ?
+            'integer|array' => is_numeric($value) ?
                 $this->castAs($value, 'int', $fieldName) :
                 (is_array($value) && ! empty($value) ? $this->castAs($value, 'array', $fieldName) : null),
             'double|array',
