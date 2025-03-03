@@ -118,7 +118,7 @@ $routes->get('robots.txt', [Seo::class, 'robots']);
 $routes->get('sitemap.xml', [Seo::class, 'sitemap']);
 
 $routes->match(
-    ['get', 'post', 'put', 'patch', 'delete'],
+    ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     'api/(:any)',
     [AvegaCmsAPI::class, 'apiMethodNotFound'],
     ['priority' => 10000]
