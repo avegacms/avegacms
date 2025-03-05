@@ -8,6 +8,7 @@ use AvegaCms\Enums\MetaDataTypes;
 use AvegaCms\Libraries\Content\Exceptions\ContentExceptions;
 use AvegaCms\Models\Admin\ContentModel;
 use AvegaCms\Models\Admin\MetaDataModel;
+use AvegaCms\Utilities\CmsModule;
 use ReflectionException;
 
 class Content
@@ -59,7 +60,8 @@ class Content
         };
 
         $data['item_id'] ??= 0;
-        $data['module_id'] = $this->moduleId;
+        $data['module_id'] = ($this->moduleId > 0) ? $this->moduleId :
+            (($data['meta_type'] === MetaDataTypes::Page->name) ? CmsModule::meta('pages')['id'] : $this->moduleId);
 
         if (! ($content['id'] = $this->MDM->insert($data))) {
             throw new ContentExceptions($this->MDM->errors());
