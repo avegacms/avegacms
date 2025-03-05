@@ -100,10 +100,19 @@ class Users extends AvegaCmsAdminAPI
             return $this->failNotFound();
         }
 
+        $roleName = (new RolesModel())->where(['id' => $old?->role])->first()?->role;
+
         $this->apiData['id'] = $id;
 
-        if ($this->validateData($this->apiData, $this->_rules(false)) === false) {
-            return $this->cmsRespondFail($this->validator->getErrors());
+        if (in_array($roleName, ['staffer', 'client'])) {
+            $this->apiData['email'] = $old->email;
+            if ($this->validateData($this->apiData, $this->UM->getValidationRules(['only' => ['id', 'status', 'email']])) === false) {
+                return $this->cmsRespondFail($this->validator->getErrors());
+            }
+        } else {
+            if ($this->validateData($this->apiData, $this->_rules(false)) === false) {
+                return $this->cmsRespondFail($this->validator->getErrors());
+            }
         }
 
         $data                  = $this->validator->getValidated();
