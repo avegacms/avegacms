@@ -131,10 +131,6 @@ class SettingsModel extends AvegaCmsModel
         return $this;
     }
 
-    /**
-     * @param string $entity
-     * @return array
-     */
     public function getSettings(string $entity): array
     {
         $this->builder()->select(
