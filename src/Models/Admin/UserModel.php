@@ -164,7 +164,7 @@ class UserModel extends AvegaCmsModel
         )->join(
             'roles',
             'roles.id = user_roles.role_id'
-        )->where(['roles.module_id' => 0]);
+        );
 
         return $this->find($id);
     }
