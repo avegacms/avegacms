@@ -81,7 +81,6 @@ class RolesModel extends AvegaCmsModel
     {
         return cache()->remember('RolesList', DAY * 30, function () {
             $this->builder()->select(['id', 'role'])
-                ->where(['module_id' => 0])
                 ->orderBy('role', 'ASC');
 
             $rolesData = $this->findAll();
