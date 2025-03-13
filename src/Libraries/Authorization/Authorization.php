@@ -6,6 +6,7 @@ namespace AvegaCms\Libraries\Authorization;
 
 use AvegaCms\Config\Services;
 use AvegaCms\Enums\UserConditions;
+use AvegaCms\Exceptions\AvegaCmsException;
 use AvegaCms\Libraries\Authorization\Exceptions\AuthenticationException;
 use AvegaCms\Libraries\Authorization\Exceptions\AuthorizationException;
 use AvegaCms\Models\Admin\AttemptsEntranceModel;
@@ -663,7 +664,7 @@ class Authorization
 
         if (($data = $this->AEM->getCode($login)) !== null) {
             if ($data->expires > now($this->settings['env']['timezone'])) {
-                throw AuthorizationException::forCodeNotExpired();
+                throw new AvegaCmsException(['redirect' => true]);
             }
 
             // увеличиваем период действия кода
