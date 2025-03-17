@@ -153,6 +153,7 @@ class UserModel extends AvegaCmsModel
     {
         $this->builder()->select(
             [
+                'users.phone',
                 'users.id',
                 'users.email',
                 'users.status',
