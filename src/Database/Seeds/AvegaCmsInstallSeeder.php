@@ -734,9 +734,9 @@ class AvegaCmsInstallSeeder extends Seeder
                 'slug'        => 'ru',
                 'locale'      => 'ru_RU',
                 'locale_name' => 'Русская версия',
-                'home'        => 'Главная',
+                'home'        => 'РУГРЕЙН',
                 'extra'       => [
-                    'app_name' => 'Мой новый проект',
+                    'app_name' => 'Аграрный маркетплейс',
                     'og:image' => 'ogDefaultRu.jpg',
                 ],
                 'is_default'    => true,
