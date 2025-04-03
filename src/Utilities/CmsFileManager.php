@@ -71,7 +71,7 @@ class CmsFileManager
             throw new UploaderException($uploadedFile->getErrorString() . '(' . $uploadedFile->getError() . ')');
         }
 
-        return self::_setFile($uploadedFile->getPathname(), $dirData, $entity, $fileConfig, false, $uploadedFile->getClientName());
+        return self::_setFile($uploadedFile->getPathname(), $dirData, $entity, $fileConfig, false, $uploadedFile->getClientName(), $uploadedFile->getClientExtension());
     }
 
     /**
@@ -434,7 +434,7 @@ class CmsFileManager
     /**
      * @throws ReflectionException|UploaderException
      */
-    private static function _setFile(string $filePath, object $dirData, array $entity, array $fileConfig, bool $saveOriginal = false, ?string $clientFileName = null): ?array
+    private static function _setFile(string $filePath, object $dirData, array $entity, array $fileConfig, bool $saveOriginal = false, ?string $clientFileName = null, ?string $clientExtension = null): ?array
     {
         $FM        = (new FilesModel());
         $FLM       = (new FilesLinksModel());
@@ -449,6 +449,13 @@ class CmsFileManager
 
         $uploadPath = FCPATH . ($directory = ('uploads/' . $dirData->url)) . '/';
         $fileName   = $uploadedFile->getRandomName();
+        $fileName = $uploadedFile->getRandomName();
+
+        if (!empty($clientExtension)) {
+            $baseName = pathinfo($fileName, PATHINFO_FILENAME);
+            $fileName = $baseName . '.' . $clientExtension;
+        }
+
         $size       = $uploadedFile->getSize();
         $title      = $clientFileName ?? pathinfo($uploadedFile->getName(), PATHINFO_FILENAME);
 
@@ -466,7 +473,7 @@ class CmsFileManager
 
         // Получаем информацию по файлу
         $file     = new File($uploadPath . $fileName);
-        $isImage  = mb_strpos(Mimes::guessTypeFromExtension($extension = $file->getExtension()) ?? '', 'image') === 0;
+        $isImage  = mb_strpos(Mimes::guessTypeFromExtension($extension = $clientExtension ?? $file->getExtension()) ?? '', 'image') === 0;
         $type     = ($isImage) ? FileTypes::Image->value : FileTypes::File->value;
         $dirFile  = $directory . '/' . $fileName;
         $fileData = [
