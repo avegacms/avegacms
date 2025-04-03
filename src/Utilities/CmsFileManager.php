@@ -71,7 +71,7 @@ class CmsFileManager
             throw new UploaderException($uploadedFile->getErrorString() . '(' . $uploadedFile->getError() . ')');
         }
 
-        return self::_setFile($uploadedFile->getPathname(), $dirData, $entity, $fileConfig);
+        return self::_setFile($uploadedFile->getPathname(), $dirData, $entity, $fileConfig, $uploadedFile->getClientName());
     }
 
     /**
@@ -434,7 +434,7 @@ class CmsFileManager
     /**
      * @throws ReflectionException|UploaderException
      */
-    private static function _setFile(string $filePath, object $dirData, array $entity, array $fileConfig, bool $saveOriginal = false): ?array
+    private static function _setFile(string $filePath, object $dirData, array $entity, array $fileConfig, bool $saveOriginal = false, ?string $clientFileName = null): ?array
     {
         $FM        = (new FilesModel());
         $FLM       = (new FilesLinksModel());
@@ -450,7 +450,7 @@ class CmsFileManager
         $uploadPath = FCPATH . ($directory = ('uploads/' . $dirData->url)) . '/';
         $fileName   = $uploadedFile->getRandomName();
         $size       = $uploadedFile->getSize();
-        $title      = pathinfo($uploadedFile->getName(), PATHINFO_FILENAME);
+        $title      = $clientFileName ?? pathinfo($uploadedFile->getName(), PATHINFO_FILENAME);
 
         if ($saveOriginal === true) {
             // Делаем копию с оригинала
