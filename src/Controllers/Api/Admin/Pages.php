@@ -7,10 +7,13 @@ namespace AvegaCms\Controllers\Api\Admin;
 use AvegaCms\Enums\MetaDataTypes;
 use AvegaCms\Enums\MetaStatuses;
 use AvegaCms\Enums\SitemapChangefreqs;
+use AvegaCms\Exceptions\AvegaCmsException;
 use AvegaCms\Libraries\Content\Content as ContentLib;
 use AvegaCms\Libraries\Content\Exceptions\ContentExceptions;
 use AvegaCms\Models\Admin\MetaDataModel;
+use AvegaCms\Utilities\CmsFileManager;
 use AvegaCms\Utilities\CmsModule;
+use AvegaCms\Utilities\Exceptions\UploaderException;
 use CodeIgniter\HTTP\ResponseInterface;
 use ReflectionException;
 
@@ -110,6 +113,40 @@ class Pages extends AvegaCmsAdminAPI
             return $this->respondDeleted();
         } catch (ContentExceptions $e) {
             return $this->cmsRespondFail($e->getMessages() ?? $e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function upload(): ResponseInterface
+    {
+        try {
+            $file = CmsFileManager::upload(
+                [
+                    'entity_id' => 0,
+                    'item_id'   => 0,
+                    'user_id'   => $this->userData->userId,
+                ],
+                [
+                    'field'      => 'file',
+                    'directory'  => 'modules/stockmarket/bid',
+                    'maxSize'    => 8192,
+                    'extInFiles' => [
+                        0 => 'png',
+                        1 => 'jpg',
+                        2 => 'jpeg',
+                        3 => 'gif',
+                        4 => 'pdf',
+                        5 => 'txt',
+                        6 => 'doc',
+                        7 => 'docx',
+                        8 => 'xlsx',
+                        9 => 'xls',
+                    ],
+                ],
+            )[0] ?? null;
+
+            return $this->respond(['file' => $file]);
+        } catch (UploaderException|AvegaCmsException $e) {
+            return $this->cmsException($e);
         }
     }
 }

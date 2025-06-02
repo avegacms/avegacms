@@ -39,6 +39,7 @@ $routes->group('api', static function (RouteCollection $routes) {
                 $routes->put('(:num)', [[Pages::class, 'update'], '$1']);
                 $routes->patch('(:num)', [[Pages::class, 'patch'], '$1']);
                 $routes->delete('(:num)', [[Pages::class, 'delete'], '$1']);
+                $routes->post('upload', [Pages::class, 'upload']);
             });
             $routes->group('settings', static function (RouteCollection $routes) {
                 $routes->group('locales', static function (RouteCollection $routes) {
