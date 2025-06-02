@@ -146,15 +146,6 @@ class Pages extends AvegaCmsAdminAPI
 
             return $this->respond(['file' => $file]);
         } catch (UploaderException|AvegaCmsException $e) {
-            log_message(
-                'error',
-                json_encode(
-                    method_exists($e, 'getMessages')
-                        ? $e->getMessages() : $e->getMessage(),
-                    JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR
-                )
-            );
-
             return $this->cmsException($e);
         }
     }
