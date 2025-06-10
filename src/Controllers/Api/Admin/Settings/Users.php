@@ -52,6 +52,9 @@ class Users extends AvegaCmsAdminAPI
      */
     public function create(): ResponseInterface
     {
+        $this->apiData['id']     = 0;
+        $this->apiData['status'] = UserStatuses::Active->value;
+
         if ($this->validateData($this->apiData, $this->_rules()) === false) {
             return $this->cmsRespondFail($this->validator->getErrors());
         }
@@ -61,7 +64,7 @@ class Users extends AvegaCmsAdminAPI
         $data['created_by_id'] = $this->userData->userId;
 
         $roles = $data['role'];
-        unset($data['role']);
+        unset($data['role'], $data['id']);
 
         $this->UM->skipValidation();
 
