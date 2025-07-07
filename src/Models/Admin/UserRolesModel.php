@@ -83,6 +83,7 @@ class UserRolesModel extends AvegaCmsModel
         'user_id'       => 'int',
         'created_by_id' => 'int',
         'created_at'    => 'cmsdatetime',
+        'profile'       => '?json-array',
     ];
 
     public function getUsers(): AvegaCmsModel
@@ -92,6 +93,7 @@ class UserRolesModel extends AvegaCmsModel
                 'u.id',
                 'u.login',
                 'u.avatar',
+                'u.profile',
                 'u.phone',
                 'u.email',
                 'u.timezone',
